@@ -1,4 +1,4 @@
-﻿using HarmonyLib;
+using HarmonyLib;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -169,7 +169,7 @@ namespace WankulCrazyPlugin.patch
             }
         }
 
-        public static void Postfix_GetCardMarketPrice_ThreeParams(ECardExpansionType expansionType, ref float __result)
+        public static void Postfix_GetCardMarketPrice_Params(int index, ECardExpansionType expansionType, bool isDestiny, int cardGrade, ref float __result)
         {
             float variation = UnityEngine.Random.Range(-0.3f, 0.3f);
             float marketPrice = 20f; // Valeur par défaut

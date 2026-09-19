@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using BepInEx.Logging;
 using HarmonyLib;
 using UnityEngine.UIElements;
@@ -75,51 +75,90 @@ public class ReplacingCards
             wankulCardData = WankulCardsData.GetAJETER();
         }
 
-        if (__instance.m_NormalGrp != null)
+        if (wankulCardData.Sprite == null)
         {
-            __instance.m_NormalGrp.SetActive(true);
+            Plugin.Logger.LogWarning($"wankulCardData Sprite is null for {wankulCardData.Title} ({wankulCardData.Index})");
+            return;
         }
 
-        gameCardData.isFoil = false;
-        gameCardData.isChampionCard = false;
-
-        if (wankulCardData is EffigyCardData)
+        if (__instance.m_CardBGImage != null)
         {
-            EffigyCardData effigyCard = (EffigyCardData)wankulCardData;
-
-            if (effigyCard.Rarity >= Rarity.UR1)
-            {
-                gameCardData.isFoil = true;
-            }
-        }
-
-        try
-        {
+            __instance.m_CardBGImage.enabled = true;
+            __instance.m_CardBGImage.gameObject.SetActive(true);
             __instance.m_CardBGImage.sprite = wankulCardData.Sprite;
-            __instance.m_CardFoilMaskImage.sprite = wankulCardData.SpriteMask;
         }
-        catch (System.Exception e)
+
+        if (__instance.m_CardBorderImage != null)
         {
-            Plugin.Logger.LogError("Error setting m_CardBGImage sprite: " + e);
-            Plugin.Logger.LogInfo("Setting m_CardBorderImage instead");
-            if (__instance.m_CardBorderImage != null)
-            {
-                __instance.m_CardBorderImage.sprite = wankulCardData.Sprite;
-            }
-            else
-            {
-                Plugin.Logger.LogError("m_CardBorderImage is null");
-            }
+            __instance.m_CardBorderImage.gameObject.SetActive(false);
         }
 
-        __instance.m_CardFront.transform.localPosition = new Vector3(-4.2517f, 0.3211f, 0.2817f);
+        if (__instance.m_CardFrontImage != null)
+        {
+            __instance.m_CardFrontImage.gameObject.SetActive(false);
+        }
 
-        __instance.m_FullArtGrp?.gameObject.SetActive(false);
-        __instance.m_GhostCard?.gameObject.SetActive(false);
-        __instance.m_MonsterImage?.gameObject.SetActive(false);
-        __instance.m_MonsterMaskImage?.gameObject.SetActive(false);
+        if (__instance.m_CardFrontImageTopLayer != null)
+        {
+            __instance.m_CardFrontImageTopLayer.gameObject.SetActive(false);
+        }
+
+        if (__instance.m_CardFullBGImage != null)
+        {
+            __instance.m_CardFullBGImage.gameObject.SetActive(false);
+        }
+
+        if (__instance.m_CardFullBGOffsetGrp != null)
+        {
+            __instance.m_CardFullBGOffsetGrp.SetActive(false);
+        }
+
+        if (__instance.m_CardFullBGTransparentLayeredOffsetGrp != null)
+        {
+            __instance.m_CardFullBGTransparentLayeredOffsetGrp.SetActive(false);
+        }
+
+        if (__instance.m_CenterFrameImageGrp != null)
+        {
+            __instance.m_CenterFrameImageGrp.SetActive(false);
+        }
+
+        if (__instance.m_CenterFrameMaskGrp != null)
+        {
+            __instance.m_CenterFrameMaskGrp.SetActive(false);
+        }
+
+        if (__instance.m_StatGrp != null)
+        {
+            __instance.m_StatGrp.SetActive(false);
+        }
+
+        if (__instance.m_EvoAndArtistNameGrp != null)
+        {
+            __instance.m_EvoAndArtistNameGrp.SetActive(false);
+        }
+
+        if (__instance.m_EvoGrp != null)
+        {
+            __instance.m_EvoGrp.SetActive(false);
+        }
+
+        if (__instance.m_EvoBasicGrp != null)
+        {
+            __instance.m_EvoBasicGrp.SetActive(false);
+        }
+
+        if (__instance.m_ArtistGrp != null)
+        {
+            __instance.m_ArtistGrp.SetActive(false);
+        }
+
+        if (__instance.m_DescriptionGrp != null)
+        {
+            __instance.m_DescriptionGrp.SetActive(false);
+        }
+
         __instance.m_RarityImage?.gameObject.SetActive(false);
-        __instance.m_AncientArtifactImage?.gameObject.SetActive(false);
         __instance.m_NumberText?.gameObject.SetActive(false);
         __instance.m_MonsterNameText?.gameObject.SetActive(false);
         __instance.m_RarityText?.gameObject.SetActive(false);
@@ -129,32 +168,7 @@ public class ReplacingCards
         __instance.m_Stat4Text?.gameObject.SetActive(false);
         __instance.m_DescriptionText?.gameObject.SetActive(false);
         __instance.m_ArtistText?.gameObject.SetActive(false);
-        __instance.m_FameText?.gameObject.SetActive(false);
         __instance.m_FirstEditionText?.gameObject.SetActive(false);
-        __instance.m_ChampionText?.gameObject.SetActive(false);
-        __instance.m_EvoGrp?.SetActive(false);
-        __instance.m_MonsterMask?.gameObject.SetActive(false);
-
-        if (__instance.m_NormalGrp != null)
-        {
-            int childCount = __instance.m_NormalGrp.transform.childCount;
-
-            for (int i = 0; i < childCount; i++)
-            {
-                Transform child = __instance.m_NormalGrp.transform.GetChild(i);
-                if (child.gameObject.name == "CardFront")
-                {
-                    for (int j = 0; j < child.childCount; j++)
-                    {
-                        Transform subChild = child.GetChild(j);
-                        if (subChild.gameObject.name == "CardFoilMask")
-                        {
-                            subChild.gameObject.SetActive(false);
-                        }
-                    }
-                }
-            }
-        }
     }
 
     class EnterViewUpCloseState__State
