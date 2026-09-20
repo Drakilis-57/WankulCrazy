@@ -38,7 +38,7 @@ namespace WankulCrazyPlugin.patch
             try
             {
                 CheckBoosterSize(__instance);
-                Plugin.Logger.LogInfo($"[CardOpening] === NOUVEAU BOOSTER OUVERT === boosterSize={boosterSize}, Card3dUIList.Count={__instance.m_Card3dUIList.Count}, CardAnimList.Count={__instance.m_CardAnimList.Count}, ShowAllCardPosList.Count={__instance.m_ShowAllCardPosList.Count}");
+                Plugin.Logger.LogDebug($"[CardOpening] === NOUVEAU BOOSTER OUVERT === boosterSize={boosterSize}, Card3dUIList.Count={__instance.m_Card3dUIList.Count}, CardAnimList.Count={__instance.m_CardAnimList.Count}, ShowAllCardPosList.Count={__instance.m_ShowAllCardPosList.Count}");
             }
             catch (Exception ex)
             {
@@ -377,12 +377,12 @@ namespace WankulCrazyPlugin.patch
                 ___m_CardValueList.Add(wankulCard.MarketPrice);
             }
 
-            Plugin.Logger.LogInfo($"[CardOpening] Booster généré: {___m_RolledCardDataList.Count} cartes tirées (boosterSize={boosterSize})");
+            Plugin.Logger.LogDebug($"[CardOpening] Booster généré: {___m_RolledCardDataList.Count} cartes tirées (boosterSize={boosterSize})");
             for (int k = 0; k < ___m_RolledCardDataList.Count; k++)
             {
                 WankulCardData wk = wankulCardsData.GetFromMonster(___m_RolledCardDataList[k], true);
                 string cardTitle = wk != null ? wk.Title : "Inconnue";
-                Plugin.Logger.LogInfo($"  [Tirage Carte {k}] Nom='{cardTitle}' Prix={___m_CardValueList[k]} isNew={((List<bool>)Plugin.GetPProperty(__instance, "m_IsNewlList"))[k]}");
+                Plugin.Logger.LogDebug($"  [Tirage Carte {k}] Nom='{cardTitle}' Prix={___m_CardValueList[k]} isNew={((List<bool>)Plugin.GetPProperty(__instance, "m_IsNewlList"))[k]}");
 
                 // Affecter explicitement les données de la carte sur l'objet 3D correspondant pour garantir son visuel dès le début
                 if (k < __instance.m_Card3dUIList.Count && __instance.m_Card3dUIList[k] != null && __instance.m_Card3dUIList[k].m_CardUI != null)
@@ -755,7 +755,7 @@ namespace WankulCrazyPlugin.patch
                     CardOpeningHelpers.SetIsAutoFire(__instance, false);
 
                     int curIndex = CardOpeningHelpers.GetCurrentOpenedCardIndex(__instance);
-                    Plugin.Logger.LogInfo($"[CardOpening] [State 5 -> Clic/Suivant] curIndex={curIndex}, lance OpenCardSlideExit sur la carte {curIndex}");
+                    Plugin.Logger.LogDebug($"[CardOpening] [State 5 -> Clic/Suivant] curIndex={curIndex}, lance OpenCardSlideExit sur la carte {curIndex}");
 
                     int num3 = UnityEngine.Random.Range(0, 3);
                     float num4 = 0.002f * (float)curIndex;
@@ -822,11 +822,11 @@ namespace WankulCrazyPlugin.patch
 
                 int nextCardIndex = curIndex + 1;
                 CardOpeningHelpers.SetCurrentOpenedCardIndex(__instance, nextCardIndex);
-                Plugin.Logger.LogInfo($"[CardOpening] [State 6 -> Fini Slide] curIndex={curIndex} masqué. Prochaine carte nextCardIndex={nextCardIndex} / {boosterSize}");
+                Plugin.Logger.LogDebug($"[CardOpening] [State 6 -> Fini Slide] curIndex={curIndex} masqué. Prochaine carte nextCardIndex={nextCardIndex} / {boosterSize}");
 
                 if (nextCardIndex >= boosterSize)
                 {
-                    Plugin.Logger.LogInfo($"[CardOpening] Toutes les {boosterSize} cartes terminées -> Passage à State 7 (Récapitulatif)");
+                    Plugin.Logger.LogDebug($"[CardOpening] Toutes les {boosterSize} cartes terminées -> Passage à State 7 (Récapitulatif)");
                     CardOpeningHelpers.SetIsGetHighValueCard(__instance, false);
                     __instance.m_StateIndex = 7;
                     return false;
@@ -841,7 +841,7 @@ namespace WankulCrazyPlugin.patch
                 bool isNew = isNewList[nextCardIndex];
                 bool isHighValue = cardValue >= threshold;
 
-                Plugin.Logger.LogInfo($"[CardOpening] [State 6 -> Carte Suivante] Index={nextCardIndex}, isNew={isNew}, isHighValue={isHighValue}");
+                Plugin.Logger.LogDebug($"[CardOpening] [State 6 -> Carte Suivante] Index={nextCardIndex}, isNew={isNew}, isHighValue={isHighValue}");
 
                 PlayCardRevealAnimation(__instance, nextCardIndex, cardValue, isNew, isHighValue);
             }
