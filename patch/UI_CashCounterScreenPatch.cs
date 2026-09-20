@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
@@ -8,7 +8,7 @@ namespace WankulCrazyPlugin.patch
 {
     public class UI_CashCounterScreenPatch
     {
-        public static bool OnCardScanned(float value, CardData cardData, float totalItemCost, UI_CashCounterScreen __instance)
+        public static bool OnCardScanned(double value, CardData cardData, double totalItemCost, UI_CashCounterScreen __instance)
         {
             if (cardData == null || cardData.monsterType == EMonsterType.None)
             {
@@ -39,15 +39,16 @@ namespace WankulCrazyPlugin.patch
                     __instance.m_CheckoutItemBarList[i].gameObject.SetActive(value: true);
                     Plugin.SetPProperty(__instance, "m_ActiveBarCount", (int)Plugin.GetPProperty(__instance, "m_ActiveBarCount") + 1);
                     Plugin.SetPProperty(__instance, "m_MaxPosX", Mathf.Clamp((float)((int)Plugin.GetPProperty(__instance, "m_ActiveBarCount") - 8) * 7.5f, 0f, 240f));
-                    ((List<EItemType>)Plugin.GetPProperty(__instance, "m_ItemTypeList")).Add(EItemType.None);
+                    ((List<EItemType>)Plugin.GetPProperty(__instance, "m_ItemTypeList")).Add((EItemType)(-1));
                     break;
                 }
             }
             Plugin.SetPProperty(__instance, "m_TotalItemCost", totalItemCost);
-            __instance.m_TotalItemListCostText.text = GameInstance.GetPriceString((float)Plugin.GetPProperty(__instance, "m_TotalItemCost"));
+            __instance.m_TotalItemListCostText.text = GameInstance.GetPriceString(totalItemCost);
             __instance.m_ScaledUpTotalText.text = __instance.m_TotalItemListCostText.text;
 
             return false;
         }
     }
 }
+

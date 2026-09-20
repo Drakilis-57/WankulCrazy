@@ -1,4 +1,4 @@
-﻿using HarmonyLib;
+using HarmonyLib;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -584,7 +584,7 @@ namespace WankulCrazyPlugin.patch
                     Plugin.SetPProperty(__instance, "m_Slider", (float)Plugin.GetPProperty(__instance, "m_Slider") + Time.deltaTime * 1f * (float)Plugin.GetPProperty(__instance, "m_MultiplierStateTimer"));
                     if (!__instance.m_CardOpeningSequenceUI.m_CardValueTextGrp.activeSelf && (int)Plugin.GetPProperty(__instance, "m_CurrentOpenedCardIndex") < (boosterSize - 1) && (float)Plugin.GetPProperty(__instance, "m_Slider") >= 0.45f && !((List<bool>)Plugin.GetPProperty(__instance, "m_IsNewlList"))[(int)Plugin.GetPProperty(__instance, "m_CurrentOpenedCardIndex")] && ((List<float>)Plugin.GetPProperty(__instance, "m_CardValueList"))[(int)Plugin.GetPProperty(__instance, "m_CurrentOpenedCardIndex")] < (float)Plugin.GetPProperty(__instance, "m_HighValueCardThreshold"))
                     {
-                        Plugin.SetPProperty(__instance, "m_Slider", (float)Plugin.GetPProperty(__instance, "m_TotalCardValue") + ((List<float>)Plugin.GetPProperty(__instance, "m_CardValueList"))[(int)Plugin.GetPProperty(__instance, "m_CurrentOpenedCardIndex")]);
+                        Plugin.SetPProperty(__instance, "m_TotalCardValue", (float)Plugin.GetPProperty(__instance, "m_TotalCardValue") + ((List<float>)Plugin.GetPProperty(__instance, "m_CardValueList"))[(int)Plugin.GetPProperty(__instance, "m_CurrentOpenedCardIndex")]);
                         __instance.m_CardOpeningSequenceUI.ShowSingleCardValue(((List<float>)Plugin.GetPProperty(__instance, "m_CardValueList"))[(int)Plugin.GetPProperty(__instance, "m_CurrentOpenedCardIndex")]);
                     }
 
@@ -609,6 +609,7 @@ namespace WankulCrazyPlugin.patch
                             __instance.StartCoroutine(DelayToState(5, 0.9f, __instance));
                             Plugin.SetPProperty(__instance, "m_TotalCardValue", (float)Plugin.GetPProperty(__instance, "m_TotalCardValue") + ((List<float>)Plugin.GetPProperty(__instance, "m_CardValueList"))[(int)Plugin.GetPProperty(__instance, "m_CurrentOpenedCardIndex")]);
                             __instance.m_CardOpeningSequenceUI.ShowSingleCardValue(((List<float>)Plugin.GetPProperty(__instance, "m_CardValueList"))[(int)Plugin.GetPProperty(__instance, "m_CurrentOpenedCardIndex")]);
+                            Plugin.SetPProperty(__instance, "m_IsGetHighValueCard", true);
                         }
                         else
                         {
@@ -635,7 +636,7 @@ namespace WankulCrazyPlugin.patch
                                 SoundManager.PlayAudio("SFX_CardReveal3", 0.6f + num5, 1f + num4);
                                 break;
                         }
-                        if ((int)Plugin.GetPProperty(__instance, "m_CurrentOpenedCardIndex") >= boosterSize)
+                        if ((int)Plugin.GetPProperty(__instance, "m_CurrentOpenedCardIndex") >= (boosterSize - 1))
                         {
                             __instance.m_StateIndex = 7;
                         }
@@ -674,7 +675,7 @@ namespace WankulCrazyPlugin.patch
                     }
 
                     Plugin.SetPProperty(__instance, "m_CurrentOpenedCardIndex", (int)Plugin.GetPProperty(__instance, "m_CurrentOpenedCardIndex") + 1);
-                    if ((int)Plugin.GetPProperty(__instance, "m_CurrentOpenedCardIndex") >= boosterSize)
+                    if ((int)Plugin.GetPProperty(__instance, "m_CurrentOpenedCardIndex") >= (boosterSize - 1))
                     {
                         Plugin.SetPProperty(__instance, "m_IsGetHighValueCard", false);
                         __instance.m_StateIndex = 7;
@@ -704,12 +705,14 @@ namespace WankulCrazyPlugin.patch
                         __instance.StartCoroutine(DelayToState(5, 0.9f, __instance));
                         Plugin.SetPProperty(__instance, "m_TotalCardValue", (float)Plugin.GetPProperty(__instance, "m_TotalCardValue") + ((List<float>)Plugin.GetPProperty(__instance, "m_CardValueList"))[(int)Plugin.GetPProperty(__instance, "m_CurrentOpenedCardIndex")]);
                         __instance.m_CardOpeningSequenceUI.ShowSingleCardValue(((List<float>)Plugin.GetPProperty(__instance, "m_CardValueList"))[(int)Plugin.GetPProperty(__instance, "m_CurrentOpenedCardIndex")]);
+                        Plugin.SetPProperty(__instance, "m_IsGetHighValueCard", true);
                     }
                     else
                     {
                         __instance.m_StateIndex = 5;
                     }
                 }
+
                 else if (__instance.m_StateIndex == 7)
                 {
                     if ((float)Plugin.GetPProperty(__instance, "m_StateTimer") == 0f && (float)Plugin.GetPProperty(__instance, "m_Slider") == 0f)
