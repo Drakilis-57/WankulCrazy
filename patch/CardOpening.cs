@@ -488,8 +488,9 @@ namespace WankulCrazyPlugin.patch
         /// </summary>
         public static bool Update(CardOpeningSequence __instance)
         {
-            // Re-vérifie la taille du booster à chaque frame (gold booster = 4 cartes, normal = 10)
-            CheckBoosterSize(__instance);
+            // Performance Optimization: Removed per-frame CheckBoosterSize(__instance) call.
+            // CheckBoosterSize performs Reflection and string/enum parsing. Since booster size is constant
+            // for the duration of a pack opening sequence, it is initialized once in OpenScreenPrefix.
 
             MethodInfo InitOpenSequence = __instance.GetType().GetMethod("InitOpenSequence", BindingFlags.Instance | BindingFlags.NonPublic);
 
