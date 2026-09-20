@@ -88,10 +88,10 @@ private static void PlayCardRevealAnimation(CardOpeningSequence s, int index, fl
 | Priorité | Action | Statut | Impact | Effort |
 |---|---|---|---|---|
 | 🔴 1 | Accesseurs typés pour les propriétés Reflection | ✅ **Fait** | Lisibilité + Sécurité | — |
-| 🔴 2 | Découper `Update()` en sous-méthodes par état | ⬜ À faire | Maintenabilité | Élevé |
-| 🟡 3 | Extraire `PlayCardRevealAnimation()` (States 4 & 6) | ⬜ À faire | DRY | Faible |
-| 🟡 4 | Retirer `CheckBoosterSize()` de `Update()` | ⬜ À faire | Performance | Très faible |
-| 🟡 5 | Découper `CheckBoosterSize()` en 3 méthodes | ⬜ À faire | SRP | Moyen |
+| 🔴 2 | Découper `Update()` en sous-méthodes par état | ✅ **Fait** | Maintenabilité | Élevé |
+| 🟡 3 | Extraire `PlayCardRevealAnimation()` (States 4 & 6) | ✅ **Fait** | DRY | Faible |
+| 🟡 4 | Retirer `CheckBoosterSize()` de `Update()` | ✅ **Fait** | Performance | Très faible |
+| 🟡 5 | Découper `CheckBoosterSize()` en 3 méthodes | ✅ **Fait** | SRP | Moyen |
 
 ---
 
