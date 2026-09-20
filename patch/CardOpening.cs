@@ -46,6 +46,34 @@ namespace WankulCrazyPlugin.patch
             }
         }
 
+        private static void ShowCardStack(CardOpeningSequence __instance, int activeIndex)
+        {
+            if (__instance.m_Card3dUIList == null) return;
+
+            int count = __instance.m_Card3dUIList.Count;
+
+            // 1. Désactiver toutes les cartes qui ne sont ni l'active ni celle de derrière
+            for (int i = 0; i < count; i++)
+            {
+                if (__instance.m_Card3dUIList[i] == null) continue;
+                bool shouldBeActive = (i == activeIndex) || (i == activeIndex + 1 && i < boosterSize);
+                __instance.m_Card3dUIList[i].gameObject.SetActive(shouldBeActive);
+            }
+
+            // 2. Ordonnancement strict dans la hiérarchie CanvasWorldspace :
+            // Dans Unity UI / Canvas, le dernier enfant (LastSibling) est rendu PAR-DESSUS tous les autres.
+            // On s'assure donc que la carte de derrière est dessinée avant, et la carte active EN DERNIER (au premier plan).
+            if (activeIndex + 1 < count && activeIndex + 1 < boosterSize && __instance.m_Card3dUIList[activeIndex + 1] != null)
+            {
+                __instance.m_Card3dUIList[activeIndex + 1].transform.SetAsLastSibling();
+            }
+
+            if (activeIndex < count && __instance.m_Card3dUIList[activeIndex] != null)
+            {
+                __instance.m_Card3dUIList[activeIndex].transform.SetAsLastSibling();
+            }
+        }
+
         public static void CheckBoosterSize(CardOpeningSequence __instance)
         {
             Item currentItem = (Item)Plugin.GetPProperty(__instance, "m_CurrentItem");
@@ -595,11 +623,8 @@ namespace WankulCrazyPlugin.patch
                         Plugin.SetPProperty(__instance, "m_StateTimer", 0f);
                         Plugin.SetPProperty(__instance, "m_Slider", 0f);
                         __instance.m_StateIndex++;
-                        // Activer STRICTEMENT une seule carte à la fois pour un fonctionnement parfait
-                        for (int i = 0; i < __instance.m_Card3dUIList.Count; i++)
-                        {
-                            __instance.m_Card3dUIList[i].gameObject.SetActive(i == 0);
-                        }
+                        // Activer la première carte et préparer la pile avec la carte suivante visible derrière
+                        ShowCardStack(__instance, 0);
                     }
                 }
                 else if (__instance.m_StateIndex == 3)
@@ -696,6 +721,9 @@ namespace WankulCrazyPlugin.patch
                         __instance.m_CardAnimList[curIndex].Play("OpenCardSlideExit");
                         __instance.m_CardAnimList[curIndex]["OpenCardSlideExit"].speed = 1f * (float)Plugin.GetPProperty(__instance, "m_MultiplierStateTimer");
 
+                        // S'assurer que la carte en train de glisser reste AU PREMIER PLAN
+                        ShowCardStack(__instance, curIndex);
+
                         Plugin.SetPProperty(__instance, "m_IsGetHighValueCard", false);
                     }
                 }
@@ -736,11 +764,8 @@ namespace WankulCrazyPlugin.patch
                         return false;
                     }
 
-                    // Activer STRICTEMENT la carte courante seule
-                    if (__instance.m_Card3dUIList.Count > nextCardIndex)
-                    {
-                        __instance.m_Card3dUIList[nextCardIndex].gameObject.SetActive(value: true);
-                    }
+                    // Activer la nouvelle carte au premier plan et préparer la suivante derrière
+                    ShowCardStack(__instance, nextCardIndex);
 
                     // Réinitialiser tout auto-fire / clic résiduel pour que la nouvelle carte ne sorte pas immédiatement
                     Plugin.SetPProperty(__instance, "m_IsAutoFire", false);
