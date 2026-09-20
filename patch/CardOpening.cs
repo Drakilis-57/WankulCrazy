@@ -227,7 +227,7 @@ namespace WankulCrazyPlugin.patch
             {
                 RectTransform rectTransform = (RectTransform)__instance.m_ShowAllCardPosList[i];
                 float t = (float)i / (__instance.m_ShowAllCardPosList.Count - 1); // Interpolation linéaire
-                float xPosition = Mathf.Lerp(-0.1f, 0.11f, t);
+                float xPosition = Mathf.Lerp(-0.105f, 0.105f, t);
                 Vector3 localPosition = rectTransform.localPosition;
                 localPosition.x = xPosition;
                 rectTransform.localPosition = localPosition;

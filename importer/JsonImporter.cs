@@ -116,12 +116,12 @@ public class JsonImporter
                     Plugin.Logger.LogError("Failed to load texture mask: " + texturepathmask);
                 }
 
-                Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), Vector2.zero);
+                Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
                 Sprite spritemask = null;
 
                 if (texturemask != null)
                 {
-                    spritemask = Sprite.Create(texturemask, new Rect(0, 0, texturemask.width, texturemask.height), Vector2.zero);
+                    spritemask = Sprite.Create(texturemask, new Rect(0, 0, texturemask.width, texturemask.height), new Vector2(0.5f, 0.5f));
                 }
 
                 if (sprite != null)
@@ -155,6 +155,7 @@ public class JsonImporter
         Texture2D texture = new Texture2D(2, 2);
         if (texture.LoadImage(bytes))
         {
+            texture.wrapMode = TextureWrapMode.Clamp;
             return texture;
         }
         return null;

@@ -86,6 +86,16 @@ public class ReplacingCards
             __instance.m_CardBGImage.enabled = true;
             __instance.m_CardBGImage.gameObject.SetActive(true);
             __instance.m_CardBGImage.sprite = wankulCardData.Sprite;
+            __instance.m_CardBGImage.preserveAspect = false;
+
+            RectTransform rect = __instance.m_CardBGImage.rectTransform;
+            if (rect != null)
+            {
+                rect.anchorMin = Vector2.zero;
+                rect.anchorMax = Vector2.one;
+                rect.offsetMin = Vector2.zero;
+                rect.offsetMax = Vector2.zero;
+            }
         }
 
         if (__instance.m_CardBorderImage != null)
