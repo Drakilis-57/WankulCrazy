@@ -95,6 +95,12 @@ public class Plugin : BaseUnityPlugin
         );
 
         TryPatch(
+            "CardOpeningSequence.OpenScreen",
+            AccessTools.Method(typeof(CardOpeningSequence), "OpenScreen"),
+            prefix: AccessTools.Method(typeof(CardOpening), "OpenScreenPrefix")
+        );
+
+        TryPatch(
             "CardOpeningSequence.GetPackContent",
             AccessTools.Method(typeof(CardOpeningSequence), "GetPackContent"),
             postfix: AccessTools.Method(typeof(CardOpening), "OpenBooster")

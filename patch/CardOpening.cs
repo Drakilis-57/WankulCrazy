@@ -33,6 +33,19 @@ namespace WankulCrazyPlugin.patch
             }
         }
 
+        public static void OpenScreenPrefix(CardOpeningSequence __instance, ECollectionPackType collectionPackType, bool isMultiPack)
+        {
+            try
+            {
+                CheckBoosterSize(__instance);
+                Plugin.Logger.LogInfo($"[CardOpening] === NOUVEAU BOOSTER OUVERT === boosterSize={boosterSize}, Card3dUIList.Count={__instance.m_Card3dUIList.Count}, CardAnimList.Count={__instance.m_CardAnimList.Count}, ShowAllCardPosList.Count={__instance.m_ShowAllCardPosList.Count}");
+            }
+            catch (Exception ex)
+            {
+                Plugin.Logger.LogError($"[OpenScreenPrefix] Erreur: {ex}");
+            }
+        }
+
         public static void CheckBoosterSize(CardOpeningSequence __instance)
         {
             Item currentItem = (Item)Plugin.GetPProperty(__instance, "m_CurrentItem");
@@ -68,55 +81,71 @@ namespace WankulCrazyPlugin.patch
                 }
 
                 int cardsToAdd = boosterSize - __instance.m_Card3dUIList.Count;
+
+                // Mesurer le décalage Z réel entre les cartes d'origine
+                float zStep = 0.0001f;
+                if (__instance.m_Card3dUIList.Count >= 2 && __instance.m_Card3dUIList[0] != null && __instance.m_Card3dUIList[1] != null)
+                {
+                    float dZ = __instance.m_Card3dUIList[1].transform.localPosition.z - __instance.m_Card3dUIList[0].transform.localPosition.z;
+                    if (Mathf.Abs(dZ) > 0.0000001f)
+                    {
+                        zStep = dZ;
+                    }
+                }
+
                 for (int i = 0; i < cardsToAdd; i++)
                 {
-
-
                     Transform CardOpeningSequence_WorldUIGrp_Transform = Plugin.GetByPathIn("CanvasWorldspace", "CanvasGrp/CardOpeningSequence_WorldUIGrp/CardOpeningGrp");
 
-                    Card3dUIGroup existingCard3dUIGroup = __instance.m_Card3dUIList[__instance.m_Card3dUIList.Count - 1];
+                    Card3dUIGroup lastCard3dUIGroup = __instance.m_Card3dUIList[__instance.m_Card3dUIList.Count - 1];
                     Card3dUIGroup newCard3dUIGroup = Card3dUISpawner.m_Instance.GetCardUI();
-                    newCard3dUIGroup.gameObject.SetActive(true);
-                    newCard3dUIGroup.transform.SetParent(CardOpeningSequence_WorldUIGrp_Transform);
-                    newCard3dUIGroup.transform.rotation = existingCard3dUIGroup.transform.rotation;
-                    newCard3dUIGroup.transform.localScale = existingCard3dUIGroup.transform.localScale;
-                    newCard3dUIGroup.transform.localPosition = existingCard3dUIGroup.transform.localPosition;
+                    newCard3dUIGroup.gameObject.SetActive(false);
+                    newCard3dUIGroup.transform.SetParent(CardOpeningSequence_WorldUIGrp_Transform, false);
+                    newCard3dUIGroup.transform.rotation = lastCard3dUIGroup.transform.rotation;
+                    newCard3dUIGroup.transform.localScale = lastCard3dUIGroup.transform.localScale;
 
-                    RectTransform rectTransform = (RectTransform)newCard3dUIGroup.transform;
-                    Vector3 anchoredPosition3D = rectTransform.anchoredPosition3D;
-                    anchoredPosition3D.z += 0.0001f * (i + 1);
-
-                    rectTransform.anchoredPosition3D = anchoredPosition3D;
+                    Vector3 newLocalPos = lastCard3dUIGroup.transform.localPosition;
+                    newLocalPos.z += zStep;
+                    newCard3dUIGroup.transform.localPosition = newLocalPos;
 
                     __instance.m_Card3dUIList.Add(newCard3dUIGroup);
 
-
                     Transform AnimGrp_Transform = Plugin.FindChildByPath(newCard3dUIGroup.transform, "AnimGrp");
-                    Transform existingAnimGrp_Transform = Plugin.FindChildByPath(existingCard3dUIGroup.transform, "AnimGrp");
-                    Animation existingAnimation = existingAnimGrp_Transform.GetComponent<Animation>();
-
-                    AnimationCopier.CopyAnimation(existingAnimGrp_Transform.gameObject, AnimGrp_Transform.gameObject, "OpenCardNewCard");
-                    AnimationCopier.CopyAnimation(existingAnimGrp_Transform.gameObject, AnimGrp_Transform.gameObject, "OpenCardSlideExit");
-                    AnimationCopier.CopyAnimation(existingAnimGrp_Transform.gameObject, AnimGrp_Transform.gameObject, "OpenCardFinalReveal");
-                    AnimationCopier.CopyAnimation(existingAnimGrp_Transform.gameObject, AnimGrp_Transform.gameObject, "OpenCardDefaultPos");
+                    Transform cleanAnimGrp_Transform = Plugin.FindChildByPath(__instance.m_Card3dUIList[0].transform, "AnimGrp");
 
                     Animation AnimGrp_Animation = AnimGrp_Transform.GetComponent<Animation>();
+                    if (AnimGrp_Animation == null)
+                    {
+                        AnimGrp_Animation = AnimGrp_Transform.gameObject.AddComponent<Animation>();
+                    }
+                    AnimGrp_Animation.playAutomatically = false;
+                    AnimGrp_Animation.Stop();
+                    AnimGrp_Transform.localPosition = Vector3.zero;
+                    AnimGrp_Transform.localRotation = Quaternion.identity;
+
+                    AnimationCopier.CopyAnimation(cleanAnimGrp_Transform.gameObject, AnimGrp_Transform.gameObject, "OpenCardNewCard");
+                    AnimationCopier.CopyAnimation(cleanAnimGrp_Transform.gameObject, AnimGrp_Transform.gameObject, "OpenCardSlideExit");
+                    AnimationCopier.CopyAnimation(cleanAnimGrp_Transform.gameObject, AnimGrp_Transform.gameObject, "OpenCardFinalReveal");
+                    AnimationCopier.CopyAnimation(cleanAnimGrp_Transform.gameObject, AnimGrp_Transform.gameObject, "OpenCardDefaultPos");
+
+                    AnimGrp_Animation.Play("OpenCardDefaultPos");
 
                     __instance.m_CardAnimList.Add(AnimGrp_Animation);
-
 
                     Transform ShowAllCardPosList_Transform = Plugin.GetByPathIn("CanvasWorldspace", "CanvasGrp/CardOpeningSequence_WorldUIGrp/ShowAllCardPosList");
 
                     RectTransform existingPos = (RectTransform)__instance.m_ShowAllCardPosList[__instance.m_ShowAllCardPosList.Count - 1];
                     GameObject newGameObject = new GameObject($"ShowAllCardPos ({__instance.m_ShowAllCardPosList.Count + 1})");
-                    newGameObject.AddComponent<RectTransform>();
-                    RectTransform newPos = newGameObject.GetComponent<RectTransform>();
-                    newPos.gameObject.SetActive(true);
-                    newPos.SetParent(ShowAllCardPosList_Transform);
-                    newPos.position = existingPos.position;
-                    newPos.rotation = existingPos.rotation;
+                    RectTransform newPos = newGameObject.AddComponent<RectTransform>();
+                    newPos.SetParent(ShowAllCardPosList_Transform, false);
+                    newPos.localRotation = existingPos.localRotation;
                     newPos.localScale = existingPos.localScale;
                     newPos.localPosition = existingPos.localPosition;
+                    newPos.anchorMin = existingPos.anchorMin;
+                    newPos.anchorMax = existingPos.anchorMax;
+                    newPos.pivot = existingPos.pivot;
+                    newPos.sizeDelta = existingPos.sizeDelta;
+                    newPos.gameObject.SetActive(true);
 
                     __instance.m_ShowAllCardPosList.Add(newPos);
                 }
@@ -287,7 +316,20 @@ namespace WankulCrazyPlugin.patch
                 totalExpGained += WankulCardsData.GetExperienceFromWankulCard(wankulCard);
                 // Ajout de la valeur de la carte dans la liste des prix
                 ___m_CardValueList.Add(wankulCard.MarketPrice);
+            }
 
+            Plugin.Logger.LogInfo($"[CardOpening] Booster généré: {___m_RolledCardDataList.Count} cartes tirées (boosterSize={boosterSize})");
+            for (int k = 0; k < ___m_RolledCardDataList.Count; k++)
+            {
+                WankulCardData wk = wankulCardsData.GetFromMonster(___m_RolledCardDataList[k], true);
+                string cardTitle = wk != null ? wk.Title : "Inconnue";
+                Plugin.Logger.LogInfo($"  [Tirage Carte {k}] Nom='{cardTitle}' Prix={___m_CardValueList[k]} isNew={((List<bool>)Plugin.GetPProperty(__instance, "m_IsNewlList"))[k]}");
+
+                // Affecter explicitement les données de la carte sur l'objet 3D correspondant pour garantir son visuel dès le début
+                if (k < __instance.m_Card3dUIList.Count && __instance.m_Card3dUIList[k] != null && __instance.m_Card3dUIList[k].m_CardUI != null)
+                {
+                    __instance.m_Card3dUIList[k].m_CardUI.SetCardUI(___m_RolledCardDataList[k]);
+                }
             }
         }
 
@@ -553,9 +595,10 @@ namespace WankulCrazyPlugin.patch
                         Plugin.SetPProperty(__instance, "m_StateTimer", 0f);
                         Plugin.SetPProperty(__instance, "m_Slider", 0f);
                         __instance.m_StateIndex++;
+                        // Activer la carte courante (0) et la suivante (1) en arrière-plan
                         for (int i = 0; i < __instance.m_Card3dUIList.Count; i++)
                         {
-                            __instance.m_Card3dUIList[i].gameObject.SetActive(value: true);
+                            __instance.m_Card3dUIList[i].gameObject.SetActive(i <= 1);
                         }
                     }
                 }
@@ -619,11 +662,17 @@ namespace WankulCrazyPlugin.patch
                 }
                 else if (__instance.m_StateIndex == 5)
                 {
-                    if ((bool)Plugin.GetPProperty(__instance, "m_IsAutoFire") || (!(bool)Plugin.GetPProperty(__instance,"m_IsGetHighValueCard") && CSingleton<CGameManager>.Instance.m_OpenPacAutoNextCard))
+                    if ((bool)Plugin.GetPProperty(__instance, "m_IsAutoFire") || (!(bool)Plugin.GetPProperty(__instance, "m_IsGetHighValueCard") && CSingleton<CGameManager>.Instance.m_OpenPacAutoNextCard))
                     {
+                        // Consommer immédiatement l'auto-fire / clic pour ne pas le transmettre à la carte suivante
+                        Plugin.SetPProperty(__instance, "m_IsAutoFire", false);
+
+                        int curIndex = (int)Plugin.GetPProperty(__instance, "m_CurrentOpenedCardIndex");
+                        Plugin.Logger.LogInfo($"[CardOpening] [State 5 -> Clic/Suivant] curIndex={curIndex}, lance OpenCardSlideExit sur la carte {curIndex}");
+
                         int num3 = UnityEngine.Random.Range(0, 3);
-                        float num4 = 0.002f * (float)(int)Plugin.GetPProperty(__instance, "m_CurrentOpenedCardIndex");
-                        float num5 = 0.001f * (float)(int)Plugin.GetPProperty(__instance, "m_CurrentOpenedCardIndex");
+                        float num4 = 0.002f * (float)curIndex;
+                        float num5 = 0.001f * (float)curIndex;
                         switch (num3)
                         {
                             case 0:
@@ -636,30 +685,28 @@ namespace WankulCrazyPlugin.patch
                                 SoundManager.PlayAudio("SFX_CardReveal3", 0.6f + num5, 1f + num4);
                                 break;
                         }
-                        if ((int)Plugin.GetPProperty(__instance, "m_CurrentOpenedCardIndex") >= (boosterSize - 1))
-                        {
-                            __instance.m_StateIndex = 7;
-                        }
-                        else
-                        {
-                            __instance.m_StateIndex++;
-                            __instance.m_NewCardIcon.SetActive(value: false);
-                            __instance.m_HighValueCardIcon.SetActive(value: false);
-                            __instance.m_CardAnimList[(int)Plugin.GetPProperty(__instance, "m_CurrentOpenedCardIndex")].Play("OpenCardSlideExit");
-                            __instance.m_CardAnimList[(int)Plugin.GetPProperty(__instance, "m_CurrentOpenedCardIndex")]["OpenCardSlideExit"].speed = 1f * (float)Plugin.GetPProperty(__instance, "m_MultiplierStateTimer");
-                            __instance.m_CardOpeningSequenceUI.HideSingleCardValue();
-                        }
+
+                        // Cacher immédiatement les icônes et le texte de valeur pour toutes les cartes (y compris la 10ème)
+                        __instance.m_NewCardIcon.SetActive(value: false);
+                        __instance.m_HighValueCardIcon.SetActive(value: false);
+                        __instance.m_CardOpeningSequenceUI.HideSingleCardValue();
+
+                        // Faire glisser la carte pour sortir de façon fluide
+                        __instance.m_StateIndex++;
+                        __instance.m_CardAnimList[curIndex].Play("OpenCardSlideExit");
+                        __instance.m_CardAnimList[curIndex]["OpenCardSlideExit"].speed = 1f * (float)Plugin.GetPProperty(__instance, "m_MultiplierStateTimer");
 
                         Plugin.SetPProperty(__instance, "m_IsGetHighValueCard", false);
                     }
                 }
                 else if (__instance.m_StateIndex == 6)
                 {
+                    int curIndex = (int)Plugin.GetPProperty(__instance, "m_CurrentOpenedCardIndex");
                     Plugin.SetPProperty(__instance, "m_Slider", (float)Plugin.GetPProperty(__instance, "m_Slider") + Time.deltaTime * 1f * (float)Plugin.GetPProperty(__instance, "m_MultiplierStateTimer"));
-                    if (!__instance.m_CardOpeningSequenceUI.m_CardValueTextGrp.activeSelf && (int)Plugin.GetPProperty(__instance, "m_CurrentOpenedCardIndex") < (boosterSize - 1) && (float)Plugin.GetPProperty(__instance, "m_Slider") >= 0.3f && !((List<bool>)Plugin.GetPProperty(__instance, "m_IsNewlList"))[(int)Plugin.GetPProperty(__instance, "m_CurrentOpenedCardIndex") + 1] && ((List<float>)Plugin.GetPProperty(__instance, "m_CardValueList"))[(int)Plugin.GetPProperty(__instance, "m_CurrentOpenedCardIndex") + 1] < (float)Plugin.GetPProperty(__instance, "m_HighValueCardThreshold"))
+                    if (!__instance.m_CardOpeningSequenceUI.m_CardValueTextGrp.activeSelf && curIndex + 1 < boosterSize && (float)Plugin.GetPProperty(__instance, "m_Slider") >= 0.3f && !((List<bool>)Plugin.GetPProperty(__instance, "m_IsNewlList"))[curIndex + 1] && ((List<float>)Plugin.GetPProperty(__instance, "m_CardValueList"))[curIndex + 1] < (float)Plugin.GetPProperty(__instance, "m_HighValueCardThreshold"))
                     {
-                        Plugin.SetPProperty(__instance, "m_TotalCardValue", (float)Plugin.GetPProperty(__instance, "m_TotalCardValue") + ((List<float>)Plugin.GetPProperty(__instance, "m_CardValueList"))[(int)Plugin.GetPProperty(__instance, "m_CurrentOpenedCardIndex") + 1]);
-                        __instance.m_CardOpeningSequenceUI.ShowSingleCardValue(((List<float>)Plugin.GetPProperty(__instance, "m_CardValueList"))[(int)Plugin.GetPProperty(__instance, "m_CurrentOpenedCardIndex") + 1]);
+                        Plugin.SetPProperty(__instance, "m_TotalCardValue", (float)Plugin.GetPProperty(__instance, "m_TotalCardValue") + ((List<float>)Plugin.GetPProperty(__instance, "m_CardValueList"))[curIndex + 1]);
+                        __instance.m_CardOpeningSequenceUI.ShowSingleCardValue(((List<float>)Plugin.GetPProperty(__instance, "m_CardValueList"))[curIndex + 1]);
                     }
 
                     if (!((float)Plugin.GetPProperty(__instance, "m_Slider") >= 0.5f))
@@ -668,43 +715,65 @@ namespace WankulCrazyPlugin.patch
                     }
 
                     Plugin.SetPProperty(__instance, "m_Slider", 0f);
-                    if (__instance.m_Card3dUIList.Count > (int)Plugin.GetPProperty(__instance, "m_CurrentOpenedCardIndex"))
+
+                    // Masquer et remettre à zéro le transform de la carte qui vient de glisser
+                    if (__instance.m_Card3dUIList.Count > curIndex)
                     {
-                        __instance.m_CardAnimList[(int)Plugin.GetPProperty(__instance, "m_CurrentOpenedCardIndex")].transform.localPosition = Vector3.zero;
-                        __instance.m_Card3dUIList[(int)Plugin.GetPProperty(__instance, "m_CurrentOpenedCardIndex")].gameObject.SetActive(value: false);
+                        __instance.m_Card3dUIList[curIndex].gameObject.SetActive(value: false);
+                        __instance.m_CardAnimList[curIndex].Stop();
+                        __instance.m_CardAnimList[curIndex].transform.localPosition = Vector3.zero;
                     }
 
-                    Plugin.SetPProperty(__instance, "m_CurrentOpenedCardIndex", (int)Plugin.GetPProperty(__instance, "m_CurrentOpenedCardIndex") + 1);
-                    if ((int)Plugin.GetPProperty(__instance, "m_CurrentOpenedCardIndex") >= (boosterSize - 1))
+                    int nextCardIndex = curIndex + 1;
+                    Plugin.SetPProperty(__instance, "m_CurrentOpenedCardIndex", nextCardIndex);
+                    Plugin.Logger.LogInfo($"[CardOpening] [State 6 -> Fini Slide] curIndex={curIndex} masqué. Prochaine carte nextCardIndex={nextCardIndex} / {boosterSize}");
+
+                    if (nextCardIndex >= boosterSize)
                     {
+                        Plugin.Logger.LogInfo($"[CardOpening] Toutes les {boosterSize} cartes terminées -> Passage à State 7 (Récapitulatif)");
                         Plugin.SetPProperty(__instance, "m_IsGetHighValueCard", false);
                         __instance.m_StateIndex = 7;
                         return false;
                     }
 
-                    if (__instance.m_Card3dUIList.Count > (int)Plugin.GetPProperty(__instance, "m_CurrentOpenedCardIndex") + 1)
+                    // Activer la carte courante et la suivante dans la pile (effet de paquet / carte en arrière-plan)
+                    if (__instance.m_Card3dUIList.Count > nextCardIndex)
                     {
-                        __instance.m_Card3dUIList[(int)Plugin.GetPProperty(__instance, "m_CurrentOpenedCardIndex") + 1].gameObject.SetActive(value: true);
+                        __instance.m_Card3dUIList[nextCardIndex].gameObject.SetActive(value: true);
+                    }
+                    if (__instance.m_Card3dUIList.Count > nextCardIndex + 1)
+                    {
+                        __instance.m_Card3dUIList[nextCardIndex + 1].gameObject.SetActive(value: true);
                     }
 
-                    if (((List<float>)Plugin.GetPProperty(__instance, "m_CardValueList"))[(int)Plugin.GetPProperty(__instance, "m_CurrentOpenedCardIndex")] >= (float)Plugin.GetPProperty(__instance, "m_HighValueCardThreshold"))
+                    // Réinitialiser tout auto-fire / clic résiduel pour que la nouvelle carte ne sorte pas immédiatement
+                    Plugin.SetPProperty(__instance, "m_IsAutoFire", false);
+                    Plugin.SetPProperty(__instance, "m_AutoFireTimer", 0f);
+
+                    float cardValue = ((List<float>)Plugin.GetPProperty(__instance, "m_CardValueList"))[nextCardIndex];
+                    bool isNew = ((List<bool>)Plugin.GetPProperty(__instance, "m_IsNewlList"))[nextCardIndex];
+                    bool isHighValue = cardValue >= (float)Plugin.GetPProperty(__instance, "m_HighValueCardThreshold");
+
+                    Plugin.Logger.LogInfo($"[CardOpening] [State 6 -> Carte Suivante] Index={nextCardIndex}, isNew={isNew}, isHighValue={isHighValue}");
+
+                    if (isHighValue)
                     {
                         SoundManager.PlayAudio("SFX_FinalizeCard", 0.6f, 1.2f);
-                        __instance.m_CardAnimList[(int)Plugin.GetPProperty(__instance, "m_CurrentOpenedCardIndex")].Play("OpenCardNewCard");
+                        __instance.m_CardAnimList[nextCardIndex].Play("OpenCardNewCard");
                         __instance.m_HighValueCardIcon.SetActive(value: true);
                         __instance.StartCoroutine(DelayToState(5, 0.9f, __instance));
-                        Plugin.SetPProperty(__instance, "m_TotalCardValue", (float)Plugin.GetPProperty(__instance, "m_TotalCardValue") + ((List<float>)Plugin.GetPProperty(__instance, "m_CardValueList"))[(int)Plugin.GetPProperty(__instance, "m_CurrentOpenedCardIndex")]);
-                        __instance.m_CardOpeningSequenceUI.ShowSingleCardValue(((List<float>)Plugin.GetPProperty(__instance, "m_CardValueList"))[(int)Plugin.GetPProperty(__instance, "m_CurrentOpenedCardIndex")]);
+                        Plugin.SetPProperty(__instance, "m_TotalCardValue", (float)Plugin.GetPProperty(__instance, "m_TotalCardValue") + cardValue);
+                        __instance.m_CardOpeningSequenceUI.ShowSingleCardValue(cardValue);
                         Plugin.SetPProperty(__instance, "m_IsGetHighValueCard", true);
                     }
-                    else if (((List<bool>)Plugin.GetPProperty(__instance, "m_IsNewlList"))[(int)Plugin.GetPProperty(__instance, "m_CurrentOpenedCardIndex")])
+                    else if (isNew)
                     {
                         SoundManager.PlayAudio("SFX_CardReveal0", 0.6f);
-                        __instance.m_CardAnimList[(int)Plugin.GetPProperty(__instance, "m_CurrentOpenedCardIndex")].Play("OpenCardNewCard");
+                        __instance.m_CardAnimList[nextCardIndex].Play("OpenCardNewCard");
                         __instance.m_NewCardIcon.SetActive(value: true);
                         __instance.StartCoroutine(DelayToState(5, 0.9f, __instance));
-                        Plugin.SetPProperty(__instance, "m_TotalCardValue", (float)Plugin.GetPProperty(__instance, "m_TotalCardValue") + ((List<float>)Plugin.GetPProperty(__instance, "m_CardValueList"))[(int)Plugin.GetPProperty(__instance, "m_CurrentOpenedCardIndex")]);
-                        __instance.m_CardOpeningSequenceUI.ShowSingleCardValue(((List<float>)Plugin.GetPProperty(__instance, "m_CardValueList"))[(int)Plugin.GetPProperty(__instance, "m_CurrentOpenedCardIndex")]);
+                        Plugin.SetPProperty(__instance, "m_TotalCardValue", (float)Plugin.GetPProperty(__instance, "m_TotalCardValue") + cardValue);
+                        __instance.m_CardOpeningSequenceUI.ShowSingleCardValue(cardValue);
                         Plugin.SetPProperty(__instance, "m_IsGetHighValueCard", true);
                     }
                     else
@@ -725,10 +794,15 @@ namespace WankulCrazyPlugin.patch
                     if ((float)Plugin.GetPProperty(__instance, "m_Slider") >= 0.05f)
                     {
                         Plugin.SetPProperty(__instance, "m_Slider", 0);
-                        __instance.m_CardAnimList[(int)(float)Plugin.GetPProperty(__instance, "m_StateTimer")].transform.position = __instance.m_ShowAllCardPosList[(int)(float)Plugin.GetPProperty(__instance, "m_StateTimer")].position;
-                        __instance.m_CardAnimList[(int)(float)Plugin.GetPProperty(__instance, "m_StateTimer")].transform.rotation = __instance.m_ShowAllCardPosList[(int)(float)Plugin.GetPProperty(__instance, "m_StateTimer")].rotation;
-                        __instance.m_Card3dUIList[(int)(float)Plugin.GetPProperty(__instance, "m_StateTimer")].gameObject.SetActive(value: true);
-                        __instance.m_CardAnimList[(int)(float)Plugin.GetPProperty(__instance, "m_StateTimer")].Play("OpenCardFinalReveal");
+                        int timerIndex = (int)(float)Plugin.GetPProperty(__instance, "m_StateTimer");
+                        if (timerIndex < __instance.m_CardAnimList.Count && timerIndex < __instance.m_ShowAllCardPosList.Count)
+                        {
+                            __instance.m_CardAnimList[timerIndex].transform.position = __instance.m_ShowAllCardPosList[timerIndex].position;
+                            __instance.m_CardAnimList[timerIndex].transform.rotation = __instance.m_ShowAllCardPosList[timerIndex].rotation;
+
+                            __instance.m_Card3dUIList[timerIndex].gameObject.SetActive(value: true);
+                            __instance.m_CardAnimList[timerIndex].Play("OpenCardFinalReveal");
+                        }
                         Plugin.SetPProperty(__instance, "m_StateTimer", (float)Plugin.GetPProperty(__instance, "m_StateTimer") + 1f);
                         if ((float)Plugin.GetPProperty(__instance, "m_StateTimer") >= (float)__instance.m_Card3dUIList.Count)
                         {
@@ -830,6 +904,12 @@ namespace WankulCrazyPlugin.patch
                         __instance.m_CardAnimList[k].transform.localRotation = Quaternion.identity;
                         __instance.m_Card3dUIList[k].m_NewCardIndicator.gameObject.SetActive(value: false);
                         __instance.m_CardAnimList[k].Play("OpenCardDefaultPos");
+
+                        if (k >= 8 && k < __instance.m_Card3dUIList.Count && __instance.m_Card3dUIList.Count >= 8 && __instance.m_Card3dUIList[7] != null)
+                        {
+                            __instance.m_Card3dUIList[k].transform.localPosition = __instance.m_Card3dUIList[7].transform.localPosition;
+                            __instance.m_Card3dUIList[k].transform.localRotation = __instance.m_Card3dUIList[7].transform.localRotation;
+                        }
                     }
 
                     if (CSingleton<InteractionPlayerController>.Instance.GetHoldItemCount() <= 0)
