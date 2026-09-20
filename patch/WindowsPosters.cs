@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
@@ -73,7 +73,10 @@ namespace WankulCrazyPlugin.patch
             {
                 byte[] data = File.ReadAllBytes(filePath);
                 tex = new Texture2D(2, 2);
-                tex.LoadImage(data);
+                if (tex.LoadImage(data))
+                {
+                    tex.Compress(false);
+                }
             }
             return tex;
         }

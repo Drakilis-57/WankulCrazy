@@ -1,4 +1,4 @@
-﻿using WankulCrazyPlugin.cards;
+using WankulCrazyPlugin.cards;
 using WankulCrazyPlugin.importer;
 
 namespace WankulCrazyPlugin.patch;
@@ -31,6 +31,10 @@ public class GameStarting
 
             ExpansionScreen.inited = false;
         }
+
+        // Clean up unreferenced assets and perform garbage collection at level transition
+        UnityEngine.Resources.UnloadUnusedAssets();
+        System.GC.Collect();
     }
 }
 

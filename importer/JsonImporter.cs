@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.IO;
 using System.Collections.Generic;
 using Newtonsoft.Json;
@@ -147,9 +147,16 @@ public class JsonImporter
 
     private static Texture2D LoadTexture(string path)
     {
+        if (!System.IO.File.Exists(path))
+        {
+            return null;
+        }
         byte[] bytes = System.IO.File.ReadAllBytes(path);
         Texture2D texture = new Texture2D(2, 2);
-        texture.LoadImage(bytes);
-        return texture;
+        if (texture.LoadImage(bytes))
+        {
+            return texture;
+        }
+        return null;
     }
 }
