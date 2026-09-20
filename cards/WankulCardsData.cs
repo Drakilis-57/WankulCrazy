@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,6 +11,13 @@ namespace WankulCrazyPlugin.cards
     {
         public List<WankulCardData> cards = [];
         public Dictionary<string, WankulCardData> association = [];
+
+        // Reverse lookup map (WankulCardData.Index -> CardData) to optimize GetCardDataFromWankulCardData from O(N) to O(1)
+        private readonly Dictionary<int, CardData> reverseAssociation = new Dictionary<int, CardData>();
+
+        // Cached enum arrays to avoid allocation on every Enum.GetValues call
+        private static readonly ECardExpansionType[] CachedExpansions = (ECardExpansionType[])Enum.GetValues(typeof(ECardExpansionType));
+        private static readonly ECardBorderType[] CachedBorders = (ECardBorderType[])Enum.GetValues(typeof(ECardBorderType));
 
 
         public WankulCardData GetFromMonster(CardData monster, bool allowNull)
@@ -73,6 +80,7 @@ namespace WankulCrazyPlugin.cards
             {
                 //Plugin.Logger.LogInfo($"GetFromMonster Setting association for {key}");
                 association[key] = wankulCardData;
+                reverseAssociation[wankulCardData.Index] = monster;
             }
 
             return wankulCardData;
@@ -80,13 +88,31 @@ namespace WankulCrazyPlugin.cards
 
         public CardData GetCardDataFromWankulCardData(WankulCardData card)
         {
+            if (card == null) return null;
+
+            if (reverseAssociation.TryGetValue(card.Index, out CardData cardData))
+            {
+                return cardData;
+            }
+
+            // Fallback & population of reverse lookup if reverseAssociation doesn't have it yet
             foreach (var entry in association)
             {
-                if (entry.Value.Index == card.Index)
+                if (entry.Value != null)
                 {
-                    return GetCardDataFromKey(entry.Key);
+                    CardData cd = GetCardDataFromKey(entry.Key);
+                    if (cd != null)
+                    {
+                        reverseAssociation[entry.Value.Index] = cd;
+                    }
                 }
             }
+
+            if (reverseAssociation.TryGetValue(card.Index, out cardData))
+            {
+                return cardData;
+            }
+
             return null;
         }
 
@@ -126,6 +152,10 @@ namespace WankulCrazyPlugin.cards
             {
                 //Plugin.Logger.LogInfo($"SetFromMonster Setting association for {key}");
                 association[key] = card;  // Créez une nouvelle association
+                if (card != null)
+                {
+                    reverseAssociation[card.Index] = monster;
+                }
             }
             else
             {
@@ -136,7 +166,7 @@ namespace WankulCrazyPlugin.cards
         public CardData GetUnassciatedCardData()
         {
             int currentTestedCard = 0;
-            foreach (ECardExpansionType expansion in Enum.GetValues(typeof(ECardExpansionType)))
+            foreach (ECardExpansionType expansion in CachedExpansions)
             {
                 if (
                             expansion == ECardExpansionType.None ||
@@ -150,7 +180,7 @@ namespace WankulCrazyPlugin.cards
                 {
                     continue;
                 }
-                foreach (ECardBorderType border in Enum.GetValues(typeof(ECardBorderType)))
+                foreach (ECardBorderType border in CachedBorders)
                 {
                     int startMonsterList = GetStartMonsterList(expansion);
                     int endMonsterList = GetEndMonsterList(expansion);
