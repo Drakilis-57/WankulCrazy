@@ -595,10 +595,10 @@ namespace WankulCrazyPlugin.patch
                         Plugin.SetPProperty(__instance, "m_StateTimer", 0f);
                         Plugin.SetPProperty(__instance, "m_Slider", 0f);
                         __instance.m_StateIndex++;
-                        // Activer la carte courante (0) et la suivante (1) en arrière-plan
+                        // Activer STRICTEMENT une seule carte à la fois pour un fonctionnement parfait
                         for (int i = 0; i < __instance.m_Card3dUIList.Count; i++)
                         {
-                            __instance.m_Card3dUIList[i].gameObject.SetActive(i <= 1);
+                            __instance.m_Card3dUIList[i].gameObject.SetActive(i == 0);
                         }
                     }
                 }
@@ -736,14 +736,10 @@ namespace WankulCrazyPlugin.patch
                         return false;
                     }
 
-                    // Activer la carte courante et la suivante dans la pile (effet de paquet / carte en arrière-plan)
+                    // Activer STRICTEMENT la carte courante seule
                     if (__instance.m_Card3dUIList.Count > nextCardIndex)
                     {
                         __instance.m_Card3dUIList[nextCardIndex].gameObject.SetActive(value: true);
-                    }
-                    if (__instance.m_Card3dUIList.Count > nextCardIndex + 1)
-                    {
-                        __instance.m_Card3dUIList[nextCardIndex + 1].gameObject.SetActive(value: true);
                     }
 
                     // Réinitialiser tout auto-fire / clic résiduel pour que la nouvelle carte ne sorte pas immédiatement
