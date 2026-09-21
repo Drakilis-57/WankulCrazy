@@ -21,9 +21,3 @@ jobs:
 
       - name: Restore dependencies & Build
         run: dotnet build --configuration ReleaseNoDeps
-
-      - name: Upload DLL artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: WankulCrazyPlugin-DLL
-          path: dist/WankulCrazy/WankulCrazyPlugin.dll
