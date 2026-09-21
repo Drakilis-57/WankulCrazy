@@ -81,16 +81,16 @@ namespace WankulCrazyPlugin.importer
             Texture2D intermediate = null;
             Texture2D intermediateMip = null;
 
-            if (original.format != replacement.format)
-            {
-                intermediate = ConvertTextureFormat(replacement, original.format, original.mipmapCount);
-                replacement = intermediate;
-            }
-
             if (original.mipmapCount != replacement.mipmapCount)
             {
                 intermediateMip = AdjustMipMapLevels(replacement, original.mipmapCount);
                 replacement = intermediateMip;
+            }
+
+            if (original.format != replacement.format)
+            {
+                intermediate = ConvertTextureFormat(replacement, original.format, original.mipmapCount);
+                replacement = intermediate;
             }
 
             try
@@ -193,10 +193,6 @@ namespace WankulCrazyPlugin.importer
             Texture2D adjustedTexture = new Texture2D(texture.width, texture.height, TextureFormat.RGBA32, mipCount > 1);
             adjustedTexture.SetPixels(texture.GetPixels());
             adjustedTexture.Apply(true);
-            if (texture.format == TextureFormat.DXT1 || texture.format == TextureFormat.DXT5)
-            {
-                adjustedTexture.Compress(false);
-            }
             return adjustedTexture;
         }
 
@@ -265,13 +261,13 @@ namespace WankulCrazyPlugin.importer
             Texture2D tex = new Texture2D(2, 2);
             if (tex.LoadImage(fileData))
             {
-                tex.Compress(false);
+                tex.Apply();
                 return tex;
             }
             return null;
         }
 
-        private static Material GetOrCreateBoxMaterial(EItemType itemType, string texturePath)
+        private static Material GetOrCreateBoxMaterial(EItemType itemType, string texturePath, Renderer sourceRenderer)
         {
             if (cachedBoxMaterials.TryGetValue(itemType, out Material cachedMat) && cachedMat != null)
             {
@@ -285,17 +281,28 @@ namespace WankulCrazyPlugin.importer
                 return null;
             }
 
-            Shader shader = Shader.Find("Standard");
-            if (shader == null)
+            // On clone le material existant du renderer pour conserver le shader et les propriétés
+            // du pipeline de rendu du jeu (HDRP/URP). Shader.Find("Standard") est incompatible.
+            Material sourceMat = sourceRenderer != null ? sourceRenderer.sharedMaterial : null;
+            Material newMat;
+            if (sourceMat != null)
             {
-                Plugin.Logger.LogError("Shader 'Standard' introuvable !");
+                newMat = new Material(sourceMat);
+            }
+            else
+            {
+                Plugin.Logger.LogError($"Renderer sans material pour {itemType}, impossible de créer le material.");
                 return null;
             }
 
-            Material newMat = new Material(shader)
-            {
-                mainTexture = texture
-            };
+            // Assigner la texture sur la propriété principale (HDRP = _BaseColorMap, URP = _BaseMap, Built-in = _MainTex)
+            // Ne PAS assigner newMat.mainTexture pour éviter l'erreur si le shader ne supporte pas _MainTex
+            if (newMat.HasProperty("_BaseColorMap"))
+                newMat.SetTexture("_BaseColorMap", texture);
+            if (newMat.HasProperty("_BaseMap"))
+                newMat.SetTexture("_BaseMap", texture);
+            if (newMat.HasProperty("_MainTex"))
+                newMat.SetTexture("_MainTex", texture);
 
             cachedBoxMaterials[itemType] = newMat;
             return newMat;
@@ -314,7 +321,8 @@ namespace WankulCrazyPlugin.importer
                 return;
             }
 
-            Material targetMaterial = GetOrCreateBoxMaterial(itemType, texturePath);
+            // On passe le renderer pour que GetOrCreateBoxMaterial puisse cloner son material
+            Material targetMaterial = GetOrCreateBoxMaterial(itemType, texturePath, renderer);
             if (targetMaterial == null)
             {
                 return;

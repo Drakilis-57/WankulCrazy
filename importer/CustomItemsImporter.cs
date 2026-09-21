@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -120,7 +120,13 @@ namespace WankulCrazyPlugin.importer
                     if (File.Exists(iconPath))
                     {
                         Texture2D iconTexture = TextureUtils.LoadTexture(iconPath);
-                        Sprite iconSprite = Sprite.Create(iconTexture, new Rect(0, 0, iconTexture.width, iconTexture.height), Vector2.zero);
+                        Sprite iconSprite = Sprite.Create(
+                            iconTexture,
+                            new Rect(0, 0, iconTexture.width, iconTexture.height),
+                            new Vector2(0.5f, 0.5f), // pivot centré
+                            100f,
+                            0,
+                            SpriteMeshType.FullRect); // évite le mesh trimmé
                         iconSprite.name = itemData.name + "_icon";
                         itemData.icon = iconSprite;
                     }

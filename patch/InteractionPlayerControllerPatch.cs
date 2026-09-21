@@ -1,4 +1,4 @@
-﻿using CMF;
+using CMF;
 using HarmonyLib;
 using System;
 using System.Collections;
@@ -450,7 +450,13 @@ namespace WankulCrazyPlugin.patch
             if (renderer != null)
             {
                 Material material = renderer.material;
-                Texture2D texture = material.mainTexture as Texture2D;
+                Texture2D texture = null;
+                if (material.HasProperty("_BaseColorMap"))
+                    texture = material.GetTexture("_BaseColorMap") as Texture2D;
+                else if (material.HasProperty("_BaseMap"))
+                    texture = material.GetTexture("_BaseMap") as Texture2D;
+                else if (material.HasProperty("_MainTex"))
+                    texture = material.GetTexture("_MainTex") as Texture2D;
 
                 if (texture != null)
                 {
@@ -478,7 +484,12 @@ namespace WankulCrazyPlugin.patch
                         readableTexture.Apply();
 
                         // Réaffecter la texture modifiée au matériau
-                        material.mainTexture = readableTexture;
+                        if (material.HasProperty("_BaseColorMap"))
+                            material.SetTexture("_BaseColorMap", readableTexture);
+                        if (material.HasProperty("_BaseMap"))
+                            material.SetTexture("_BaseMap", readableTexture);
+                        if (material.HasProperty("_MainTex"))
+                            material.SetTexture("_MainTex", readableTexture);
 
                         //Debug.Log($"Texture modifiée pour la zone UV ({uvTopLeft}, {uvBottomRight}) sur l'objet {targetObject.name}");
                     }
@@ -515,10 +526,19 @@ namespace WankulCrazyPlugin.patch
                 Renderer renderer = child.GetComponent<Renderer>();
                 if (renderer != null)
                 {
-                    // Réutilise un matériau existant si possible
-                    Material material = new Material(Shader.Find("Standard"));
-                    material.mainTexture = newTexture;
-                    renderer.material = material;
+                    // Cloner le matériau existant au lieu d'utiliser Shader.Find("Standard") (incompatible HDRP)
+                    Material sourceMat = renderer.sharedMaterial;
+                    if (sourceMat != null)
+                    {
+                        Material material = new Material(sourceMat);
+                        if (material.HasProperty("_BaseColorMap"))
+                            material.SetTexture("_BaseColorMap", newTexture);
+                        if (material.HasProperty("_BaseMap"))
+                            material.SetTexture("_BaseMap", newTexture);
+                        if (material.HasProperty("_MainTex"))
+                            material.SetTexture("_MainTex", newTexture);
+                        renderer.material = material;
+                    }
                 }
                 else
                 {

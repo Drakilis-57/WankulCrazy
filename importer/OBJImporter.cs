@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
@@ -256,6 +256,7 @@ namespace WankulCrazyPlugin.importer
                 if (renderer != null && renderer.sharedMaterial != null)
                 {
                     var sharedMaterial = renderer.sharedMaterial;
+                    if (!sharedMaterial.HasProperty("_MainTex")) continue;
                     var mainTex = sharedMaterial.mainTexture as Texture2D;
                     if (mainTex != null)
                     {

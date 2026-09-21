@@ -9,7 +9,6 @@ using WankulCrazyPlugin.cards;
 namespace WankulCrazyPlugin.importer;
 public class JsonImporter
 {
-
     public static void ImportJson()
     {
         string pluginPath = Plugin.GetPluginPath();
@@ -37,7 +36,6 @@ public class JsonImporter
         {
             Plugin.Logger.LogError("Failed to deserialize JSON: " + ex.Message);
         }
-
     }
 
     private static List<WankulCardData> DeserializeCards(JObject jsonObject)
@@ -80,13 +78,13 @@ public class JsonImporter
     private static void CreateCardsData(List<WankulCardData> cards)
     {
         WankulCardsData cardsData = WankulCardsData.Instance;
-
         cardsData.cards = cards;
+
+        string pluginPath = Plugin.GetPluginPath();
         foreach (var card in cardsData.cards)
         {
             if (!string.IsNullOrEmpty(card.TexturePath))
             {
-                string pluginPath = Plugin.GetPluginPath();
                 string texturepath = Path.Combine(pluginPath, "data", card.TexturePath);
                 string texturepathmask = Path.Combine(pluginPath, "data/masks", card.TexturePath);
 

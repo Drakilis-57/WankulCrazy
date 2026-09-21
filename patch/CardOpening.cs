@@ -257,6 +257,15 @@ namespace WankulCrazyPlugin.patch
             }
 
             WankulCardsData wankulCardsData = WankulCardsData.Instance;
+
+            // Guard : si la base de cartes n'est pas encore initialisée (ex. 1er booster en Nouvelle Partie),
+            // forcer l'import JSON avant tout tirage pour éviter un tirage invalide.
+            if (wankulCardsData.cards.Count == 0)
+            {
+                Plugin.Logger.LogWarning("[CardOpening] WankulCardsData vide au moment de l'ouverture — import JSON forcé.");
+                JsonImporter.ImportJson();
+            }
+
             ___m_CardValueList.Clear();
             ___m_RolledCardDataList.Clear();
             ___m_SecondaryRolledCardDataList.Clear();

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
@@ -19,7 +19,8 @@ namespace WankulCrazyPlugin.utils
 
             Texture2D readableTexture = new Texture2D(texture.width, texture.height);
             readableTexture.ReadPixels(new Rect(0, 0, temporaryRenderTex.width, temporaryRenderTex.height), 0, 0);
-            readableTexture.Apply();
+            readableTexture.Apply(); // NE PAS utiliser makeNoLongerReadable=true ici :
+            // cette copie doit rester lisible par CPU pour les GetPixels() de PatchTexturesImporter.
 
             RenderTexture.active = previous;
             RenderTexture.ReleaseTemporary(temporaryRenderTex);
@@ -32,6 +33,7 @@ namespace WankulCrazyPlugin.utils
             byte[] bytes = System.IO.File.ReadAllBytes(path);
             Texture2D texture = new Texture2D(2, 2);
             texture.LoadImage(bytes);
+            // Pas de Apply(false,true) : cette texture peut être relue par PatchTexturesImporter
             return texture;
         }
     }
