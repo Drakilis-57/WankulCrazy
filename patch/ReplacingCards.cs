@@ -84,7 +84,7 @@ public class ReplacingCards
         {
             __instance.m_CardBGImage.enabled = true;
             __instance.m_CardBGImage.gameObject.SetActive(true);
-            __instance.m_CardBGImage.sprite = wankulCardData.Sprite;
+            __instance.m_CardBGImage.sprite = (Sprite)wankulCardData.Sprite;
             __instance.m_CardBGImage.preserveAspect = false;
 
             RectTransform rect = __instance.m_CardBGImage.rectTransform;
@@ -321,7 +321,7 @@ public class ReplacingCards
     {
         WankulCardData aJETER = WankulCardsData.GetAJETER();
 ;
-        __result = aJETER.Sprite;
+        __result = (Sprite)aJETER.Sprite;
         return false;
     }
 }
