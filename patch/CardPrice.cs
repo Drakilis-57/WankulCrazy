@@ -196,7 +196,7 @@ namespace WankulCrazyPlugin.patch
         public static IEnumerator DelayRemoveCustomerFromQueue(float waitTime, Customer instance)
         {
             yield return new WaitForSeconds(waitTime);
-            InteractableCashierCounter m_CurrentQueueCashierCounter = (InteractableCashierCounter)AccessTools.Field(instance.GetType(), "m_CurrentQueueCashierCounter").GetValue(instance);
+            InteractableCashierCounter m_CurrentQueueCashierCounter = (InteractableCashierCounter)Plugin.GetPProperty(instance, "m_CurrentQueueCashierCounter");
             m_CurrentQueueCashierCounter.RemoveCustomerFromQueue(instance);
             m_CurrentQueueCashierCounter.RemoveCurrentCustomerFromQueue();
         }
@@ -242,7 +242,7 @@ namespace WankulCrazyPlugin.patch
                 __instance.m_CardInBagList[j].m_Rigidbody.isKinematic = true;
 
                 CardUI cardUi = __instance.m_CardInBagList[j].m_Card3dUI.m_CardUI;
-                CardData cardData = (CardData)AccessTools.Field(cardUi.GetType(), "m_CardData").GetValue(cardUi);
+                CardData cardData = (CardData)Plugin.GetPProperty(cardUi, "m_CardData");
                 WankulCardData wankulCardData = WankulCardsData.Instance.GetFromMonster(cardData, true);
                 if (wankulCardData != null) {
                     int exp = WankulCardsData.GetExperienceFromWankulCard(wankulCardData);
@@ -255,7 +255,7 @@ namespace WankulCrazyPlugin.patch
             }
 
             __instance.StartCoroutine(DelayRemoveCustomerFromQueue(Random.Range(0.25f, 1f), __instance));
-            MethodInfo DetermineShopAction = __instance.GetType().GetMethod("DetermineShopAction", BindingFlags.Instance | BindingFlags.NonPublic);
+            MethodInfo DetermineShopAction = Plugin.GetCachedMethod(__instance.GetType(), "DetermineShopAction");
             DetermineShopAction.Invoke(__instance, new object[] { });
             CEventManager.QueueEvent(new CEventPlayer_AddShopExp(__instance.m_ItemInBagList.Count * 4 + Mathf.RoundToInt(num) + num2 / 2 + totalCardExp));
             return false;

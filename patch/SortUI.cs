@@ -1,4 +1,3 @@
-﻿using HarmonyLib;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -139,41 +138,46 @@ namespace WankulCrazyPlugin.patch
                 __instance.m_SortAlbumBtnList[6].gameObject.SetActive(false);
 
 
+                void OnClickSeasonButton(SortSeasonType season, int expansionIdx)
+                {
+                    currentSeason = season;
+                    currentGameExpansionIndex = expansionIdx;
+                    CSingleton<InteractionPlayerController>.Instance?.HideCursor();
+                    SoundManager.GenericConfirm(1f, 1f);
+                    __instance.m_SortAlbumScreen.SetActive(false);
+                    if (__instance.m_SortAlbumScreenUIExtension != null)
+                    {
+                        ControllerScreenUIExtManager.OnCloseScreen(__instance.m_SortAlbumScreenUIExtension);
+                    }
+                    if (__instance.m_CollectionAlbum != null)
+                    {
+                        OnSortingMethodUpdated(true, __instance.m_CollectionAlbum);
+                    }
+                }
+
                 __instance.m_ExpansionBtnList[0].GetComponentInChildren<Button>().onClick.AddListener(() =>
                 {
-                    currentSeason = SortSeasonType.ALL;
-                    __instance.OnPressSwitchExpansion(0);
-                    currentGameExpansionIndex = 0;
+                    OnClickSeasonButton(SortSeasonType.ALL, 0);
                 });
                 __instance.m_ExpansionBtnList[1].GetComponentInChildren<Button>().onClick.AddListener(() =>
                 {
-                    currentSeason = SortSeasonType.S01;
-                    __instance.OnPressSwitchExpansion(1);
-                    currentGameExpansionIndex = 1;
+                    OnClickSeasonButton(SortSeasonType.S01, 1);
                 });
                 __instance.m_ExpansionBtnList[2].GetComponentInChildren<Button>().onClick.AddListener(() =>
                 {
-                    currentSeason = SortSeasonType.S02;
-                    __instance.OnPressSwitchExpansion(2);
-                    currentGameExpansionIndex = 2;
+                    OnClickSeasonButton(SortSeasonType.S02, 2);
                 });
                 __instance.m_ExpansionBtnList[3].GetComponentInChildren<Button>().onClick.AddListener(() =>
                 {
-                    currentSeason = SortSeasonType.S03;
-                    __instance.OnPressSwitchExpansion(3);
-                    currentGameExpansionIndex = 3;
+                    OnClickSeasonButton(SortSeasonType.S03, 3);
                 });
                 __instance.m_ExpansionBtnList[4].GetComponentInChildren<Button>().onClick.AddListener(() =>
                 {
-                    currentSeason = SortSeasonType.S04;
-                    __instance.OnPressSwitchExpansion(4);
-                    currentGameExpansionIndex = 4;
+                    OnClickSeasonButton(SortSeasonType.S04, 4);
                 });
                 __instance.m_ExpansionBtnList[5].GetComponentInChildren<Button>().onClick.AddListener(() =>
                 {
-                    currentSeason = SortSeasonType.HS;
-                    __instance.OnPressSwitchExpansion(5);
-                    currentGameExpansionIndex = 5;
+                    OnClickSeasonButton(SortSeasonType.HS, 5);
                 });
 
                 __instance.m_SortAlbumBtnList[2].GetComponentInChildren<Button>().onClick.AddListener(() =>
@@ -375,48 +379,80 @@ namespace WankulCrazyPlugin.patch
 
         private static IEnumerator DelayResetCanFlipBook(float delayTime, CollectionBinderFlipAnimCtrl __instance)
         {
-            MethodInfo HideCurrentInteractableCard3dList = __instance.GetType().GetMethod("HideCurrentInteractableCard3dList", BindingFlags.Instance | BindingFlags.NonPublic);
-            MethodInfo UpdateCurrentInteractableCard3dList = __instance.GetType().GetMethod("UpdateCurrentInteractableCard3dList", BindingFlags.Instance | BindingFlags.NonPublic);
-            bool m_CanFlip = (bool)AccessTools.Field(__instance.GetType(), "m_CanFlip").GetValue(__instance);
+            MethodInfo HideCurrentInteractableCard3dList = Plugin.GetCachedMethod(__instance.GetType(), "HideCurrentInteractableCard3dList");
+            MethodInfo UpdateCurrentInteractableCard3dList = Plugin.GetCachedMethod(__instance.GetType(), "UpdateCurrentInteractableCard3dList");
+            bool m_CanFlip = (bool)Plugin.GetPProperty(__instance, "m_CanFlip");
 
             HideCurrentInteractableCard3dList.Invoke(__instance, new object[] {});
             m_CanFlip = false;
             CanFlip = false;
-            AccessTools.Field(__instance.GetType(), "m_CanFlip").SetValue(__instance, m_CanFlip);
+            Plugin.SetPProperty(__instance, "m_CanFlip", m_CanFlip);
             yield return new WaitForSeconds(delayTime);
             m_CanFlip = true;
             CanFlip = true;
-            AccessTools.Field(__instance.GetType(), "m_CanFlip").SetValue(__instance, m_CanFlip);
+            Plugin.SetPProperty(__instance, "m_CanFlip", m_CanFlip);
             yield return new WaitForSeconds(0.1f);
             UpdateCurrentInteractableCard3dList.Invoke(__instance, new object[] { });
         }
 
         private static IEnumerator DelaySetBinderPageCardIndex(int binderIndex, int pageIndex, CollectionBinderFlipAnimCtrl __instance)
         {
-            int m_MaxIndex = (int)AccessTools.Field(__instance.GetType(), "m_MaxIndex").GetValue(__instance);
+            int m_MaxIndex = (int)Plugin.GetPProperty(__instance, "m_MaxIndex");
             yield return new WaitForSeconds(0.5f);
             UpdateBinderAllCardUI(binderIndex, pageIndex, m_MaxIndex, __instance);
         }
 
         public static bool OnSortingMethodUpdated(bool backToFirstPage, CollectionBinderFlipAnimCtrl __instance)
         {
-            int m_Index = (int)AccessTools.Field(__instance.GetType(), "m_Index").GetValue(__instance);
-            bool m_CanUpdateSort = (bool)AccessTools.Field(__instance.GetType(), "m_CanUpdateSort").GetValue(__instance);
-            int m_MaxIndex = (int)AccessTools.Field(__instance.GetType(), "m_MaxIndex").GetValue(__instance);
+            int m_Index = (int)Plugin.GetPProperty(__instance, "m_Index");
+            bool m_CanUpdateSort = (bool)Plugin.GetPProperty(__instance, "m_CanUpdateSort");
+
             if (backToFirstPage)
             {
                 m_Index = 1;
-                AccessTools.Field(__instance.GetType(), "m_Index").SetValue(__instance, m_Index);
+                Plugin.SetPProperty(__instance, "m_Index", m_Index);
             }
             if (m_CanUpdateSort)
             {
                 m_CanUpdateSort = false;
-                AccessTools.Field(__instance.GetType(), "m_CanUpdateSort").SetValue(__instance, m_CanUpdateSort);
+                Plugin.SetPProperty(__instance, "m_CanUpdateSort", m_CanUpdateSort);
+            }
+
+            // Recalculer le nombre de cartes et max index pour la saison active
+            List<WankulCardData> wankulCardDatas = WankulCardsData.Instance.cards;
+            float totalPrice = WankulInventory.GetTotalPrice();
+            if (currentSeason != SortSeasonType.ALL)
+            {
+                wankulCardDatas = WankulCardsData.GetCardsFromSeason((Season)currentSeason);
+                totalPrice = WankulInventory.GetTotalPriceBySeason((Season)currentSeason);
+            }
+
+            int totalSeasonCards = wankulCardDatas.Count;
+            int m_MaxIndex = Mathf.Max(1, Mathf.CeilToInt((float)totalSeasonCards / 12f));
+            Plugin.SetPProperty(__instance, "m_MaxIndex", m_MaxIndex);
+
+            if (m_Index > m_MaxIndex)
+            {
+                m_Index = m_MaxIndex;
+                Plugin.SetPProperty(__instance, "m_Index", m_Index);
+            }
+
+            if (__instance.m_CollectionBinderUI != null)
+            {
+                __instance.m_CollectionBinderUI.SetMaxPage(m_MaxIndex);
+                __instance.m_CollectionBinderUI.SetCurrentPage(m_Index);
+                __instance.m_CollectionBinderUI.SetMaxCardCollectCount(totalSeasonCards);
+                __instance.m_CollectionBinderUI.SetTotalValue(totalPrice);
             }
 
             UpdateBinderAllCardUI(0, m_Index, m_MaxIndex, __instance);
             UpdateBinderAllCardUI(1, m_Index + 1, m_MaxIndex, __instance);
             UpdateBinderAllCardUI(2, m_Index - 1, m_MaxIndex, __instance);
+
+            if (__instance.m_CollectionBinderUI != null)
+            {
+                __instance.m_CollectionBinderUI.SetCardCollected(SortedCardIndies.Count, (ECardExpansionType)0);
+            }
 
             return false;
         }
@@ -425,21 +461,21 @@ namespace WankulCrazyPlugin.patch
             CollectionBinderFlipAnimCtrl __instance
         )
         {
-            bool ___m_IsBookOpen = (bool)AccessTools.Field(__instance.GetType(), "m_IsBookOpen").GetValue(__instance);
-            bool ___m_IsHoldingCardCloseUp = (bool)AccessTools.Field(__instance.GetType(), "m_IsHoldingCardCloseUp").GetValue(__instance);
-            bool ___m_IsExitingCardCloseUp = (bool)AccessTools.Field(__instance.GetType(), "m_IsExitingCardCloseUp").GetValue(__instance);
-            bool ___m_OpenBinder = (bool)AccessTools.Field(__instance.GetType(), "m_OpenBinder").GetValue(__instance);
-            Coroutine ___m_CanFlipCoroutine = (Coroutine)AccessTools.Field(__instance.GetType(), "m_CanFlipCoroutine").GetValue(__instance);
-            ECardExpansionType ___m_ExpansionType = (ECardExpansionType)AccessTools.Field(__instance.GetType(), "m_ExpansionType").GetValue(__instance);
-            int ___m_MaxIndex = (int)AccessTools.Field(__instance.GetType(), "m_MaxIndex").GetValue(__instance);
-            ECollectionSortingType ___m_SortingType = (ECollectionSortingType)AccessTools.Field(__instance.GetType(), "m_SortingType").GetValue(__instance);
-            bool ___m_CloseBinder = (bool)AccessTools.Field(__instance.GetType(), "m_CloseBinder").GetValue(__instance);
-            bool ___m_CanFlip = (bool)AccessTools.Field(__instance.GetType(), "m_CanFlip").GetValue(__instance);
-            bool ___m_GoNext = (bool)AccessTools.Field(__instance.GetType(), "m_GoNext").GetValue(__instance);
-            bool ___m_GoPrevious = (bool)AccessTools.Field(__instance.GetType(), "m_GoPrevious").GetValue(__instance);
-            bool ___m_GoNext10 = (bool)AccessTools.Field(__instance.GetType(), "m_GoNext10").GetValue(__instance);
-            bool ___m_GoPrevious10 = (bool)AccessTools.Field(__instance.GetType(), "m_GoPrevious10").GetValue(__instance);
-            int ___m_Index = (int)AccessTools.Field(__instance.GetType(), "m_Index").GetValue(__instance);
+            bool ___m_IsBookOpen = (bool)Plugin.GetPProperty(__instance, "m_IsBookOpen");
+            bool ___m_IsHoldingCardCloseUp = (bool)Plugin.GetPProperty(__instance, "m_IsHoldingCardCloseUp");
+            bool ___m_IsExitingCardCloseUp = (bool)Plugin.GetPProperty(__instance, "m_IsExitingCardCloseUp");
+            bool ___m_OpenBinder = (bool)Plugin.GetPProperty(__instance, "m_OpenBinder");
+            Coroutine ___m_CanFlipCoroutine = (Coroutine)Plugin.GetPProperty(__instance, "m_CanFlipCoroutine");
+            ECardExpansionType ___m_ExpansionType = (ECardExpansionType)Plugin.GetPProperty(__instance, "m_ExpansionType");
+            int ___m_MaxIndex = (int)Plugin.GetPProperty(__instance, "m_MaxIndex");
+            ECollectionSortingType ___m_SortingType = (ECollectionSortingType)Plugin.GetPProperty(__instance, "m_SortingType");
+            bool ___m_CloseBinder = (bool)Plugin.GetPProperty(__instance, "m_CloseBinder");
+            bool ___m_CanFlip = (bool)Plugin.GetPProperty(__instance, "m_CanFlip");
+            bool ___m_GoNext = (bool)Plugin.GetPProperty(__instance, "m_GoNext");
+            bool ___m_GoPrevious = (bool)Plugin.GetPProperty(__instance, "m_GoPrevious");
+            bool ___m_GoNext10 = (bool)Plugin.GetPProperty(__instance, "m_GoNext10");
+            bool ___m_GoPrevious10 = (bool)Plugin.GetPProperty(__instance, "m_GoPrevious10");
+            int ___m_Index = (int)Plugin.GetPProperty(__instance, "m_Index");
 
 
             if (___m_IsBookOpen && ___m_IsHoldingCardCloseUp && !___m_IsExitingCardCloseUp)
@@ -478,9 +514,9 @@ namespace WankulCrazyPlugin.patch
 
                 __instance.m_ShowHideAnim.gameObject.SetActive(value: true);
                 ___m_OpenBinder = false;
-                AccessTools.Field(__instance.GetType(), "m_OpenBinder").SetValue(__instance, ___m_OpenBinder);
+                Plugin.SetPProperty(__instance, "m_OpenBinder", ___m_OpenBinder);
                 ___m_IsBookOpen = true;
-                AccessTools.Field(__instance.GetType(), "m_IsBookOpen").SetValue(__instance, ___m_IsBookOpen);
+                Plugin.SetPProperty(__instance, "m_IsBookOpen", ___m_IsBookOpen);
                 __instance.m_BookAnim.SetTrigger("OpenBinder");
                 __instance.m_BinderThicknessAnim.SetTrigger("OpenBinder");
                 __instance.m_BinderPageGrpList[0].m_Anim.SetTrigger("OpenBinder");
@@ -493,7 +529,7 @@ namespace WankulCrazyPlugin.patch
                 }
 
                 ___m_CanFlipCoroutine = __instance.StartCoroutine(DelayResetCanFlipBook(CSingleton<InteractionPlayerController>.Instance.m_HideCardAlbumTime + 0.3f, __instance));
-                AccessTools.Field(__instance.GetType(), "m_CanFlipCoroutine").SetValue(__instance, ___m_CanFlipCoroutine);
+                Plugin.SetPProperty(__instance, "m_CanFlipCoroutine", ___m_CanFlipCoroutine);
 
                 List<WankulCardData> wankulCardDatas = WankulCardsData.Instance.cards;
                 float totalPrice = WankulInventory.GetTotalPrice();
@@ -506,7 +542,7 @@ namespace WankulCrazyPlugin.patch
                 int num2 = wankulCardDatas.Count;
 
                 ___m_MaxIndex = Mathf.CeilToInt((float)num2 / 12f);
-                AccessTools.Field(__instance.GetType(), "m_MaxIndex").SetValue(__instance, ___m_MaxIndex);
+                Plugin.SetPProperty(__instance, "m_MaxIndex", ___m_MaxIndex);
                 __instance.m_CollectionBinderUI.SetMaxPage(___m_MaxIndex);
                 __instance.m_CollectionBinderUI.SetCurrentPage(___m_Index);
                 __instance.m_CollectionBinderUI.SetMaxCardCollectCount(num2);
@@ -514,13 +550,15 @@ namespace WankulCrazyPlugin.patch
                 __instance.m_CollectionBinderUI.SetTotalValue(totalPrice);
 
                 __instance.m_CollectionBinderUI.OpenScreen();
-                ___m_SortingType = (ECollectionSortingType)CPlayerData.m_CollectionSortingMethodIndexList[(int)___m_ExpansionType];
-                AccessTools.Field(__instance.GetType(), "m_SortingType").SetValue(__instance, ___m_SortingType);
-                if (___m_SortingType < ECollectionSortingType.Default || ___m_SortingType >= ECollectionSortingType.MAX)
+                if ((int)___m_ExpansionType >= 0 && (int)___m_ExpansionType < CPlayerData.m_CollectionSortingMethodIndexList.Count)
                 {
-                    ___m_SortingType = ECollectionSortingType.Price;
-                    AccessTools.Field(__instance.GetType(), "m_SortingType").SetValue(__instance, ___m_SortingType);
-                    CPlayerData.m_CollectionSortingMethodIndexList[(int)___m_ExpansionType] = (int)___m_SortingType;
+                    ___m_SortingType = (ECollectionSortingType)CPlayerData.m_CollectionSortingMethodIndexList[(int)___m_ExpansionType];
+                    if (___m_SortingType < ECollectionSortingType.Default || ___m_SortingType >= ECollectionSortingType.MAX)
+                    {
+                        ___m_SortingType = ECollectionSortingType.Price;
+                        CPlayerData.m_CollectionSortingMethodIndexList[(int)___m_ExpansionType] = (int)___m_SortingType;
+                    }
+                    Plugin.SetPProperty(__instance, "m_SortingType", ___m_SortingType);
                 }
 
                 OnSortingMethodUpdated(false, __instance);
@@ -536,7 +574,7 @@ namespace WankulCrazyPlugin.patch
                 if (___m_CloseBinder)
                 {
                     ___m_IsBookOpen = false;
-                    AccessTools.Field(__instance.GetType(), "m_IsBookOpen").SetValue(__instance, ___m_IsBookOpen);
+                    Plugin.SetPProperty(__instance, "m_IsBookOpen", ___m_IsBookOpen);
                     __instance.m_BookAnim.Play("CollectionBookClose");
                     __instance.m_BinderThicknessAnim.Play("CollectionBookClose");
                     __instance.m_BinderPageGrpList[0].m_Anim.Play("BinderClose");
@@ -545,44 +583,44 @@ namespace WankulCrazyPlugin.patch
                     __instance.m_BinderPageGrpList[1].SetVisibility(isVisible: false);
                     __instance.m_BinderPageGrpList[2].SetVisibility(isVisible: false);
                     ___m_CloseBinder = false;
-                    AccessTools.Field(__instance.GetType(), "m_CloseBinder").SetValue(__instance, ___m_CloseBinder);
+                    Plugin.SetPProperty(__instance, "m_CloseBinder", ___m_CloseBinder);
                     if (___m_CanFlipCoroutine != null)
                     {
                         __instance.StopCoroutine(___m_CanFlipCoroutine);
                     }
 
                     ___m_CanFlipCoroutine = __instance.StartCoroutine(DelayResetCanFlipBook(0.5f, __instance));
-                    AccessTools.Field(__instance.GetType(), "m_CanFlipCoroutine").SetValue(__instance, ___m_CanFlipCoroutine);
+                    Plugin.SetPProperty(__instance, "m_CanFlipCoroutine", ___m_CanFlipCoroutine);
                     SoundManager.PlayAudio("SFX_AlbumFlip", 0.6f);
                 }
 
-                ___m_CanFlip = (bool)AccessTools.Field(__instance.GetType(), "m_CanFlip").GetValue(__instance);
+                ___m_CanFlip = (bool)Plugin.GetPProperty(__instance, "m_CanFlip");
                 if (!___m_CanFlip || !CanFlip)
                 {
                     ___m_GoNext = false;
-                    AccessTools.Field(__instance.GetType(), "m_GoNext").SetValue(__instance, ___m_GoNext);
+                    Plugin.SetPProperty(__instance, "m_GoNext", ___m_GoNext);
                     ___m_GoPrevious = false;
-                    AccessTools.Field(__instance.GetType(), "m_GoPrevious").SetValue(__instance, ___m_GoPrevious);
+                    Plugin.SetPProperty(__instance, "m_GoPrevious", ___m_GoPrevious);
                     ___m_GoNext10 = false;
-                    AccessTools.Field(__instance.GetType(), "m_GoNext10").SetValue(__instance, ___m_GoNext10);
+                    Plugin.SetPProperty(__instance, "m_GoNext10", ___m_GoNext10);
                     ___m_GoPrevious10 = false;
-                    AccessTools.Field(__instance.GetType(), "m_GoPrevious10").SetValue(__instance, ___m_GoPrevious10);
+                    Plugin.SetPProperty(__instance, "m_GoPrevious10", ___m_GoPrevious10);
 
-                    AccessTools.Field(__instance.GetType(), "m_IsBookOpen").SetValue(__instance, ___m_IsBookOpen);
-                    AccessTools.Field(__instance.GetType(), "m_IsHoldingCardCloseUp").SetValue(__instance, ___m_IsHoldingCardCloseUp);
-                    AccessTools.Field(__instance.GetType(), "m_IsExitingCardCloseUp").SetValue(__instance, ___m_IsExitingCardCloseUp);
-                    AccessTools.Field(__instance.GetType(), "m_OpenBinder").SetValue(__instance, ___m_OpenBinder);
-                    AccessTools.Field(__instance.GetType(), "m_CanFlipCoroutine").SetValue(__instance, ___m_CanFlipCoroutine);
-                    AccessTools.Field(__instance.GetType(), "m_ExpansionType").SetValue(__instance, ___m_ExpansionType);
-                    AccessTools.Field(__instance.GetType(), "m_MaxIndex").SetValue(__instance, ___m_MaxIndex);
-                    AccessTools.Field(__instance.GetType(), "m_SortingType").SetValue(__instance, ___m_SortingType);
-                    AccessTools.Field(__instance.GetType(), "m_CloseBinder").SetValue(__instance, ___m_CloseBinder);
-                    AccessTools.Field(__instance.GetType(), "m_CanFlip").SetValue(__instance, ___m_CanFlip);
-                    AccessTools.Field(__instance.GetType(), "m_GoNext").SetValue(__instance, ___m_GoNext);
-                    AccessTools.Field(__instance.GetType(), "m_GoPrevious").SetValue(__instance, ___m_GoPrevious);
-                    AccessTools.Field(__instance.GetType(), "m_GoNext10").SetValue(__instance, ___m_GoNext10);
-                    AccessTools.Field(__instance.GetType(), "m_GoPrevious10").SetValue(__instance, ___m_GoPrevious10);
-                    AccessTools.Field(__instance.GetType(), "m_Index").SetValue(__instance, ___m_Index);
+                    Plugin.SetPProperty(__instance, "m_IsBookOpen", ___m_IsBookOpen);
+                    Plugin.SetPProperty(__instance, "m_IsHoldingCardCloseUp", ___m_IsHoldingCardCloseUp);
+                    Plugin.SetPProperty(__instance, "m_IsExitingCardCloseUp", ___m_IsExitingCardCloseUp);
+                    Plugin.SetPProperty(__instance, "m_OpenBinder", ___m_OpenBinder);
+                    Plugin.SetPProperty(__instance, "m_CanFlipCoroutine", ___m_CanFlipCoroutine);
+                    Plugin.SetPProperty(__instance, "m_ExpansionType", ___m_ExpansionType);
+                    Plugin.SetPProperty(__instance, "m_MaxIndex", ___m_MaxIndex);
+                    Plugin.SetPProperty(__instance, "m_SortingType", ___m_SortingType);
+                    Plugin.SetPProperty(__instance, "m_CloseBinder", ___m_CloseBinder);
+                    Plugin.SetPProperty(__instance, "m_CanFlip", ___m_CanFlip);
+                    Plugin.SetPProperty(__instance, "m_GoNext", ___m_GoNext);
+                    Plugin.SetPProperty(__instance, "m_GoPrevious", ___m_GoPrevious);
+                    Plugin.SetPProperty(__instance, "m_GoNext10", ___m_GoNext10);
+                    Plugin.SetPProperty(__instance, "m_GoPrevious10", ___m_GoPrevious10);
+                    Plugin.SetPProperty(__instance, "m_Index", ___m_Index);
                     return false;
                 }
 
@@ -595,7 +633,7 @@ namespace WankulCrazyPlugin.patch
                     __instance.m_BinderPageGrpList.RemoveAt(0);
                     __instance.m_BinderPageGrpList.Add(item);
                     ___m_GoNext = false;
-                    AccessTools.Field(__instance.GetType(), "m_GoNext").SetValue(__instance, ___m_GoNext);
+                    Plugin.SetPProperty(__instance, "m_GoNext", ___m_GoNext);
                     ___m_Index++;
                     if (___m_CanFlipCoroutine != null)
                     {
@@ -603,7 +641,7 @@ namespace WankulCrazyPlugin.patch
                     }
 
                     ___m_CanFlipCoroutine = __instance.StartCoroutine(DelayResetCanFlipBook(0.55f, __instance));
-                    AccessTools.Field(__instance.GetType(), "m_CanFlipCoroutine").SetValue(__instance, ___m_CanFlipCoroutine);
+                    Plugin.SetPProperty(__instance, "m_CanFlipCoroutine", ___m_CanFlipCoroutine);
                     __instance.m_CollectionBinderUI.SetCurrentPage(___m_Index);
                     SoundManager.PlayAudio("SFX_AlbumFlip", 0.6f);
                     if (___m_Index < ___m_MaxIndex)
@@ -621,7 +659,7 @@ namespace WankulCrazyPlugin.patch
                     __instance.m_BinderPageGrpList.RemoveAt(2);
                     __instance.m_BinderPageGrpList.Insert(0, item2);
                     ___m_GoPrevious = false;
-                    AccessTools.Field(__instance.GetType(), "m_GoPrevious").SetValue(__instance, ___m_GoPrevious);
+                    Plugin.SetPProperty(__instance, "m_GoPrevious", ___m_GoPrevious);
                     ___m_Index--;
                     if (___m_CanFlipCoroutine != null)
                     {
@@ -629,7 +667,7 @@ namespace WankulCrazyPlugin.patch
                     }
 
                     ___m_CanFlipCoroutine = __instance.StartCoroutine(DelayResetCanFlipBook(0.55f, __instance));
-                    AccessTools.Field(__instance.GetType(), "m_CanFlipCoroutine").SetValue(__instance, ___m_CanFlipCoroutine);
+                    Plugin.SetPProperty(__instance, "m_CanFlipCoroutine", ___m_CanFlipCoroutine);
                     __instance.m_CollectionBinderUI.SetCurrentPage(___m_Index);
                     SoundManager.PlayAudio("SFX_AlbumFlip", 0.6f);
                     if (___m_Index > 1)
@@ -647,7 +685,7 @@ namespace WankulCrazyPlugin.patch
                     __instance.m_BinderPageGrpList.RemoveAt(0);
                     __instance.m_BinderPageGrpList.Add(item3);
                     ___m_GoNext10 = false;
-                    AccessTools.Field(__instance.GetType(), "m_GoNext10").SetValue(__instance, ___m_GoNext10);
+                    Plugin.SetPProperty(__instance, "m_GoNext10", ___m_GoNext10);
                     ___m_Index += 10;
                     if (___m_Index > ___m_MaxIndex)
                     {
@@ -660,7 +698,7 @@ namespace WankulCrazyPlugin.patch
                     }
 
                     ___m_CanFlipCoroutine = __instance.StartCoroutine(DelayResetCanFlipBook(0.55f, __instance));
-                    AccessTools.Field(__instance.GetType(), "m_CanFlipCoroutine").SetValue(__instance, ___m_CanFlipCoroutine);
+                    Plugin.SetPProperty(__instance, "m_CanFlipCoroutine", ___m_CanFlipCoroutine);
                     UpdateBinderAllCardUI(0, ___m_Index, ___m_MaxIndex, __instance);
                     __instance.StartCoroutine(DelaySetBinderPageCardIndex(2, ___m_Index - 1, __instance));
                     __instance.m_CollectionBinderUI.SetCurrentPage(___m_Index);
@@ -680,7 +718,7 @@ namespace WankulCrazyPlugin.patch
                     __instance.m_BinderPageGrpList.RemoveAt(2);
                     __instance.m_BinderPageGrpList.Insert(0, item4);
                     ___m_GoPrevious10 = false;
-                    AccessTools.Field(__instance.GetType(), "m_GoPrevious10").SetValue(__instance, ___m_GoPrevious10);
+                    Plugin.SetPProperty(__instance, "m_GoPrevious10", ___m_GoPrevious10);
                     ___m_Index -= 10;
                     if (___m_Index < 1)
                     {
@@ -693,7 +731,7 @@ namespace WankulCrazyPlugin.patch
                     }
 
                     ___m_CanFlipCoroutine = __instance.StartCoroutine(DelayResetCanFlipBook(0.55f, __instance));
-                    AccessTools.Field(__instance.GetType(), "m_CanFlipCoroutine").SetValue(__instance, ___m_CanFlipCoroutine);
+                    Plugin.SetPProperty(__instance, "m_CanFlipCoroutine", ___m_CanFlipCoroutine);
                     UpdateBinderAllCardUI(0, ___m_Index, ___m_MaxIndex, __instance);
                     __instance.StartCoroutine(DelaySetBinderPageCardIndex( 1, ___m_Index + 1, __instance));
                     __instance.m_CollectionBinderUI.SetCurrentPage(___m_Index);
@@ -713,21 +751,21 @@ namespace WankulCrazyPlugin.patch
             ___m_GoNext10 = false;
             ___m_GoPrevious10 = false;
 
-            AccessTools.Field(__instance.GetType(), "m_IsBookOpen").SetValue(__instance, ___m_IsBookOpen);
-            AccessTools.Field(__instance.GetType(), "m_IsHoldingCardCloseUp").SetValue(__instance, ___m_IsHoldingCardCloseUp);
-            AccessTools.Field(__instance.GetType(), "m_IsExitingCardCloseUp").SetValue(__instance, ___m_IsExitingCardCloseUp);
-            AccessTools.Field(__instance.GetType(), "m_OpenBinder").SetValue(__instance, ___m_OpenBinder);
-            AccessTools.Field(__instance.GetType(), "m_CanFlipCoroutine").SetValue(__instance, ___m_CanFlipCoroutine);
-            AccessTools.Field(__instance.GetType(), "m_ExpansionType").SetValue(__instance, ___m_ExpansionType);
-            AccessTools.Field(__instance.GetType(), "m_MaxIndex").SetValue(__instance, ___m_MaxIndex);
-            AccessTools.Field(__instance.GetType(), "m_SortingType").SetValue(__instance, ___m_SortingType);
-            AccessTools.Field(__instance.GetType(), "m_CloseBinder").SetValue(__instance, ___m_CloseBinder);
-            AccessTools.Field(__instance.GetType(), "m_CanFlip").SetValue(__instance, ___m_CanFlip);
-            AccessTools.Field(__instance.GetType(), "m_GoNext").SetValue(__instance, ___m_GoNext);
-            AccessTools.Field(__instance.GetType(), "m_GoPrevious").SetValue(__instance, ___m_GoPrevious);
-            AccessTools.Field(__instance.GetType(), "m_GoNext10").SetValue(__instance, ___m_GoNext10);
-            AccessTools.Field(__instance.GetType(), "m_GoPrevious10").SetValue(__instance, ___m_GoPrevious10);
-            AccessTools.Field(__instance.GetType(), "m_Index").SetValue(__instance, ___m_Index);
+            Plugin.SetPProperty(__instance, "m_IsBookOpen", ___m_IsBookOpen);
+            Plugin.SetPProperty(__instance, "m_IsHoldingCardCloseUp", ___m_IsHoldingCardCloseUp);
+            Plugin.SetPProperty(__instance, "m_IsExitingCardCloseUp", ___m_IsExitingCardCloseUp);
+            Plugin.SetPProperty(__instance, "m_OpenBinder", ___m_OpenBinder);
+            Plugin.SetPProperty(__instance, "m_CanFlipCoroutine", ___m_CanFlipCoroutine);
+            Plugin.SetPProperty(__instance, "m_ExpansionType", ___m_ExpansionType);
+            Plugin.SetPProperty(__instance, "m_MaxIndex", ___m_MaxIndex);
+            Plugin.SetPProperty(__instance, "m_SortingType", ___m_SortingType);
+            Plugin.SetPProperty(__instance, "m_CloseBinder", ___m_CloseBinder);
+            Plugin.SetPProperty(__instance, "m_CanFlip", ___m_CanFlip);
+            Plugin.SetPProperty(__instance, "m_GoNext", ___m_GoNext);
+            Plugin.SetPProperty(__instance, "m_GoPrevious", ___m_GoPrevious);
+            Plugin.SetPProperty(__instance, "m_GoNext10", ___m_GoNext10);
+            Plugin.SetPProperty(__instance, "m_GoPrevious10", ___m_GoPrevious10);
+            Plugin.SetPProperty(__instance, "m_Index", ___m_Index);
 
             return false;
         }

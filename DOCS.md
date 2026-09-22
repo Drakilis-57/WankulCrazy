@@ -83,7 +83,52 @@ Pour affranchir totalement le mod des `enum` C# pour les saisons et raretés :
 * Charger un fichier `seasons.json` contenant la liste des saisons et leurs noms affichés.
 * Charger un fichier `rarities.json` définissant les raretés, leurs coefficients d'XP et leurs multiplicateurs de prix.
 
-### 💡 Simplification 3 : Support Multi-Packs / Moddabilité par dossier (Recommandation Future)
+### ✅ Simplification 4 : Cache mémoire au démarrage (Implémenté)
+Les textures et meshes des items custom (`OBJImporter.cs`) sont chargés une seule fois au
+démarrage (`CacheTexturesAtStart`, `CacheMeshesAtStart`) et réutilisés par référence à chaque
+spawn, plutôt que relus depuis le disque à chaque instanciation.
+
+### ✅ Simplification 5 : Cache des accès par réflexion (Implémenté)
+Plusieurs chemins critiques ré-exécutaient une résolution par réflexion (`Type.GetField`,
+`Type.GetMethod`) à **chaque appel** plutôt qu'une seule fois — notamment `Plugin.GetPProperty`/
+`SetPProperty` (utilisés par `CardOpeningHelpers` à **chaque frame** pendant `CardOpening.Update()`
+et par `CollectionBinderFlipAnimCtrl.Update()` dans `SortUI.cs`, le classeur/album), ainsi que des
+`AccessTools.Field(__instance.GetType(), "...")` et `GetType().GetMethod(...)` répétés dans
+`CheckPriceUI.cs`, `WorkbenchPatch.cs`, `CardPrice.cs`, `ReplacingCards.cs` et
+`InteractionPlayerControllerPatch.cs`.
+
+Deux caches statiques ont été ajoutés dans `Plugin.cs` (`GetCachedField`/`GetCachedMethod`, indexés
+par `(Type, nom du champ/méthode)`), et tous les appels de ces fichiers ont été migrés dessus.
+Un `FieldInfo`/`MethodInfo` est stable pour un type donné : il n'est désormais résolu qu'une seule
+fois, puis réutilisé — supprimant un coût de réflexion répété plusieurs fois par frame dans les
+écrans d'ouverture de booster et de tri de cartes.
+
+*(Quelques appels résiduels très ponctuels — non exécutés en boucle, ex: gestion de mesh à
+l'ouverture d'une boîte de cartes dans `InteractionPlayerControllerPatch.cs` — n'ont pas été migrés
+car le gain y est négligeable et le risque de régression plus élevé sur du code multi-lignes.)*
+
+> ⚠️ **Correctif** : la première version de ce cache (`type.GetField`/`GetMethod` sur le type exact
+> uniquement) ne trouvait pas les champs privés déclarés dans une classe de base du jeu — contrairement
+> à `AccessTools.Field`/`Method` (Harmony) qui remonte la hiérarchie. Ça a cassé l'affichage de l'album
+> (`CollectionBinderFlipAnimCtrl.Update`, dans `SortUI.cs`, retombait sur `null` à chaque frame).
+> `GetCachedField`/`GetCachedMethod` remontent désormais `BaseType` jusqu'à trouver le membre,
+> exactement comme le faisait `AccessTools`.
+
+### ✅ Simplification 6 : Cache des tableaux d'enum généralisé (Implémenté)
+`Season[] seasons = (Season[])Enum.GetValues(typeof(Season))` était réalloué à chaque appel dans
+`CheckPriceUI.cs` et `WorkbenchPatch.cs`, alors que le même principe était déjà appliqué à
+`ECardExpansionType`/`ECardBorderType` dans `WankulCardsData.cs` (`CachedExpansions`/`CachedBorders`).
+Un tableau `Season[]` statique en cache a été ajouté dans les deux fichiers concernés.
+
+### ✅ Simplification 7 : Index Saison → Cartes précalculé (Implémenté)
+`WankulInventory.randFromPackType` faisait un `List.FindAll` sur l'ensemble des cartes à chaque
+tirage (jusqu'à 10 fois par booster). `WankulCardsData` construit désormais un index
+`Dictionary<Season, List<WankulCardData>>` de façon paresseuse (une seule fois, la liste de cartes
+n'étant jamais modifiée après le chargement JSON initial), exposé via
+`WankulCardsData.GetCardsBySeasonFast(season)`. Le tirage passe d'un scan O(N) répété à un accès
+O(1) amorti.
+
+### 💡 Simplification 8 : Support Multi-Packs / Moddabilité par dossier (Recommandation Future)
 Permettre le chargement séparé des données :
 ```text
 data/

@@ -1,6 +1,7 @@
 using BepInEx;
 using BepInEx.Logging;
 using HarmonyLib;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using WankulCrazyPlugin.patch;
@@ -373,11 +374,77 @@ public class Plugin : BaseUnityPlugin
         return Path.Combine(Application.dataPath, "../BepInEx/plugins", PluginInfo.PLUGIN_NAME);
     }
 
+    // Cache des FieldInfo/MethodInfo résolus par réflexion.
+    // Sans ce cache, chaque appel à GetPProperty/SetPProperty (et donc chaque lecture/écriture
+    // de CardOpeningHelpers, appelée à CHAQUE FRAME pendant CardOpening.Update) refaisait un
+    // Type.GetField coûteux. Un FieldInfo/MethodInfo est stable pour un type donné : on ne le
+    // résout qu'une seule fois puis on le réutilise.
+    private static readonly Dictionary<(Type, string), FieldInfo> FieldCache = new Dictionary<(Type, string), FieldInfo>();
+    private static readonly Dictionary<(Type, string), MethodInfo> MethodCache = new Dictionary<(Type, string), MethodInfo>();
+    private const BindingFlags PrivateInstanceFlags = BindingFlags.NonPublic | BindingFlags.Instance;
+
+    // type.GetField/GetMethod ne renvoie que les membres déclarés sur le type exact : un champ
+    // privé déclaré dans une classe de base du jeu (ex: CollectionBinderFlipAnimCtrl héritant
+    // d'un type Unity) n'est PAS trouvé ainsi. AccessTools.Field/Method (Harmony) remonte la
+    // hiérarchie ; on reproduit ce comportement ici pour ne pas casser les patches existants
+    // (c'est ce qui avait cassé l'affichage de l'album : GetPProperty renvoyait null en boucle).
+    private static FieldInfo FindFieldInHierarchy(Type type, string fieldName)
+    {
+        for (Type current = type; current != null; current = current.BaseType)
+        {
+            FieldInfo field = current.GetField(fieldName, PrivateInstanceFlags | BindingFlags.Public);
+            if (field != null)
+            {
+                return field;
+            }
+        }
+        return null;
+    }
+
+    private static MethodInfo FindMethodInHierarchy(Type type, string methodName)
+    {
+        for (Type current = type; current != null; current = current.BaseType)
+        {
+            MethodInfo method = current.GetMethod(methodName, PrivateInstanceFlags | BindingFlags.Public);
+            if (method != null)
+            {
+                return method;
+            }
+        }
+        return null;
+    }
+
+    private static FieldInfo GetCachedField(Type type, string fieldName)
+    {
+        var key = (type, fieldName);
+        if (!FieldCache.TryGetValue(key, out FieldInfo field))
+        {
+            field = FindFieldInHierarchy(type, fieldName);
+            FieldCache[key] = field; // on cache aussi les échecs (null) pour éviter de refaire la recherche
+        }
+        return field;
+    }
+
+    /// <summary>
+    /// Résout et met en cache une MethodInfo privée d'instance pour un type donné (en remontant
+    /// la hiérarchie de classes, comme AccessTools.Method). À utiliser à la place de
+    /// `instance.GetType().GetMethod(...)` dans les chemins appelés répétitivement (ex: Update par frame).
+    /// </summary>
+    public static MethodInfo GetCachedMethod(Type type, string methodName)
+    {
+        var key = (type, methodName);
+        if (!MethodCache.TryGetValue(key, out MethodInfo method))
+        {
+            method = FindMethodInHierarchy(type, methodName);
+            MethodCache[key] = method;
+        }
+        return method;
+    }
+
     public static object GetPProperty(object __instance, string fieldName) {
         Type type = __instance.GetType();
-        BindingFlags flags = BindingFlags.NonPublic | BindingFlags.Instance;
 
-        FieldInfo field = type.GetField(fieldName, flags);
+        FieldInfo field = GetCachedField(type, fieldName);
         if (field == null)
         {
             Plugin.Logger.LogError($"Field {fieldName} not found");
@@ -390,9 +457,8 @@ public class Plugin : BaseUnityPlugin
     public static object SetPProperty(object __instance, string fieldName, object value)
     {
         Type type = __instance.GetType();
-        BindingFlags flags = BindingFlags.NonPublic | BindingFlags.Instance;
 
-        FieldInfo field = type.GetField(fieldName, flags);
+        FieldInfo field = GetCachedField(type, fieldName);
         if (field == null)
         {
             Plugin.Logger.LogError($"Field {fieldName} not found");

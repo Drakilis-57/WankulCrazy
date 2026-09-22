@@ -139,7 +139,7 @@ namespace WankulCrazyPlugin.patch
         [HarmonyPatch(typeof(InteractionPlayerController), "EvaluateOpenCardPack")]
         public static bool EvaluateOpenCardPack(InteractionPlayerController __instance)
         {
-            List<Item> m_HoldItemList = (List<Item>)AccessTools.Field(__instance.GetType(), "m_HoldItemList").GetValue(__instance);
+            List<Item> m_HoldItemList = (List<Item>)Plugin.GetPProperty(__instance, "m_HoldItemList");
             var canOpenPackMethod = AccessTools.Method(__instance.GetType(), "CanOpenPack");
             bool canOpenPack = (bool)canOpenPackMethod.Invoke(__instance, null);
 
@@ -151,8 +151,8 @@ namespace WankulCrazyPlugin.patch
 
                 CSingleton<CardOpeningSequence>.Instance.ReadyingCardPack(holdItem);
 
-                AccessTools.Field(__instance.GetType(), "m_IsHoldingMouseDown").SetValue(__instance, false);
-                AccessTools.Field(__instance.GetType(), "m_IsHoldingRightMouseDown").SetValue(__instance, false);
+                Plugin.SetPProperty(__instance, "m_IsHoldingMouseDown", false);
+                Plugin.SetPProperty(__instance, "m_IsHoldingRightMouseDown", false);
             }
             else
             {
@@ -163,7 +163,7 @@ namespace WankulCrazyPlugin.patch
                     return false;
                 }
 
-                AccessTools.Field(__instance.GetType(), "m_IsOpeningCardBox").SetValue(__instance, true);
+                Plugin.SetPProperty(__instance, "m_IsOpeningCardBox", true);
                 Item holdItem = m_HoldItemList[0];
                 EItemType cardPack = (EItemType)AccessTools.Method(__instance.GetType(), "CardBoxToCardPack").Invoke(__instance, new object[] { holdItem.GetItemType() });
 

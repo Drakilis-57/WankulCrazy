@@ -121,7 +121,7 @@ namespace WankulCrazyPlugin.patch
                     return;
                 }
 
-                MethodInfo addCardPrefabMethod = typeof(Card3dUISpawner).GetMethod("AddCardPrefab", BindingFlags.Instance | BindingFlags.NonPublic);
+                MethodInfo addCardPrefabMethod = Plugin.GetCachedMethod(typeof(Card3dUISpawner), "AddCardPrefab");
                 if (addCardPrefabMethod == null)
                 {
                     Plugin.Logger.LogError("Failed to get AddCardPrefab method.");
@@ -1069,7 +1069,9 @@ namespace WankulCrazyPlugin.patch
         /// </summary>
         public static bool Update(CardOpeningSequence __instance)
         {
-            MethodInfo InitOpenSequence = __instance.GetType().GetMethod("InitOpenSequence", BindingFlags.Instance | BindingFlags.NonPublic);
+            // Update() est appelé à chaque frame : on ne résout plus la MethodInfo à chaque appel,
+            // Plugin.GetCachedMethod la met en cache après la première résolution.
+            MethodInfo InitOpenSequence = Plugin.GetCachedMethod(__instance.GetType(), "InitOpenSequence");
 
             CardOpeningHelpers.SetIsAutoFire(__instance, false);
 

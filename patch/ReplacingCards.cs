@@ -1,6 +1,5 @@
 using UnityEngine;
 using BepInEx.Logging;
-using HarmonyLib;
 using UnityEngine.UIElements;
 using Logger = HarmonyLib.Tools.Logger;
 using System.Threading;
@@ -270,7 +269,7 @@ public class ReplacingCards
 
     public static bool CollectionBinderFlipAnimCtrlOnRightMouseButtonUp(CollectionBinderFlipAnimCtrl __instance)
     {
-        ECollectionSortingType m_SortingType = (ECollectionSortingType)AccessTools.Field(__instance.GetType(), "m_SortingType").GetValue(__instance);
+        ECollectionSortingType m_SortingType = (ECollectionSortingType)Plugin.GetPProperty(__instance, "m_SortingType");
         if ((__instance.m_IsHoldingCardCloseUp || __instance.m_IsExitingCardCloseUp) && __instance.m_IsHoldingCardCloseUp)
         {
             _ = __instance.m_IsExitingCardCloseUp;
@@ -303,7 +302,7 @@ public class ReplacingCards
 
         (WankulCardData wankulCardData, CardData cardData, int amount) inventoryCard = WankulInventory.GetWankulCardFormGameCard(cardData);
         int count = inventoryCard.amount;
-        int m_CurrentRaycastedCardIndex = (int)AccessTools.Field(__instance.GetType(), "m_CurrentRaycastedCardIndex").GetValue(__instance);
+        int m_CurrentRaycastedCardIndex = (int)Plugin.GetPProperty(__instance, "m_CurrentRaycastedCardIndex");
         __instance.m_BinderPageGrpList[0].SetSingleCard(m_CurrentRaycastedCardIndex, cardData, count, m_SortingType);
         if (count <= 0)
         {

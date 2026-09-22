@@ -393,12 +393,10 @@ namespace WankulCrazyPlugin.inventory
 
         public static WankulCardData randFromPackType(ECollectionPackType packType)
         {
-            List<WankulCardData> allCards = WankulCardsData.Instance.cards;
-
-            // Filtrer les cartes déjà associées
+            // Filtrage par saison en O(1) amorti (index précalculé) au lieu d'un
+            // List.FindAll sur toutes les cartes à chaque tirage (jusqu'à 10x/booster).
             Season season = ConvertPackTypeToSeason(packType);
-            List<WankulCardData> seasonalCard =
-                allCards.FindAll(card => card.Season == season);
+            List<WankulCardData> seasonalCard = WankulCardsData.GetCardsBySeasonFast(season);
 
             if (seasonalCard.Count == 0)
             {

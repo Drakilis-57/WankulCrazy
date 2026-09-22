@@ -1,5 +1,4 @@
-﻿using HarmonyLib;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +15,10 @@ namespace WankulCrazyPlugin.patch.workbench
     public class WorkbenchPatch
     {
         public static int currentRarityIndex = 0;
+
+        // Tableau d'enum mis en cache une seule fois (au lieu de Enum.GetValues à chaque appel).
+        private static readonly Season[] CachedSeasons = (Season[])Enum.GetValues(typeof(Season));
+
         public static Dictionary<int, (string label, List<Rarity> rarities, bool isTerrain)> rarityGroups = new Dictionary<int, (string label, List<Rarity>, bool isTerrain)>
         {
             { 0, ("Toute Rareté", new List<Rarity>((Rarity[])Enum.GetValues(typeof(Rarity))), false) },
@@ -85,18 +88,17 @@ namespace WankulCrazyPlugin.patch.workbench
         public static bool RunBundleCardBulkFunction(WorkbenchUIScreen __instance)
         {
             // Utilisation de la réflexion pour récupérer les champs privés
-            var currentInteractableWorkbench = (InteractableWorkbench)AccessTools.Field(__instance.GetType(), "m_CurrentInteractableWorkbench").GetValue(__instance);
-            var isWorkingOnTask = (bool)AccessTools.Field(__instance.GetType(), "m_IsWorkingOnTask").GetValue(__instance);
-            var currentCardExpansionType = (ECardExpansionType)AccessTools.Field(__instance.GetType(), "m_CurrentCardExpansionType").GetValue(__instance);
+            var currentInteractableWorkbench = (InteractableWorkbench)Plugin.GetPProperty(__instance, "m_CurrentInteractableWorkbench");
+            var isWorkingOnTask = (bool)Plugin.GetPProperty(__instance, "m_IsWorkingOnTask");
+            var currentCardExpansionType = (ECardExpansionType)Plugin.GetPProperty(__instance, "m_CurrentCardExpansionType");
 
-            // Accès à d'autres champs ou méthodes si nécessaire
-            var sliderPriceLimit = (UnityEngine.UI.Slider)AccessTools.Field(__instance.GetType(), "m_SliderPriceLimit").GetValue(__instance);
-            var sliderMinCard = (UnityEngine.UI.Slider)AccessTools.Field(__instance.GetType(), "m_SliderMinCard").GetValue(__instance);
-            var taskFinishCircleGrp = (UnityEngine.GameObject)AccessTools.Field(__instance.GetType(), "m_TaskFinishCirlceGrp").GetValue(__instance);
+            // Accès à d'autres champs ou méthodes si nécessaire (résolus via le cache de Plugin.GetPProperty)
+            var sliderPriceLimit = (UnityEngine.UI.Slider)Plugin.GetPProperty(__instance, "m_SliderPriceLimit");
+            var sliderMinCard = (UnityEngine.UI.Slider)Plugin.GetPProperty(__instance, "m_SliderMinCard");
+            var taskFinishCircleGrp = (UnityEngine.GameObject)Plugin.GetPProperty(__instance, "m_TaskFinishCirlceGrp");
 
 
-            Season[] seasons = (Season[])Enum.GetValues(typeof(Season));
-            Season currentSeason = seasons[ExpansionScreen.currentExpensionIndex];
+            Season currentSeason = CachedSeasons[ExpansionScreen.currentExpensionIndex];
             List<Rarity> currentRarities = rarityGroups[currentRarityIndex].rarities;
             bool isTerrain = rarityGroups[currentRarityIndex].isTerrain;
 
@@ -175,7 +177,7 @@ namespace WankulCrazyPlugin.patch.workbench
 
             currentInteractableWorkbench.PlayBundlingCardBoxSequence(selectedCardsData, currentCardExpansionType, totalPrice);
 
-            AccessTools.Field(__instance.GetType(), "m_IsWorkingOnTask").SetValue(__instance, true);
+            Plugin.SetPProperty(__instance, "m_IsWorkingOnTask", true);
 
             // Activation du GameObject via réflexion
             taskFinishCircleGrp.SetActive(true);

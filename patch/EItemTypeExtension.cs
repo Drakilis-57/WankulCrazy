@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -47,24 +47,68 @@ public static class EnumExtensions
         }
     };
 
+    private static readonly Dictionary<string, string> itemTypeAliases = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+        { "Booster Stellar", "BoosterStellar" },
+        { "Display Stellar", "DisplayStellar" },
+        { "Booster Stellar Taux +", "BoosterStellarTaux" },
+        { "Booster Stellar Taux+", "BoosterStellarTaux" },
+        { "Display Stellar Taux +", "DisplayStellarTaux" },
+        { "Display Stellar Taux+", "DisplayStellarTaux" },
+        { "Calecon Stellar", "CaleconStellar" },
+        { "Caleçon Stellar", "CaleconStellar" },
+        { "Starter Apocalypse", "StarterApocalypse" },
+        { "Starter Showtime", "StarterShowtime" },
+        { "Tapi Stellar 1", "TapisS41" },
+        { "Tapi Stellar 2", "TapisS42" },
+        { "Tapis Stellar 1", "TapisS41" },
+        { "Tapis Stellar 2", "TapisS42" },
+        { "Classeur Stellar", "ClasseurS4" },
+        { "Booster Gold Battle", "BoosterGoldBattle" },
+        { "Booster Gold Stellar", "BoosterGoldStellar" }
+    };
+
     public static EItemType SafeParseEItemType(string value)
     {
-        if (string.IsNullOrEmpty(value))
+        if (string.IsNullOrWhiteSpace(value))
         {
             Debug.LogError("[WankulCrazy] Erreur JSON: Valeur itemType vide ou null !");
             return (EItemType)0; // Valeur par défaut
         }
 
-        // Vérifie si c'est une valeur définie dans l'Enum
-        if (Enum.TryParse(typeof(EItemType), value, true, out object result))
+        string trimmed = value.Trim();
+
+        // 1. Alias connus
+        if (itemTypeAliases.TryGetValue(trimmed, out string aliasTarget))
+        {
+            trimmed = aliasTarget;
+        }
+
+        // 2. Vérifie si c'est une valeur définie dans l'Enum officiel (exact ou case-insensitive)
+        if (Enum.TryParse(typeof(EItemType), trimmed, true, out object result))
         {
             return (EItemType)result;
         }
 
-        // Vérifie si c'est une valeur custom
-        if (EnumExtensions.customEnumValues[typeof(EItemType)].ContainsValue(value))
+        // 3. Vérifie si c'est une valeur custom définie
+        var customItems = EnumExtensions.customEnumValues[typeof(EItemType)];
+        var match = customItems.FirstOrDefault(x => string.Equals(x.Value, trimmed, StringComparison.OrdinalIgnoreCase));
+        if (match.Value != null)
         {
-            return (EItemType)EnumExtensions.customEnumValues[typeof(EItemType)].FirstOrDefault(x => x.Value == value).Key;
+            return (EItemType)match.Key;
+        }
+
+        // 4. Tentative avec suppression des espaces et tirets
+        string normalized = trimmed.Replace(" ", "").Replace("-", "").Replace("_", "");
+        if (Enum.TryParse(typeof(EItemType), normalized, true, out object normalizedResult))
+        {
+            return (EItemType)normalizedResult;
+        }
+
+        var normalizedMatch = customItems.FirstOrDefault(x => string.Equals(x.Value, normalized, StringComparison.OrdinalIgnoreCase));
+        if (normalizedMatch.Value != null)
+        {
+            return (EItemType)normalizedMatch.Key;
         }
 
         Debug.LogError($"[WankulCrazy] Erreur JSON: '{value}' n'est pas une valeur valide pour EItemType.");
@@ -73,25 +117,42 @@ public static class EnumExtensions
 
     public static ECollectionPackType SafeParseECollectionPackType(string value)
     {
-        if (string.IsNullOrEmpty(value))
+        if (string.IsNullOrWhiteSpace(value))
         {
-            Debug.LogError("[WankulCrazy] Erreur JSON: Valeur itemType vide ou null !");
+            Debug.LogError("[WankulCrazy] Erreur JSON: Valeur collectionPackType vide ou null !");
             return (ECollectionPackType)0; // Valeur par défaut
         }
 
+        string trimmed = value.Trim();
+
         // Vérifie si c'est une valeur définie dans l'Enum
-        if (Enum.TryParse(typeof(ECollectionPackType), value, true, out object result))
+        if (Enum.TryParse(typeof(ECollectionPackType), trimmed, true, out object result))
         {
             return (ECollectionPackType)result;
         }
 
         // Vérifie si c'est une valeur custom
-        if (EnumExtensions.customEnumValues[typeof(ECollectionPackType)].ContainsValue(value))
+        var customPacks = EnumExtensions.customEnumValues[typeof(ECollectionPackType)];
+        var match = customPacks.FirstOrDefault(x => string.Equals(x.Value, trimmed, StringComparison.OrdinalIgnoreCase));
+        if (match.Value != null)
         {
-            return (ECollectionPackType)EnumExtensions.customEnumValues[typeof(ECollectionPackType)].FirstOrDefault(x => x.Value == value).Key;
+            return (ECollectionPackType)match.Key;
         }
 
-        Debug.LogError($"[WankulCrazy] Erreur JSON: '{value}' n'est pas une valeur valide pour EItemType.");
+        // Normalisation sans espaces
+        string normalized = trimmed.Replace(" ", "").Replace("-", "").Replace("_", "");
+        if (Enum.TryParse(typeof(ECollectionPackType), normalized, true, out object normalizedResult))
+        {
+            return (ECollectionPackType)normalizedResult;
+        }
+
+        var normalizedMatch = customPacks.FirstOrDefault(x => string.Equals(x.Value, normalized, StringComparison.OrdinalIgnoreCase));
+        if (normalizedMatch.Value != null)
+        {
+            return (ECollectionPackType)normalizedMatch.Key;
+        }
+
+        Debug.LogError($"[WankulCrazy] Erreur JSON: '{value}' n'est pas une valeur valide pour ECollectionPackType.");
         return (ECollectionPackType)0; // Valeur par défaut
     }
 

@@ -1,4 +1,3 @@
-using HarmonyLib;
 using System.Collections.Generic;
 using System;
 using UnityEngine;
@@ -16,17 +15,21 @@ namespace WankulCrazyPlugin.patch
         //public static Dictionary<int, int> indexesAssociation = new();
         public static List<WankulCardData> wankulCardsSet = new List<WankulCardData>();
         public static bool isFromCheckPriceList = false;
+
+        // Tableau d'enum mis en cache une seule fois (au lieu de Enum.GetValues à chaque appel).
+        private static readonly Season[] CachedSeasons = (Season[])Enum.GetValues(typeof(Season));
         public static bool EvaluateCardPanelUI(int cardPageIndex, CheckPriceScreen __instance)
         {
-            var m_PosX = (float)AccessTools.Field(__instance.GetType(), "m_PosX").GetValue(__instance);
-            var m_LerpPosX = (float)AccessTools.Field(__instance.GetType(), "m_LerpPosX").GetValue(__instance);
-            var m_CurrentExpansionType = (ECardExpansionType)AccessTools.Field(__instance.GetType(), "m_CurrentExpansionType").GetValue(__instance);
-            var m_CardPageMaxIndex = (int)AccessTools.Field(__instance.GetType(), "m_CardPageMaxIndex").GetValue(__instance);
-            var m_ScrollEndPosParent = (GameObject)AccessTools.Field(__instance.GetType(), "m_ScrollEndPosParent").GetValue(__instance);
-            var m_CardPageIndex = (int)AccessTools.Field(__instance.GetType(), "m_CardPageIndex").GetValue(__instance);
+            // Champs résolus via un cache (Plugin.GetPProperty) au lieu d'un AccessTools.Field
+            // recalculé à chaque appel de cette méthode.
+            var m_PosX = (float)Plugin.GetPProperty(__instance, "m_PosX");
+            var m_LerpPosX = (float)Plugin.GetPProperty(__instance, "m_LerpPosX");
+            var m_CurrentExpansionType = (ECardExpansionType)Plugin.GetPProperty(__instance, "m_CurrentExpansionType");
+            var m_CardPageMaxIndex = (int)Plugin.GetPProperty(__instance, "m_CardPageMaxIndex");
+            var m_ScrollEndPosParent = (GameObject)Plugin.GetPProperty(__instance, "m_ScrollEndPosParent");
+            var m_CardPageIndex = (int)Plugin.GetPProperty(__instance, "m_CardPageIndex");
 
-            Season[] seasons = (Season[])Enum.GetValues(typeof(Season));
-            Season currentSeason = seasons[ExpansionScreen.currentExpensionIndex];
+            Season currentSeason = CachedSeasons[ExpansionScreen.currentExpensionIndex];
             string currentSeasonText = SeasonsContainer.Seasons[currentSeason];
             List<WankulCardData> wankulCards = WankulCardsData.GetCardsFromSeason(currentSeason);
 
@@ -80,24 +83,24 @@ namespace WankulCrazyPlugin.patch
             __instance.m_PageText.text = m_CardPageIndex + 1 + " / " + (m_CardPageMaxIndex + 1);
             __instance.m_CardPageOptionGrp.SetActive(value: true);
 
-            AccessTools.Field(__instance.GetType(), "m_PosX").SetValue(__instance, m_PosX);
-            AccessTools.Field(__instance.GetType(), "m_LerpPosX").SetValue(__instance, m_LerpPosX);
-            AccessTools.Field(__instance.GetType(), "m_CurrentExpansionType").SetValue(__instance, m_CurrentExpansionType);
-            AccessTools.Field(__instance.GetType(), "m_CardPageMaxIndex").SetValue(__instance, m_CardPageMaxIndex);
-            AccessTools.Field(__instance.GetType(), "m_ScrollEndPosParent").SetValue(__instance, m_ScrollEndPosParent);
-            AccessTools.Field(__instance.GetType(), "m_CardPageIndex").SetValue(__instance, m_CardPageIndex);
+            Plugin.SetPProperty(__instance, "m_PosX", m_PosX);
+            Plugin.SetPProperty(__instance, "m_LerpPosX", m_LerpPosX);
+            Plugin.SetPProperty(__instance, "m_CurrentExpansionType", m_CurrentExpansionType);
+            Plugin.SetPProperty(__instance, "m_CardPageMaxIndex", m_CardPageMaxIndex);
+            Plugin.SetPProperty(__instance, "m_ScrollEndPosParent", m_ScrollEndPosParent);
+            Plugin.SetPProperty(__instance, "m_CardPageIndex", m_CardPageIndex);
 
             return false;
         }
         public static bool CheckPricePanelInitCard(CheckPriceScreen checkPriceScreen, int cardIndex, ECardExpansionType expansionType, bool isDestiny, CheckPricePanelUI __instance)
         {
-            var m_IsItem = (bool)AccessTools.Field(__instance.GetType(), "m_IsItem").GetValue(__instance);
-            var m_IsCard = (bool)AccessTools.Field(__instance.GetType(), "m_IsCard").GetValue(__instance);
-            var m_CheckPriceScreen = (CheckPriceScreen)AccessTools.Field(__instance.GetType(), "m_CheckPriceScreen").GetValue(__instance);
-            var m_CardIndex = (int)AccessTools.Field(__instance.GetType(), "m_CardIndex").GetValue(__instance);
-            var m_CardExpansionType = (ECardExpansionType)AccessTools.Field(__instance.GetType(), "m_CardExpansionType").GetValue(__instance);
-            var m_IsDestiny = (bool)AccessTools.Field(__instance.GetType(), "m_IsDestiny").GetValue(__instance);
-            var m_TotalPrice = (float)AccessTools.Field(__instance.GetType(), "m_TotalPrice").GetValue(__instance);
+            var m_IsItem = (bool)Plugin.GetPProperty(__instance, "m_IsItem");
+            var m_IsCard = (bool)Plugin.GetPProperty(__instance, "m_IsCard");
+            var m_CheckPriceScreen = (CheckPriceScreen)Plugin.GetPProperty(__instance, "m_CheckPriceScreen");
+            var m_CardIndex = (int)Plugin.GetPProperty(__instance, "m_CardIndex");
+            var m_CardExpansionType = (ECardExpansionType)Plugin.GetPProperty(__instance, "m_CardExpansionType");
+            var m_IsDestiny = (bool)Plugin.GetPProperty(__instance, "m_IsDestiny");
+            var m_TotalPrice = (float)Plugin.GetPProperty(__instance, "m_TotalPrice");
 
             WankulCardData wankulCardData = wankulCardsSet.ElementAt(cardIndex);
 
@@ -152,13 +155,13 @@ namespace WankulCrazyPlugin.patch
             __instance.m_ItemImage.enabled = false;
             __instance.m_CardUI.gameObject.SetActive(value: true);
 
-            AccessTools.Field(__instance.GetType(), "m_IsItem").SetValue(__instance, m_IsItem);
-            AccessTools.Field(__instance.GetType(), "m_IsCard").SetValue(__instance, m_IsCard);
-            AccessTools.Field(__instance.GetType(), "m_CheckPriceScreen").SetValue(__instance, m_CheckPriceScreen);
-            AccessTools.Field(__instance.GetType(), "m_CardIndex").SetValue(__instance, m_CardIndex);
-            AccessTools.Field(__instance.GetType(), "m_CardExpansionType").SetValue(__instance, m_CardExpansionType);
-            AccessTools.Field(__instance.GetType(), "m_IsDestiny").SetValue(__instance, m_IsDestiny);
-            AccessTools.Field(__instance.GetType(), "m_TotalPrice").SetValue(__instance, m_TotalPrice);
+            Plugin.SetPProperty(__instance, "m_IsItem", m_IsItem);
+            Plugin.SetPProperty(__instance, "m_IsCard", m_IsCard);
+            Plugin.SetPProperty(__instance, "m_CheckPriceScreen", m_CheckPriceScreen);
+            Plugin.SetPProperty(__instance, "m_CardIndex", m_CardIndex);
+            Plugin.SetPProperty(__instance, "m_CardExpansionType", m_CardExpansionType);
+            Plugin.SetPProperty(__instance, "m_IsDestiny", m_IsDestiny);
+            Plugin.SetPProperty(__instance, "m_TotalPrice", m_TotalPrice);
 
             List<float> pastCardPricePercentChange = wankulCardData.PastPercent;
             if (pastCardPricePercentChange.Count > 1)
@@ -208,7 +211,7 @@ namespace WankulCrazyPlugin.patch
             isFromCheckPriceList = true;
             __instance.m_ItemPriceGraphScreen.ShowCardPriceChart(cardIndex, expansionType, isDestiny, 0);
 
-            MethodInfo openChildScreenMethod = __instance.GetType().GetMethod("OpenChildScreen", BindingFlags.Instance | BindingFlags.NonPublic);
+            MethodInfo openChildScreenMethod = Plugin.GetCachedMethod(__instance.GetType(), "OpenChildScreen");
             openChildScreenMethod.Invoke(__instance, new object[] { __instance.m_ItemPriceGraphScreen });
 
             return false;
@@ -228,7 +231,7 @@ namespace WankulCrazyPlugin.patch
                 }
 
 
-                MethodInfo EvaluatePriceChartMethod = __instance.GetType().GetMethod("EvaluatePriceChart", BindingFlags.Instance | BindingFlags.NonPublic);
+                MethodInfo EvaluatePriceChartMethod = Plugin.GetCachedMethod(__instance.GetType(), "EvaluatePriceChart");
                 EvaluatePriceChartMethod.Invoke(__instance, new object[] { pricesList });
 
                 CardData cardData = WankulCardsData.Instance.GetCardDataFromWankulCardData(wankulCardData);
@@ -267,7 +270,7 @@ namespace WankulCrazyPlugin.patch
                     pricesList.Add(wankulCardDataSaveIndex.generatedMarketPrice * (wankulCardDataSaveIndex.PastPercent[i]) / 100);
                 }
 
-                MethodInfo EvaluatePriceChartMethod = __instance.GetType().GetMethod("EvaluatePriceChart", BindingFlags.Instance | BindingFlags.NonPublic);
+                MethodInfo EvaluatePriceChartMethod = Plugin.GetCachedMethod(__instance.GetType(), "EvaluatePriceChart");
                 EvaluatePriceChartMethod.Invoke(__instance, new object[] { pricesList });
 
                 CardData cardData = WankulCardsData.Instance.GetCardDataFromWankulCardData(wankulCardDataSaveIndex);

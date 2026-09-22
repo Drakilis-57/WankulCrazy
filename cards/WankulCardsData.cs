@@ -19,6 +19,40 @@ namespace WankulCrazyPlugin.cards
         private static readonly ECardExpansionType[] CachedExpansions = (ECardExpansionType[])Enum.GetValues(typeof(ECardExpansionType));
         private static readonly ECardBorderType[] CachedBorders = (ECardBorderType[])Enum.GetValues(typeof(ECardBorderType));
 
+        // Index Saison -> Cartes, construit une seule fois (lazy) à partir de `cards`.
+        // `cards` n'est jamais modifiée après le chargement JSON initial, donc un index
+        // paresseux évite de rescanner toute la liste (List.FindAll) à chaque tirage de carte.
+        private Dictionary<Season, List<WankulCardData>> cardsBySeason;
+
+        private Dictionary<Season, List<WankulCardData>> GetCardsBySeasonIndex()
+        {
+            if (cardsBySeason == null)
+            {
+                cardsBySeason = new Dictionary<Season, List<WankulCardData>>();
+                foreach (WankulCardData card in cards)
+                {
+                    if (!cardsBySeason.TryGetValue(card.Season, out List<WankulCardData> list))
+                    {
+                        list = new List<WankulCardData>();
+                        cardsBySeason[card.Season] = list;
+                    }
+                    list.Add(card);
+                }
+            }
+            return cardsBySeason;
+        }
+
+        /// <summary>
+        /// Retourne (en O(1) amorti) la liste des cartes d'une saison donnée, sans scanner
+        /// l'ensemble des cartes à chaque appel (contrairement à un List.FindAll).
+        /// </summary>
+        public static List<WankulCardData> GetCardsBySeasonFast(Season season)
+        {
+            return Instance.GetCardsBySeasonIndex().TryGetValue(season, out List<WankulCardData> list)
+                ? list
+                : new List<WankulCardData>();
+        }
+
 
         public WankulCardData GetFromMonster(CardData monster, bool allowNull)
         {
