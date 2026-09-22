@@ -381,13 +381,15 @@ namespace WankulCrazyPlugin.importer
                         //Debug.LogWarning("Nom : "+(spriteList[index].name));
                         if (File.Exists(OBJImporter.path_nam + "figurines/" + spriteList[index].name + "_NAME.txt"))
                         {
+                            string filePath = OBJImporter.path_nam + "figurines/" + spriteList[index].name + "_NAME.txt";
                             try
                             {
-                                string[] strArray = File.ReadAllLines(OBJImporter.path_nam + "figurines/" + spriteList[index].name + "_NAME.txt");
+                                string[] strArray = File.ReadAllLines(filePath);
                                 spriteList[index].name = strArray[0];
                             }
-                            catch
+                            catch (Exception ex)
                             {
+                                Plugin.Logger.LogWarning($"Failed to load name from: {filePath}. Error: {ex.Message}");
                             }
                         }
                         else if (File.Exists(OBJImporter.path_nam + "accessories/" + spriteList[index].name + "_NAME.txt"))
