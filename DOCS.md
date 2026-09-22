@@ -128,7 +128,7 @@ n'étant jamais modifiée après le chargement JSON initial), exposé via
 `WankulCardsData.GetCardsBySeasonFast(season)`. Le tirage passe d'un scan O(N) répété à un accès
 O(1) amorti.
 
-### 💡 Simplification 8 : Support Multi-Packs / Moddabilité par dossier (Recommandation Future)
+### ✅ Simplification 8 : Support Multi-Packs / Moddabilité par dossier (FAIT)
 Permettre le chargement séparé des données :
 ```text
 data/

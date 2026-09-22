@@ -54,14 +54,18 @@ namespace WankulCrazyPlugin.importer
             List<ItemData> itemDataList = new List<ItemData>();
             string pluginPath = Plugin.GetPluginPath();
             string customItemsPath = Path.Combine(pluginPath, "data/customitems");
-            string itemDataListPath = Path.Combine(pluginPath, customItemsPath, "ItemDataList.json");
-            string jsonContent = File.ReadAllText(itemDataListPath);
 
-            try
+            if (!Directory.Exists(customItemsPath)) return itemDataList;
+
+            string[] files = Directory.GetFiles(customItemsPath, "*ItemData*.json", SearchOption.AllDirectories);
+            foreach (string filePath in files)
             {
-                JArray jsonArray = JArray.Parse(jsonContent);
+                try
+                {
+                    string jsonContent = File.ReadAllText(filePath);
+                    JArray jsonArray = JArray.Parse(jsonContent);
 
-                foreach (JObject itemDataJson in jsonArray)
+                    foreach (JObject itemDataJson in jsonArray)
                 {
                     ItemData itemData = new ItemData();
                     EItemType itemType = EnumExtensions.SafeParseEItemType(itemDataJson.GetValue("itemType").Value<string>());
@@ -130,10 +134,11 @@ namespace WankulCrazyPlugin.importer
                     itemDataList.Add(itemData);
                 }
 
-            }
-            catch (System.Exception ex)
-            {
-                Plugin.Logger.LogError("Failed to deserialize JSON ItemData: " + ex.Message);
+                }
+                catch (System.Exception ex)
+                {
+                    Plugin.Logger.LogError($"Failed to deserialize JSON ItemData from {filePath}: " + ex.Message);
+                }
             }
 
             return itemDataList;
@@ -144,14 +149,18 @@ namespace WankulCrazyPlugin.importer
             List<RestockData> restockDataList = new List<RestockData>();
             string pluginPath = Plugin.GetPluginPath();
             string customItemsPath = Path.Combine(pluginPath, "data/customitems");
-            string restockDataListPath = Path.Combine(pluginPath, customItemsPath, "restockDataList.json");
-            string jsonContent = File.ReadAllText(restockDataListPath);
 
-            try
+            if (!Directory.Exists(customItemsPath)) return restockDataList;
+
+            string[] files = Directory.GetFiles(customItemsPath, "*restockData*.json", SearchOption.AllDirectories);
+            foreach (string filePath in files)
             {
-                JArray jsonArray = JArray.Parse(jsonContent);
+                try
+                {
+                    string jsonContent = File.ReadAllText(filePath);
+                    JArray jsonArray = JArray.Parse(jsonContent);
 
-                foreach (JObject restockDataJson in jsonArray)
+                    foreach (JObject restockDataJson in jsonArray)
                 {
                     RestockData restockData = new RestockData();
                     restockData.index = restockDataJson.GetValue("index").Value<int>();
@@ -168,10 +177,11 @@ namespace WankulCrazyPlugin.importer
                     restockDataList.Add(restockData);
                 }
 
-            }
-            catch (System.Exception ex)
-            {
-                Plugin.Logger.LogError("Failed to deserialize JSON RestockData: " + ex.Message);
+                }
+                catch (System.Exception ex)
+                {
+                    Plugin.Logger.LogError($"Failed to deserialize JSON RestockData from {filePath}: " + ex.Message);
+                }
             }
 
             return restockDataList;
@@ -182,15 +192,19 @@ namespace WankulCrazyPlugin.importer
             List<ItemMeshData> itemMeshDataList = new List<ItemMeshData>();
             string pluginPath = Plugin.GetPluginPath();
             string customItemsPath = Path.Combine(pluginPath, "data/customitems");
-            string itemMeshDataListPath = Path.Combine(pluginPath, customItemsPath, "itemMeshDataList.json");
-            string jsonContent = File.ReadAllText(itemMeshDataListPath);
             string copyItemTypestring = "rien";
 
-            try
-            {
-                JArray jsonArray = JArray.Parse(jsonContent);
+            if (!Directory.Exists(customItemsPath)) return itemMeshDataList;
 
-                foreach (JObject itemMeshDataJson in jsonArray)
+            string[] files = Directory.GetFiles(customItemsPath, "*itemMeshData*.json", SearchOption.AllDirectories);
+            foreach (string filePath in files)
+            {
+                try
+                {
+                    string jsonContent = File.ReadAllText(filePath);
+                    JArray jsonArray = JArray.Parse(jsonContent);
+
+                    foreach (JObject itemMeshDataJson in jsonArray)
                 {
                     ItemMeshData itemMeshData = new ItemMeshData();
                     EItemType itemType = EnumExtensions.SafeParseEItemType(itemMeshDataJson.GetValue("itemType").Value<string>());
@@ -298,11 +312,12 @@ namespace WankulCrazyPlugin.importer
                     itemMeshDataList.Add(itemMeshData);
                 }
 
-            }
-            catch (System.Exception ex)
-            {
-                Plugin.Logger.LogError("Failed to deserialize JSON ItemMeshData: " + ex.Message);
-                Plugin.Logger.LogError("Failed to deserialize JSON ItemMeshData: " + copyItemTypestring);
+                }
+                catch (System.Exception ex)
+                {
+                    Plugin.Logger.LogError($"Failed to deserialize JSON ItemMeshData from {filePath}: " + ex.Message);
+                    Plugin.Logger.LogError("Last copyItemType string: " + copyItemTypestring);
+                }
             }
 
             return itemMeshDataList;
