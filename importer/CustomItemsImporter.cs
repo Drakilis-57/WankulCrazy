@@ -275,8 +275,9 @@ namespace WankulCrazyPlugin.importer
                                         mesh1.name = itemMeshData.name;
                                         itemMeshData.mesh = mesh1;
                                     }
-                                    catch
+                                    catch (System.Exception ex)
                                     {
+                                        Plugin.Logger.LogWarning($"Failed to combine mesh for item '{itemMeshData.name}': {ex.Message}");
                                     }
                                 }
                                 OBJImporter.tempmesh.gameObject.SetActive(false);
