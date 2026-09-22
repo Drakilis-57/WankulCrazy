@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
+using Newtonsoft.Json;
 using WankulCrazyPlugin.patch;
 
 namespace WankulCrazyPlugin.cards
@@ -17,17 +17,46 @@ namespace WankulCrazyPlugin.cards
 
         public CardType CardType;
 
+        [JsonConverter(typeof(SeasonJsonConverter))]
         public Season Season;
+
+        private string seasonId;
+
+        public string SeasonId
+        {
+            get => !string.IsNullOrEmpty(seasonId) ? seasonId : Season.ToString();
+            set
+            {
+                seasonId = value;
+                if (!string.IsNullOrEmpty(value))
+                {
+                    SeasonsManager.RegisterSeason(new SeasonData(value, value));
+                    if (Enum.TryParse<Season>(value, true, out var parsedSeason))
+                    {
+                        Season = parsedSeason;
+                    }
+                }
+            }
+        }
 
         public string TexturePath;
 
-        public Texture2D Texture;
+        private object texture;
+        private object textureMask;
+        private object sprite;
+        private object spriteMask;
 
-        public Texture2D TextureMask;
+        [JsonIgnore]
+        public object Texture { get => texture; set => texture = value; }
 
-        public Sprite Sprite;
+        [JsonIgnore]
+        public object TextureMask { get => textureMask; set => textureMask = value; }
 
-        public Sprite SpriteMask;
+        [JsonIgnore]
+        public object Sprite { get => sprite; set => sprite = value; }
+
+        [JsonIgnore]
+        public object SpriteMask { get => spriteMask; set => spriteMask = value; }
 
         public bool IsNumberInt(string text)
         {
@@ -60,13 +89,21 @@ namespace WankulCrazyPlugin.cards
 
         public float generatedMarketPrice;
 
+        [JsonIgnore]
         public float MarketPrice
         {
             get
             {
                 if (generatedMarketPrice == 0)
                 {
-                    generatedMarketPrice = CardPrice.generateMarketPrice(this);
+                    try
+                    {
+                        generatedMarketPrice = CardPrice.generateMarketPrice(this);
+                    }
+                    catch
+                    {
+                        generatedMarketPrice = 1.0f;
+                    }
                 }
                 return generatedMarketPrice * (Percentage / 100);
             }
