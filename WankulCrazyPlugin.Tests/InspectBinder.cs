@@ -19,7 +19,7 @@ namespace WankulCrazyPlugin.Tests
         [Fact]
         public void Run()
         {
-            var assemblyPath = Path.GetFullPath(@"..\..\..\..\libs\Assembly-CSharp.dll");
+            var assemblyPath = Path.GetFullPath(@"../../../../libs/Assembly-CSharp.dll");
             var assembly = AssemblyDefinition.ReadAssembly(assemblyPath);
 
             var binderUI = assembly.MainModule.Types.FirstOrDefault(t => t.Name == "CollectionBinderUI");
