@@ -12,7 +12,7 @@ namespace WankulCrazyPlugin.utils.obj
         internal List<Vector3> Vertices = new List<Vector3>();
         internal List<Vector3> Normals = new List<Vector3>();
         internal List<Vector2> UVs = new List<Vector2>();
-        internal Dictionary<string, Material> Materials;
+        internal Dictionary<string, Material> Materials = new Dictionary<string, Material>();
         private FileInfo _objInfo;
 
 
