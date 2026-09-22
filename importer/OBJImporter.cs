@@ -379,48 +379,34 @@ namespace WankulCrazyPlugin.importer
                     if (spriteList[index].name != "")
                     {
                         //Debug.LogWarning("Nom : "+(spriteList[index].name));
+                        string nameFilePath = null;
                         if (File.Exists(OBJImporter.path_nam + "figurines/" + spriteList[index].name + "_NAME.txt"))
                         {
-                            try
-                            {
-                                string[] strArray = File.ReadAllLines(OBJImporter.path_nam + "figurines/" + spriteList[index].name + "_NAME.txt");
-                                spriteList[index].name = strArray[0];
-                            }
-                            catch
-                            {
-                            }
+                            nameFilePath = OBJImporter.path_nam + "figurines/" + spriteList[index].name + "_NAME.txt";
                         }
                         else if (File.Exists(OBJImporter.path_nam + "accessories/" + spriteList[index].name + "_NAME.txt"))
                         {
-                            try
-                            {
-                                string[] strArray = File.ReadAllLines(OBJImporter.path_nam + "accessories/" + spriteList[index].name + "_NAME.txt");
-                                spriteList[index].name = strArray[0];
-                            }
-                            catch
-                            {
-                            }
+                            nameFilePath = OBJImporter.path_nam + "accessories/" + spriteList[index].name + "_NAME.txt";
                         }
                         else if (File.Exists(OBJImporter.path_nam + "booster packs/" + spriteList[index].name + "_NAME.txt"))
                         {
-                            try
-                            {
-                                string[] strArray = File.ReadAllLines(OBJImporter.path_nam + "booster packs/" + spriteList[index].name + "_NAME.txt");
-                                spriteList[index].name = strArray[0];
-                            }
-                            catch
-                            {
-                            }
+                            nameFilePath = OBJImporter.path_nam + "booster packs/" + spriteList[index].name + "_NAME.txt";
                         }
                         else if (File.Exists(OBJImporter.path_nam + "posters/" + spriteList[index].name + "_NAME.txt"))
                         {
+                            nameFilePath = OBJImporter.path_nam + "posters/" + spriteList[index].name + "_NAME.txt";
+                        }
+
+                        if (nameFilePath != null)
+                        {
                             try
                             {
-                                string[] strArray = File.ReadAllLines(OBJImporter.path_nam + "posters/" + spriteList[index].name + "_NAME.txt");
+                                string[] strArray = File.ReadAllLines(nameFilePath);
                                 spriteList[index].name = strArray[0];
                             }
                             catch
                             {
+                                Plugin.Logger.LogWarning($"Failed to load name from: {nameFilePath}");
                             }
                         }
                     }
