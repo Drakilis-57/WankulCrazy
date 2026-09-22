@@ -379,48 +379,57 @@ namespace WankulCrazyPlugin.importer
                     if (spriteList[index].name != "")
                     {
                         //Debug.LogWarning("Nom : "+(spriteList[index].name));
-                        if (File.Exists(OBJImporter.path_nam + "figurines/" + spriteList[index].name + "_NAME.txt"))
+                        string figurinePath = OBJImporter.path_nam + "figurines/" + spriteList[index].name + "_NAME.txt";
+                        string accessoryPath = OBJImporter.path_nam + "accessories/" + spriteList[index].name + "_NAME.txt";
+                        string boosterPath = OBJImporter.path_nam + "booster packs/" + spriteList[index].name + "_NAME.txt";
+                        string posterPath = OBJImporter.path_nam + "posters/" + spriteList[index].name + "_NAME.txt";
+
+                        if (File.Exists(figurinePath))
                         {
                             try
                             {
-                                string[] strArray = File.ReadAllLines(OBJImporter.path_nam + "figurines/" + spriteList[index].name + "_NAME.txt");
+                                string[] strArray = File.ReadAllLines(figurinePath);
                                 spriteList[index].name = strArray[0];
                             }
-                            catch
+                            catch (Exception ex)
                             {
+                                Plugin.Logger.LogWarning($"Failed to load name from: {figurinePath} - {ex.Message}");
                             }
                         }
-                        else if (File.Exists(OBJImporter.path_nam + "accessories/" + spriteList[index].name + "_NAME.txt"))
+                        else if (File.Exists(accessoryPath))
                         {
                             try
                             {
-                                string[] strArray = File.ReadAllLines(OBJImporter.path_nam + "accessories/" + spriteList[index].name + "_NAME.txt");
+                                string[] strArray = File.ReadAllLines(accessoryPath);
                                 spriteList[index].name = strArray[0];
                             }
-                            catch
+                            catch (Exception ex)
                             {
+                                Plugin.Logger.LogWarning($"Failed to load name from: {accessoryPath} - {ex.Message}");
                             }
                         }
-                        else if (File.Exists(OBJImporter.path_nam + "booster packs/" + spriteList[index].name + "_NAME.txt"))
+                        else if (File.Exists(boosterPath))
                         {
                             try
                             {
-                                string[] strArray = File.ReadAllLines(OBJImporter.path_nam + "booster packs/" + spriteList[index].name + "_NAME.txt");
+                                string[] strArray = File.ReadAllLines(boosterPath);
                                 spriteList[index].name = strArray[0];
                             }
-                            catch
+                            catch (Exception ex)
                             {
+                                Plugin.Logger.LogWarning($"Failed to load name from: {boosterPath} - {ex.Message}");
                             }
                         }
-                        else if (File.Exists(OBJImporter.path_nam + "posters/" + spriteList[index].name + "_NAME.txt"))
+                        else if (File.Exists(posterPath))
                         {
                             try
                             {
-                                string[] strArray = File.ReadAllLines(OBJImporter.path_nam + "posters/" + spriteList[index].name + "_NAME.txt");
+                                string[] strArray = File.ReadAllLines(posterPath);
                                 spriteList[index].name = strArray[0];
                             }
-                            catch
+                            catch (Exception ex)
                             {
+                                Plugin.Logger.LogWarning($"Failed to load name from: {posterPath} - {ex.Message}");
                             }
                         }
                     }
