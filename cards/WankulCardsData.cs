@@ -417,14 +417,8 @@ namespace WankulCrazyPlugin.cards
                 shopXpFactor = 1;
             }
 
-            // Logging for debugging purposes
-            //Plugin.Logger.LogInfo($"Experience before shop factor: {experienceFloat}");
-            //Plugin.Logger.LogInfo($"shop factor: {shopXpFactor}");
-
             // Final experience calculation
             int experience = Mathf.CeilToInt(experienceFloat * shopXpFactor);
-
-            //Plugin.Logger.LogInfo($"Experience after shop factor: {experience}");
 
             return experience;
         }
