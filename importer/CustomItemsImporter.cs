@@ -43,16 +43,8 @@ namespace WankulCrazyPlugin.importer
             //    InventoryBase.Instance.m_StockItemData_SO.m_ShownItemType.Add(EnumExtensions.SafeParseEItemType(item.Value));
             //}
 
-            InventoryBase.Instance.m_StockItemData_SO.m_ShownItemType.Add(EnumExtensions.SafeParseEItemType("BoosterStellar"));
-            InventoryBase.Instance.m_StockItemData_SO.m_ShownItemType.Add(EnumExtensions.SafeParseEItemType("DisplayStellar"));
-            InventoryBase.Instance.m_StockItemData_SO.m_ShownItemType.Add(EnumExtensions.SafeParseEItemType("BoosterStellarTaux"));
-            InventoryBase.Instance.m_StockItemData_SO.m_ShownItemType.Add(EnumExtensions.SafeParseEItemType("DisplayStellarTaux"));
-            InventoryBase.Instance.m_StockItemData_SO.m_ShownItemType.Add(EnumExtensions.SafeParseEItemType("StarterApocalypse"));
-            InventoryBase.Instance.m_StockItemData_SO.m_ShownItemType.Add(EnumExtensions.SafeParseEItemType("StarterShowtime"));
-            InventoryBase.Instance.m_StockItemData_SO.m_ShownFigurineItemType.Add(EnumExtensions.SafeParseEItemType("CaleconStellar"));
-            InventoryBase.Instance.m_StockItemData_SO.m_ShownAccessoryItemType.Add(EnumExtensions.SafeParseEItemType("TapisS41"));
-            InventoryBase.Instance.m_StockItemData_SO.m_ShownAccessoryItemType.Add(EnumExtensions.SafeParseEItemType("TapisS42"));
-            InventoryBase.Instance.m_StockItemData_SO.m_ShownAccessoryItemType.Add(EnumExtensions.SafeParseEItemType("ClasseurS4"));
+            // Dynamic category auto-registration for imported custom items
+            RegisterCustomItemsToShopCategories(ItemDataList);
 
             isImported = true;
         }
@@ -396,6 +388,38 @@ namespace WankulCrazyPlugin.importer
                 __result = ECardExpansionType.None;
 
             return false;
+        }
+
+        private static void RegisterCustomItemsToShopCategories(List<ItemData> itemDataList)
+        {
+            if (itemDataList == null || InventoryBase.Instance?.m_StockItemData_SO == null)
+                return;
+
+            var stockSO = InventoryBase.Instance.m_StockItemData_SO;
+
+            foreach (var itemData in itemDataList)
+            {
+                EItemType itemType = EnumExtensions.SafeParseEItemType(itemData.name);
+                if (itemType == EItemType.None)
+                    continue;
+
+                string categoryStr = itemData.category.ToString();
+                if (categoryStr.Equals("Figurine", StringComparison.OrdinalIgnoreCase))
+                {
+                    if (!stockSO.m_ShownFigurineItemType.Contains(itemType))
+                        stockSO.m_ShownFigurineItemType.Add(itemType);
+                }
+                else if (categoryStr.Equals("Accessory", StringComparison.OrdinalIgnoreCase) || categoryStr.Equals("Accessories", StringComparison.OrdinalIgnoreCase))
+                {
+                    if (!stockSO.m_ShownAccessoryItemType.Contains(itemType))
+                        stockSO.m_ShownAccessoryItemType.Add(itemType);
+                }
+                else
+                {
+                    if (!stockSO.m_ShownItemType.Contains(itemType))
+                        stockSO.m_ShownItemType.Add(itemType);
+                }
+            }
         }
     }
 }
