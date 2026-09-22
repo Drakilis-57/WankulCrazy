@@ -217,8 +217,9 @@ namespace WankulCrazyPlugin.importer
                         OBJImporter.cachedMeshes[key] = mesh1;
                         OBJImporter.cachedMeshes[key].UploadMeshData(true);
                     }
-                    catch
+                    catch (System.Exception ex)
                     {
+                        Plugin.Logger.LogWarning($"Failed to cache mesh for key '{key}': {ex.Message}");
                     }
                 }
             }
