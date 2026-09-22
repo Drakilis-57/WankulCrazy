@@ -68,7 +68,7 @@ namespace WankulCrazyPlugin.patch
 
             GameObject s04GameObject = GameObject.Instantiate(destinyButton.gameObject);
             s04GameObject.name = "S04_Button";
-            s04GameObject.transform.SetParent(tetramonButton.GetParent().transform);
+            s04GameObject.transform.SetParent(tetramonButton.parent);
             s04GameObject.transform.localScale = tetramonButton.localScale;
             s04GameObject.transform.localPosition = tetramonButton.localPosition;
             s04GameObject.transform.localRotation = tetramonButton.localRotation;
@@ -92,7 +92,7 @@ namespace WankulCrazyPlugin.patch
 
             GameObject HSGameObject = GameObject.Instantiate(destinyButton.gameObject);
             HSGameObject.name = "HS_Button";
-            HSGameObject.transform.SetParent(tetramonButton.GetParent().transform);
+            HSGameObject.transform.SetParent(tetramonButton.parent);
             HSGameObject.transform.localScale = tetramonButton.localScale;
             HSGameObject.transform.localPosition = tetramonButton.localPosition;
             HSGameObject.transform.localRotation = tetramonButton.localRotation;
