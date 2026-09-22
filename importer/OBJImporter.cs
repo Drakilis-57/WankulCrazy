@@ -129,8 +129,9 @@ namespace WankulCrazyPlugin.importer
                     }
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                Plugin.Logger.LogWarning($"Error while scanning sprite files: {ex}");
             }
             try
             {
