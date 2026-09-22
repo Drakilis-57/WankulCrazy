@@ -379,48 +379,65 @@ namespace WankulCrazyPlugin.importer
                     if (spriteList[index].name != "")
                     {
                         //Debug.LogWarning("Nom : "+(spriteList[index].name));
-                        if (File.Exists(OBJImporter.path_nam + "figurines/" + spriteList[index].name + "_NAME.txt"))
+                        string nameFilePath = OBJImporter.path_nam + "figurines/" + spriteList[index].name + "_NAME.txt";
+                        if (File.Exists(nameFilePath))
                         {
                             try
                             {
-                                string[] strArray = File.ReadAllLines(OBJImporter.path_nam + "figurines/" + spriteList[index].name + "_NAME.txt");
-                                spriteList[index].name = strArray[0];
+                                string[] strArray = File.ReadAllLines(nameFilePath);
+                                if (strArray.Length > 0)
+                                {
+                                    spriteList[index].name = strArray[0];
+                                }
                             }
-                            catch
+                            catch (Exception ex)
                             {
+                                Plugin.Logger.LogWarning($"Failed to load name from {nameFilePath}: {ex.Message}");
                             }
                         }
-                        else if (File.Exists(OBJImporter.path_nam + "accessories/" + spriteList[index].name + "_NAME.txt"))
+                        else if (File.Exists(nameFilePath = OBJImporter.path_nam + "accessories/" + spriteList[index].name + "_NAME.txt"))
                         {
                             try
                             {
-                                string[] strArray = File.ReadAllLines(OBJImporter.path_nam + "accessories/" + spriteList[index].name + "_NAME.txt");
-                                spriteList[index].name = strArray[0];
+                                string[] strArray = File.ReadAllLines(nameFilePath);
+                                if (strArray.Length > 0)
+                                {
+                                    spriteList[index].name = strArray[0];
+                                }
                             }
-                            catch
+                            catch (Exception ex)
                             {
+                                Plugin.Logger.LogWarning($"Failed to load name from {nameFilePath}: {ex.Message}");
                             }
                         }
-                        else if (File.Exists(OBJImporter.path_nam + "booster packs/" + spriteList[index].name + "_NAME.txt"))
+                        else if (File.Exists(nameFilePath = OBJImporter.path_nam + "booster packs/" + spriteList[index].name + "_NAME.txt"))
                         {
                             try
                             {
-                                string[] strArray = File.ReadAllLines(OBJImporter.path_nam + "booster packs/" + spriteList[index].name + "_NAME.txt");
-                                spriteList[index].name = strArray[0];
+                                string[] strArray = File.ReadAllLines(nameFilePath);
+                                if (strArray.Length > 0)
+                                {
+                                    spriteList[index].name = strArray[0];
+                                }
                             }
-                            catch
+                            catch (Exception ex)
                             {
+                                Plugin.Logger.LogWarning($"Failed to load name from {nameFilePath}: {ex.Message}");
                             }
                         }
-                        else if (File.Exists(OBJImporter.path_nam + "posters/" + spriteList[index].name + "_NAME.txt"))
+                        else if (File.Exists(nameFilePath = OBJImporter.path_nam + "posters/" + spriteList[index].name + "_NAME.txt"))
                         {
                             try
                             {
-                                string[] strArray = File.ReadAllLines(OBJImporter.path_nam + "posters/" + spriteList[index].name + "_NAME.txt");
-                                spriteList[index].name = strArray[0];
+                                string[] strArray = File.ReadAllLines(nameFilePath);
+                                if (strArray.Length > 0)
+                                {
+                                    spriteList[index].name = strArray[0];
+                                }
                             }
-                            catch
+                            catch (Exception ex)
                             {
+                                Plugin.Logger.LogWarning($"Failed to load name from {nameFilePath}: {ex.Message}");
                             }
                         }
                     }
