@@ -8,6 +8,7 @@ using WankulCrazyPlugin.importer;
 
 namespace WankulCrazyPlugin.Tests
 {
+    [Collection("StaticStateTests")]
     public class DocsFeaturesVerificationTests
     {
         [Fact]
