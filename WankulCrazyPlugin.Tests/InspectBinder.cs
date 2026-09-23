@@ -42,6 +42,7 @@ namespace WankulCrazyPlugin.Tests
                     }
                 }
             }
+
             var binderAnim = assembly.MainModule.Types.FirstOrDefault(t => t.Name == "CollectionBinderFlipAnimCtrl");
             if (binderAnim != null)
             {
@@ -57,12 +58,10 @@ namespace WankulCrazyPlugin.Tests
                 // Look for nested iterator types
                 foreach (var nested in binderAnim.NestedTypes)
                 {
-                    if (nested.Name?.Contains("DelayAlbumSort"))
+                    if (!string.IsNullOrEmpty(nested.Name) && nested.Name.Contains("DelayAlbumSort"))
                     {
                         _output.WriteLine($"Nested: {nested.Name}");
-                        if (nested.Methods != null)
-                        {
-                             foreach (var m in nested.Methods)
+                        foreach (var m in nested.Methods)
                         {
                             _output.WriteLine($"  {m.ReturnType.Name} {m.Name}");
                         }
