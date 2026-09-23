@@ -5,6 +5,22 @@ using Newtonsoft.Json;
 
 namespace WankulCrazyPlugin.cards
 {
+    internal static class PluginLogger
+    {
+        public static void LogError(string message)
+        {
+            try
+            {
+                if (Plugin.Logger != null) Plugin.Logger.LogError(message);
+                else Console.WriteLine("[Error] " + message);
+            }
+            catch
+            {
+                Console.WriteLine("[Error] " + message);
+            }
+        }
+    }
+
     public static class SeasonsManager
     {
         private static readonly object _lock = new object();
@@ -61,7 +77,7 @@ namespace WankulCrazyPlugin.cards
             }
             catch (Exception ex)
             {
-                Plugin.Logger?.LogError($"Failed to load seasons.json: {ex.Message}");
+                try { PluginLogger.LogError($"Failed to load seasons.json: {ex.Message}"); } catch {}
             }
         }
 
@@ -97,10 +113,14 @@ namespace WankulCrazyPlugin.cards
                 allSeasons.Add(seasonData);
             }
 
-            if (Enum.TryParse<Season>(seasonData.Id, true, out var seasonEnum))
+            try
             {
-                SeasonsContainer.Seasons[seasonEnum] = seasonData.Name;
+                if (Enum.TryParse<Season>(seasonData.Id, true, out var seasonEnum))
+                {
+                    SeasonsContainer.Seasons[seasonEnum] = seasonData.Name;
+                }
             }
+            catch (Exception) { }
         }
 
         public static SeasonData GetSeason(string id)

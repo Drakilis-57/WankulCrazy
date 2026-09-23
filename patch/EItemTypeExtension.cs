@@ -51,9 +51,22 @@ public static class EnumExtensions
         { "Test Card Pack 32", "TestCardPack32" }, { "Test Card Pack 64", "TestCardPack64" }
     };
 
+
+    private static void LogError(string message)
+    {
+        try
+        {
+            Debug.LogError(message);
+        }
+        catch (Exception)
+        {
+            Console.WriteLine("[Error] " + message);
+        }
+    }
+
     public static EItemType SafeParseEItemType(string value)
     {
-        if (string.IsNullOrWhiteSpace(value)) { Debug.LogError("[WankulCrazy] Erreur JSON: Valeur itemType vide ou null !"); return (EItemType)0; }
+        if (string.IsNullOrWhiteSpace(value)) { LogError("[WankulCrazy] Erreur JSON: Valeur itemType vide ou null !"); return (EItemType)0; }
         string trimmed = value.Trim();
         if (itemTypeAliases.TryGetValue(trimmed, out string aliasTarget)) trimmed = aliasTarget;
         if (Enum.TryParse(typeof(EItemType), trimmed, true, out object result)) return (EItemType)result;
@@ -64,7 +77,7 @@ public static class EnumExtensions
         if (Enum.TryParse(typeof(EItemType), normalized, true, out object normalizedResult)) return (EItemType)normalizedResult;
         var normalizedMatch = customItems.FirstOrDefault(x => string.Equals(x.Value, normalized, StringComparison.OrdinalIgnoreCase));
         if (normalizedMatch.Value != null) return (EItemType)normalizedMatch.Key;
-        Debug.LogError($"[WankulCrazy] Erreur JSON: '{value}' n'est pas une valeur valide pour EItemType.");
+        LogError($"[WankulCrazy] Erreur JSON: '{value}' n'est pas une valeur valide pour EItemType.");
         return (EItemType)0;
     }
 
@@ -80,7 +93,7 @@ public static class EnumExtensions
         if (Enum.TryParse(typeof(ECollectionPackType), normalized, true, out object normalizedResult)) return (ECollectionPackType)normalizedResult;
         var normalizedMatch = customPacks.FirstOrDefault(x => string.Equals(x.Value, normalized, StringComparison.OrdinalIgnoreCase));
         if (normalizedMatch.Value != null) return (ECollectionPackType)normalizedMatch.Key;
-        Debug.LogError($"[WankulCrazy] Erreur JSON: '{value}' n'est pas une valeur valide pour ECollectionPackType.");
+        LogError($"[WankulCrazy] Erreur JSON: '{value}' n'est pas une valeur valide pour ECollectionPackType.");
         return (ECollectionPackType)0;
     }
 

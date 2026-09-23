@@ -77,7 +77,7 @@ namespace WankulCrazyPlugin.cards
             }
             catch (Exception ex)
             {
-                Plugin.Logger?.LogError($"Failed to load rarities.json: {ex.Message}");
+                try { Plugin.Logger?.LogError($"Failed to load rarities.json: {ex.Message}"); } catch {}
             }
         }
 
