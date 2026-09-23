@@ -172,27 +172,37 @@ namespace WankulCrazyPlugin.cards
             return null;
         }
 
+        // Cache du parsing des cles "monster_border_expansion" : Enum.Parse (patche par Harmony)
+        // etait appele 3 fois par carte a chaque chargement de sauvegarde.
+        private static readonly Dictionary<string, (EMonsterType monster, ECardBorderType border, ECardExpansionType expansion)> parsedKeyCache
+            = new Dictionary<string, (EMonsterType, ECardBorderType, ECardExpansionType)>();
+
         public CardData GetCardDataFromKey(string key)
         {
-            // Découper la clé en utilisant l'underscore comme séparateur
-            string[] parts = key.Split('_');
-
-            if (parts.Length != 3)
+            if (!parsedKeyCache.TryGetValue(key, out var parsed))
             {
-                Debug.LogError("La clé ne contient pas le bon nombre de parties.");
-                return null;
+                // Découper la clé en utilisant l'underscore comme séparateur
+                string[] parts = key.Split('_');
+
+                if (parts.Length != 3)
+                {
+                    Debug.LogError("La clé ne contient pas le bon nombre de parties.");
+                    return null;
+                }
+
+                parsed = (
+                    (EMonsterType)Enum.Parse(typeof(EMonsterType), parts[0]),
+                    (ECardBorderType)Enum.Parse(typeof(ECardBorderType), parts[1]),
+                    (ECardExpansionType)Enum.Parse(typeof(ECardExpansionType), parts[2])
+                );
+                parsedKeyCache[key] = parsed;
             }
 
-            // Extraire les valeurs
-            EMonsterType monsterType = (EMonsterType)Enum.Parse(typeof(EMonsterType), parts[0]);
-            ECardBorderType borderType = (ECardBorderType)Enum.Parse(typeof(ECardBorderType), parts[1]);
-            ECardExpansionType expansionType = (ECardExpansionType)Enum.Parse(typeof(ECardExpansionType), parts[2]);
-
-            // Récupérer les données du monstre
+            // Nouvelle instance a chaque appel : CardData est mutable (isFoil, isNew...)
             CardData cardData = new CardData();
-            cardData.monsterType = monsterType;
-            cardData.borderType = borderType;
-            cardData.expansionType = expansionType;
+            cardData.monsterType = parsed.monster;
+            cardData.borderType = parsed.border;
+            cardData.expansionType = parsed.expansion;
 
             return cardData;
         }
@@ -219,17 +229,45 @@ namespace WankulCrazyPlugin.cards
             }
         }
 
-        public CardData GetUnassciatedCardData()
+        private struct Slot
         {
-            int currentTestedCard = 0;
+            public ECardExpansionType Expansion;
+            public ECardBorderType Border;
+            public EMonsterType Monster;
+            public string Key;
+        }
+
+        // Liste ordonnee (meme ordre de parcours qu'avant) de tous les slots utilisables,
+        // construite une seule fois, + curseur sur le premier slot potentiellement libre.
+        private List<Slot> slotOrder;
+        private int slotCursor;
+        private Dictionary<string, WankulCardData> slotCursorAssociation;
+        private int slotCursorAssociationCount;
+
+        private static bool IsExcludedMonster(EMonsterType monster)
+        {
+            return monster == EMonsterType.EarlyPlayer ||
+                   monster == EMonsterType.START_CATJOB ||
+                   monster == EMonsterType.START_FANTASYRPG ||
+                   monster == EMonsterType.START_MEGABOT ||
+                   monster == EMonsterType.None ||
+                   monster == EMonsterType.MAX ||
+                   monster == EMonsterType.MAX_CATJOB ||
+                   monster == EMonsterType.MAX_FANTASYRPG ||
+                   monster == EMonsterType.MAX_MEGABOT;
+        }
+
+        private static List<Slot> BuildSlotOrder()
+        {
+            var slots = new List<Slot>();
             foreach (ECardExpansionType expansion in CachedExpansions)
             {
                 if (
-                            expansion == ECardExpansionType.None ||
-                            expansion == ECardExpansionType.Ghost ||
-                            expansion == ECardExpansionType.FoodieGO ||
-                            expansion == ECardExpansionType.MAX
-                    )
+                    expansion == ECardExpansionType.None ||
+                    expansion == ECardExpansionType.Ghost ||
+                    expansion == ECardExpansionType.FoodieGO ||
+                    expansion == ECardExpansionType.MAX
+                )
                 {
                     continue;
                 }
@@ -240,43 +278,49 @@ namespace WankulCrazyPlugin.cards
                         for (int i = startMonsterList; i <= endMonsterList; i++)
                         {
                             EMonsterType monster = (EMonsterType)i;
-                            if (
-                                monster == EMonsterType.EarlyPlayer ||
-                                monster == EMonsterType.START_CATJOB ||
-                                monster == EMonsterType.START_FANTASYRPG ||
-                                monster == EMonsterType.START_MEGABOT ||
-                                monster == EMonsterType.None ||
-                                monster == EMonsterType.MAX ||
-                                monster == EMonsterType.MAX_CATJOB ||
-                                monster == EMonsterType.MAX_FANTASYRPG ||
-                                monster == EMonsterType.MAX_MEGABOT
-                                )
-                            {
-                                continue;
-                            }
-                            // Récupérer les données du monstre
-                            MonsterData monsterData = InventoryBase.GetMonsterData(monster);
+                            if (IsExcludedMonster(monster)) continue;
 
-                            CardData cardData = new CardData();
-                            cardData.borderType = border;
-                            cardData.expansionType = expansion;
-                            cardData.monsterType = monster;
-
-                            string key = $"{cardData.monsterType.ToString()}_{cardData.borderType.ToString()}_{cardData.expansionType.ToString()}";
-                            currentTestedCard++;
-                            if (!association.ContainsKey(key))
+                            slots.Add(new Slot
                             {
-                                return cardData; // Retourne le premier CardData manquant trouvé
-                            } else
-                            {
-                                //Plugin.Logger.LogInfo($"CardData {key} already associated {currentTestedCard}");
-                            }
+                                Expansion = expansion,
+                                Border = border,
+                                Monster = monster,
+                                Key = $"{monster}_{border}_{expansion}"
+                            });
                         }
                     }
                 }
-
             }
-            return null; // Si aucune CardData manquante n'est trouvée
+            return slots;
+        }
+
+        public CardData GetUnassciatedCardData()
+        {
+            slotOrder ??= BuildSlotOrder();
+
+            // Si le dictionnaire a ete remplace ou vide (nouvelle sauvegarde), on repart du debut.
+            if (!ReferenceEquals(slotCursorAssociation, association) || association.Count < slotCursorAssociationCount)
+            {
+                slotCursor = 0;
+                slotCursorAssociation = association;
+            }
+            slotCursorAssociationCount = association.Count;
+
+            // Un slot n'est jamais libere : le curseur ne recule pas, on ne reparcourt plus tout a chaque appel.
+            while (slotCursor < slotOrder.Count)
+            {
+                Slot slot = slotOrder[slotCursor];
+                if (!association.ContainsKey(slot.Key))
+                {
+                    CardData cardData = new CardData();
+                    cardData.borderType = slot.Border;
+                    cardData.expansionType = slot.Expansion;
+                    cardData.monsterType = slot.Monster;
+                    return cardData; // Premier CardData manquant
+                }
+                slotCursor++;
+            }
+            return null; // Aucune CardData manquante
         }
 
         // Plages de EMonsterType valides par expansion. Chaque expansion peut avoir plusieurs
@@ -297,7 +341,20 @@ namespace WankulCrazyPlugin.cards
             return MonsterRanges.TryGetValue(expansion, out var ranges) ? ranges : new List<(int, int)>();
         }
 
+        private static readonly Dictionary<string, bool> keyValidCache = new Dictionary<string, bool>();
+
         public static bool IsKeyValid(string keyToCheck)
+        {
+            if (keyToCheck == null) return false;
+            if (!keyValidCache.TryGetValue(keyToCheck, out bool valid))
+            {
+                valid = IsKeyValidUncached(keyToCheck);
+                keyValidCache[keyToCheck] = valid;
+            }
+            return valid;
+        }
+
+        private static bool IsKeyValidUncached(string keyToCheck)
         {
             // Découper la clé pour récupérer les valeurs
             string[] parts = keyToCheck.Split('_');

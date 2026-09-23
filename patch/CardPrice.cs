@@ -110,11 +110,21 @@ namespace WankulCrazyPlugin.patch
             return UnityEngine.Random.Range(minPrice, maxPrice) * priceFactor;
         }
 
+        // FieldInfo mis en cache : AccessTools.Field a chaque appel coutait tres cher
+        // (appele jusqu'a 30 x 910 cartes au chargement d'une sauvegarde).
+        private static FieldInfo priceChangeMinField;
+        private static FieldInfo priceChangeMaxField;
+
         public static void UpdateCardPricePercent(WankulCardData wankulCardData)
         {
-            
-            var m_PriceChangeMin = (float)AccessTools.Field(PriceChangeManager.Instance.GetType(), "m_PriceChangeMin").GetValue(PriceChangeManager.Instance);
-            var m_PriceChangeMax = (float)AccessTools.Field(PriceChangeManager.Instance.GetType(), "m_PriceChangeMax").GetValue(PriceChangeManager.Instance);
+            var priceChangeManager = PriceChangeManager.Instance;
+            if (priceChangeMinField == null || priceChangeMaxField == null)
+            {
+                priceChangeMinField = AccessTools.Field(priceChangeManager.GetType(), "m_PriceChangeMin");
+                priceChangeMaxField = AccessTools.Field(priceChangeManager.GetType(), "m_PriceChangeMax");
+            }
+            var m_PriceChangeMin = (float)priceChangeMinField.GetValue(priceChangeManager);
+            var m_PriceChangeMax = (float)priceChangeMaxField.GetValue(priceChangeManager);
 
             float percentChange = Random.Range(m_PriceChangeMin, m_PriceChangeMax);
             float increaseFactor = UnityEngine.Random.Range(0, 2) == 0 ? -1f : 1f;

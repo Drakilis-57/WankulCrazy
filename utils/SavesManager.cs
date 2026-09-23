@@ -237,21 +237,40 @@ namespace WankulCrazyPlugin.utils
             }
         }
 
+        // Index -> carte, construit une fois : remplace les List.Find en O(N) par entree.
+        private static Dictionary<int, WankulCardData> BuildCardIndex()
+        {
+            var byIndex = new Dictionary<int, WankulCardData>(WankulCardsData.Instance.cards.Count);
+            foreach (var card in WankulCardsData.Instance.cards)
+            {
+                byIndex.TryAdd(card.Index, card); // garde la premiere, comme List.Find
+            }
+            return byIndex;
+        }
+
         private static void LoadAssociations(Save save)
         {
+            var sw = System.Diagnostics.Stopwatch.StartNew();
+            var cardsByIndex = BuildCardIndex();
+            var associatedIndexes = new HashSet<int>();
+            foreach (var existing in WankulCardsData.Instance.association.Values)
+            {
+                if (existing != null) associatedIndexes.Add(existing.Index);
+            }
+
             foreach (var association in save.associationsWithPercents)
             {
                 if (save.version == "1.0.0" && association.Value.WankulCardIndex == 546 || association.Value.WankulCardIndex == 547)
                 {
                     continue;
                 }
-                if (WankulCardsData.Instance.association.ContainsKey(association.Key) || WankulCardsData.Instance.association.Values.Any(card => card.Index == association.Value.WankulCardIndex))
+                if (WankulCardsData.Instance.association.ContainsKey(association.Key) || associatedIndexes.Contains(association.Value.WankulCardIndex))
                 {
                     //Plugin.Logger.LogInfo($"Association already exists: {association.Key}");
                     continue;
                 }
 
-                var card = WankulCardsData.Instance.cards.Find(c => c.Index == association.Value.WankulCardIndex);
+                cardsByIndex.TryGetValue(association.Value.WankulCardIndex, out var card);
                 if (card != null)
                 {
                     if (association.Value.pastPercent != null && association.Value.pastPercent.Count > 0)
@@ -265,6 +284,7 @@ namespace WankulCrazyPlugin.utils
                     }
 
                     UpdateCardPriceIfNeeded(card);
+                    associatedIndexes.Add(card.Index);
 
                     if (WankulCardsData.IsKeyValid(association.Key))
                     {
@@ -281,7 +301,7 @@ namespace WankulCrazyPlugin.utils
                 }
             }
 
-            Plugin.Logger.LogInfo($"Associations loaded: {WankulCardsData.Instance.association.Count}");
+            Plugin.Logger.LogInfo($"Associations loaded: {WankulCardsData.Instance.association.Count} in {sw.ElapsedMilliseconds} ms");
         }
 
         private static void UpdateCardPriceIfNeeded(WankulCardData card)
@@ -296,10 +316,11 @@ namespace WankulCrazyPlugin.utils
 
         private static void LoadWankulCards(Save save)
         {
+            var cardsByIndex = BuildCardIndex();
             foreach (var item in save.wankulCards)
             {
                 string cardkey = item.Value.cardkey;
-                var wankulCardData = WankulCardsData.Instance.cards.Find(card => card.Index == item.Value.WankulCardIndex);
+                cardsByIndex.TryGetValue(item.Value.WankulCardIndex, out var wankulCardData);
                 if (wankulCardData != null)
                 {
                     if (WankulCardsData.IsKeyValid(cardkey))
