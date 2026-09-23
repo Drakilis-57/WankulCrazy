@@ -21,8 +21,8 @@ namespace WankulCrazyPlugin.importer
         {
             if (_instance == null)
             {
-                GameObject go = new GameObject("WankulLoadingScreen");
-                DontDestroyOnLoad(go);
+                GameObject go = new GameObject("WankulLoadingScreen", typeof(RectTransform));
+                UnityEngine.Object.DontDestroyOnLoad(go);
                 _instance = go.AddComponent<WankulLoadingScreen>();
             }
 
@@ -36,21 +36,23 @@ namespace WankulCrazyPlugin.importer
 
         private void CreateUI()
         {
-            _overlay = new GameObject("Overlay");
-            _overlay.transform.SetParent(transform, false);
+            _overlay = this.gameObject;
 
-            _canvas = _overlay.AddComponent<Canvas>();
+            _canvas = _overlay.GetComponent<Canvas>();
+            if (_canvas == null) _canvas = _overlay.AddComponent<Canvas>();
             _canvas.renderMode = RenderMode.ScreenSpaceOverlay;
             _canvas.sortingOrder = 9999; // Toujours au premier plan absolu
 
-            CanvasScaler scaler = _overlay.AddComponent<CanvasScaler>();
+            CanvasScaler scaler = _overlay.GetComponent<CanvasScaler>();
+            if (scaler == null) scaler = _overlay.AddComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
             scaler.referenceResolution = new Vector2(1920, 1080);
 
-            _overlay.AddComponent<GraphicRaycaster>();
+            if (_overlay.GetComponent<GraphicRaycaster>() == null)
+                _overlay.AddComponent<GraphicRaycaster>();
 
             // Fond sombre opaque
-            GameObject bgObj = new GameObject("Background");
+            GameObject bgObj = new GameObject("Background", typeof(RectTransform));
             bgObj.transform.SetParent(_overlay.transform, false);
             Image bg = bgObj.AddComponent<Image>();
             bg.color = new Color(0.08f, 0.08f, 0.10f, 0.96f);
@@ -66,7 +68,7 @@ namespace WankulCrazyPlugin.importer
             }
 
             // Titre Wankul TCG
-            GameObject titleObj = new GameObject("Title");
+            GameObject titleObj = new GameObject("Title", typeof(RectTransform));
             titleObj.transform.SetParent(_overlay.transform, false);
             _titleText = titleObj.AddComponent<Text>();
             if (defaultFont != null) _titleText.font = defaultFont;
@@ -80,7 +82,7 @@ namespace WankulCrazyPlugin.importer
             titleRect.sizeDelta = new Vector2(1000, 70);
 
             // Texte de statut (ex: Chargement 240 / 895 cartes...)
-            GameObject statusObj = new GameObject("Status");
+            GameObject statusObj = new GameObject("Status", typeof(RectTransform));
             statusObj.transform.SetParent(_overlay.transform, false);
             _statusText = statusObj.AddComponent<Text>();
             if (defaultFont != null) _statusText.font = defaultFont;
@@ -93,28 +95,35 @@ namespace WankulCrazyPlugin.importer
             statusRect.sizeDelta = new Vector2(800, 40);
 
             // Barre de progression - Fond
-            GameObject barBgObj = new GameObject("ProgressBarBg");
+            Texture2D whiteTex = Texture2D.whiteTexture;
+            Sprite whiteSprite = Sprite.Create(whiteTex, new Rect(0, 0, whiteTex.width, whiteTex.height), new Vector2(0.5f, 0.5f));
+
+            GameObject barBgObj = new GameObject("ProgressBarBg", typeof(RectTransform));
             barBgObj.transform.SetParent(_overlay.transform, false);
             Image barBg = barBgObj.AddComponent<Image>();
-            barBg.color = new Color(0.2f, 0.2f, 0.25f, 1f);
+            barBg.sprite = whiteSprite;
+            barBg.color = new Color(0.18f, 0.18f, 0.22f, 1f);
             RectTransform barBgRect = barBgObj.GetComponent<RectTransform>();
             barBgRect.anchoredPosition = new Vector2(0, -50);
-            barBgRect.sizeDelta = new Vector2(600, 24);
+            barBgRect.sizeDelta = new Vector2(600, 26);
 
-            // Barre de progression - Remplissage
-            GameObject barFillObj = new GameObject("ProgressBarFill");
+            // Remplissage progressif vert (Image.Type.Filled exige un sprite assigné !)
+            GameObject barFillObj = new GameObject("ProgressBarFill", typeof(RectTransform));
             barFillObj.transform.SetParent(barBgObj.transform, false);
             _progressBarFill = barFillObj.AddComponent<Image>();
+            _progressBarFill.sprite = whiteSprite;
             _progressBarFill.color = new Color(0.3f, 0.75f, 0.35f, 1f); // Vert vif
             _progressBarFill.type = Image.Type.Filled;
             _progressBarFill.fillMethod = Image.FillMethod.Horizontal;
+            _progressBarFill.fillOrigin = (int)Image.OriginHorizontal.Left;
             _progressBarFill.fillAmount = 0f;
             RectTransform barFillRect = barFillObj.GetComponent<RectTransform>();
             barFillRect.anchorMin = Vector2.zero;
             barFillRect.anchorMax = Vector2.one;
             barFillRect.sizeDelta = Vector2.zero;
 
-            _overlay.SetActive(false);
+            // Masquer par défaut via le Canvas pour laisser le GameObject et le MonoBehaviour actifs
+            if (_canvas != null) _canvas.enabled = false;
         }
 
         private IEnumerator LoadCardsCoroutine(List<WankulCardData> cards, Action onComplete)
@@ -125,15 +134,31 @@ namespace WankulCrazyPlugin.importer
                 yield break;
             }
 
-            _overlay.SetActive(true);
+            // Activer le rendu du Canvas
+            if (_canvas != null) _canvas.enabled = true;
+            if (_progressBarFill != null) _progressBarFill.fillAmount = 0f;
+            if (_statusText != null) _statusText.text = "Préparation du chargement...";
+            yield return null;
 
             string pluginPath = Plugin.GetPluginPath();
             int total = cards.Count;
             int loaded = 0;
             const int batchSize = 12; // Décompresse 12 images par frame pour fluidité maximale sans freeze Windows
+            float lastProgressTime = Time.realtimeSinceStartup;
 
             for (int i = 0; i < total; i++)
             {
+                // Watchdog : si plus de 25 secondes s'écoulent sans aucun progrès, alerter via WankulDebugScreen
+                if (Time.realtimeSinceStartup - lastProgressTime > 25f)
+                {
+                    WankulDebugScreen.Show(
+                        "CHARGEMENT BLOQUÉ (Watchdog)",
+                        $"Le chargement semble figé sur la carte index {i}/{total} ({cards[i]?.Title ?? "Inconnue"}).",
+                        $"TexturePath: {cards[i]?.TexturePath}\nPluginPath: {pluginPath}"
+                    );
+                    yield break;
+                }
+
                 var card = cards[i];
                 if (!string.IsNullOrEmpty(card.TexturePath))
                 {
@@ -177,6 +202,7 @@ namespace WankulCrazyPlugin.importer
                 // Rendre la main à Unity et Windows toutes les 'batchSize' images pour garder l'interface fluide
                 if (loaded % batchSize == 0 || loaded == total)
                 {
+                    lastProgressTime = Time.realtimeSinceStartup;
                     float progress = (float)loaded / total;
                     if (_progressBarFill != null) _progressBarFill.fillAmount = progress;
                     if (_statusText != null) _statusText.text = $"Chargement des cartes : {loaded} / {total} ({(int)(progress * 100)}%)";
@@ -187,7 +213,7 @@ namespace WankulCrazyPlugin.importer
             if (_statusText != null) _statusText.text = "Chargement terminé !";
             yield return new WaitForSeconds(0.3f);
 
-            _overlay.SetActive(false);
+            if (_canvas != null) _canvas.enabled = false;
             onComplete?.Invoke();
         }
     }

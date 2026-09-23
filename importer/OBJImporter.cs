@@ -27,7 +27,7 @@ namespace WankulCrazyPlugin.importer
         public static Dictionary<string, string> filePaths_tex = new Dictionary<string, string>((IEqualityComparer<string>)StringComparer.OrdinalIgnoreCase);
         private static Dictionary<string, Texture2D> cachedTextures = new Dictionary<string, Texture2D>();
         private static Dictionary<string, Mesh> cachedMeshes = new Dictionary<string, Mesh>();
-        public static GameObject tempmesh = new GameObject((string)null);
+        public static GameObject tempmesh = null;
 
         private static Dictionary<string, Mesh> vanilla_podium_meshes = new Dictionary<string, Mesh>();
         private static Dictionary<string, Texture> vanilla_podium_textures = new Dictionary<string, Texture>();
@@ -220,6 +220,14 @@ namespace WankulCrazyPlugin.importer
                     catch (System.Exception ex)
                     {
                         Plugin.Logger.LogWarning($"Failed to cache mesh for key '{key}': {ex.Message}");
+                    }
+                    finally
+                    {
+                        if (OBJImporter.tempmesh != null)
+                        {
+                            UnityEngine.Object.Destroy(OBJImporter.tempmesh);
+                            OBJImporter.tempmesh = null;
+                        }
                     }
                 }
             }

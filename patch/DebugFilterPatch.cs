@@ -5,9 +5,18 @@ namespace WankulCrazyPlugin.patch
 {
     public static class DebugFilterPatch
     {
+        private static bool ShouldIgnore(string text)
+        {
+            if (string.IsNullOrEmpty(text)) return false;
+            return text.Contains("The character used for Underline is not available in font asset")
+                || text.Contains("DontDestroyOnLoad only works for root GameObjects")
+                || text.Contains("Parent of RectTransform is being set with parent property")
+                || text.Contains("BoxCollider does not support negative scale or size");
+        }
+
         public static bool LogWarningPrefix(object message)
         {
-            if (message != null && message.ToString().Contains("The character used for Underline is not available in font asset"))
+            if (message != null && ShouldIgnore(message.ToString()))
             {
                 return false;
             }
@@ -16,7 +25,7 @@ namespace WankulCrazyPlugin.patch
 
         public static bool LogWarningContextPrefix(object message, UnityEngine.Object context)
         {
-            if (message != null && message.ToString().Contains("The character used for Underline is not available in font asset"))
+            if (message != null && ShouldIgnore(message.ToString()))
             {
                 return false;
             }
@@ -25,7 +34,7 @@ namespace WankulCrazyPlugin.patch
 
         public static bool LogWarningFormatPrefix(string format, params object[] args)
         {
-            if (format != null && format.Contains("The character used for Underline is not available in font asset"))
+            if (format != null && ShouldIgnore(format))
             {
                 return false;
             }

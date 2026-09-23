@@ -122,12 +122,12 @@ namespace WankulCrazyPlugin.importer
             return result;
         }
 
-        public static bool ItemTypeToCollectionPackType(EItemType itemType, ref ECollectionPackType result)
+        public static bool ItemTypeToCollectionPackType(EItemType itemType, ref ECollectionPackType __result)
         {
             EItemType test32 = EnumExtensions.SafeParseEItemType("TestCardPack32");
             EItemType test64 = EnumExtensions.SafeParseEItemType("TestCardPack64");
-            if (itemType == test32) { result = EnumExtensions.SafeParseECollectionPackType("SeasonTestPack32"); return false; }
-            if (itemType == test64) { result = EnumExtensions.SafeParseECollectionPackType("SeasonTestPack64"); return false; }
+            if (itemType == test32) { __result = EnumExtensions.SafeParseECollectionPackType("SeasonTestPack32"); return false; }
+            if (itemType == test64) { __result = EnumExtensions.SafeParseECollectionPackType("SeasonTestPack64"); return false; }
 
             EItemType boosterStellar = EnumExtensions.SafeParseEItemType("BoosterStellar");
             EItemType displayStellar = EnumExtensions.SafeParseEItemType("DisplayStellar");
@@ -138,28 +138,28 @@ namespace WankulCrazyPlugin.importer
             ECollectionPackType stellarPack = EnumExtensions.SafeParseECollectionPackType("Stellar");
             ECollectionPackType stellarPackTaux = EnumExtensions.SafeParseECollectionPackType("StellarTaux");
 
-            if (itemType == EItemType.BasicCardPack || itemType == EItemType.BasicCardBox) result = ECollectionPackType.BasicCardPack;
-            else if (itemType == EItemType.RareCardPack || itemType == EItemType.RareCardBox) result = ECollectionPackType.RareCardPack;
-            else if (itemType == EItemType.EpicCardPack || itemType == EItemType.EpicCardBox || itemType == boosterGoldBattle) result = ECollectionPackType.EpicCardPack;
-            else if (itemType == EItemType.LegendaryCardPack || itemType == EItemType.LegendaryCardBox) result = ECollectionPackType.LegendaryCardPack;
-            else if (itemType == EItemType.DestinyBasicCardPack || itemType == EItemType.DestinyBasicCardBox) result = ECollectionPackType.DestinyBasicCardPack;
-            else if (itemType == EItemType.DestinyRareCardPack || itemType == EItemType.DestinyRareCardBox) result = ECollectionPackType.DestinyRareCardPack;
-            else if (itemType == EItemType.DestinyEpicCardPack || itemType == EItemType.DestinyEpicCardBox) result = ECollectionPackType.DestinyEpicCardPack;
-            else if (itemType == EItemType.DestinyLegendaryCardPack || itemType == EItemType.DestinyLegendaryCardBox) result = ECollectionPackType.DestinyLegendaryCardPack;
-            else if (itemType == EItemType.GhostPack) result = ECollectionPackType.GhostPack;
-            else if (itemType == EItemType.MegabotPack) result = ECollectionPackType.MegabotPack;
-            else if (itemType == EItemType.FantasyRPGPack) result = ECollectionPackType.FantasyRPGPack;
-            else if (itemType == EItemType.CatJobPack) result = ECollectionPackType.CatJobPack;
-            else if (itemType == boosterStellar || itemType == displayStellar || itemType == boosterGoldStellar) result = stellarPack;
-            else if (itemType == boosterStellarTaux || itemType == displayStellarTaux) result = stellarPackTaux;
-            else result = ECollectionPackType.None;
+            if (itemType == EItemType.BasicCardPack || itemType == EItemType.BasicCardBox) __result = ECollectionPackType.BasicCardPack;
+            else if (itemType == EItemType.RareCardPack || itemType == EItemType.RareCardBox) __result = ECollectionPackType.RareCardPack;
+            else if (itemType == EItemType.EpicCardPack || itemType == EItemType.EpicCardBox || itemType == boosterGoldBattle) __result = ECollectionPackType.EpicCardPack;
+            else if (itemType == EItemType.LegendaryCardPack || itemType == EItemType.LegendaryCardBox) __result = ECollectionPackType.LegendaryCardPack;
+            else if (itemType == EItemType.DestinyBasicCardPack || itemType == EItemType.DestinyBasicCardBox) __result = ECollectionPackType.DestinyBasicCardPack;
+            else if (itemType == EItemType.DestinyRareCardPack || itemType == EItemType.DestinyRareCardBox) __result = ECollectionPackType.DestinyRareCardPack;
+            else if (itemType == EItemType.DestinyEpicCardPack || itemType == EItemType.DestinyEpicCardBox) __result = ECollectionPackType.DestinyEpicCardPack;
+            else if (itemType == EItemType.DestinyLegendaryCardPack || itemType == EItemType.DestinyLegendaryCardBox) __result = ECollectionPackType.DestinyLegendaryCardPack;
+            else if (itemType == EItemType.GhostPack) __result = ECollectionPackType.GhostPack;
+            else if (itemType == EItemType.MegabotPack) __result = ECollectionPackType.MegabotPack;
+            else if (itemType == EItemType.FantasyRPGPack) __result = ECollectionPackType.FantasyRPGPack;
+            else if (itemType == EItemType.CatJobPack) __result = ECollectionPackType.CatJobPack;
+            else if (itemType == boosterStellar || itemType == displayStellar || itemType == boosterGoldStellar) __result = stellarPack;
+            else if (itemType == boosterStellarTaux || itemType == displayStellarTaux) __result = stellarPackTaux;
+            else __result = ECollectionPackType.None;
             return false;
         }
 
-        public static bool GetCardExpansionType(ECollectionPackType type, ref ECardExpansionType result)
+        public static bool GetCardExpansionType(ECollectionPackType collectionPackType, ref ECardExpansionType __result)
         {
-            if (type == EnumExtensions.SafeParseECollectionPackType("SeasonTestPack32") || type == EnumExtensions.SafeParseECollectionPackType("SeasonTestPack64")) { result = ECardExpansionType.Tetramon; return false; }
-            result = ECardExpansionType.None;
+            if (collectionPackType == EnumExtensions.SafeParseECollectionPackType("SeasonTestPack32") || collectionPackType == EnumExtensions.SafeParseECollectionPackType("SeasonTestPack64")) { __result = ECardExpansionType.Tetramon; return false; }
+            __result = ECardExpansionType.None;
             return true;
         }
 
@@ -171,6 +171,35 @@ namespace WankulCrazyPlugin.importer
                 EItemType type = EnumExtensions.SafeParseEItemType(item.name);
                 if (type != EItemType.None && !InventoryBase.Instance.m_StockItemData_SO.m_ShownItemType.Contains(type)) InventoryBase.Instance.m_StockItemData_SO.m_ShownItemType.Add(type);
             }
+        }
+
+        public static bool GetItemDataPrefix(EItemType itemType, ref ItemData __result)
+        {
+            if (ItemDataList != null)
+            {
+                foreach (ItemData customItem in ItemDataList)
+                {
+                    if (customItem != null && EnumExtensions.SafeParseEItemType(customItem.name) == itemType)
+                    {
+                        __result = customItem;
+                        return false;
+                    }
+                }
+            }
+
+            var stock = InventoryBase.Instance?.m_StockItemData_SO?.m_ItemDataList;
+            if (stock != null)
+            {
+                int index = (int)itemType;
+                if (index < 0 || index >= stock.Count)
+                {
+                    // Fallback pour tout autre enum custom ou invalide non trouvé par index
+                    __result = new ItemData();
+                    return false;
+                }
+            }
+
+            return true;
         }
     }
 }

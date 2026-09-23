@@ -22,16 +22,16 @@ namespace WankulCrazyPlugin.Tests
             var assemblyPath = Path.GetFullPath(@"../../../../libs/Assembly-CSharp.dll");
             var assembly = AssemblyDefinition.ReadAssembly(assemblyPath);
 
-            var binderUI = assembly.MainModule.Types.FirstOrDefault(t => t.Name == "CollectionBinderUI");
-            _output.WriteLine("=== CollectionBinderUI ===");
-            if (binderUI != null)
+            var inv = assembly.MainModule.Types.FirstOrDefault(t => t.Name == "InventoryBase");
+            _output.WriteLine("=== InventoryBase ===");
+            if (inv != null)
             {
-                foreach (var m in binderUI.Methods)
+                foreach (var m in inv.Methods)
                 {
-                    if (m.Name == "SetCardCollected")
+                    if (m.Name.Contains("GetItemData"))
                     {
                         var ps = string.Join(", ", m.Parameters.Select(p => $"{p.ParameterType.Name} {p.Name}"));
-                        _output.WriteLine($"TARGET: {m.ReturnType.Name} {m.Name}({ps})");
+                        _output.WriteLine($"METHOD: {m.ReturnType.Name} {m.Name}({ps})");
                         if (m.HasBody)
                         {
                             foreach (var inst in m.Body.Instructions)
@@ -43,27 +43,64 @@ namespace WankulCrazyPlugin.Tests
                 }
             }
 
-            var binderAnim = assembly.MainModule.Types.FirstOrDefault(t => t.Name == "CollectionBinderFlipAnimCtrl");
-            if (binderAnim != null)
+            var playCardUI = assembly.MainModule.Types.FirstOrDefault(t => t.Name == "PlayCardSetUI");
+            _output.WriteLine("=== PlayCardSetUI ===");
+            if (playCardUI != null)
             {
-                foreach (var m in binderAnim.Methods)
+                foreach (var m in playCardUI.Methods)
                 {
-                    if (m.Name.Contains("SwitchExpansion") || m.Name.Contains("SwitchSortingMethod"))
+                    if (m.Name == "LateUpdate")
                     {
                         var ps = string.Join(", ", m.Parameters.Select(p => $"{p.ParameterType.Name} {p.Name}"));
-                        _output.WriteLine($"{m.ReturnType.Name} {m.Name}({ps})");
+                        _output.WriteLine($"METHOD: {m.ReturnType.Name} {m.Name}({ps})");
+                        if (m.HasBody)
+                        {
+                            foreach (var inst in m.Body.Instructions)
+                            {
+                                _output.WriteLine($"    {inst.OpCode} {inst.Operand}");
+                            }
+                        }
                     }
                 }
+            }
 
-                // Look for nested iterator types
-                foreach (var nested in binderAnim.NestedTypes)
+            var restockUI = assembly.MainModule.Types.FirstOrDefault(t => t.Name == "RestockItemPanelUI");
+            _output.WriteLine("=== RestockItemPanelUI ===");
+            if (restockUI != null)
+            {
+                foreach (var m in restockUI.Methods)
                 {
-                    if (!string.IsNullOrEmpty(nested.Name) && nested.Name.Contains("DelayAlbumSort"))
+                    if (m.Name == "Init")
                     {
-                        _output.WriteLine($"Nested: {nested.Name}");
-                        foreach (var m in nested.Methods)
+                        var ps = string.Join(", ", m.Parameters.Select(p => $"{p.ParameterType.Name} {p.Name}"));
+                        _output.WriteLine($"METHOD: {m.ReturnType.Name} {m.Name}({ps})");
+                        if (m.HasBody)
                         {
-                            _output.WriteLine($"  {m.ReturnType.Name} {m.Name}");
+                            foreach (var inst in m.Body.Instructions)
+                            {
+                                _output.WriteLine($"    {inst.OpCode} {inst.Operand}");
+                            }
+                        }
+                    }
+                }
+            }
+
+            var levelUpUI = assembly.MainModule.Types.FirstOrDefault(t => t.Name == "LevelUpNotificationUI");
+            _output.WriteLine("=== LevelUpNotificationUI ===");
+            if (levelUpUI != null)
+            {
+                foreach (var m in levelUpUI.Methods)
+                {
+                    if (m.Name.Contains("RefreshUnlockableTextData"))
+                    {
+                        var ps = string.Join(", ", m.Parameters.Select(p => $"{p.ParameterType.Name} {p.Name}"));
+                        _output.WriteLine($"METHOD: {m.ReturnType.Name} {m.Name}({ps})");
+                        if (m.HasBody)
+                        {
+                            foreach (var inst in m.Body.Instructions)
+                            {
+                                _output.WriteLine($"    {inst.OpCode} {inst.Operand}");
+                            }
                         }
                     }
                 }

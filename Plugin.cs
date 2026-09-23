@@ -21,6 +21,9 @@ public class Plugin : BaseUnityPlugin
         Logger = base.Logger;
         Logger.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is loaded!");
 
+        // Initialisation de l'écran de debug pour intercepter les crashs et blocages
+        WankulDebugScreen.Initialize();
+
         Harmony harmony = new Harmony(PluginInfo.PLUGIN_GUID);
 
         // Helper pour sécuriser chaque patch manuel contre les MethodInfo nulls
@@ -384,6 +387,36 @@ public class Plugin : BaseUnityPlugin
             "Debug.LogWarningFormat(string, object[])",
             AccessTools.Method(typeof(Debug), "LogWarningFormat", new[] { typeof(string), typeof(object[]) }),
             prefix: AccessTools.Method(typeof(DebugFilterPatch), nameof(DebugFilterPatch.LogWarningFormatPrefix))
+        );
+
+        TryPatch(
+            "PlayCardSetUI.Update",
+            AccessTools.Method(typeof(PlayCardSetUI), "Update"),
+            prefix: AccessTools.Method(typeof(PlayCardSetUIPatch), nameof(PlayCardSetUIPatch.Prefix))
+        );
+
+        TryPatch(
+            "PlayCardSetUI.LateUpdate",
+            AccessTools.Method(typeof(PlayCardSetUI), "LateUpdate"),
+            prefix: AccessTools.Method(typeof(PlayCardSetUIPatch), nameof(PlayCardSetUIPatch.LateUpdatePrefix))
+        );
+
+        TryPatch(
+            "InventoryBase.GetItemData",
+            AccessTools.Method(typeof(InventoryBase), "GetItemData", new[] { typeof(EItemType) }),
+            prefix: AccessTools.Method(typeof(CustomItemsImporter), nameof(CustomItemsImporter.GetItemDataPrefix))
+        );
+
+        TryPatch(
+            "LoadingScreen.CloseScreen",
+            AccessTools.Method(typeof(LoadingScreen), "CloseScreen"),
+            prefix: AccessTools.Method(typeof(SceneLifecyclePatches), nameof(SceneLifecyclePatches.CloseScreenPrefix))
+        );
+
+        TryPatch(
+            "ScreenRatioScaler.Init",
+            AccessTools.Method(typeof(ScreenRatioScaler), "Init"),
+            prefix: AccessTools.Method(typeof(SceneLifecyclePatches), nameof(SceneLifecyclePatches.ScreenRatioScalerInitPrefix))
         );
     }
 

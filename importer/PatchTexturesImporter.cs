@@ -12,6 +12,10 @@ namespace WankulCrazyPlugin.importer
         public static void ReplaceGameTextures(string textureLevel)
         {
             string texturesPath = Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", textureLevel);
+            if (!Directory.Exists(texturesPath))
+            {
+                return;
+            }
             List<string> filenames = GetFileNames(texturesPath);
 
             foreach (string filename in filenames)
