@@ -10,7 +10,7 @@ Le mod **WankulCrazyPlugin** est un mod BepInEx/Harmony qui remplace ou étend l
 
 ### 🃏 A. Cartes Wankul & Mécaniques de Collection
 * **Cartes Custom (Effigies, Terrains, Spéciales)** :
-  * Chargement dynamique à partir d'un fichier JSON (`data/formated_wankul_cards.json`).
+  * Chargement dynamique à partir d'un fichier JSON principal (`data/formated_wankul_cards.json`) et de fichiers/dossiers multiples dans `data/cards/`.
   * Prise en charge des textures HD de cartes et de leurs **masques de brillance/foil** (`data/masks/`).
 * **Association & Mapping Dynamiques** :
   * Association automatique des cartes Wankul aux monstres originaux du jeu (`EMonsterType`, `ECardBorderType`, `ECardExpansionType`).
@@ -22,7 +22,7 @@ Le mod **WankulCrazyPlugin** est un mod BepInEx/Harmony qui remplace ou étend l
   * Algorithme personnalisé d'ouverture de boosters (`CardOpening.cs`).
   * Distribution des cartes Wankul selon le type de pack/extension (ex: Basic, Rare, Epic, Legendary, Destiny, Stellar...).
 * **Expérience (XP)** :
-  * Système de calcul d'expérience basé sur la rareté Wankul et le niveau du magasin du joueur (`WankulCardsData.GetExperienceFromWankulCard`).
+  * Système de calcul d'expérience basé sur la rareté Wankul et le niveau du magasin du joueur (`WankulCardsData.GetExperienceFromWankulCard` & `RaritiesManager`).
 * **Classeur / Album (`SortUI`, `ReplacingCards`)** :
   * Patch de l'interface de l'album et du classeur pour afficher les cartes Wankul.
   * Options de tri personnalisées (par Saison, par Rareté, par Numéro, par Type).
@@ -52,18 +52,12 @@ Le mod **WankulCrazyPlugin** est un mod BepInEx/Harmony qui remplace ou étend l
 
 ## 2. Qu'est-ce qui manquait pour simplifier l'ajout de nouvelles cartes, saisons, figurines, etc. ?
 
-Malgré la présence de fichiers JSON pour les cartes et les items, plusieurs éléments imposaient jusqu'alors de modifier le code source C# et de recompiler la DLL :
+Auparavant, plusieurs éléments imposaient de modifier le code source C# et de recompiler la DLL :
+1. Les types de saisons et de raretés étaient strictement limités par des enums C# (`Season`, `Rarity`).
+2. L'inscription des items custom en boutique nécessitait un enregistrement manuel.
+3. Toutes les cartes devaient résider dans un fichier unique monolithique.
 
-### ❌ Inconvénients / Goulets d'étranglement identifiés :
-1. **Types de Saisons hardcodés (`Season.cs` & `SeasonsContainer.cs`)** :
-   * Les saisons (`S01`, `S02`, `S03`, `S04`, `HS`) sont définies sous forme d'une `enum C#`.
-   * Pour ajouter une "Saison 5" ou un hors-série spécifique, il fallait modifier l'enum C# et recompiler le projet.
-2. **Types de Raretés hardcodés (`Rarity.cs`)** :
-   * Les raretés (`C`, `UC`, `R`, `UR1`, `UR2`, `LB`, `LA`, `LO`, `PGW23`, `NOEL23`...) sont également des `enum C#`.
-3. **Inscription manuelle des items en boutique (`CustomItemsImporter.cs`)** :
-   * Les sous-catégories d'affichage en magasin (Boosters, Figurines, Accessoires) nécessitaient des appels `Add(...)` explicites en C#.
-4. **Chargement monolithique des cartes** :
-   * Toutes les cartes devaient être regroupées dans un seul gros fichier `formated_wankul_cards.json`.
+Toutes ces limitations ont désormais été levées grâce aux simplifications et améliorations intégrées ci-dessous.
 
 ---
 
@@ -77,11 +71,11 @@ Au lieu d'ajouter manuellement chaque item custom dans la liste de la boutique p
 
 *(Grâce à cela, ajouter une nouvelle figurine ou un nouveau tapis dans `ItemDataList.json` l'affiche immédiatement en magasin sans recompiler la DLL).*
 
-### 💡 Simplification 2 : Évolution vers des Saisons et Raretés dynamiques (Recommandation Future)
-Pour affranchir totalement le mod des `enum` C# pour les saisons et raretés :
-* Remplacer `enum Season` par un identifiant `string` (ex: `"S01"`, `"S05"`).
-* Charger un fichier `seasons.json` contenant la liste des saisons et leurs noms affichés.
-* Charger un fichier `rarities.json` définissant les raretés, leurs coefficients d'XP et leurs multiplicateurs de prix.
+### ✅ Simplification 2 : Évolution vers des Saisons et Raretés dynamiques (Implémenté)
+Le mod gère désormais les saisons et raretés via des identifiants `string` dynamiques (`SeasonId` et `RarityId`) et deux gestionnaires dédiés (`SeasonsManager` et `RaritiesManager`) :
+* Les fichiers JSON optionnels `data/seasons.json` et `data/rarities.json` permettent de définir de nouvelles saisons ou raretés personnalisées avec leurs noms d'affichage, coefficients d'expérience et multiplicateur de prix sans modifier le code C#.
+* Des convertisseurs JSON (`SeasonJsonConverter`, `RarityJsonConverter`) et des accesseurs dans `WankulCardData`/`EffigyCardData` enregistrent automatiquement toute nouvelle saison ou rareté rencontrée lors de la désérialisation.
+* La rétrocompatibilité avec les enums C# historiques (`Season`, `Rarity`) est entièrement préservée via des valeurs de repli (ex: `Season.HS`, `Rarity.C`).
 
 ### ✅ Simplification 4 : Cache mémoire au démarrage (Implémenté)
 Les textures et meshes des items custom (`OBJImporter.cs`) sont chargés une seule fois au
@@ -103,16 +97,10 @@ Un `FieldInfo`/`MethodInfo` est stable pour un type donné : il n'est désormais
 fois, puis réutilisé — supprimant un coût de réflexion répété plusieurs fois par frame dans les
 écrans d'ouverture de booster et de tri de cartes.
 
-*(Quelques appels résiduels très ponctuels — non exécutés en boucle, ex: gestion de mesh à
-l'ouverture d'une boîte de cartes dans `InteractionPlayerControllerPatch.cs` — n'ont pas été migrés
-car le gain y est négligeable et le risque de régression plus élevé sur du code multi-lignes.)*
-
 > ⚠️ **Correctif** : la première version de ce cache (`type.GetField`/`GetMethod` sur le type exact
 > uniquement) ne trouvait pas les champs privés déclarés dans une classe de base du jeu — contrairement
-> à `AccessTools.Field`/`Method` (Harmony) qui remonte la hiérarchie. Ça a cassé l'affichage de l'album
-> (`CollectionBinderFlipAnimCtrl.Update`, dans `SortUI.cs`, retombait sur `null` à chaque frame).
-> `GetCachedField`/`GetCachedMethod` remontent désormais `BaseType` jusqu'à trouver le membre,
-> exactement comme le faisait `AccessTools`.
+> à `AccessTools.Field`/`Method` (Harmony) qui remonte la hiérarchie. `GetCachedField`/`GetCachedMethod`
+> remontent désormais `BaseType` jusqu'à trouver le membre, exactement comme le faisait `AccessTools`.
 
 ### ✅ Simplification 6 : Cache des tableaux d'enum généralisé (Implémenté)
 `Season[] seasons = (Season[])Enum.GetValues(typeof(Season))` était réalloué à chaque appel dans
@@ -123,13 +111,13 @@ Un tableau `Season[]` statique en cache a été ajouté dans les deux fichiers c
 ### ✅ Simplification 7 : Index Saison → Cartes précalculé (Implémenté)
 `WankulInventory.randFromPackType` faisait un `List.FindAll` sur l'ensemble des cartes à chaque
 tirage (jusqu'à 10 fois par booster). `WankulCardsData` construit désormais un index
-`Dictionary<Season, List<WankulCardData>>` de façon paresseuse (une seule fois, la liste de cartes
+`Dictionary<string, List<WankulCardData>>` de façon paresseuse (une seule fois, la liste de cartes
 n'étant jamais modifiée après le chargement JSON initial), exposé via
-`WankulCardsData.GetCardsBySeasonFast(season)`. Le tirage passe d'un scan O(N) répété à un accès
+`WankulCardsData.GetCardsBySeasonFast(seasonId)`. Le tirage passe d'un scan O(N) répété à un accès
 O(1) amorti.
 
-### 💡 Simplification 8 : Support Multi-Packs / Moddabilité par dossier (Recommandation Future)
-Permettre le chargement séparé des données :
+### ✅ Simplification 8 : Support Multi-Packs / Moddabilité par dossier (Implémenté)
+Le chargement des cartes supporte la modularité par dossiers et fichiers multiples :
 ```text
 data/
   ├── customitems/
@@ -138,4 +126,4 @@ data/
   │    ├── season2.json
   │    └── my_custom_pack.json
 ```
-Le mod fusionnerait tous les fichiers JSON du dossier `data/cards/` au démarrage.
+Au démarrage, `JsonImporter` conserve la prise en charge du fichier historique `data/formated_wankul_cards.json` tout en parcourant de manière récursive le dossier `data/cards/` pour charger, désérialiser et fusionner automatiquement tous les fichiers JSON qu'il contient. Il est ainsi possible d'ajouter de nouveaux packs de cartes de façon modulaire sans altérer le fichier principal.
