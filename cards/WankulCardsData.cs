@@ -10,7 +10,8 @@ namespace WankulCrazyPlugin.cards
 {
     public class WankulCardsData : Singleton<WankulCardsData>
     {
-        public List<WankulCardData> cards = [];
+        private List<WankulCardData> _cards;
+        public List<WankulCardData> cards { get => _cards ??= new List<WankulCardData>(); set { _cards = value; cardsBySeason = null; } }
         public Dictionary<string, WankulCardData> association = [];
 
         // Reverse lookup map (WankulCardData.Index -> CardData) to optimize GetCardDataFromWankulCardData from O(N) to O(1)

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -11,6 +12,20 @@ namespace WankulCrazyPlugin.inventory
     public class WankulInventory : Singleton<WankulInventory>
     {
         public Dictionary<int, (WankulCardData wankulcard, CardData card, int amount)> wankulCards = [];
+
+
+        private static void LogError(string message)
+        {
+            try
+            {
+                if (Plugin.Logger != null) Plugin.Logger.LogError(message);
+                else Console.WriteLine("[Error] " + message);
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("[Error] " + message);
+            }
+        }
 
         public static Season ConvertPackTypeToSeason(ECollectionPackType packType)
         {
@@ -33,6 +48,10 @@ namespace WankulCrazyPlugin.inventory
         public static WankulCardData DropCard(ECollectionPackType packType, List<WankulCardData> alreadySelectedCards, bool isTerrain = false, bool isMinRare = false, bool isMinUR = false, bool isMinLegendary = false, bool isRare = false)
         {
             ECollectionPackType stellarPackTaux = EnumExtensions.SafeParseECollectionPackType("StellarTaux");
+            ECollectionPackType seasonTestPack32 = EnumExtensions.SafeParseECollectionPackType("SeasonTestPack32");
+            ECollectionPackType seasonTestPack64 = EnumExtensions.SafeParseECollectionPackType("SeasonTestPack64");
+            bool isSeasonTestPack = packType == seasonTestPack32 || packType == seasonTestPack64;
+
             bool increaseRarity = false;
             Season season = ConvertPackTypeToSeason(packType);
 
@@ -48,25 +67,40 @@ namespace WankulCrazyPlugin.inventory
             }
 
             List<WankulCardData> allCards = WankulCardsData.Instance.cards;
-
-            if (isTerrain)
-            {
-                allCards = allCards.FindAll(card => card is TerrainCardData);
-            }
-            else
-            {
-                allCards = allCards.FindAll(card => card is not TerrainCardData);
-            }
-
             List<WankulCardData> seasonalCard;
 
-            if (season != Season.HS)
+            if (isSeasonTestPack)
+            {
+                seasonalCard = WankulCardsData.GetCardsBySeasonFast("SeasonTest");
+                if (seasonalCard == null || seasonalCard.Count == 0)
+                {
+                    seasonalCard = allCards.FindAll(card => string.Equals(card.SeasonId, "SeasonTest", StringComparison.OrdinalIgnoreCase));
+                }
+            }
+            else if (season != Season.HS)
             {
                 seasonalCard = allCards.FindAll(card => card.Season == season);
             }
             else
             {
                 seasonalCard = allCards;
+            }
+
+            if (isTerrain)
+            {
+                List<WankulCardData> terrainCards = seasonalCard.FindAll(card => card is TerrainCardData);
+                if (terrainCards.Count > 0)
+                {
+                    seasonalCard = terrainCards;
+                }
+                else
+                {
+                    seasonalCard = seasonalCard.FindAll(card => card is not TerrainCardData);
+                }
+            }
+            else
+            {
+                seasonalCard = seasonalCard.FindAll(card => card is not TerrainCardData);
             }
 
             if (!isTerrain && (isMinRare || isMinLegendary || isMinUR || isRare))
@@ -97,11 +131,12 @@ namespace WankulCrazyPlugin.inventory
                         .ConvertAll(card => (WankulCardData)card);
                 }
 
-
-                List<WankulCardData> specialCardsData = allCards
-                .FindAll(card => card is SpecialCardData);
-                seasonalCard.AddRange(specialCardsData);
-
+                if (!isSeasonTestPack)
+                {
+                    List<WankulCardData> specialCardsData = allCards
+                        .FindAll(card => card is SpecialCardData);
+                    seasonalCard.AddRange(specialCardsData);
+                }
             }
             else if (!isTerrain && !isMinRare)
             {
@@ -112,17 +147,14 @@ namespace WankulCrazyPlugin.inventory
 
             if (seasonalCard.Count == 0)
             {
-                Plugin.Logger.LogError("No available cards to drop");
+                LogError("No available cards to drop");
                 return null;
             }
 
-            // Filtrer les cartes déjà sélectionnées pour éviter les doublons
-            seasonalCard = seasonalCard.Where(card => !alreadySelectedCards.Contains(card)).ToList();
-
-            if (seasonalCard.Count == 0)
+            List<WankulCardData> uniqueCards = seasonalCard.Where(card => !alreadySelectedCards.Contains(card)).ToList();
+            if (uniqueCards.Count > 0)
             {
-                Plugin.Logger.LogError("No available unique cards to drop");
-                return null;
+                seasonalCard = uniqueCards;
             }
 
             float totalDropChance = 0f;
@@ -166,7 +198,7 @@ namespace WankulCrazyPlugin.inventory
                 totalDropChance += card.Drop * increaseFactor;
             }
 
-            float randomValue = Random.Range(0f, totalDropChance);
+            float randomValue = RandomUtils.Range(0f, totalDropChance);
             float cumulativeDropChance = 0f;
 
             foreach (var card in seasonalCard)
@@ -210,14 +242,14 @@ namespace WankulCrazyPlugin.inventory
                 cumulativeDropChance += card.Drop * increaseFactor;
                 if (randomValue <= cumulativeDropChance)
                 {
-                    // Ajouter la carte sélectionnée aux cartes déjà sélectionnées pour éviter un doublon
                     alreadySelectedCards.Add(card);
                     return card;
                 }
             }
 
-            Plugin.Logger.LogError("Failed to drop a card");
-            return null;
+            WankulCardData fallbackCard = seasonalCard[0];
+            alreadySelectedCards.Add(fallbackCard);
+            return fallbackCard;
         }
 
         public static WankulCardData DropCardGold(ECollectionPackType packType, List<WankulCardData> alreadySelectedCards)
@@ -275,14 +307,14 @@ namespace WankulCrazyPlugin.inventory
             }
             else
             {
-                Plugin.Logger.LogError("No available cards to drop");
+                LogError("No available cards to drop");
                 return null;
             }
 
 
             if (seasonalCard.Count == 0)
             {
-                Plugin.Logger.LogError("No available cards to drop");
+                LogError("No available cards to drop");
                 return null;
             }
 
@@ -291,7 +323,7 @@ namespace WankulCrazyPlugin.inventory
 
             if (seasonalCard.Count == 0)
             {
-                Plugin.Logger.LogError("No available unique cards to drop");
+                LogError("No available unique cards to drop");
                 return null;
             }
 
@@ -336,7 +368,7 @@ namespace WankulCrazyPlugin.inventory
                 totalDropChance += card.Drop * increaseFactor;
             }
 
-            float randomValue = Random.Range(0f, totalDropChance);
+            float randomValue = RandomUtils.Range(0f, totalDropChance);
             float cumulativeDropChance = 0f;
 
             foreach (var card in seasonalCard)
@@ -386,7 +418,7 @@ namespace WankulCrazyPlugin.inventory
                 }
             }
 
-            Plugin.Logger.LogError("Failed to drop a card");
+            LogError("Failed to drop a card");
             return null;
         }
 
@@ -400,11 +432,11 @@ namespace WankulCrazyPlugin.inventory
 
             if (seasonalCard.Count == 0)
             {
-                Plugin.Logger.LogError("No available cards to drop");
+                LogError("No available cards to drop");
                 return null;
             }
 
-            int randomValue = Random.Range(0, seasonalCard.Count);
+            int randomValue = RandomUtils.Range(0, seasonalCard.Count);
 
             return seasonalCard[randomValue];
         }
@@ -556,11 +588,11 @@ namespace WankulCrazyPlugin.inventory
                 dropableExpansion.Add(ECollectionPackType.DestinyLegendaryCardPack);
             }
 
-            ECollectionPackType selectedPackType = dropableExpansion[Random.Range(0, dropableExpansion.Count)];
-            bool isTerrain = Random.Range(0, 2) == 1;
-            bool isMinRare = Random.Range(0, 2) == 1;
-            bool isMinUR = Random.Range(0, 100) < 50;
-            bool isMinLegendary = Random.Range(0, 200) < 50;
+            ECollectionPackType selectedPackType = dropableExpansion[RandomUtils.Range(0, dropableExpansion.Count)];
+            bool isTerrain = RandomUtils.Range(0, 2) == 1;
+            bool isMinRare = RandomUtils.Range(0, 2) == 1;
+            bool isMinUR = RandomUtils.Range(0, 100) < 50;
+            bool isMinLegendary = RandomUtils.Range(0, 200) < 50;
 
             WankulCardData wankulCardData = DropCard(selectedPackType, new List<WankulCardData>(), isTerrain, isMinRare, isMinUR, isMinLegendary);
 
@@ -581,7 +613,7 @@ namespace WankulCrazyPlugin.inventory
 
             if (fromWankulCardData == null)
             {
-                Plugin.Logger.LogError("GetWankulCardDataForTradeOfferByPrice: No wankul card found for this card");
+                LogError("GetWankulCardDataForTradeOfferByPrice: No wankul card found for this card");
                 return GetWankulCardDataForTradeOffer();
             }
 
@@ -593,7 +625,7 @@ namespace WankulCrazyPlugin.inventory
 
             List<WankulCardData> inPriceBoundCards = WankulCardsData.Instance.cards.FindAll(card => card.MarketPrice >= minPrice && card.MarketPrice <= maxPrice && card.Index != fromWankulCardData.Index);
 
-            int randomValue = Random.Range(0, inPriceBoundCards.Count);
+            int randomValue = RandomUtils.Range(0, inPriceBoundCards.Count);
             WankulCardData wankulCardData = inPriceBoundCards[randomValue];
 
             int amount = Instance.wankulCards.ContainsKey(wankulCardData.Index) ? Instance.wankulCards[wankulCardData.Index].amount : 0;
