@@ -13,33 +13,31 @@ namespace WankulCrazyPlugin.Tests
     public class SeasonTestAndCustomPacksTests
     {
         [Fact]
-        public void SeasonTestCards_JsonLoading_RegistersSeasonAndRarities()
+        public void LegacyCards_JsonLoading_RegistersSeasonAndRarities()
         {
             SeasonsManager.LoadFromPluginPath(Directory.GetCurrentDirectory());
             RaritiesManager.ResetToDefaults();
 
-            string jsonPath = Path.Combine(Directory.GetCurrentDirectory(), "data/cards/SeasonTest/season_test.json");
-            Assert.True(File.Exists(jsonPath), $"season_test.json file should exist at {jsonPath}");
+            string jsonPath = Path.Combine(Directory.GetCurrentDirectory(), "data/cards/Legacy/legacy.json");
+            Assert.True(File.Exists(jsonPath), $"legacy.json file should exist at {jsonPath}");
 
             string jsonContent = File.ReadAllText(jsonPath);
             JToken token = JToken.Parse(jsonContent);
             List<WankulCardData> cards = JsonImporter.DeserializeToken(token);
 
-            Assert.Equal(16, cards.Count);
+            Assert.Equal(185, cards.Count);
 
             int terrainCount = 0;
             int effigyCount = 0;
 
             foreach (var card in cards)
             {
-                Assert.Equal("SeasonTest", card.SeasonId);
+                Assert.Equal("S05", card.SeasonId);
                 Assert.NotNull(SeasonsManager.GetSeason(card.SeasonId));
 
-                if (card is TerrainCardData terrainCard)
+                if (card is TerrainCardData)
                 {
                     terrainCount++;
-                    Assert.Equal("TEST-016", terrainCard.Number);
-                    Assert.Equal("Test Terrain 001", terrainCard.Title);
                 }
                 else if (card is EffigyCardData effigyCard)
                 {
@@ -48,9 +46,9 @@ namespace WankulCrazyPlugin.Tests
                 }
             }
 
-            Assert.Equal(1, terrainCount);
-            Assert.Equal(15, effigyCount);
-            Assert.Equal("Season Test", SeasonsManager.GetSeasonName("SeasonTest"));
+            Assert.Equal(30, terrainCount);
+            Assert.Equal(155, effigyCount);
+            Assert.Equal("Legacy", SeasonsManager.GetSeasonName("S05"));
         }
 
         [Fact]

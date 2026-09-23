@@ -12,3 +12,8 @@ WankulCrazyPlugin.Tests/obj/
 *.dll
 *.pdb
 *.cache
+
+# Scraper tools & downloaded assets
+download_cards.py
+docu.md
+downloaded_cards/

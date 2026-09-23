@@ -1,3 +1,4 @@
 [
-  { "Id": "SeasonTest", "Name": "Season Test" }
+  { "Id": "S04", "Name": "Stellar" },
+  { "Id": "S05", "Name": "Legacy" }
 ]

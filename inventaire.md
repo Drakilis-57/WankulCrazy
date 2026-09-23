@@ -11,11 +11,11 @@ Ce document récapitule l'ensemble des cartes recensées dans le projet, classé
 | **S01** | **Origins** | 150 | 30 | 0 | **180** | Base officielle |
 | **S02** | **Campus** | 130 | 25 | 0 | **155** | Base officielle |
 | **S03** | **Battle** | 150 | 30 | 0 | **180** | Base officielle |
-| **S04** | **Stellar** | 150 | 30 | 0 | **160** | Prévue (Boosters & Énums câblés) |
+| **S04** | **Stellar** | 150 | 30 | 0 | **180** | Prévue (Boosters & Énums câblés) |
 | **S05** | **Legacy** | 155 | 30 | 0 | **185** | Nouvelle Saison |
 | **HS** | **Hors-Série** | 76 | 0 | 2 | **78** | Packs spéciaux / promos |
 | **SeasonTest** | **Season Test (Dev)** | 15 | 1 | 0 | **16** | Actif dans le repo |
-| **TOTAL** | | **921** | **146** | **2** | **1081** | |
+| **TOTAL** | | **926** | **146** | **2** | **1074** | |
 
 ---
 
@@ -63,9 +63,9 @@ Ce document récapitule l'ensemble des cartes recensées dans le projet, classé
 
 ---
 
-### 4. Saison 4 : Stellar (`S04`) — 160 Cartes
+### 4. Saison 4 : Stellar (`S04`) — 180 Cartes
 * **Terrains** : 30 cartes
-* **Personnages / Effigies** : 130 cartes
+* **Personnages / Effigies** : 150 cartes
 * *Boosters & items associés déjà référencés :* Booster Stellar, Booster Stellar Taux +, Display Stellar, Booster Gold Stellar, Boxers/Caleçons, Tapis, Classeurs.
 
 ---
@@ -77,10 +77,10 @@ Ce document récapitule l'ensemble des cartes recensées dans le projet, classé
 
 ---
 
-### 6. Hors-Série (`HS`) — 33 Cartes
+### 6. Hors-Série (`HS`) — 78 Cartes
 Série promotionnelle et événementielle :
 * **Cartes Spéciales** : 2 (`TICKET D'OR !!!`, `À JETER`)
-* **Personnages / Promos** : 31 cartes
+* **Personnages / Promos** : 76 cartes
   * **SPCAR** (Starter Pack Carrières) : 8
   * **SPJV** (Starter Pack Jeux Vidéo) : 8
   * **PGW23** (Paris Games Week 2023) : 4

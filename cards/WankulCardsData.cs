@@ -226,9 +226,6 @@ namespace WankulCrazyPlugin.cards
             {
                 if (
                             expansion == ECardExpansionType.None ||
-                            expansion == ECardExpansionType.FantasyRPG ||
-                            expansion == ECardExpansionType.Megabot ||
-                            expansion == ECardExpansionType.CatJob ||
                             expansion == ECardExpansionType.Ghost ||
                             expansion == ECardExpansionType.FoodieGO ||
                             expansion == ECardExpansionType.MAX

@@ -48,6 +48,7 @@ namespace WankulCrazyPlugin.cards
                 RegisterSeasonInternal(new SeasonData("S02", "Campus"));
                 RegisterSeasonInternal(new SeasonData("S03", "Battle"));
                 RegisterSeasonInternal(new SeasonData("S04", "Stellar"));
+                RegisterSeasonInternal(new SeasonData("S05", "Legacy"));
                 RegisterSeasonInternal(new SeasonData("HS", "Hors Serie"));
             }
         }
