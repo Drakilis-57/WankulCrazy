@@ -1,0 +1,50 @@
+[
+  {
+    "Id": "C",
+    "Name": "Common",
+    "ExperienceMultiplier": 1.0,
+    "PriceMultiplier": 1.0
+  },
+  {
+    "Id": "UC",
+    "Name": "Uncommon",
+    "ExperienceMultiplier": 1.25,
+    "PriceMultiplier": 1.25
+  },
+  {
+    "Id": "R",
+    "Name": "Rare",
+    "ExperienceMultiplier": 1.5,
+    "PriceMultiplier": 1.5
+  },
+  {
+    "Id": "UR1",
+    "Name": "Ultra Rare 1",
+    "ExperienceMultiplier": 2.0,
+    "PriceMultiplier": 2.0
+  },
+  {
+    "Id": "UR2",
+    "Name": "Ultra Rare 2",
+    "ExperienceMultiplier": 2.5,
+    "PriceMultiplier": 2.5
+  },
+  {
+    "Id": "LB",
+    "Name": "Legendary Bronze",
+    "ExperienceMultiplier": 3.0,
+    "PriceMultiplier": 3.0
+  },
+  {
+    "Id": "LA",
+    "Name": "Legendary Argent",
+    "ExperienceMultiplier": 4.0,
+    "PriceMultiplier": 4.0
+  },
+  {
+    "Id": "LO",
+    "Name": "Legendary Or",
+    "ExperienceMultiplier": 5.0,
+    "PriceMultiplier": 5.0
+  }
+]

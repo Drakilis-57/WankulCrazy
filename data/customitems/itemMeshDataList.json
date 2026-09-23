@@ -1,0 +1,16 @@
+[
+  {
+    "itemType": "TestCardPack32",
+    "name": "TestCardPack32",
+    "importType": "CopyItem",
+    "copyItemType": "BasicCardPack",
+    "texture": "test_card_pack_32.txt"
+  },
+  {
+    "itemType": "TestCardPack64",
+    "name": "TestCardPack64",
+    "importType": "CopyItem",
+    "copyItemType": "BasicCardPack",
+    "texture": "test_card_pack_64.txt"
+  }
+]

@@ -1,0 +1,26 @@
+[
+  {
+    "index": 1,
+    "name": "TestCardPack32",
+    "isBigBox": false,
+    "ignoreDoubleImage": false,
+    "amount": 1,
+    "licenseShopLevelRequired": 1,
+    "licensePrice": 60.0,
+    "itemType": "TestCardPack32",
+    "prologueShow": false,
+    "isHideItemUntilUnlocked": false
+  },
+  {
+    "index": 2,
+    "name": "TestCardPack64",
+    "isBigBox": false,
+    "ignoreDoubleImage": false,
+    "amount": 1,
+    "licenseShopLevelRequired": 1,
+    "licensePrice": 120.0,
+    "itemType": "TestCardPack64",
+    "prologueShow": false,
+    "isHideItemUntilUnlocked": false
+  }
+]
