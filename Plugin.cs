@@ -389,7 +389,17 @@ public class Plugin : BaseUnityPlugin
 
     public static string GetPluginPath()
     {
-        return Path.Combine(Application.dataPath, "../BepInEx/plugins", PluginInfo.PLUGIN_NAME);
+        try
+        {
+            if (!string.IsNullOrEmpty(Application.dataPath))
+            {
+                return Path.Combine(Application.dataPath, "../BepInEx/plugins", PluginInfo.PLUGIN_NAME);
+            }
+        }
+        catch (Exception)
+        {
+        }
+        return AppDomain.CurrentDomain.BaseDirectory;
     }
 
     // Cache des FieldInfo/MethodInfo résolus par réflexion.

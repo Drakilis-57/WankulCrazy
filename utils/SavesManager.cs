@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using WankulCrazyPlugin.cards;
 using Newtonsoft.Json;
 using WankulCrazyPlugin.inventory;
@@ -99,6 +99,7 @@ namespace WankulCrazyPlugin.utils
         public static void ModLoad()
         {
             SortUI.inited = false;
+            WankulCardsData.Instance.EnsureInitialized();
 
             Plugin.Logger.LogInfo("Loading cards associations");
             string pluginPath = Plugin.GetPluginPath();

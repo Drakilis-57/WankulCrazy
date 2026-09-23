@@ -1,3 +1,4 @@
+using WankulCrazyPlugin.importer;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,16 @@ namespace WankulCrazyPlugin.cards
     {
         public List<WankulCardData> cards = [];
         public Dictionary<string, WankulCardData> association = [];
+
+        public void EnsureInitialized()
+        {
+            if (cards == null || cards.Count == 0)
+            {
+                Plugin.Logger?.LogInfo("[WankulCardsData] Initialisation des cartes déclenchée par EnsureInitialized.");
+                JsonImporter.ImportJson();
+            }
+        }
+
 
         // Reverse lookup map (WankulCardData.Index -> CardData) to optimize GetCardDataFromWankulCardData from O(N) to O(1)
         private readonly Dictionary<int, CardData> reverseAssociation = new Dictionary<int, CardData>();

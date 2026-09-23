@@ -11,6 +11,11 @@ namespace WankulCrazyPlugin.cards
         private static readonly Dictionary<string, SeasonData> seasonsById = new Dictionary<string, SeasonData>(StringComparer.OrdinalIgnoreCase);
         private static readonly List<SeasonData> allSeasons = new List<SeasonData>();
 
+        private static void SafeLogError(string msg)
+        {
+            try { Plugin.Logger?.LogError(msg); } catch {}
+        }
+
         static SeasonsManager()
         {
             ResetToDefaults();
@@ -61,7 +66,7 @@ namespace WankulCrazyPlugin.cards
             }
             catch (Exception ex)
             {
-                Plugin.Logger?.LogError($"Failed to load seasons.json: {ex.Message}");
+                SafeLogError($"Failed to load seasons.json: {ex.Message}");
             }
         }
 
@@ -96,32 +101,21 @@ namespace WankulCrazyPlugin.cards
             {
                 allSeasons.Add(seasonData);
             }
-
-            if (Enum.TryParse<Season>(seasonData.Id, true, out var seasonEnum))
-            {
-                SeasonsContainer.Seasons[seasonEnum] = seasonData.Name;
-            }
         }
 
-        public static SeasonData GetSeason(string id)
+        public static SeasonData GetSeason(string seasonId)
         {
-            if (string.IsNullOrEmpty(id)) return null;
+            if (string.IsNullOrWhiteSpace(seasonId)) return null;
             lock (_lock)
             {
-                seasonsById.TryGetValue(id, out var data);
-                return data;
+                return seasonsById.TryGetValue(seasonId, out var seasonData) ? seasonData : null;
             }
         }
 
-        public static string GetSeasonName(string id)
+        public static string GetSeasonName(string seasonId)
         {
-            var season = GetSeason(id);
-            return season != null ? season.Name : id;
-        }
-
-        public static string GetSeasonName(Season season)
-        {
-            return GetSeasonName(season.ToString());
+            var season = GetSeason(seasonId);
+            return season != null ? season.Name : seasonId;
         }
 
         public static List<SeasonData> GetAllSeasons()

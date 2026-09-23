@@ -246,6 +246,18 @@ namespace WankulCrazyPlugin.patch
             }
 
             EnsureCardSlots(__instance);
+
+            List<CardData> rolledList = (List<CardData>)Plugin.GetPProperty(__instance, "m_RolledCardDataList");
+            if (rolledList != null && rolledList.Count > 0 && __instance.m_Card3dUIList != null)
+            {
+                for (int k = 0; k < __instance.m_Card3dUIList.Count && k < rolledList.Count; k++)
+                {
+                    if (__instance.m_Card3dUIList[k] != null && __instance.m_Card3dUIList[k].m_CardUI != null && rolledList[k] != null)
+                    {
+                        __instance.m_Card3dUIList[k].m_CardUI.SetCardUI(rolledList[k]);
+                    }
+                }
+            }
             RedistributeCardPositions(__instance);
         }
 
@@ -257,14 +269,10 @@ namespace WankulCrazyPlugin.patch
             }
 
             WankulCardsData wankulCardsData = WankulCardsData.Instance;
+            wankulCardsData.EnsureInitialized();
+            CheckBoosterSize(__instance);
 
-            // Guard : si la base de cartes n'est pas encore initialisée (ex. 1er booster en Nouvelle Partie),
-            // forcer l'import JSON avant tout tirage pour éviter un tirage invalide.
-            if (wankulCardsData.cards.Count == 0)
-            {
-                Plugin.Logger.LogWarning("[CardOpening] WankulCardsData vide au moment de l'ouverture — import JSON forcé.");
-                JsonImporter.ImportJson();
-            }
+
 
             ___m_CardValueList.Clear();
             ___m_RolledCardDataList.Clear();

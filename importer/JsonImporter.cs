@@ -168,7 +168,9 @@ public class JsonImporter
                 string texturepath = Path.Combine(pluginPath, "data", card.TexturePath);
                 string texturepathmask = Path.Combine(pluginPath, "data/masks", card.TexturePath);
 
-                Texture2D texture = LoadTexture(texturepath);
+                try
+                {
+                    Texture2D texture = LoadTexture(texturepath);
                 Texture2D texturemask = null;
 
                 if (File.Exists(texturepathmask))
@@ -218,6 +220,11 @@ public class JsonImporter
                 else if (texturemask != null)
                 {
                     Plugin.Logger?.LogError("Failed to create sprite mask: " + texturepathmask);
+                }
+                }
+                catch (Exception ex)
+                {
+                    Plugin.Logger?.LogWarning("Texture/Sprite load skipped: " + ex.Message);
                 }
             }
         }

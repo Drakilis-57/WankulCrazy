@@ -7,6 +7,12 @@ namespace WankulCrazyPlugin.cards
 {
     public static class RaritiesManager
     {
+        private static void SafeLogError(string msg)
+        {
+            try { Plugin.Logger?.LogError(msg); } catch {}
+        }
+
+
         private static readonly object _lock = new object();
         private static readonly Dictionary<string, RarityData> raritiesById = new Dictionary<string, RarityData>(StringComparer.OrdinalIgnoreCase);
         private static readonly List<RarityData> allRarities = new List<RarityData>();
@@ -77,7 +83,7 @@ namespace WankulCrazyPlugin.cards
             }
             catch (Exception ex)
             {
-                Plugin.Logger?.LogError($"Failed to load rarities.json: {ex.Message}");
+                SafeLogError($"Failed to load rarities.json: {ex.Message}");
             }
         }
 

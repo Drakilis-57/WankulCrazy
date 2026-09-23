@@ -7,6 +7,8 @@ public class GameStarting
 {
     public static void OnLevelFinishedLoading(CGameManager __instance)
     {
+        WankulCardsData.Instance.EnsureInitialized();
+
         if (__instance.m_IsGameLevel) {
             PatchTexturesImporter.ReplaceGameTextures("shared1");
             OBJImporter.DoReplace();
@@ -16,19 +18,6 @@ public class GameStarting
         {
             PatchTexturesImporter.ReplaceGameTextures("shared0");
             OBJImporter.InitFiles();
-
-            if (WankulCardsData.Instance.cards.Count == 0)
-            {
-                PatchTexturesImporter.ReplaceGameTextures("shared0");
-                // Import JSON data
-                JsonImporter.ImportJson();
-                Plugin.Logger.LogInfo("JSON data imported");
-            }
-            else
-            {
-                Plugin.Logger.LogInfo("JSON data already imported");
-            }
-
             ExpansionScreen.inited = false;
         }
 
@@ -37,4 +26,3 @@ public class GameStarting
         System.GC.Collect();
     }
 }
-
