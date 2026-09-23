@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -557,8 +557,8 @@ namespace WankulCrazyPlugin.inventory
             }
 
             ECollectionPackType selectedPackType = dropableExpansion[Random.Range(0, dropableExpansion.Count)];
-            bool isTerrain = Random.Range(0, 1) == 1;
-            bool isMinRare = Random.Range(0, 1) == 1;
+            bool isTerrain = Random.Range(0, 2) == 1;
+            bool isMinRare = Random.Range(0, 2) == 1;
             bool isMinUR = Random.Range(0, 100) < 50;
             bool isMinLegendary = Random.Range(0, 200) < 50;
 

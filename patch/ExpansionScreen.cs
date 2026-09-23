@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using TMPro;
@@ -39,17 +39,17 @@ namespace WankulCrazyPlugin.patch
             MaskRectTransform.sizeDelta = new Vector2(MaskRectTransform.sizeDelta.x, 600);
 
 
-            Transform tetramonButton = FindChildByPath(CSingleton<CardExpansionSelectScreen>.Instance.m_ScreenGrp.transform, "AnimGrp/Mask/UIGroup/Tetramon_Button");
+            Transform tetramonButton = Plugin.FindChildByPath(CSingleton<CardExpansionSelectScreen>.Instance.m_ScreenGrp.transform, "AnimGrp/Mask/UIGroup/Tetramon_Button");
             tetramonButton.GetComponentInChildren<TextMeshProUGUI>().text = "Origins";
             tetramonButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(
                 0,
                 220
             );
 
-            Transform destinyButton = FindChildByPath(CSingleton<CardExpansionSelectScreen>.Instance.m_ScreenGrp.transform, "AnimGrp/Mask/UIGroup/Destiny_Button");
+            Transform destinyButton = Plugin.FindChildByPath(CSingleton<CardExpansionSelectScreen>.Instance.m_ScreenGrp.transform, "AnimGrp/Mask/UIGroup/Destiny_Button");
             destinyButton.GetComponentInChildren<TextMeshProUGUI>().text = "Campus";
             
-            Transform ghostButton = FindChildByPath(CSingleton<CardExpansionSelectScreen>.Instance.m_ScreenGrp.transform, "AnimGrp/Mask/UIGroup/Ghost_Button");
+            Transform ghostButton = Plugin.FindChildByPath(CSingleton<CardExpansionSelectScreen>.Instance.m_ScreenGrp.transform, "AnimGrp/Mask/UIGroup/Ghost_Button");
             ghostButton.GetComponentInChildren<TextMeshProUGUI>().text = "Battle";
 
             float verticalSpacing = destinyButton.gameObject.GetComponent<RectTransform>().anchoredPosition.y - ghostButton.gameObject.GetComponent<RectTransform>().anchoredPosition.y - 15;
@@ -68,7 +68,7 @@ namespace WankulCrazyPlugin.patch
 
             GameObject s04GameObject = GameObject.Instantiate(destinyButton.gameObject);
             s04GameObject.name = "S04_Button";
-            s04GameObject.transform.SetParent(tetramonButton.GetParent().transform);
+            s04GameObject.transform.SetParent(tetramonButton.parent);
             s04GameObject.transform.localScale = tetramonButton.localScale;
             s04GameObject.transform.localPosition = tetramonButton.localPosition;
             s04GameObject.transform.localRotation = tetramonButton.localRotation;
@@ -92,7 +92,7 @@ namespace WankulCrazyPlugin.patch
 
             GameObject HSGameObject = GameObject.Instantiate(destinyButton.gameObject);
             HSGameObject.name = "HS_Button";
-            HSGameObject.transform.SetParent(tetramonButton.GetParent().transform);
+            HSGameObject.transform.SetParent(tetramonButton.parent);
             HSGameObject.transform.localScale = tetramonButton.localScale;
             HSGameObject.transform.localPosition = tetramonButton.localPosition;
             HSGameObject.transform.localRotation = tetramonButton.localRotation;
@@ -118,35 +118,5 @@ namespace WankulCrazyPlugin.patch
             currentExpensionIndex = index;
         }
 
-        private static string GetGameObjectPath(GameObject obj)
-        {
-            string path = obj.name;
-            Transform current = obj.transform;
-
-            while (current.parent != null)
-            {
-                current = current.parent;
-                path = current.name + "/" + path;
-            }
-
-            return path;
         }
-
-        private static Transform FindChildByPath(Transform parent, string path)
-        {
-            string[] segments = path.Split('/');
-            Transform current = parent;
-
-            foreach (string segment in segments)
-            {
-                current = current.Find(segment);
-                if (current == null)
-                {
-                    return null;
-                }
-            }
-
-            return current;
-        }
-    }
 }

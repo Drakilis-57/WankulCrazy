@@ -208,7 +208,7 @@ namespace WankulCrazyPlugin.patch
 
                 if (someDefaultParentTransform == null)
                 {
-                    Plugin.Logger.LogError("Le parent par défaut 'SomeParentObject' n'a pas été trouvé dans la scène !");
+                    Plugin.Logger.LogError("Le parent par défaut 'Level_Environment_Grp' n'a pas été trouvé dans la scène !");
                 }
 
                 if (openCardBoxSpawnCardPackPosList.Count < 24)
@@ -251,11 +251,8 @@ namespace WankulCrazyPlugin.patch
                     // Récupérer le dernier élément valide pour baser les éléments fictifs
                     Transform lastValidTransform = __instance.m_HoldCardPackPosList.Count > 0 ? __instance.m_HoldCardPackPosList[__instance.m_HoldCardPackPosList.Count - 1] : null;
 
-                    // Déclarer un parent par défaut si nécessaire (remplacer "SomeParentObject" par un objet réel de votre scène)
-                    Transform someDefaultParentTransformV2 = GameObject.Find("SomeParentObject")?.transform;
-
-                    // Vérifier si lastValidTransform a un parent, sinon définisser un parent par défaut
-                    Transform defaultParent = lastValidTransform?.parent != null ? lastValidTransform.parent : someDefaultParentTransformV2;
+                    // Vérifier si lastValidTransform a un parent, sinon utiliser le parent par défaut
+                    Transform defaultParent = lastValidTransform?.parent != null ? lastValidTransform.parent : someDefaultParentTransform;
 
                     while (__instance.m_HoldCardPackPosList.Count < 24)
                     {
@@ -326,19 +323,7 @@ namespace WankulCrazyPlugin.patch
                                         child.localPosition = new Vector3(-0.001f, 0.1107f - 0.08f, 0);
                                         child.localRotation = Quaternion.Euler(0, 180, 0);
                                         child.localScale = new Vector3(0.15f, 0.15f, 0.0001f);
-                                        Dictionary<EItemType, string> texturePaths = new Dictionary<EItemType, string>
-                                        {
-                                            { EItemType.BasicCardPack, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S1.png") },
-                                            { EItemType.RareCardPack, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S2.png") },
-                                            { EItemType.EpicCardPack, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S3.png") },
-                                            { EnumExtensions.SafeParseEItemType("BoosterStellar"), Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S4.png") },
-                                            { EItemType.LegendaryCardPack, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_HS.png") },
-                                            { EItemType.DestinyBasicCardPack, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S1_TauxDrop.png") },
-                                            { EItemType.DestinyRareCardPack, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S2_TauxDrop.png") },
-                                            { EItemType.DestinyEpicCardPack, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S3_TauxDrop.png") },
-                                            { EnumExtensions.SafeParseEItemType("BoosterStellarTaux"), Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S4_TauxDrop.png") },
-                                            { EItemType.DestinyLegendaryCardPack, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_HS_TauxDrop.png") },
-                                        };
+                                        Dictionary<EItemType, string> texturePaths = GetPackTexturePaths();
 
                                         // Vérifie si le cardPack a une texture associée dans le dictionnaire
                                         if (texturePaths.TryGetValue(cardPack, out string texturePath))
@@ -358,19 +343,7 @@ namespace WankulCrazyPlugin.patch
                                         child.localPosition = new Vector3(-0.001f, 0.08f - 0.08f, 0);
                                         child.localRotation = Quaternion.Euler(90, 180, 0);
                                         child.localScale = new Vector3(0.15f, 0.15f, 0.15f);
-                                        Dictionary<EItemType, string> texturePaths = new Dictionary<EItemType, string>
-                                        {
-                                            { EItemType.BasicCardPack, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S1.png") },
-                                            { EItemType.RareCardPack, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S2.png") },
-                                            { EItemType.EpicCardPack, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S3.png") },
-                                            { EnumExtensions.SafeParseEItemType("BoosterStellar"), Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S4.png") },
-                                            { EItemType.LegendaryCardPack, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_HS.png") },
-                                            { EItemType.DestinyBasicCardPack, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S1_TauxDrop.png") },
-                                            { EItemType.DestinyRareCardPack, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S2_TauxDrop.png") },
-                                            { EItemType.DestinyEpicCardPack, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S3_TauxDrop.png") },
-                                            { EnumExtensions.SafeParseEItemType("BoosterStellarTaux"), Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S4_TauxDrop.png") },
-                                            { EItemType.DestinyLegendaryCardPack, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_HS_TauxDrop.png") },
-                                        };
+                                        Dictionary<EItemType, string> texturePaths = GetPackTexturePaths();
 
                                         // Vérifie si le cardPack a une texture associée dans le dictionnaire
                                         if (texturePaths.TryGetValue(cardPack, out string texturePath))
@@ -549,6 +522,29 @@ namespace WankulCrazyPlugin.patch
             {
                 Plugin.Logger.LogError("Échec du chargement de la texture.");
             }
+        }
+    
+        private static Dictionary<EItemType, string> packTexturePaths = null;
+
+        private static Dictionary<EItemType, string> GetPackTexturePaths()
+        {
+            if (packTexturePaths == null)
+            {
+                packTexturePaths = new Dictionary<EItemType, string>
+                {
+                    { EItemType.BasicCardPack, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S1.png") },
+                    { EItemType.RareCardPack, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S2.png") },
+                    { EItemType.EpicCardPack, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S3.png") },
+                    { EnumExtensions.SafeParseEItemType("BoosterStellar"), Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S4.png") },
+                    { EItemType.LegendaryCardPack, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_HS.png") },
+                    { EItemType.DestinyBasicCardPack, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S1_TauxDrop.png") },
+                    { EItemType.DestinyRareCardPack, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S2_TauxDrop.png") },
+                    { EItemType.DestinyEpicCardPack, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S3_TauxDrop.png") },
+                    { EnumExtensions.SafeParseEItemType("BoosterStellarTaux"), Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S4_TauxDrop.png") },
+                    { EItemType.DestinyLegendaryCardPack, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_HS_TauxDrop.png") },
+                };
+            }
+            return packTexturePaths;
         }
     }
 }

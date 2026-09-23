@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,27 +32,27 @@ namespace WankulCrazyPlugin.patch.workbench
         public static void OpenRarityScreen(ERarity initCardRarity)
         {
             
-            Transform anyRarityButton = FindChildByPath(CSingleton<CardRaritySelectScreen>.Instance.m_ScreenGrp.transform, "AnimGrp/Mask/UIGroup/AnyRarity_Button");
+            Transform anyRarityButton = Plugin.FindChildByPath(CSingleton<CardRaritySelectScreen>.Instance.m_ScreenGrp.transform, "AnimGrp/Mask/UIGroup/AnyRarity_Button");
             if (anyRarityButton != null)
             {
                 anyRarityButton.GetComponentInChildren<TextMeshProUGUI>().text = rarityGroups[0].label;
             }
-            Transform commonButton = FindChildByPath(CSingleton<CardRaritySelectScreen>.Instance.m_ScreenGrp.transform, "AnimGrp/Mask/UIGroup/Common_Button");
+            Transform commonButton = Plugin.FindChildByPath(CSingleton<CardRaritySelectScreen>.Instance.m_ScreenGrp.transform, "AnimGrp/Mask/UIGroup/Common_Button");
             if (commonButton != null)
             {
                 commonButton.GetComponentInChildren<TextMeshProUGUI>().text = rarityGroups[1].label;
             }
-            Transform rareButton = FindChildByPath(CSingleton<CardRaritySelectScreen>.Instance.m_ScreenGrp.transform, "AnimGrp/Mask/UIGroup/Rare_Button");
+            Transform rareButton = Plugin.FindChildByPath(CSingleton<CardRaritySelectScreen>.Instance.m_ScreenGrp.transform, "AnimGrp/Mask/UIGroup/Rare_Button");
             if (rareButton != null)
             {
                 rareButton.GetComponentInChildren<TextMeshProUGUI>().text = rarityGroups[2].label;
             }
-            Transform epicButton = FindChildByPath(CSingleton<CardRaritySelectScreen>.Instance.m_ScreenGrp.transform, "AnimGrp/Mask/UIGroup/Epic_Button");
+            Transform epicButton = Plugin.FindChildByPath(CSingleton<CardRaritySelectScreen>.Instance.m_ScreenGrp.transform, "AnimGrp/Mask/UIGroup/Epic_Button");
             if (epicButton != null)
             {
                 epicButton.GetComponentInChildren<TextMeshProUGUI>().text = rarityGroups[3].label;
             }
-            Transform legendaryButton = FindChildByPath(CSingleton<CardRaritySelectScreen>.Instance.m_ScreenGrp.transform, "AnimGrp/Mask/UIGroup/Legendary_Button");
+            Transform legendaryButton = Plugin.FindChildByPath(CSingleton<CardRaritySelectScreen>.Instance.m_ScreenGrp.transform, "AnimGrp/Mask/UIGroup/Legendary_Button");
             if (legendaryButton != null)
             {
                 legendaryButton.GetComponentInChildren<TextMeshProUGUI>().text = rarityGroups[4].label;
@@ -185,35 +185,5 @@ namespace WankulCrazyPlugin.patch.workbench
             return false;
         }
 
-        private static string GetGameObjectPath(GameObject obj)
-        {
-            string path = obj.name;
-            Transform current = obj.transform;
-
-            while (current.parent != null)
-            {
-                current = current.parent;
-                path = current.name + "/" + path;
-            }
-
-            return path;
         }
-
-        private static Transform FindChildByPath(Transform parent, string path)
-        {
-            string[] segments = path.Split('/');
-            Transform current = parent;
-
-            foreach (string segment in segments)
-            {
-                current = current.Find(segment);
-                if (current == null)
-                {
-                    return null;
-                }
-            }
-
-            return current;
-        }
-    }
 }
