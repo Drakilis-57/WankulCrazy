@@ -114,106 +114,74 @@ Il supporte désormais :
 
 Cela permet d’étendre facilement le contenu sans devoir modifier le code C#.
 
----
+### 3.3 Cheminement et cycle de vie d'une carte (Exemple : Carte Legacy)
 
-## 4. Améliorations et simplifications intégrées
-
-### ✅ Simplification 1 : auto-enregistrement dynamique par catégorie
-
-Avant, les items custom devaient être ajoutés à la boutique de façon manuelle dans le code.
-
-Maintenant, le code parcourt les objets `ItemDataList` chargés, puis les classe automatiquement selon leur catégorie :
-- `EItemCategory.Figurine` → boutique figurines,
-- `EItemCategory.Accessory` → boutique accessoires,
-- packs et boosters → catalogue standard.
-
-Cela permet d’ajouter un nouvel item via le JSON sans recompilation.
-
-### ✅ Simplification 2 : saisons et raretés dynamiques
-
-Le système n’est plus limité aux enums originaux.
-
-Le repo actuel utilise :
-- `SeasonsManager`
-- `RaritiesManager`
-- `SeasonData` / `RarityData`
-- `SeasonJsonConverter` / `RarityJsonConverter`
-
-Les nouvelles valeurs sont automatiquement enregistrées et accessibles ensuite via `SeasonId` / `RarityId`.
-
-La compatibilité avec les anciennes valeurs d’enum est conservée via des valeurs de repli.
-
-### ✅ Simplification 3 : chargement de cartes multi-fichiers / multi-dossiers
-
-Le mod supporte désormais :
+Pour comprendre comment le mod intègre une carte du début à la fin, voici le cheminement pas à pas d'une carte comme **ROAD TRIP (`Index: 500001`, `S05`)** :
 
 ```text
-data/
-  ├── customitems/
-  ├── cards/
-  │    ├── season1.json
-  │    ├── season2.json
-  │    └── my_custom_pack.json
+┌─────────────────────────────────────────────────────────────┐
+│ 1. Définition JSON (data/cards/Legacy/legacy.json)          │
+└──────────────────────────────┬──────────────────────────────┘
+                               │
+                               ▼
+┌─────────────────────────────────────────────────────────────┐
+│ 2. Chargement & Désérialisation (JsonImporter.ImportJson)   │
+└──────────────────────────────┬──────────────────────────────┘
+                               │
+                               ▼
+┌─────────────────────────────────────────────────────────────┐
+│ 3. Enregistrement Modèle (WankulCardsData.Instance)         │
+└──────────────────────────────┬──────────────────────────────┘
+                               │
+                               ▼
+┌─────────────────────────────────────────────────────────────┐
+│ 4. Décompression Asynchrone (WankulLoadingScreen)           │
+└──────────────────────────────┬──────────────────────────────┘
+                               │
+                               ▼
+┌─────────────────────────────────────────────────────────────┐
+│ 5. Mapping In-Game (Association CardData du jeu)            │
+└──────────────────────────────┬──────────────────────────────┘
+                               │
+                               ▼
+┌─────────────────────────────────────────────────────────────┐
+│ 6. Exploitation In-Game (Boosters, Classeur, Prix, Vente)   │
+└─────────────────────────────────────────────────────────────┘
 ```
 
-Le chargement ne dépend plus d’un unique fichier monolithique.
+#### Étape 1 : Définition de la carte (`data/cards/Legacy/legacy.json`)
+La carte est définie avec ses caractéristiques Wankul :
+- `Index`: `500001` (identifiant unique pour la saison Legacy S05)
+- `Number`: `"001"`, `Title`: `"ROAD TRIP"`, `CardType`: `"Terrain"`
+- `SeasonId`: `"S05"`, `RarityId`: `"C"` (Commune)
+- `TexturePath`: `"cards/Legacy/textures/001_ROAD TRIP.png"`
 
-### ✅ Simplification 4 : cache mémoire de textures et meshes
+#### Étape 2 : Chargement et Parsing (`JsonImporter.cs`)
+1. Au lancement du jeu (hook `GameStarting.OnLevelFinishedLoading`), `WankulCardsData.Instance.EnsureInitialized()` déclenche `JsonImporter.ImportJson()`.
+2. Le fichier `seasons.json` associe `"S05"` à la saison **Legacy** (`expansionIndex: 4`).
+3. `JsonImporter` scanne récursivement `data/cards/` et désérialise le JSON en objet typé C# `TerrainCardData` (héritant de `WankulCardData`).
 
-`OBJImporter` applique des mécanismes de cache pour éviter de relire les mêmes ressources depuis le disque à chaque instanciation :
-- `CacheTexturesAtStart`
-- `CacheMeshesAtStart`
+#### Étape 3 : Écran de chargement et décompression visuelle (`WankulLoadingScreen.cs`)
+1. En jeu, `JsonImporter` transmet la liste des cartes à `WankulLoadingScreen.ShowAndStartLoading(...)`.
+2. L'écran de chargement s'affiche en surimpression (`Canvas`, `sortingOrder = 9999`) avec sa barre de progression.
+3. Les textures PNG/JPG sont chargées depuis le disque et converties en `Texture2D` et `Sprite` Unity par batch de 12 images par frame (`yield return null`), ce qui évite tout freeze Windows.
+4. Les objets `Texture` et `Sprite` sont assignés directement à la propriété de la carte (`card.Texture = texture`, `card.Sprite = sprite`).
 
-Les ressources sont réutilisées par référence lors des spawns d’objets.
+#### Étape 4 : Association avec le moteur du jeu (`WankulCardsData.cs`)
+Pour que le moteur de *TCG Card Shop Simulator* puisse manipuler la carte Wankul sans casser ses systèmes internes, la carte est mappée à un slot existant du jeu (`CardData`) :
+1. `GetUnassciatedCardData()` alloue un emplacement parmi les extensions supportées (`Ghost`, `FantasyRPG`, `Megabot`, `CatJob`...).
+2. Le dictionnaire `association` relie la clé de la carte Wankul au `CardData` correspondant, et un dictionnaire inverse `reverseAssociation` permet un accès en $O(1)$.
 
-### ✅ Simplification 5 : cache des accès par réflexion
-
-Le code évite de réévaluer par réflexion à chaque appel dans les chemins critiques.
-
-Dans `Plugin.cs`, deux caches statiques ont été ajoutés :
-- `FieldCache`
-- `MethodCache`
-
-et des helpers :
-- `GetCachedField`
-- `GetCachedMethod`
-
-Cela est particulièrement utile pour des méthodes appelées très souvent pendant les animations et l’UI, comme des chemins de mise à jour par frame.
-
-Le correctif important ici est qu’il remonte la hiérarchie de classes (`BaseType`) pour trouver les membres privés hérités, ce qui correspond au comportement attendu de `AccessTools.Field` / `AccessTools.Method`.
-
-### ✅ Simplification 6 : cache des tableaux d’enum
-
-Les conversions répétées sur `Enum.GetValues` ont été remplacées par des tableaux statiques réutilisés.
-
-Exemples présents dans le code :
-- `CachedExpansions`
-- `CachedBorders`
-
-Cela évite les allocations inutiles dans les boucles de calculs de cartes et d’UI.
-
-### ✅ Simplification 7 : index saison → cartes precalculé
-
-`WankulCardsData` construit un index lazy :
-- `cardsBySeason`
-- `GetCardsBySeasonFast(string seasonId)`
-
-Au lieu de recalculer des listes à chaque tirage, le mod accède directement à la liste associée à la saison demandée. Cela améliore le temps de tirage des boosters et réduit les scans O(N) répétés.
-
-### ✅ Simplification 8 : compatibilité Enum + patchs système
-
-Le plugin applique des patches de compatibilité sur certaines méthodes du runtime pour que les cartes Wankul et les données dynamiques interagissent mieux avec les enums et les conversions du jeu.
-
-Cela concerne notamment :
-- `Enum.GetName`
-- `Enum.IsDefined`
-- `Enum.Parse`
-
-Ce type de compatibilité est utile pour stabiliser le comportement du jeu avec des valeurs custom non standard.
+#### Étape 5 : Exploitation in-game via les patchs Harmony
+Une fois le jeu en cours d'exécution, la carte intervient à plusieurs endroits grâce aux patchs :
+- **Ouverture de boosters (`patch/CardOpening.cs`)** : Lors de l'ouverture d'un paquet de la saison Legacy, la pioche tire la carte selon ses taux de drop (`Drop`, `Percentage`, rareté `C`).
+- **Affichage et album (`patch/ReplacingCards.cs`, `patch/SortUI.cs`)** : Les méthodes d'affichage de texture du jeu (`GetCardTexture`, `GetIcon`) interceptent le rendu pour afficher le sprite Wankul au lieu du visuel de base du jeu.
+- **Cotation et Marché (`patch/CheckPriceUI.cs`)** : Le prix de vente et la valeur marchande sont calculés en fonction des stats de la carte Wankul.
+- **Posters et vitrines (`patch/WindowsPosters.cs`, `patch/CustomItemsImporter.cs`)** : Les modèles 3D et textures des packagings Legacy sont injectés dans la boutique.
 
 ---
 
-## 5. Validation et tests du repo
+## 4. Validation et tests du repo
 
 Le dépôt contient une suite de tests unitaire dédiée à ces fonctionnalités, notamment :
 - `WankulCrazyPlugin.Tests/DocsFeaturesVerificationTests.cs`
@@ -230,7 +198,7 @@ Les tests couvrent :
 
 ---
 
-## 6. Points d’attention / limites actuelles
+## 5. Points d’attention / limites actuelles
 
 Le mod est bien avancé, mais il reste des points sensibles :
 - beaucoup de logique dépend directement de l’API du jeu original et de sa structure interne,
@@ -240,7 +208,7 @@ Le mod est bien avancé, mais il reste des points sensibles :
 
 ---
 
-## 7. Conclusion
+## 6. Conclusion
 
 Le mod WankulCrazyPlugin est aujourd’hui structuré autour de trois axes principaux :
 1. extension de contenu via JSON dynamique,
@@ -251,7 +219,7 @@ La logique actuelle montre clairement une volonté d’ouvrir le système à de 
 
 ---
 
-## 8. Fichiers utiles à consulter
+## 7. Fichiers utiles à consulter
 
 - `Plugin.cs`
 - `cards/WankulCardsData.cs`

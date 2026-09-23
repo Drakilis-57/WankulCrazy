@@ -171,6 +171,17 @@ public class JsonImporter
         WankulCardsData cardsData = WankulCardsData.Instance;
         cardsData.cards = cards;
 
+        // Si nous sommes dans l'environnement de jeu Unity, utiliser l'écran de chargement asynchrone non bloquant
+        if (Application.isPlaying)
+        {
+            WankulLoadingScreen.ShowAndStartLoading(cardsData.cards, () =>
+            {
+                Plugin.Logger?.LogInfo($"[WankulLoadingScreen] Toutes les {cardsData.cards.Count} textures de cartes ont été chargées avec succès !");
+            });
+            return;
+        }
+
+        // Fallback synchrone pour les tests unitaires headless
         string pluginPath = Plugin.GetPluginPath();
         foreach (var card in cardsData.cards)
         {
