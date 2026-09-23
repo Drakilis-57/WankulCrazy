@@ -88,6 +88,10 @@ namespace WankulCrazyPlugin.cards
                 {
                     rarityData.ExperienceMultiplier = existingRarity.ExperienceMultiplier;
                 }
+                if (rarityData.PriceMultiplier == 1.0f && existingRarity.PriceMultiplier != 1.0f)
+                {
+                    rarityData.PriceMultiplier = existingRarity.PriceMultiplier;
+                }
             }
 
             raritiesById[rarityData.Id] = rarityData;

@@ -34,6 +34,14 @@ public static class EnumExtensions
                 { 15, "Stellar" },
                 { 16, "StellarTaux" },
             }
+        },
+        {
+            typeof(EMonsterType), new Dictionary<int, string>
+            {
+                { 50000, "WankulMonster001" },
+                { 50001, "WankulMonster002" },
+                // Ajouter une entrée par nouvelle carte custom
+            }
         }
     };
 
@@ -154,6 +162,47 @@ public static class EnumExtensions
 
         Debug.LogError($"[WankulCrazy] Erreur JSON: '{value}' n'est pas une valeur valide pour ECollectionPackType.");
         return (ECollectionPackType)0; // Valeur par défaut
+    }
+
+    public static EMonsterType SafeParseEMonsterType(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            Debug.LogError("[WankulCrazy] Erreur JSON: Valeur monsterType vide ou null !");
+            return (EMonsterType)0;
+        }
+
+        string trimmed = value.Trim();
+
+        // 1. Vérifie si c'est une valeur définie dans l'Enum officiel
+        if (Enum.TryParse(typeof(EMonsterType), trimmed, true, out object result))
+        {
+            return (EMonsterType)result;
+        }
+
+        // 2. Vérifie si c'est une valeur custom définie
+        var customMonsters = EnumExtensions.customEnumValues[typeof(EMonsterType)];
+        var match = customMonsters.FirstOrDefault(x => string.Equals(x.Value, trimmed, StringComparison.OrdinalIgnoreCase));
+        if (match.Value != null)
+        {
+            return (EMonsterType)match.Key;
+        }
+
+        // 3. Tentative avec suppression des espaces et tirets
+        string normalized = trimmed.Replace(" ", "").Replace("-", "").Replace("_", "");
+        if (Enum.TryParse(typeof(EMonsterType), normalized, true, out object normalizedResult))
+        {
+            return (EMonsterType)normalizedResult;
+        }
+
+        var normalizedMatch = customMonsters.FirstOrDefault(x => string.Equals(x.Value, normalized, StringComparison.OrdinalIgnoreCase));
+        if (normalizedMatch.Value != null)
+        {
+            return (EMonsterType)normalizedMatch.Key;
+        }
+
+        Debug.LogError($"[WankulCrazy] Erreur JSON: '{value}' n'est pas une valeur valide pour EMonsterType.");
+        return (EMonsterType)0;
     }
 
     public static string GetEnumName(Type enumType, int value)
