@@ -367,6 +367,24 @@ public class Plugin : BaseUnityPlugin
             AccessTools.Method(typeof(CPlayerData), "GetCardAmount"),
             prefix: AccessTools.Method(typeof(CPlayerDataPatch), "GetCardAmount")
         );
+
+        TryPatch(
+            "Debug.LogWarning(object)",
+            AccessTools.Method(typeof(Debug), "LogWarning", new[] { typeof(object) }),
+            prefix: AccessTools.Method(typeof(DebugFilterPatch), nameof(DebugFilterPatch.LogWarningPrefix))
+        );
+
+        TryPatch(
+            "Debug.LogWarning(object, Object)",
+            AccessTools.Method(typeof(Debug), "LogWarning", new[] { typeof(object), typeof(UnityEngine.Object) }),
+            prefix: AccessTools.Method(typeof(DebugFilterPatch), nameof(DebugFilterPatch.LogWarningContextPrefix))
+        );
+
+        TryPatch(
+            "Debug.LogWarningFormat(string, object[])",
+            AccessTools.Method(typeof(Debug), "LogWarningFormat", new[] { typeof(string), typeof(object[]) }),
+            prefix: AccessTools.Method(typeof(DebugFilterPatch), nameof(DebugFilterPatch.LogWarningFormatPrefix))
+        );
     }
 
     public static string GetPluginPath()

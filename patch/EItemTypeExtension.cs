@@ -206,6 +206,18 @@ public static class EnumExtensions
         return (EMonsterType)0;
     }
 
+    public static bool TryToInt32(object value, out int result)
+    {
+        if (value is int i) { result = i; return true; }
+        if (value is Enum) { result = Convert.ToInt32(value); return true; }
+        if (value != null && !(value is string))
+        {
+            try { result = Convert.ToInt32(value); return true; } catch { }
+        }
+        result = 0;
+        return false;
+    }
+
     public static string GetEnumName(Type enumType, int value)
     {
         if (Enum.IsDefined(enumType, value))
@@ -224,66 +236,88 @@ public static class EnumExtensions
 
 // 🎯 Patch (int)myitem.type → Supporte 999
 // 🎯 Patch Enum.GetName() et Enum.IsDefined()
-class Patch_Enum_GetName
+public class Patch_Enum_GetName
 {
-    static bool Prefix(Type enumType, object value, ref string __result)
+    public static bool Prefix(Type enumType, object value, ref string __result)
     {
-        if (EnumExtensions.customEnumValues.ContainsKey(enumType) &&
-            EnumExtensions.customEnumValues[enumType].TryGetValue((int)value, out string name))
+        if (enumType != null && value != null && EnumExtensions.customEnumValues.TryGetValue(enumType, out var customDict))
         {
-            __result = name;
-            return false; // Skip l'original
+            if (EnumExtensions.TryToInt32(value, out int intVal))
+            {
+                if (customDict.TryGetValue(intVal, out string name))
+                {
+                    __result = name;
+                    return false; // Skip l'original
+                }
+            }
         }
         return true;
     }
 }
 
-class Patch_Enum_IsDefined
+public class Patch_Enum_IsDefined
 {
-    static bool Prefix(Type enumType, object value, ref bool __result)
+    public static bool Prefix(Type enumType, object value, ref bool __result)
     {
-        if (EnumExtensions.customEnumValues.ContainsKey(enumType))
+        if (enumType != null && value != null && EnumExtensions.customEnumValues.TryGetValue(enumType, out var customDict))
         {
-            __result = EnumExtensions.IsValidEnumValue(enumType, (int)value);
-            return false; // Skip l'original
+            if (value is string strVal)
+            {
+                if (customDict.ContainsValue(strVal))
+                {
+                    __result = true;
+                    return false; // Skip l'original
+                }
+                return true; // Laisse faire Enum.IsDefined d'origine pour les chaînes natifs
+            }
+
+            if (EnumExtensions.TryToInt32(value, out int intVal))
+            {
+                if (customDict.ContainsKey(intVal))
+                {
+                    __result = true;
+                    return false; // Skip l'original
+                }
+            }
         }
         return true;
     }
 }
 
 // 🎯 Patch Enum.Parse() pour supporter CustomItem
-class Patch_Enum_Parse
+public class Patch_Enum_Parse
 {
-    static bool Prefix(Type enumType, string value, bool ignoreCase, ref object __result)
+    public static bool Prefix(Type enumType, string value, bool ignoreCase, ref object __result)
     {
-        if (EnumExtensions.customEnumValues.ContainsKey(enumType))
+        if (enumType != null && !string.IsNullOrEmpty(value) && EnumExtensions.customEnumValues.TryGetValue(enumType, out var customDict))
         {
-            // Vérifie si la valeur existe dans l'Enum d'origine
-            if (Enum.IsDefined(enumType, value))
-            {
-                int parsedValue = (int)Enum.Parse(enumType, value, ignoreCase);
+            StringComparison comp = ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
 
-                // Vérifie si la valeur doit être remappée
-                if (EnumExtensions.remappedEnumValues.ContainsKey(enumType) &&
-                    EnumExtensions.remappedEnumValues[enumType].ContainsKey(parsedValue))
+            // 1. Vérifie si c'est une valeur custom
+            var customMatch = customDict.FirstOrDefault(x => string.Equals(x.Value, value, comp));
+            if (customMatch.Value != null)
+            {
+                __result = Enum.ToObject(enumType, customMatch.Key);
+                return false; // Skip l'original
+            }
+
+            // 2. Vérifie si la valeur doit être remappée
+            try
+            {
+                if (EnumExtensions.remappedEnumValues.TryGetValue(enumType, out var remappedDict))
                 {
-                    parsedValue = EnumExtensions.remappedEnumValues[enumType][parsedValue];
+                    if (Enum.TryParse(enumType, value, ignoreCase, out object parsedObj))
+                    {
+                        int parsedValue = Convert.ToInt32(parsedObj);
+                        if (remappedDict.TryGetValue(parsedValue, out int remappedValue))
+                        {
+                            __result = Enum.ToObject(enumType, remappedValue);
+                            return false; // Skip l'original
+                        }
+                    }
                 }
-
-                __result = (Enum)Enum.ToObject(enumType, parsedValue);
-                return false; // Skip l'original
             }
-
-            // Vérifie si c'est une valeur custom
-            if (EnumExtensions.customEnumValues[enumType].ContainsValue(value))
-            {
-                __result = (Enum)Enum.ToObject(enumType, EnumExtensions.customEnumValues[enumType].FirstOrDefault(x => x.Value == value).Key);
-                return false; // Skip l'original
-            }
-
-            Debug.LogError($"[WankulCrazy] Erreur JSON: '{value}' n'est pas une valeur valide pour {enumType.Name}.");
-            __result = Activator.CreateInstance(enumType); // Valeur par défaut
-            return false; // Skip l'original
+            catch { }
         }
 
         return true; // Continue normalement pour les autres Enums
