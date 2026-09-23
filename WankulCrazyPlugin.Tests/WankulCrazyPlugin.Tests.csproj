@@ -27,6 +27,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\WankulCrazyPlugin.csproj" />
+    <Reference Include="Assembly-CSharp">
+      <HintPath>..\libs\Assembly-CSharp.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>
