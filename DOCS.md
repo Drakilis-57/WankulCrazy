@@ -1,123 +1,152 @@
-# Documentation du Mod WankulCrazy
+# Documentation du mod WankulCrazy
 
-Ce document décrit en détail les fonctionnalités intégrées/modifiables par le mod dans **TCG Card Shop Simulator**, ainsi qu'une analyse de l'architecture actuelle et des pistes d'amélioration pour simplifier l'ajout de contenu (cartes, saisons, figurines, etc.).
-
----
-
-## 1. Que permet d'intégrer et de modifier le mod dans le jeu ?
-
-Le mod **WankulCrazyPlugin** est un mod BepInEx/Harmony qui remplace ou étend le contenu original de TCG Card Shop Simulator par l'univers des cartes **Wankul**.
-
-### 🃏 A. Cartes Wankul & Mécaniques de Collection
-* **Cartes Custom (Effigies, Terrains, Spéciales)** :
-  * Chargement dynamique à partir d'un fichier JSON principal (`data/formated_wankul_cards.json`) et de fichiers/dossiers multiples dans `data/cards/`.
-  * Prise en charge des textures HD de cartes et de leurs **masques de brillance/foil** (`data/masks/`).
-* **Association & Mapping Dynamiques** :
-  * Association automatique des cartes Wankul aux monstres originaux du jeu (`EMonsterType`, `ECardBorderType`, `ECardExpansionType`).
-  * Indexation inversée (`reverseAssociation`) en mémoire pour des recherches instantanées O(1).
-* **Système Économique & Prix du Marché** :
-  * Calcul dynamique de la valeur marchande selon le type de carte, la saison, la rareté et le pourcentage d'état de la carte.
-  * Patchs des écrans de comparaison de prix (`CheckPriceUI`), des graphiques de prix historiques (`ItemPriceGraphScreen`) et des transactions avec les clients (`CustomerTradeCardScreen`).
-* **Booster Opening & Drop Rates** :
-  * Algorithme personnalisé d'ouverture de boosters (`CardOpening.cs`).
-  * Distribution des cartes Wankul selon le type de pack/extension (ex: Basic, Rare, Epic, Legendary, Destiny, Stellar...).
-* **Expérience (XP)** :
-  * Système de calcul d'expérience basé sur la rareté Wankul et le niveau du magasin du joueur (`WankulCardsData.GetExperienceFromWankulCard` & `RaritiesManager`).
-* **Classeur / Album (`SortUI`, `ReplacingCards`)** :
-  * Patch de l'interface de l'album et du classeur pour afficher les cartes Wankul.
-  * Options de tri personnalisées (par Saison, par Rareté, par Numéro, par Type).
-
-### 🛒 B. Produits Custom & Magasin (`CustomItemsImporter`)
-* **Types d'Articles Personnalisés** :
-  * **Boosters & Displays** (ex: *BoosterStellar*, *DisplayStellar*, *BoosterStellarTaux*...).
-  * **Starters & Decks** (ex: *StarterApocalypse*, *StarterShowtime*...).
-  * **Figurines** (ex: *CaleçonStellar*...).
-  * **Accessoires** (ex: *TapisS41*, *TapisS42*, *ClasseurS4*...).
-* **Modèles 3D Mesh & Textures** :
-  * Importation de fichiers 3D au format Wavefront `.obj` via `OBJImporter`.
-  * Duplication/Copie de meshes existants du jeu originel (`CopyItem`) en appliquant une nouvelle texture.
-  * Définition des dimensions, colliders, échelles d'icônes et prix d'achat/revente via `ItemDataList.json` et `itemMeshDataList.json`.
-* **Licences de Restock & Réapprovisionnement** :
-  * Intégration dans l'application de réapprovisionnement du téléphone portable/PC en jeu via `restockDataList.json`.
-
-### 🎨 C. Retexturing & Décoration du Magasin
-* **Posters & Vitrines (`WindowsPosters`)** :
-  * Remplacement des textures des vitrines et posters muraux par des visuels Wankil.
-* **Workbench & Postes de Travail (`WorkbenchPatch`)** :
-  * Adaptation de la table de reconditionnement/tri de cartes pour prendre en compte les extensions et raretés Wankul.
-* **Caisse Enregistreuse (`UI_CashCounterScreenPatch`)** :
-  * Prise en charge des prix et scans des cartes/produits Wankul lors du passage en caisse.
+Ce document reflète l’état actuel du dépôt et décrit les fonctionnalités réellement intégrées dans le mod, ainsi que les points d’architecture et d’optimisation qui ont été ajoutés au fil du développement.
 
 ---
 
-## 2. Qu'est-ce qui manquait pour simplifier l'ajout de nouvelles cartes, saisons, figurines, etc. ?
+## 1. Ce que fait le mod
 
-Auparavant, plusieurs éléments imposaient de modifier le code source C# et de recompiler la DLL :
-1. Les types de saisons et de raretés étaient strictement limités par des enums C# (`Season`, `Rarity`).
-2. L'inscription des items custom en boutique nécessitait un enregistrement manuel.
-3. Toutes les cartes devaient résider dans un fichier unique monolithique.
+Le mod WankulCrazyPlugin est un plugin BepInEx/Harmony pour TCG Card Shop Simulator qui enrichit le jeu avec un univers Wankul : cartes custom, items, boosters, figurines, accessoires, adaptation de l’interface et compatibilité avec des données dynamiques chargées depuis des fichiers JSON.
 
-Toutes ces limitations ont désormais été levées grâce aux simplifications et améliorations intégrées ci-dessous.
+Il interfère principalement avec :
+- les cartes du jeu et leurs associations aux monstres,
+- les packs / boosters / collections,
+- les écrans de prix, de tri et d’album,
+- l’import de contenus custom depuis le dossier `data/`,
+- les textures et meshes des objets supplémentaires.
 
 ---
 
-## 3. Pistes de simplification & Améliorations intégrées
+## 2. Fonctionnalités principales
 
-### ✅ Simplification 1 : Auto-enregistrement dynamique par catégorie (Implémenté)
-Au lieu d'ajouter manuellement chaque item custom dans la liste de la boutique par du code C# hardcodé, le mod parcourt désormais dynamiquement la liste `ItemDataList` désérialisée et vérifie la catégorie (`category`) ou le type de chaque item :
-* Si `category == EItemCategory.Figurine` $\rightarrow$ Ajout automatique à `m_ShownFigurineItemType`.
-* Si `category == EItemCategory.Accessory` $\rightarrow$ Ajout automatique à `m_ShownAccessoryItemType`.
-* Si l'item est un booster ou un paquet $\rightarrow$ Ajout automatique à `m_ShownItemType`.
+### 2.1 Cartes Wankul, saisons et raretés dynamiques
 
-*(Grâce à cela, ajouter une nouvelle figurine ou un nouveau tapis dans `ItemDataList.json` l'affiche immédiatement en magasin sans recompiler la DLL).*
+Le mod charge des cartes Wankul depuis plusieurs sources, notamment :
+- `data/formated_wankul_cards.json` pour le format historique,
+- `data/cards/` pour un chargement modulable par fichiers et dossiers.
 
-### ✅ Simplification 2 : Évolution vers des Saisons et Raretés dynamiques (Implémenté)
-Le mod gère désormais les saisons et raretés via des identifiants `string` dynamiques (`SeasonId` et `RarityId`) et deux gestionnaires dédiés (`SeasonsManager` et `RaritiesManager`) :
-* Les fichiers JSON optionnels `data/seasons.json` et `data/rarities.json` permettent de définir de nouvelles saisons ou raretés personnalisées avec leurs noms d'affichage, coefficients d'expérience et multiplicateur de prix sans modifier le code C#.
-* Des convertisseurs JSON (`SeasonJsonConverter`, `RarityJsonConverter`) et des accesseurs dans `WankulCardData`/`EffigyCardData` enregistrent automatiquement toute nouvelle saison ou rareté rencontrée lors de la désérialisation.
-* La rétrocompatibilité avec les enums C# historiques (`Season`, `Rarity`) est entièrement préservée via des valeurs de repli (ex: `Season.HS`, `Rarity.C`).
+Les types de cartes supportés incluent :
+- `WankulCardData`
+- `EffigyCardData`
+- `TerrainCardData`
+- `SpecialCardData`
 
-### ✅ Simplification 4 : Cache mémoire au démarrage (Implémenté)
-Les textures et meshes des items custom (`OBJImporter.cs`) sont chargés une seule fois au
-démarrage (`CacheTexturesAtStart`, `CacheMeshesAtStart`) et réutilisés par référence à chaque
-spawn, plutôt que relus depuis le disque à chaque instanciation.
+Les valeurs de saison et de rareté ne sont plus obligatoirement figées dans des enums C# historiques. Le code supporte désormais :
+- `SeasonId` et `RarityId` sous forme de chaîne dynamique,
+- gestion par `SeasonsManager` et `RaritiesManager`,
+- enregistrement automatique des valeurs nouvelles rencontrées lors du chargement JSON,
+- compatibilité rétroactive avec les enums d’origine (`Season`, `Rarity`).
 
-### ✅ Simplification 5 : Cache des accès par réflexion (Implémenté)
-Plusieurs chemins critiques ré-exécutaient une résolution par réflexion (`Type.GetField`,
-`Type.GetMethod`) à **chaque appel** plutôt qu'une seule fois — notamment `Plugin.GetPProperty`/
-`SetPProperty` (utilisés par `CardOpeningHelpers` à **chaque frame** pendant `CardOpening.Update()`
-et par `CollectionBinderFlipAnimCtrl.Update()` dans `SortUI.cs`, le classeur/album), ainsi que des
-`AccessTools.Field(__instance.GetType(), "...")` et `GetType().GetMethod(...)` répétés dans
-`CheckPriceUI.cs`, `WorkbenchPatch.cs`, `CardPrice.cs`, `ReplacingCards.cs` et
-`InteractionPlayerControllerPatch.cs`.
+Cela permet d’ajouter de nouvelles saisons ou raretés sans recompilation du plugin.
 
-Deux caches statiques ont été ajoutés dans `Plugin.cs` (`GetCachedField`/`GetCachedMethod`, indexés
-par `(Type, nom du champ/méthode)`), et tous les appels de ces fichiers ont été migrés dessus.
-Un `FieldInfo`/`MethodInfo` est stable pour un type donné : il n'est désormais résolu qu'une seule
-fois, puis réutilisé — supprimant un coût de réflexion répété plusieurs fois par frame dans les
-écrans d'ouverture de booster et de tri de cartes.
+### 2.2 Import automatisé des items custom
 
-> ⚠️ **Correctif** : la première version de ce cache (`type.GetField`/`GetMethod` sur le type exact
-> uniquement) ne trouvait pas les champs privés déclarés dans une classe de base du jeu — contrairement
-> à `AccessTools.Field`/`Method` (Harmony) qui remonte la hiérarchie. `GetCachedField`/`GetCachedMethod`
-> remontent désormais `BaseType` jusqu'à trouver le membre, exactement comme le faisait `AccessTools`.
+Le chargement des objets custom est centralisé dans `CustomItemsImporter` et `JsonImporter`.
 
-### ✅ Simplification 6 : Cache des tableaux d'enum généralisé (Implémenté)
-`Season[] seasons = (Season[])Enum.GetValues(typeof(Season))` était réalloué à chaque appel dans
-`CheckPriceUI.cs` et `WorkbenchPatch.cs`, alors que le même principe était déjà appliqué à
-`ECardExpansionType`/`ECardBorderType` dans `WankulCardsData.cs` (`CachedExpansions`/`CachedBorders`).
-Un tableau `Season[]` statique en cache a été ajouté dans les deux fichiers concernés.
+Le mod prend en charge :
+- boosters,
+- packs,
+- displays,
+- starters / decks,
+- figurines,
+- accessoires,
+- objets visuels comme tapis, classeurs, posters, etc.
 
-### ✅ Simplification 7 : Index Saison → Cartes précalculé (Implémenté)
-`WankulInventory.randFromPackType` faisait un `List.FindAll` sur l'ensemble des cartes à chaque
-tirage (jusqu'à 10 fois par booster). `WankulCardsData` construit désormais un index
-`Dictionary<string, List<WankulCardData>>` de façon paresseuse (une seule fois, la liste de cartes
-n'étant jamais modifiée après le chargement JSON initial), exposé via
-`WankulCardsData.GetCardsBySeasonFast(seasonId)`. Le tirage passe d'un scan O(N) répété à un accès
-O(1) amorti.
+L’auto-enregistrement à la boutique est également activé par catégorie :
+- `EItemCategory.Figurine` → ajout aux figurines visibles,
+- `EItemCategory.Accessory` → ajout aux accessoires visibles,
+- packs/boosters → ajout au catalogue d’items standard.
 
-### ✅ Simplification 8 : Support Multi-Packs / Moddabilité par dossier (Implémenté)
-Le chargement des cartes supporte la modularité par dossiers et fichiers multiples :
+### 2.3 Association cartes / monstres
+
+`WankulCardsData` construit une association entre les cartes Wankul et les cartes du jeu de base :
+- `association` : clé `monsterType_borderType_expansionType` → carte Wankul,
+- `reverseAssociation` : index de carte Wankul → `CardData` du jeu,
+- validation de clés de monstre / expansion,
+- support de plages de monstres par expansion pour éviter les parcours inutiles.
+
+Cela permet un mapping multiforme entre l’univers Wankul et les données du jeu original.
+
+### 2.4 Prix, collection, classeur, album et opening
+
+Le mod patche plusieurs écrans et mécanismes du jeu afin d’intégrer les éléments Wankul :
+- `CheckPriceUI`
+- `CardPrice`
+- `SortUI`
+- `ReplacingCards`
+- `CardOpening`
+- `WorkbenchPatch`
+- `CustomerTradeCardScreenPatch`
+- `UI_CashCounterScreenPatch`
+- `WindowsPosters`
+
+Le but est de rendre compatibles :
+- l’ouverture de boosters custom,
+- le calcul de valeur de marché,
+- la collection et le tri par saison/rarité/numéro/type,
+- la vente et la caisse,
+- les emplois du temps de travail / reconditionnement.
+
+---
+
+## 3. Architecture actuelle
+
+### 3.1 Fichiers clés
+
+Principaux composants du dépôt :
+- `Plugin.cs` : point d’entrée, patchs Harmony, caches globaux,
+- `cards/` : définition des données, saisons, raretés, mapping,
+- `importer/` : chargement JSON, objets 3D, textures,
+- `patch/` : hooks sur les écrans et mécanismes du jeu,
+- `inventory/` : logique de tirage et de génération de cartes,
+- `utils/` : utilitaires, OBJ loader, conversions, helpers,
+- `WankulCrazyPlugin.Tests/` : vérifications de comportement et régression.
+
+### 3.2 Chargement JSON et modularité
+
+`JsonImporter` a été rendu plus robuste et plus extensible.
+
+Il supporte désormais :
+- des structures JSON de type tableau,
+- des objets contenant des propriétés comme `wankuls`, `terrains`, `specials`,
+- un chargement récursif depuis plusieurs sous-dossiers,
+- compatibilité avec l’ancien fichier monolithique.
+
+Cela permet d’étendre facilement le contenu sans devoir modifier le code C#.
+
+---
+
+## 4. Améliorations et simplifications intégrées
+
+### ✅ Simplification 1 : auto-enregistrement dynamique par catégorie
+
+Avant, les items custom devaient être ajoutés à la boutique de façon manuelle dans le code.
+
+Maintenant, le code parcourt les objets `ItemDataList` chargés, puis les classe automatiquement selon leur catégorie :
+- `EItemCategory.Figurine` → boutique figurines,
+- `EItemCategory.Accessory` → boutique accessoires,
+- packs et boosters → catalogue standard.
+
+Cela permet d’ajouter un nouvel item via le JSON sans recompilation.
+
+### ✅ Simplification 2 : saisons et raretés dynamiques
+
+Le système n’est plus limité aux enums originaux.
+
+Le repo actuel utilise :
+- `SeasonsManager`
+- `RaritiesManager`
+- `SeasonData` / `RarityData`
+- `SeasonJsonConverter` / `RarityJsonConverter`
+
+Les nouvelles valeurs sont automatiquement enregistrées et accessibles ensuite via `SeasonId` / `RarityId`.
+
+La compatibilité avec les anciennes valeurs d’enum est conservée via des valeurs de repli.
+
+### ✅ Simplification 3 : chargement de cartes multi-fichiers / multi-dossiers
+
+Le mod supporte désormais :
+
 ```text
 data/
   ├── customitems/
@@ -126,4 +155,114 @@ data/
   │    ├── season2.json
   │    └── my_custom_pack.json
 ```
-Au démarrage, `JsonImporter` conserve la prise en charge du fichier historique `data/formated_wankul_cards.json` tout en parcourant de manière récursive le dossier `data/cards/` pour charger, désérialiser et fusionner automatiquement tous les fichiers JSON qu'il contient. Il est ainsi possible d'ajouter de nouveaux packs de cartes de façon modulaire sans altérer le fichier principal.
+
+Le chargement ne dépend plus d’un unique fichier monolithique.
+
+### ✅ Simplification 4 : cache mémoire de textures et meshes
+
+`OBJImporter` applique des mécanismes de cache pour éviter de relire les mêmes ressources depuis le disque à chaque instanciation :
+- `CacheTexturesAtStart`
+- `CacheMeshesAtStart`
+
+Les ressources sont réutilisées par référence lors des spawns d’objets.
+
+### ✅ Simplification 5 : cache des accès par réflexion
+
+Le code évite de réévaluer par réflexion à chaque appel dans les chemins critiques.
+
+Dans `Plugin.cs`, deux caches statiques ont été ajoutés :
+- `FieldCache`
+- `MethodCache`
+
+et des helpers :
+- `GetCachedField`
+- `GetCachedMethod`
+
+Cela est particulièrement utile pour des méthodes appelées très souvent pendant les animations et l’UI, comme des chemins de mise à jour par frame.
+
+Le correctif important ici est qu’il remonte la hiérarchie de classes (`BaseType`) pour trouver les membres privés hérités, ce qui correspond au comportement attendu de `AccessTools.Field` / `AccessTools.Method`.
+
+### ✅ Simplification 6 : cache des tableaux d’enum
+
+Les conversions répétées sur `Enum.GetValues` ont été remplacées par des tableaux statiques réutilisés.
+
+Exemples présents dans le code :
+- `CachedExpansions`
+- `CachedBorders`
+
+Cela évite les allocations inutiles dans les boucles de calculs de cartes et d’UI.
+
+### ✅ Simplification 7 : index saison → cartes precalculé
+
+`WankulCardsData` construit un index lazy :
+- `cardsBySeason`
+- `GetCardsBySeasonFast(string seasonId)`
+
+Au lieu de recalculer des listes à chaque tirage, le mod accède directement à la liste associée à la saison demandée. Cela améliore le temps de tirage des boosters et réduit les scans O(N) répétés.
+
+### ✅ Simplification 8 : compatibilité Enum + patchs système
+
+Le plugin applique des patches de compatibilité sur certaines méthodes du runtime pour que les cartes Wankul et les données dynamiques interagissent mieux avec les enums et les conversions du jeu.
+
+Cela concerne notamment :
+- `Enum.GetName`
+- `Enum.IsDefined`
+- `Enum.Parse`
+
+Ce type de compatibilité est utile pour stabiliser le comportement du jeu avec des valeurs custom non standard.
+
+---
+
+## 5. Validation et tests du repo
+
+Le dépôt contient une suite de tests unitaire dédiée à ces fonctionnalités, notamment :
+- `WankulCrazyPlugin.Tests/DocsFeaturesVerificationTests.cs`
+- `DynamicSeasonsAndRaritiesTests.cs`
+- `EnumExtensionsTests.cs`
+- `StringExtensionsTests.cs`
+
+Les tests couvrent :
+- chargement multi-fichiers de cartes,
+- enregistrement dynamique d’une saison et d’une rareté,
+- conversion JSON des objets `Season`/`Rarity`,
+- propriétés auto-enregistrées sur `EffigyCardData`,
+- cohérence des extensions de chaînes et enums.
+
+---
+
+## 6. Points d’attention / limites actuelles
+
+Le mod est bien avancé, mais il reste des points sensibles :
+- beaucoup de logique dépend directement de l’API du jeu original et de sa structure interne,
+- certaines mécaniques sont patchées via réflexion et restent sensibles aux changements de version du jeu,
+- la robustesse de certaines méthodes dépend des noms exacts d’éléments privés du jeu,
+- la documentation technique doit être maintenue à côté du code au cas où des changements de signature ou de patchs sont apportés.
+
+---
+
+## 7. Conclusion
+
+Le mod WankulCrazyPlugin est aujourd’hui structuré autour de trois axes principaux :
+1. extension de contenu via JSON dynamique,
+2. compatibilité avec les systèmes du jeu originaux via patchs Harmony,
+3. optimisation via caches et indexation pour limiter les coûts de calcul et de réflexion.
+
+La logique actuelle montre clairement une volonté d’ouvrir le système à de nouveaux contenus sans recompilation du plugin, tout en conservant une compatibilité forte avec l’architecture du jeu.
+
+---
+
+## 8. Fichiers utiles à consulter
+
+- `Plugin.cs`
+- `cards/WankulCardsData.cs`
+- `cards/SeasonsManager.cs`
+- `cards/RaritiesManager.cs`
+- `importer/JsonImporter.cs`
+- `importer/CustomItemsImporter.cs`
+- `patch/CardOpening.cs`
+- `patch/CheckPriceUI.cs`
+- `patch/ReplacingCards.cs`
+- `patch/workbench/WorkbenchPatch.cs`
+- `WankulCrazyPlugin.Tests/DocsFeaturesVerificationTests.cs`
+
+Cette liste est un bon point de départ si tu veux aller plus loin dans l’analyse du code ou une future documentation technique plus détaillée.
