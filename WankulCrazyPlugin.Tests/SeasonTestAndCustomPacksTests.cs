@@ -65,10 +65,13 @@ namespace WankulCrazyPlugin.Tests
             Assert.Equal(2, array.Count);
             foreach (JObject item in array)
             {
-                string catString = item["category"].Value<string>()!;
+                string? catString = (string?)item["category"];
+                Assert.NotNull(catString);
                 EItemCategory category = (EItemCategory)Enum.Parse(typeof(EItemCategory), catString);
                 Assert.Equal(EItemCategory.TCG, category);
-                Assert.EndsWith(".png", item["icon"].Value<string>()!);
+                string? icon = (string?)item["icon"];
+                Assert.NotNull(icon);
+                Assert.EndsWith(".png", icon);
             }
 
             string restockPath = Path.Combine(Directory.GetCurrentDirectory(), "data/customitems/restockDataList.json");
@@ -76,18 +79,22 @@ namespace WankulCrazyPlugin.Tests
             JArray restockArray = JArray.Parse(File.ReadAllText(restockPath));
 
             Assert.Equal(2, restockArray.Count);
-            Assert.Equal(32, restockArray[0]["amount"].Value<int>());
-            Assert.Equal(64, restockArray[1]["amount"].Value<int>());
-            Assert.Equal(1, restockArray[0]["licenseShopLevelRequired"].Value<int>());
-            Assert.Equal(1, restockArray[1]["licenseShopLevelRequired"].Value<int>());
+            Assert.Equal(32, (int?)restockArray[0]["amount"]);
+            Assert.Equal(64, (int?)restockArray[1]["amount"]);
+            Assert.Equal(1, (int?)restockArray[0]["licenseShopLevelRequired"]);
+            Assert.Equal(1, (int?)restockArray[1]["licenseShopLevelRequired"]);
 
             string meshPath = Path.Combine(Directory.GetCurrentDirectory(), "data/customitems/itemMeshDataList.json");
             Assert.True(File.Exists(meshPath));
             JArray meshArray = JArray.Parse(File.ReadAllText(meshPath));
 
             Assert.Equal(2, meshArray.Count);
-            Assert.EndsWith(".png", meshArray[0]["texture"].Value<string>()!);
-            Assert.EndsWith(".png", meshArray[1]["texture"].Value<string>()!);
+            string? texture0 = (string?)meshArray[0]["texture"];
+            string? texture1 = (string?)meshArray[1]["texture"];
+            Assert.NotNull(texture0);
+            Assert.NotNull(texture1);
+            Assert.EndsWith(".png", texture0);
+            Assert.EndsWith(".png", texture1);
         }
 
         [Fact]
