@@ -53,17 +53,17 @@ namespace WankulCrazyPlugin.Tests
                         _output.WriteLine($"{m.ReturnType.Name} {m.Name}({ps})");
                     }
                 }
-            }
 
-            // Look for nested iterator types
-            foreach (var nested in binderAnim.NestedTypes)
-            {
-                if (nested.Name.Contains("DelayAlbumSort"))
+                // Look for nested iterator types
+                foreach (var nested in binderAnim.NestedTypes)
                 {
-                    _output.WriteLine($"Nested: {nested.Name}");
-                    foreach (var m in nested.Methods)
+                    if (nested.Name.Contains("DelayAlbumSort"))
                     {
-                        _output.WriteLine($"  {m.ReturnType.Name} {m.Name}");
+                        _output.WriteLine($"Nested: {nested.Name}");
+                        foreach (var m in nested.Methods)
+                        {
+                            _output.WriteLine($"  {m.ReturnType.Name} {m.Name}");
+                        }
                     }
                 }
             }

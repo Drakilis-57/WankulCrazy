@@ -7,6 +7,7 @@ namespace WankulCrazyPlugin.cards
 {
     public static class RaritiesManager
     {
+        private static readonly object _lock = new object();
         private static readonly Dictionary<string, RarityData> raritiesById = new Dictionary<string, RarityData>(StringComparer.OrdinalIgnoreCase);
         private static readonly List<RarityData> allRarities = new List<RarityData>();
 
@@ -17,30 +18,33 @@ namespace WankulCrazyPlugin.cards
 
         public static void ResetToDefaults()
         {
-            raritiesById.Clear();
-            allRarities.Clear();
+            lock (_lock)
+            {
+                raritiesById.Clear();
+                allRarities.Clear();
 
-            RegisterRarity(new RarityData("C", "Common", 1.0f, 1.0f));
-            RegisterRarity(new RarityData("UC", "Uncommon", 2.0f, 1.0f));
-            RegisterRarity(new RarityData("R", "Rare", 4.0f, 1.0f));
-            RegisterRarity(new RarityData("UR1", "Ultra Rare 1", 7.0f, 1.0f));
-            RegisterRarity(new RarityData("UR2", "Ultra Rare 2", 10.0f, 1.0f));
-            RegisterRarity(new RarityData("LB", "Legendary Bronze", 15.0f, 1.0f));
-            RegisterRarity(new RarityData("LA", "Legendary Argent", 20.0f, 1.0f));
-            RegisterRarity(new RarityData("LO", "Legendary Or", 25.0f, 1.0f));
-            RegisterRarity(new RarityData("PGW23", "PGW 23", 50.0f, 1.0f));
-            RegisterRarity(new RarityData("NOEL23", "Noel 23", 50.0f, 1.0f));
-            RegisterRarity(new RarityData("PGW24", "PGW 24", 50.0f, 1.0f));
-            RegisterRarity(new RarityData("SPCIV", "Starter Pack Civilisations", 50.0f, 1.0f));
-            RegisterRarity(new RarityData("SPLEG", "Starter Pack Legendes", 50.0f, 1.0f));
-            RegisterRarity(new RarityData("ED", "Edition speciale", 50.0f, 1.0f));
-            RegisterRarity(new RarityData("SPPOP", "Starter Pack Pop Culture", 50.0f, 1.0f));
-            RegisterRarity(new RarityData("GP", "Gemmes Pack", 50.0f, 1.0f));
-            RegisterRarity(new RarityData("SPTV", "Starter Pack TV", 50.0f, 1.0f));
-            RegisterRarity(new RarityData("SPJV", "Starter Pack Jeux Video", 50.0f, 1.0f));
-            RegisterRarity(new RarityData("EG", "Edition Gold", 50.0f, 1.0f));
-            RegisterRarity(new RarityData("SPCAR", "Starter Pack Carrières", 50.0f, 1.0f));
-            RegisterRarity(new RarityData("TOR", "The One Ring", 50.0f, 1.0f));
+                RegisterRarityInternal(new RarityData("C", "Common", 1.0f, 1.0f));
+                RegisterRarityInternal(new RarityData("UC", "Uncommon", 2.0f, 1.0f));
+                RegisterRarityInternal(new RarityData("R", "Rare", 4.0f, 1.0f));
+                RegisterRarityInternal(new RarityData("UR1", "Ultra Rare 1", 7.0f, 1.0f));
+                RegisterRarityInternal(new RarityData("UR2", "Ultra Rare 2", 10.0f, 1.0f));
+                RegisterRarityInternal(new RarityData("LB", "Legendary Bronze", 15.0f, 1.0f));
+                RegisterRarityInternal(new RarityData("LA", "Legendary Argent", 20.0f, 1.0f));
+                RegisterRarityInternal(new RarityData("LO", "Legendary Or", 25.0f, 1.0f));
+                RegisterRarityInternal(new RarityData("PGW23", "PGW 23", 50.0f, 1.0f));
+                RegisterRarityInternal(new RarityData("NOEL23", "Noel 23", 50.0f, 1.0f));
+                RegisterRarityInternal(new RarityData("PGW24", "PGW 24", 50.0f, 1.0f));
+                RegisterRarityInternal(new RarityData("SPCIV", "Starter Pack Civilisations", 50.0f, 1.0f));
+                RegisterRarityInternal(new RarityData("SPLEG", "Starter Pack Legendes", 50.0f, 1.0f));
+                RegisterRarityInternal(new RarityData("ED", "Edition speciale", 50.0f, 1.0f));
+                RegisterRarityInternal(new RarityData("SPPOP", "Starter Pack Pop Culture", 50.0f, 1.0f));
+                RegisterRarityInternal(new RarityData("GP", "Gemmes Pack", 50.0f, 1.0f));
+                RegisterRarityInternal(new RarityData("SPTV", "Starter Pack TV", 50.0f, 1.0f));
+                RegisterRarityInternal(new RarityData("SPJV", "Starter Pack Jeux Video", 50.0f, 1.0f));
+                RegisterRarityInternal(new RarityData("EG", "Edition Gold", 50.0f, 1.0f));
+                RegisterRarityInternal(new RarityData("SPCAR", "Starter Pack Carrières", 50.0f, 1.0f));
+                RegisterRarityInternal(new RarityData("TOR", "The One Ring", 50.0f, 1.0f));
+            }
         }
 
         public static void LoadFromPluginPath(string pluginPath)
@@ -59,11 +63,14 @@ namespace WankulCrazyPlugin.cards
                 List<RarityData> loadedRarities = JsonConvert.DeserializeObject<List<RarityData>>(json);
                 if (loadedRarities != null && loadedRarities.Count > 0)
                 {
-                    foreach (var r in loadedRarities)
+                    lock (_lock)
                     {
-                        if (!string.IsNullOrWhiteSpace(r.Id))
+                        foreach (var r in loadedRarities)
                         {
-                            RegisterRarity(r);
+                            if (!string.IsNullOrWhiteSpace(r.Id))
+                            {
+                                RegisterRarityInternal(r);
+                            }
                         }
                     }
                 }
@@ -75,6 +82,15 @@ namespace WankulCrazyPlugin.cards
         }
 
         public static void RegisterRarity(RarityData rarityData)
+        {
+            if (rarityData == null || string.IsNullOrWhiteSpace(rarityData.Id)) return;
+            lock (_lock)
+            {
+                RegisterRarityInternal(rarityData);
+            }
+        }
+
+        private static void RegisterRarityInternal(RarityData rarityData)
         {
             if (rarityData == null || string.IsNullOrWhiteSpace(rarityData.Id)) return;
 
@@ -109,8 +125,11 @@ namespace WankulCrazyPlugin.cards
         public static RarityData GetRarity(string id)
         {
             if (string.IsNullOrEmpty(id)) return null;
-            raritiesById.TryGetValue(id, out var data);
-            return data;
+            lock (_lock)
+            {
+                raritiesById.TryGetValue(id, out var data);
+                return data;
+            }
         }
 
         public static RarityData GetRarity(Rarity rarityEnum)
@@ -137,7 +156,10 @@ namespace WankulCrazyPlugin.cards
 
         public static List<RarityData> GetAllRarities()
         {
-            return new List<RarityData>(allRarities);
+            lock (_lock)
+            {
+                return new List<RarityData>(allRarities);
+            }
         }
 
         public static int CalculateExperience(WankulCardData wankulCardData, int shopLevel = 1)

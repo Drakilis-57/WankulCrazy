@@ -7,6 +7,7 @@ namespace WankulCrazyPlugin.cards
 {
     public static class SeasonsManager
     {
+        private static readonly object _lock = new object();
         private static readonly Dictionary<string, SeasonData> seasonsById = new Dictionary<string, SeasonData>(StringComparer.OrdinalIgnoreCase);
         private static readonly List<SeasonData> allSeasons = new List<SeasonData>();
 
@@ -17,14 +18,17 @@ namespace WankulCrazyPlugin.cards
 
         public static void ResetToDefaults()
         {
-            seasonsById.Clear();
-            allSeasons.Clear();
+            lock (_lock)
+            {
+                seasonsById.Clear();
+                allSeasons.Clear();
 
-            RegisterSeason(new SeasonData("S01", "Origins"));
-            RegisterSeason(new SeasonData("S02", "Campus"));
-            RegisterSeason(new SeasonData("S03", "Battle"));
-            RegisterSeason(new SeasonData("S04", "Stellar"));
-            RegisterSeason(new SeasonData("HS", "Hors Serie"));
+                RegisterSeasonInternal(new SeasonData("S01", "Origins"));
+                RegisterSeasonInternal(new SeasonData("S02", "Campus"));
+                RegisterSeasonInternal(new SeasonData("S03", "Battle"));
+                RegisterSeasonInternal(new SeasonData("S04", "Stellar"));
+                RegisterSeasonInternal(new SeasonData("HS", "Hors Serie"));
+            }
         }
 
         public static void LoadFromPluginPath(string pluginPath)
@@ -43,11 +47,14 @@ namespace WankulCrazyPlugin.cards
                 List<SeasonData> loadedSeasons = JsonConvert.DeserializeObject<List<SeasonData>>(json);
                 if (loadedSeasons != null && loadedSeasons.Count > 0)
                 {
-                    foreach (var s in loadedSeasons)
+                    lock (_lock)
                     {
-                        if (!string.IsNullOrWhiteSpace(s.Id))
+                        foreach (var s in loadedSeasons)
                         {
-                            RegisterSeason(s);
+                            if (!string.IsNullOrWhiteSpace(s.Id))
+                            {
+                                RegisterSeasonInternal(s);
+                            }
                         }
                     }
                 }
@@ -59,6 +66,15 @@ namespace WankulCrazyPlugin.cards
         }
 
         public static void RegisterSeason(SeasonData seasonData)
+        {
+            if (seasonData == null || string.IsNullOrWhiteSpace(seasonData.Id)) return;
+            lock (_lock)
+            {
+                RegisterSeasonInternal(seasonData);
+            }
+        }
+
+        private static void RegisterSeasonInternal(SeasonData seasonData)
         {
             if (seasonData == null || string.IsNullOrWhiteSpace(seasonData.Id)) return;
 
@@ -90,8 +106,11 @@ namespace WankulCrazyPlugin.cards
         public static SeasonData GetSeason(string id)
         {
             if (string.IsNullOrEmpty(id)) return null;
-            seasonsById.TryGetValue(id, out var data);
-            return data;
+            lock (_lock)
+            {
+                seasonsById.TryGetValue(id, out var data);
+                return data;
+            }
         }
 
         public static string GetSeasonName(string id)
@@ -107,7 +126,10 @@ namespace WankulCrazyPlugin.cards
 
         public static List<SeasonData> GetAllSeasons()
         {
-            return new List<SeasonData>(allSeasons);
+            lock (_lock)
+            {
+                return new List<SeasonData>(allSeasons);
+            }
         }
     }
 }
