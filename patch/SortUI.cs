@@ -91,7 +91,7 @@ namespace WankulCrazyPlugin.patch
                 GameObject s04GameObject = GameObject.Instantiate(__instance.m_ExpansionBtnList[0].gameObject);
                 s04GameObject.name = "S04_Button";
                 s04GameObject.AddComponent<RectTransform>();
-                s04GameObject.transform.SetParent(__instance.m_ExpansionBtnList[0].GetParent().transform);
+                s04GameObject.transform.SetParent(__instance.m_ExpansionBtnList[0].parent);
                 s04GameObject.transform.localScale = __instance.m_ExpansionBtnList[0].localScale;
                 s04GameObject.transform.localPosition = __instance.m_ExpansionBtnList[0].localPosition;
                 s04GameObject.transform.localRotation = __instance.m_ExpansionBtnList[0].localRotation;
@@ -100,13 +100,13 @@ namespace WankulCrazyPlugin.patch
                     __instance.m_ExpansionBtnList[3].GetComponent<RectTransform>().anchoredPosition.y - verticalSpacing  // Espacement vertical
                 );
                 s04GameObject.GetComponentInChildren<TextMeshProUGUI>().text = SeasonsContainer.Seasons[Season.S04];
-                __instance.m_ExpansionBtnList[4] = s04GameObject.transform;
+                __instance.m_ExpansionBtnList.Add(s04GameObject.transform);
 
 
                 GameObject hsGameObject = GameObject.Instantiate(__instance.m_ExpansionBtnList[0].gameObject);
                 hsGameObject.name = "HS_Button";
                 hsGameObject.AddComponent<RectTransform>();
-                hsGameObject.transform.SetParent(__instance.m_ExpansionBtnList[0].GetParent().transform);
+                hsGameObject.transform.SetParent(__instance.m_ExpansionBtnList[0].parent);
                 hsGameObject.transform.localScale = __instance.m_ExpansionBtnList[0].localScale;
                 hsGameObject.transform.localPosition = __instance.m_ExpansionBtnList[0].localPosition;
                 hsGameObject.transform.localRotation = __instance.m_ExpansionBtnList[0].localRotation;

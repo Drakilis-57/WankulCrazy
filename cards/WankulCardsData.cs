@@ -1,6 +1,7 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using WankulCrazyPlugin.inventory;
 using WankulCrazyPlugin.utils;
@@ -19,22 +20,26 @@ namespace WankulCrazyPlugin.cards
         private static readonly ECardExpansionType[] CachedExpansions = (ECardExpansionType[])Enum.GetValues(typeof(ECardExpansionType));
         private static readonly ECardBorderType[] CachedBorders = (ECardBorderType[])Enum.GetValues(typeof(ECardBorderType));
 
-        // Index Saison -> Cartes, construit une seule fois (lazy) à partir de `cards`.
-        // `cards` n'est jamais modifiée après le chargement JSON initial, donc un index
-        // paresseux évite de rescanner toute la liste (List.FindAll) à chaque tirage de carte.
-        private Dictionary<Season, List<WankulCardData>> cardsBySeason;
+        // Index Saison -> Cartes (base par ID chaîne), construit une seule fois (lazy).
+        private Dictionary<string, List<WankulCardData>> cardsBySeason;
 
-        private Dictionary<Season, List<WankulCardData>> GetCardsBySeasonIndex()
+        private Dictionary<string, List<WankulCardData>> GetCardsBySeasonIndex()
         {
             if (cardsBySeason == null)
             {
-                cardsBySeason = new Dictionary<Season, List<WankulCardData>>();
+                cardsBySeason = new Dictionary<string, List<WankulCardData>>(StringComparer.OrdinalIgnoreCase);
                 foreach (WankulCardData card in cards)
                 {
-                    if (!cardsBySeason.TryGetValue(card.Season, out List<WankulCardData> list))
+                    string seasonKey = card.SeasonId;
+                    if (string.IsNullOrEmpty(seasonKey))
+                    {
+                        seasonKey = card.Season.ToString();
+                    }
+
+                    if (!cardsBySeason.TryGetValue(seasonKey, out List<WankulCardData> list))
                     {
                         list = new List<WankulCardData>();
-                        cardsBySeason[card.Season] = list;
+                        cardsBySeason[seasonKey] = list;
                     }
                     list.Add(card);
                 }
@@ -42,15 +47,20 @@ namespace WankulCrazyPlugin.cards
             return cardsBySeason;
         }
 
+        public static List<WankulCardData> GetCardsBySeasonFast(string seasonId)
+        {
+            if (string.IsNullOrEmpty(seasonId)) return new List<WankulCardData>();
+            return Instance.GetCardsBySeasonIndex().TryGetValue(seasonId, out List<WankulCardData> list)
+                ? list
+                : new List<WankulCardData>();
+        }
+
         /// <summary>
-        /// Retourne (en O(1) amorti) la liste des cartes d'une saison donnée, sans scanner
-        /// l'ensemble des cartes à chaque appel (contrairement à un List.FindAll).
+        /// Surcharge rétro-compatible utilisant l'enum Season.
         /// </summary>
         public static List<WankulCardData> GetCardsBySeasonFast(Season season)
         {
-            return Instance.GetCardsBySeasonIndex().TryGetValue(season, out List<WankulCardData> list)
-                ? list
-                : new List<WankulCardData>();
+            return GetCardsBySeasonFast(season.ToString());
         }
 
 
@@ -216,41 +226,42 @@ namespace WankulCrazyPlugin.cards
                 }
                 foreach (ECardBorderType border in CachedBorders)
                 {
-                    int startMonsterList = GetStartMonsterList(expansion);
-                    int endMonsterList = GetEndMonsterList(expansion);
-                    for (int i = startMonsterList; i <= endMonsterList; i++)
+                    foreach (var (startMonsterList, endMonsterList) in GetMonsterRanges(expansion))
                     {
-                        EMonsterType monster = (EMonsterType)i;
-                        if (
-                            monster == EMonsterType.EarlyPlayer ||
-                            monster == EMonsterType.START_CATJOB ||
-                            monster == EMonsterType.START_FANTASYRPG ||
-                            monster == EMonsterType.START_MEGABOT ||
-                            monster == EMonsterType.None ||
-                            monster == EMonsterType.MAX ||
-                            monster == EMonsterType.MAX_CATJOB ||
-                            monster == EMonsterType.MAX_FANTASYRPG ||
-                            monster == EMonsterType.MAX_MEGABOT
-                            )
+                        for (int i = startMonsterList; i <= endMonsterList; i++)
                         {
-                            continue;
-                        }
-                        // Récupérer les données du monstre
-                        MonsterData monsterData = InventoryBase.GetMonsterData(monster);
+                            EMonsterType monster = (EMonsterType)i;
+                            if (
+                                monster == EMonsterType.EarlyPlayer ||
+                                monster == EMonsterType.START_CATJOB ||
+                                monster == EMonsterType.START_FANTASYRPG ||
+                                monster == EMonsterType.START_MEGABOT ||
+                                monster == EMonsterType.None ||
+                                monster == EMonsterType.MAX ||
+                                monster == EMonsterType.MAX_CATJOB ||
+                                monster == EMonsterType.MAX_FANTASYRPG ||
+                                monster == EMonsterType.MAX_MEGABOT
+                                )
+                            {
+                                continue;
+                            }
+                            // Récupérer les données du monstre
+                            MonsterData monsterData = InventoryBase.GetMonsterData(monster);
 
-                        CardData cardData = new CardData();
-                        cardData.borderType = border;
-                        cardData.expansionType = expansion;
-                        cardData.monsterType = monster;
+                            CardData cardData = new CardData();
+                            cardData.borderType = border;
+                            cardData.expansionType = expansion;
+                            cardData.monsterType = monster;
 
-                        string key = $"{cardData.monsterType.ToString()}_{cardData.borderType.ToString()}_{cardData.expansionType.ToString()}";
-                        currentTestedCard++;
-                        if (!association.ContainsKey(key))
-                        {
-                            return cardData; // Retourne le premier CardData manquant trouvé
-                        } else
-                        {
-                            //Plugin.Logger.LogInfo($"CardData {key} already associated {currentTestedCard}");
+                            string key = $"{cardData.monsterType.ToString()}_{cardData.borderType.ToString()}_{cardData.expansionType.ToString()}";
+                            currentTestedCard++;
+                            if (!association.ContainsKey(key))
+                            {
+                                return cardData; // Retourne le premier CardData manquant trouvé
+                            } else
+                            {
+                                //Plugin.Logger.LogInfo($"CardData {key} already associated {currentTestedCard}");
+                            }
                         }
                     }
                 }
@@ -259,45 +270,22 @@ namespace WankulCrazyPlugin.cards
             return null; // Si aucune CardData manquante n'est trouvée
         }
 
-        private static int GetStartMonsterList(ECardExpansionType cardExpansion) {
-            if (cardExpansion == ECardExpansionType.Tetramon || cardExpansion == ECardExpansionType.Destiny)
-            {
-                return 0;
-            }
-            else if (cardExpansion == ECardExpansionType.Megabot)
-            {
-                return 1000;
-            }
-            else if (cardExpansion == ECardExpansionType.FantasyRPG)
-            {
-                return 2000;
-            }
-            else if (cardExpansion == ECardExpansionType.CatJob)
-            {
-                return 3000;
-            }
-            return 0;
-        }
-
-        private static int GetEndMonsterList(ECardExpansionType cardExpansion)
+        // Plages de EMonsterType valides par expansion. Chaque expansion peut avoir plusieurs
+        // segments disjoints (ex: plage native du jeu + plage custom Wankul), évitant d'itérer
+        // sur des dizaines de milliers de valeurs vides entre deux segments éloignés.
+        private static readonly Dictionary<ECardExpansionType, List<(int start, int end)>> MonsterRanges =
+            new Dictionary<ECardExpansionType, List<(int start, int end)>>
         {
-            if (cardExpansion == ECardExpansionType.Tetramon || cardExpansion == ECardExpansionType.Destiny)
-            {
-                return 121;
-            }
-            else if (cardExpansion == ECardExpansionType.Megabot)
-            {
-                return 1112;
-            }
-            else if (cardExpansion == ECardExpansionType.FantasyRPG)
-            {
-                return 2049;
-            }
-            else if (cardExpansion == ECardExpansionType.CatJob)
-            {
-                return 3039;
-            }
-            return 122;
+            { ECardExpansionType.Tetramon, new List<(int, int)> { (0, 121), (50000, 50099) } },
+            { ECardExpansionType.Destiny,  new List<(int, int)> { (0, 121) } },
+            { ECardExpansionType.Megabot,  new List<(int, int)> { (1000, 1112) } },
+            { ECardExpansionType.FantasyRPG, new List<(int, int)> { (2000, 2049) } },
+            { ECardExpansionType.CatJob,   new List<(int, int)> { (3000, 3039) } },
+        };
+
+        private static List<(int start, int end)> GetMonsterRanges(ECardExpansionType expansion)
+        {
+            return MonsterRanges.TryGetValue(expansion, out var ranges) ? ranges : new List<(int, int)>();
         }
 
         public static bool IsKeyValid(string keyToCheck)
@@ -342,13 +330,11 @@ namespace WankulCrazyPlugin.cards
                 return false;
             }
 
-            // Vérifier que le monstre est dans la plage correcte pour l'expansion donnée
-            int startMonsterList = GetStartMonsterList(expansion);
-            int endMonsterList = GetEndMonsterList(expansion);
-
-            if ((int)monster < startMonsterList || (int)monster > endMonsterList)
+            // Vérifier que le monstre est dans une des plages valides pour l'expansion donnée
+            bool inRange = GetMonsterRanges(expansion).Any(r => (int)monster >= r.start && (int)monster <= r.end);
+            if (!inRange)
             {
-                //Console.WriteLine($"❌ Monstre {monster} hors de la plage [{startMonsterList}, {endMonsterList}] pour l'expansion {expansion}");
+                //Console.WriteLine($"❌ Monstre {monster} hors des plages valides pour l'expansion {expansion}");
                 return false;
             }
 
@@ -375,86 +361,21 @@ namespace WankulCrazyPlugin.cards
 
         public static int GetExperienceFromWankulCard(WankulCardData wankulCardData)
         {
-            // Base XP multiplier based on card type and rarity
-            float experienceFloat = 1;
-
-            // Handle different card types and their XP multipliers
-            if (wankulCardData is TerrainCardData)
+            int shopLevel = 1;
+            try
             {
-                // Terrain cards have slightly higher XP
-                experienceFloat = 1.5f;
-            }
-            else if (wankulCardData is EffigyCardData effigyCardData)
-            {
-                // Significant XP boost based on rarity
-                switch (effigyCardData.Rarity)
+                var field = typeof(CPlayerData).GetField("m_ShopLevel", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
+                if (field != null)
                 {
-                    case Rarity.C:
-                        experienceFloat = 1.0f;  // Common cards - baseline XP
-                        break;
-                    case Rarity.UC:
-                        experienceFloat = 2.0f;  // Uncommon - much higher than common
-                        break;
-                    case Rarity.R:
-                        experienceFloat = 4.0f;  // Rare cards - significantly boosted
-                        break;
-                    case Rarity.UR1:
-                        experienceFloat = 7.0f;  // Ultra Rare 1 - large XP boost
-                        break;
-                    case Rarity.UR2:
-                        experienceFloat = 10.0f;  // Ultra Rare 2 - even larger boost
-                        break;
-                    case Rarity.LB:
-                        experienceFloat = 15.0f;  // Legendary B - very high XP
-                        break;
-                    case Rarity.LA:
-                        experienceFloat = 20.0f;  // Legendary A - extreme XP gain
-                        break;
-                    case Rarity.LO:
-                        experienceFloat = 25.0f;  // Legendary O - maximum XP for this category
-                        break;
-                    // Special event cards with massive XP boosts
-                    case Rarity.PGW23:
-                    case Rarity.NOEL23:
-                    case Rarity.SPCIV:
-                    case Rarity.SPLEG:
-                    case Rarity.ED:
-                    case Rarity.SPPOP:
-                    case Rarity.GP:
-                    case Rarity.SPTV:
-                    case Rarity.SPJV:
-                    case Rarity.EG:
-                    case Rarity.SPCAR:
-                    case Rarity.TOR:
-                        experienceFloat = 50.0f;  // Special event cards with huge XP
-                        break;
-                    default:
-                        experienceFloat = 1.0f;  // Default XP for unrecognized rarities
-                        break;
+                    shopLevel = Convert.ToInt32(field.GetValue(null));
                 }
             }
-            else if (wankulCardData is SpecialCardData)
+            catch
             {
-                // Special cards give a massive amount of XP
-                experienceFloat = 100f;
+                shopLevel = 1;
             }
 
-            // Factor of XP based on the shop's level (dynamically adjusted)
-            int shopLevel = CPlayerData.m_ShopLevel;
-
-            // New formula to calculate XP factor based on the shop level
-            float shopXpFactor = 1f + shopLevel + (shopLevel * shopLevel * 0.001f);
-
-            // Ensuring a minimum shop factor of 1
-            if (shopXpFactor < 1)
-            {
-                shopXpFactor = 1;
-            }
-
-            // Final experience calculation
-            int experience = Mathf.CeilToInt(experienceFloat * shopXpFactor);
-
-            return experience;
+            return RaritiesManager.CalculateExperience(wankulCardData, shopLevel);
         }
 
 
@@ -463,9 +384,15 @@ namespace WankulCrazyPlugin.cards
             return Instance.cards.Count;
         }
 
+        public static List<WankulCardData> GetCardsFromSeason(string seasonId)
+        {
+            if (string.IsNullOrEmpty(seasonId)) return new List<WankulCardData>();
+            return Instance.cards.FindAll(wankulCard => string.Equals(wankulCard.SeasonId, seasonId, StringComparison.OrdinalIgnoreCase));
+        }
+
         public static List<WankulCardData> GetCardsFromSeason(Season season)
         {
-            return Instance.cards.FindAll(wankulCard => wankulCard.Season == season);
+            return GetCardsFromSeason(season.ToString());
         }
 
         public static WankulCardData GetAJETER()
