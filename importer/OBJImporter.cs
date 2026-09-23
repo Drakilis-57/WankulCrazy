@@ -314,7 +314,15 @@ namespace WankulCrazyPlugin.importer
                             }
 
                             // Création d'une texture clonée et remplacement de son contenu
-                            Texture2D clonedTex = UnityEngine.Object.Instantiate(mainTex);
+                            Texture2D clonedTex;
+                            if (mainTex.isReadable)
+                            {
+                                clonedTex = UnityEngine.Object.Instantiate(mainTex);
+                            }
+                            else
+                            {
+                                clonedTex = new Texture2D(cachedTexture.width, cachedTexture.height, cachedTexture.format, cachedTexture.mipmapCount > 1);
+                            }
                             clonedTex.name = texName + "_Custom";
 
                             // Remplacement du contenu
