@@ -1,6 +1,7 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using WankulCrazyPlugin.inventory;
 using WankulCrazyPlugin.utils;
@@ -225,41 +226,42 @@ namespace WankulCrazyPlugin.cards
                 }
                 foreach (ECardBorderType border in CachedBorders)
                 {
-                    int startMonsterList = GetStartMonsterList(expansion);
-                    int endMonsterList = GetEndMonsterList(expansion);
-                    for (int i = startMonsterList; i <= endMonsterList; i++)
+                    foreach (var (startMonsterList, endMonsterList) in GetMonsterRanges(expansion))
                     {
-                        EMonsterType monster = (EMonsterType)i;
-                        if (
-                            monster == EMonsterType.EarlyPlayer ||
-                            monster == EMonsterType.START_CATJOB ||
-                            monster == EMonsterType.START_FANTASYRPG ||
-                            monster == EMonsterType.START_MEGABOT ||
-                            monster == EMonsterType.None ||
-                            monster == EMonsterType.MAX ||
-                            monster == EMonsterType.MAX_CATJOB ||
-                            monster == EMonsterType.MAX_FANTASYRPG ||
-                            monster == EMonsterType.MAX_MEGABOT
-                            )
+                        for (int i = startMonsterList; i <= endMonsterList; i++)
                         {
-                            continue;
-                        }
-                        // Récupérer les données du monstre
-                        MonsterData monsterData = InventoryBase.GetMonsterData(monster);
+                            EMonsterType monster = (EMonsterType)i;
+                            if (
+                                monster == EMonsterType.EarlyPlayer ||
+                                monster == EMonsterType.START_CATJOB ||
+                                monster == EMonsterType.START_FANTASYRPG ||
+                                monster == EMonsterType.START_MEGABOT ||
+                                monster == EMonsterType.None ||
+                                monster == EMonsterType.MAX ||
+                                monster == EMonsterType.MAX_CATJOB ||
+                                monster == EMonsterType.MAX_FANTASYRPG ||
+                                monster == EMonsterType.MAX_MEGABOT
+                                )
+                            {
+                                continue;
+                            }
+                            // Récupérer les données du monstre
+                            MonsterData monsterData = InventoryBase.GetMonsterData(monster);
 
-                        CardData cardData = new CardData();
-                        cardData.borderType = border;
-                        cardData.expansionType = expansion;
-                        cardData.monsterType = monster;
+                            CardData cardData = new CardData();
+                            cardData.borderType = border;
+                            cardData.expansionType = expansion;
+                            cardData.monsterType = monster;
 
-                        string key = $"{cardData.monsterType.ToString()}_{cardData.borderType.ToString()}_{cardData.expansionType.ToString()}";
-                        currentTestedCard++;
-                        if (!association.ContainsKey(key))
-                        {
-                            return cardData; // Retourne le premier CardData manquant trouvé
-                        } else
-                        {
-                            //Plugin.Logger.LogInfo($"CardData {key} already associated {currentTestedCard}");
+                            string key = $"{cardData.monsterType.ToString()}_{cardData.borderType.ToString()}_{cardData.expansionType.ToString()}";
+                            currentTestedCard++;
+                            if (!association.ContainsKey(key))
+                            {
+                                return cardData; // Retourne le premier CardData manquant trouvé
+                            } else
+                            {
+                                //Plugin.Logger.LogInfo($"CardData {key} already associated {currentTestedCard}");
+                            }
                         }
                     }
                 }
@@ -268,45 +270,22 @@ namespace WankulCrazyPlugin.cards
             return null; // Si aucune CardData manquante n'est trouvée
         }
 
-        private static int GetStartMonsterList(ECardExpansionType cardExpansion) {
-            if (cardExpansion == ECardExpansionType.Tetramon || cardExpansion == ECardExpansionType.Destiny)
-            {
-                return 0;
-            }
-            else if (cardExpansion == ECardExpansionType.Megabot)
-            {
-                return 1000;
-            }
-            else if (cardExpansion == ECardExpansionType.FantasyRPG)
-            {
-                return 2000;
-            }
-            else if (cardExpansion == ECardExpansionType.CatJob)
-            {
-                return 3000;
-            }
-            return 0;
-        }
-
-        private static int GetEndMonsterList(ECardExpansionType cardExpansion)
+        // Plages de EMonsterType valides par expansion. Chaque expansion peut avoir plusieurs
+        // segments disjoints (ex: plage native du jeu + plage custom Wankul), évitant d'itérer
+        // sur des dizaines de milliers de valeurs vides entre deux segments éloignés.
+        private static readonly Dictionary<ECardExpansionType, List<(int start, int end)>> MonsterRanges =
+            new Dictionary<ECardExpansionType, List<(int start, int end)>>
         {
-            if (cardExpansion == ECardExpansionType.Tetramon || cardExpansion == ECardExpansionType.Destiny)
-            {
-                return 121;
-            }
-            else if (cardExpansion == ECardExpansionType.Megabot)
-            {
-                return 1112;
-            }
-            else if (cardExpansion == ECardExpansionType.FantasyRPG)
-            {
-                return 2049;
-            }
-            else if (cardExpansion == ECardExpansionType.CatJob)
-            {
-                return 3039;
-            }
-            return 122;
+            { ECardExpansionType.Tetramon, new List<(int, int)> { (0, 121), (50000, 50099) } },
+            { ECardExpansionType.Destiny,  new List<(int, int)> { (0, 121) } },
+            { ECardExpansionType.Megabot,  new List<(int, int)> { (1000, 1112) } },
+            { ECardExpansionType.FantasyRPG, new List<(int, int)> { (2000, 2049) } },
+            { ECardExpansionType.CatJob,   new List<(int, int)> { (3000, 3039) } },
+        };
+
+        private static List<(int start, int end)> GetMonsterRanges(ECardExpansionType expansion)
+        {
+            return MonsterRanges.TryGetValue(expansion, out var ranges) ? ranges : new List<(int, int)>();
         }
 
         public static bool IsKeyValid(string keyToCheck)
@@ -351,13 +330,11 @@ namespace WankulCrazyPlugin.cards
                 return false;
             }
 
-            // Vérifier que le monstre est dans la plage correcte pour l'expansion donnée
-            int startMonsterList = GetStartMonsterList(expansion);
-            int endMonsterList = GetEndMonsterList(expansion);
-
-            if ((int)monster < startMonsterList || (int)monster > endMonsterList)
+            // Vérifier que le monstre est dans une des plages valides pour l'expansion donnée
+            bool inRange = GetMonsterRanges(expansion).Any(r => (int)monster >= r.start && (int)monster <= r.end);
+            if (!inRange)
             {
-                //Console.WriteLine($"❌ Monstre {monster} hors de la plage [{startMonsterList}, {endMonsterList}] pour l'expansion {expansion}");
+                //Console.WriteLine($"❌ Monstre {monster} hors des plages valides pour l'expansion {expansion}");
                 return false;
             }
 
