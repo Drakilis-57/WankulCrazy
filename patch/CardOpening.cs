@@ -263,6 +263,20 @@ namespace WankulCrazyPlugin.patch
 
         public static void OpenBooster(List<CardData> ___m_RolledCardDataList, List<float> ___m_CardValueList, ECollectionPackType ___m_CollectionPackType, Item ___m_CurrentItem, List<CardData> ___m_SecondaryRolledCardDataList, CardOpeningSequence __instance)
         {
+            // Une exception ici laissait la sequence d'ouverture a moitie initialisee
+            // (listes vides -> ArgumentOutOfRange a chaque frame -> joueur bloque).
+            try
+            {
+                OpenBoosterCore(___m_RolledCardDataList, ___m_CardValueList, ___m_CollectionPackType, ___m_CurrentItem, ___m_SecondaryRolledCardDataList, __instance);
+            }
+            catch (Exception ex)
+            {
+                Plugin.Logger.LogError($"[CardOpening] OpenBooster a echoue : {ex}");
+            }
+        }
+
+        private static void OpenBoosterCore(List<CardData> ___m_RolledCardDataList, List<float> ___m_CardValueList, ECollectionPackType ___m_CollectionPackType, Item ___m_CurrentItem, List<CardData> ___m_SecondaryRolledCardDataList, CardOpeningSequence __instance)
+        {
             if (SavesManager.DebuggingSave)
             {
                 return;
@@ -277,6 +291,8 @@ namespace WankulCrazyPlugin.patch
             ___m_CardValueList.Clear();
             ___m_RolledCardDataList.Clear();
             ___m_SecondaryRolledCardDataList.Clear();
+            // Sinon nos flags s'ajoutent a ceux du jeu vanilla et les indices sont decales.
+            ((List<bool>)Plugin.GetPProperty(__instance, "m_IsNewlList")).Clear();
 
             totalExpGained = 0;
 
@@ -1127,6 +1143,19 @@ namespace WankulCrazyPlugin.patch
             }
 
             int state = __instance.m_StateIndex;
+
+            // Soupape de securite : si le tirage est incomplet, on ferme la sequence
+            // au lieu de lever une exception a chaque frame et de bloquer le joueur.
+            if (state >= 3 && state <= 6)
+            {
+                if (CardOpeningHelpers.GetCardValueList(__instance).Count < boosterSize ||
+                    CardOpeningHelpers.GetIsNewlList(__instance).Count < boosterSize)
+                {
+                    Plugin.Logger.LogError("[CardOpening] Booster incomplet, fermeture de la sequence.");
+                    __instance.m_StateIndex = 11;
+                    return false;
+                }
+            }
 
             // États 0, 1, 2 : Ouverture du booster
             if (state >= 0 && state <= 2)

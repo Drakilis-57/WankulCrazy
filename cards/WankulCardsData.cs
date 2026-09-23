@@ -151,6 +151,9 @@ namespace WankulCrazyPlugin.cards
                 return cardData;
             }
 
+            // Rien a reconstruire : le reverse lookup couvre deja toutes les associations
+            if (reverseAssociation.Count >= association.Count) return null;
+
             // Fallback & population of reverse lookup if reverseAssociation doesn't have it yet
             foreach (var entry in association)
             {

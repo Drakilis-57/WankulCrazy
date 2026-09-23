@@ -341,9 +341,19 @@ public class Patch_Enum_IsDefined
 
 public class Patch_Enum_Parse
 {
+    // Enum.IsDefined / Enum.Parse appeles depuis ce prefix sont eux-memes patches :
+    // sans garde, un nom natif provoquait une recursion infinie (StackOverflow).
+    [ThreadStatic] private static bool inPrefix;
+
     public static bool Prefix(Type enumType, string value, bool ignoreCase, ref object __result)
     {
-        if (EnumExtensions.customEnumValues.ContainsKey(enumType))
+        if (inPrefix || !EnumExtensions.customEnumValues.ContainsKey(enumType))
+        {
+            return true;
+        }
+
+        inPrefix = true;
+        try
         {
             try
             {
@@ -372,8 +382,12 @@ public class Patch_Enum_Parse
                 __result = Enum.ToObject(enumType, customKvp.Key);
                 return false;
             }
-        }
 
-        return true;
+            return true;
+        }
+        finally
+        {
+            inPrefix = false;
+        }
     }
 }
