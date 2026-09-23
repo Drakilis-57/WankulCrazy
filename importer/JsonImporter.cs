@@ -140,17 +140,28 @@ public class JsonImporter
 
     private static WankulCardData DeserializeSingleCard(JObject obj, JsonSerializer serializer)
     {
-        if (obj["Effigy"] != null || obj["Rarity"] != null || obj["RarityId"] != null || (obj["CardType"] != null && obj["CardType"].ToString().Equals("Effigy", StringComparison.OrdinalIgnoreCase)))
+        if (obj["CardType"] != null)
         {
-            return obj.ToObject<EffigyCardData>(serializer);
+            string cardType = obj["CardType"].ToString();
+            if (cardType.Equals("Terrain", StringComparison.OrdinalIgnoreCase))
+                return obj.ToObject<TerrainCardData>(serializer);
+            if (cardType.Equals("Special", StringComparison.OrdinalIgnoreCase))
+                return obj.ToObject<SpecialCardData>(serializer);
+            if (cardType.Equals("Effigy", StringComparison.OrdinalIgnoreCase))
+                return obj.ToObject<EffigyCardData>(serializer);
         }
-        if (obj["Special"] != null || (obj["CardType"] != null && obj["CardType"].ToString().Equals("Special", StringComparison.OrdinalIgnoreCase)))
+
+        if (obj["Terrain"] != null)
+        {
+            return obj.ToObject<TerrainCardData>(serializer);
+        }
+        if (obj["Special"] != null)
         {
             return obj.ToObject<SpecialCardData>(serializer);
         }
-        if (obj["Terrain"] != null || (obj["CardType"] != null && obj["CardType"].ToString().Equals("Terrain", StringComparison.OrdinalIgnoreCase)))
+        if (obj["Effigy"] != null || obj["Rarity"] != null || obj["RarityId"] != null)
         {
-            return obj.ToObject<TerrainCardData>(serializer);
+            return obj.ToObject<EffigyCardData>(serializer);
         }
         return obj.ToObject<WankulCardData>(serializer);
     }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using UnityEngine;
 
@@ -6,8 +7,13 @@ namespace WankulCrazyPlugin.utils
 {
     public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
     {
-        private static T _instance;
+        protected static T _instance;
         private static readonly object _lock = new();
+
+        public static void SetManualInstance(T instance)
+        {
+            _instance = instance;
+        }
 
         public static void SetTestInstance(T instance)
         {
@@ -18,11 +24,12 @@ namespace WankulCrazyPlugin.utils
         {
             get
             {
-                lock (_lock)
+                if (_instance != null) return _instance;
+                try
                 {
-                    if (_instance == null)
+                    lock (_lock)
                     {
-                        try
+                        if (_instance == null)
                         {
                             _instance = FindObjectOfType<T>();
 
@@ -34,11 +41,14 @@ namespace WankulCrazyPlugin.utils
                                 DontDestroyOnLoad(singletonObject);
                             }
                         }
-                        catch (Exception)
-                        {
-                            // Hors-runtime Unity (ex: tests unitaires xUnit), instancier via GetUninitializedObject sans appeler les C++ internal calls de MonoBehaviour
-                            _instance = (T)FormatterServices.GetUninitializedObject(typeof(T));
-                        }
+                        return _instance;
+                    }
+                }
+                catch (Exception)
+                {
+                    if (_instance == null)
+                    {
+                        _instance = (T)FormatterServices.GetUninitializedObject(typeof(T));
                     }
                     return _instance;
                 }

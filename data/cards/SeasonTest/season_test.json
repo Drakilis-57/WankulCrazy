@@ -268,5 +268,21 @@
     "Combo": "",
     "Quote": "Pack de test",
     "RarityId": "LO"
+  },
+  {
+    "Index": 900016,
+    "Number": "TEST-016",
+    "Title": "Test Terrain 001",
+    "Artist": "WankulCrazy Test Team",
+    "CardType": "Terrain",
+    "SeasonId": "SeasonTest",
+    "TexturePath": "cards/SeasonTest/textures/test_016.png",
+    "Drop": 20.0,
+    "Percentage": 100,
+    "Rules": "Terrain de test temporaire.",
+    "WinningEffect": "Effet Victoire Test",
+    "LosingEffect": "Effet Défaite Test",
+    "SpecialEffect": "Effet Spécial Test",
+    "RarityId": "C"
   }
 ]

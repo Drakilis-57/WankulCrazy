@@ -88,63 +88,97 @@ public static class EnumExtensions
         return false;
     }
 
-    public static EItemType SafeParseEItemType(string value)
-    {
-        if (string.IsNullOrEmpty(value))
-        {
-            Debug.LogError("[WankulCrazy] Erreur JSON: Valeur itemType vide ou null !");
-            return (EItemType)0;
-        }
 
+    private static void LogError(string message)
+    {
         try
         {
-            if (Enum.TryParse(typeof(EItemType), value, true, out object result))
-            {
-                return (EItemType)result;
-            }
+            Debug.LogError(message);
+        }
+        catch (Exception)
+        {
+            Console.WriteLine("[Error] " + message);
+        }
+    }
+
+    private static readonly Dictionary<string, string> itemTypeAliases = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+        { "Booster Stellar", "BoosterStellar" }, { "Display Stellar", "DisplayStellar" },
+        { "Booster Stellar Taux +", "BoosterStellarTaux" }, { "Booster Stellar Taux+", "BoosterStellarTaux" },
+        { "Display Stellar Taux +", "DisplayStellarTaux" }, { "Display Stellar Taux+", "DisplayStellarTaux" },
+        { "Calecon Stellar", "CaleconStellar" }, { "Caleçon Stellar", "CaleconStellar" },
+        { "Boxer Stellar", "CaleconStellar" }, { "Starter Apocalypse", "StarterApocalypse" },
+        { "Starter Showtime", "StarterShowtime" }, { "Tapi Stellar 1", "TapisS41" },
+        { "Tapi Stellar 2", "TapisS42" }, { "Tapis Stellar 1", "TapisS41" },
+        { "Tapis Stellar 2", "TapisS42" }, { "Classeur Stellar", "ClasseurS4" },
+        { "Booster Gold Battle", "BoosterGoldBattle" }, { "Booster Gold Stellar", "BoosterGoldStellar" },
+        { "Test Card Pack 32", "TestCardPack32" }, { "Test Card Pack 64", "TestCardPack64" }
+    };
+
+    public static EItemType SafeParseEItemType(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value)) { LogError("[WankulCrazy] Erreur JSON: Valeur itemType vide ou null !"); return (EItemType)0; }
+        string trimmed = value.Trim();
+        if (itemTypeAliases.TryGetValue(trimmed, out string aliasTarget)) trimmed = aliasTarget;
+        try
+        {
+            if (Enum.TryParse(typeof(EItemType), trimmed, true, out object result)) return (EItemType)result;
         }
         catch (TypeLoadException) { }
 
-        if (EnumExtensions.customEnumValues.ContainsKey(typeof(EItemType)))
+        if (customEnumValues.TryGetValue(typeof(EItemType), out var customItems))
         {
-            var kvp = EnumExtensions.customEnumValues[typeof(EItemType)].FirstOrDefault(x => string.Equals(x.Value, value, StringComparison.OrdinalIgnoreCase));
-            if (kvp.Value != null)
-            {
-                return (EItemType)kvp.Key;
-            }
+            var match = customItems.FirstOrDefault(x => string.Equals(x.Value, trimmed, StringComparison.OrdinalIgnoreCase));
+            if (match.Value != null) return (EItemType)match.Key;
         }
 
-        Debug.LogError($"[WankulCrazy] Erreur JSON: '{value}' n'est pas une valeur valide pour EItemType.");
+        string normalized = trimmed.Replace(" ", "").Replace("-", "").Replace("_", "");
+        try
+        {
+            if (Enum.TryParse(typeof(EItemType), normalized, true, out object normalizedResult)) return (EItemType)normalizedResult;
+        }
+        catch (TypeLoadException) { }
+
+        if (customEnumValues.TryGetValue(typeof(EItemType), out var customItemsNorm))
+        {
+            var normalizedMatch = customItemsNorm.FirstOrDefault(x => string.Equals(x.Value, normalized, StringComparison.OrdinalIgnoreCase));
+            if (normalizedMatch.Value != null) return (EItemType)normalizedMatch.Key;
+        }
+
+        LogError($"[WankulCrazy] Erreur JSON: '{value}' n'est pas une valeur valide pour EItemType.");
         return (EItemType)0;
     }
 
     public static ECollectionPackType SafeParseECollectionPackType(string value)
     {
-        if (string.IsNullOrEmpty(value))
-        {
-            Debug.LogError("[WankulCrazy] Erreur JSON: Valeur itemType vide ou null !");
-            return (ECollectionPackType)0;
-        }
-
+        if (string.IsNullOrWhiteSpace(value)) return (ECollectionPackType)0;
+        string trimmed = value.Trim();
         try
         {
-            if (Enum.TryParse(typeof(ECollectionPackType), value, true, out object result))
-            {
-                return (ECollectionPackType)result;
-            }
+            if (Enum.TryParse(typeof(ECollectionPackType), trimmed, true, out object result)) return (ECollectionPackType)result;
         }
         catch (TypeLoadException) { }
 
-        if (EnumExtensions.customEnumValues.ContainsKey(typeof(ECollectionPackType)))
+        if (customEnumValues.TryGetValue(typeof(ECollectionPackType), out var customPacks))
         {
-            var kvp = EnumExtensions.customEnumValues[typeof(ECollectionPackType)].FirstOrDefault(x => string.Equals(x.Value, value, StringComparison.OrdinalIgnoreCase));
-            if (kvp.Value != null)
-            {
-                return (ECollectionPackType)kvp.Key;
-            }
+            var match = customPacks.FirstOrDefault(x => string.Equals(x.Value, trimmed, StringComparison.OrdinalIgnoreCase));
+            if (match.Value != null) return (ECollectionPackType)match.Key;
         }
 
-        Debug.LogError($"[WankulCrazy] Erreur JSON: '{value}' n'est pas une valeur valide pour ECollectionPackType.");
+        string normalized = trimmed.Replace(" ", "").Replace("-", "").Replace("_", "");
+        try
+        {
+            if (Enum.TryParse(typeof(ECollectionPackType), normalized, true, out object normalizedResult)) return (ECollectionPackType)normalizedResult;
+        }
+        catch (TypeLoadException) { }
+
+        if (customEnumValues.TryGetValue(typeof(ECollectionPackType), out var customPacksNorm))
+        {
+            var normalizedMatch = customPacksNorm.FirstOrDefault(x => string.Equals(x.Value, normalized, StringComparison.OrdinalIgnoreCase));
+            if (normalizedMatch.Value != null) return (ECollectionPackType)normalizedMatch.Key;
+        }
+
+        LogError($"[WankulCrazy] Erreur JSON: '{value}' n'est pas une valeur valide pour ECollectionPackType.");
         return (ECollectionPackType)0;
     }
 
