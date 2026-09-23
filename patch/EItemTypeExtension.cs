@@ -65,6 +65,7 @@ public static class EnumExtensions
         { "Display Stellar Taux+", "DisplayStellarTaux" },
         { "Calecon Stellar", "CaleconStellar" },
         { "Caleçon Stellar", "CaleconStellar" },
+        { "Boxer Stellar", "CaleconStellar" },
         { "Starter Apocalypse", "StarterApocalypse" },
         { "Starter Showtime", "StarterShowtime" },
         { "Tapi Stellar 1", "TapisS41" },

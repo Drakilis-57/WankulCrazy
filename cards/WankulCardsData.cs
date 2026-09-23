@@ -276,7 +276,7 @@ namespace WankulCrazyPlugin.cards
         private static readonly Dictionary<ECardExpansionType, List<(int start, int end)>> MonsterRanges =
             new Dictionary<ECardExpansionType, List<(int start, int end)>>
         {
-            { ECardExpansionType.Tetramon, new List<(int, int)> { (0, 121), (50000, 50099) } },
+            { ECardExpansionType.Tetramon, new List<(int, int)> { (0, 121) } },
             { ECardExpansionType.Destiny,  new List<(int, int)> { (0, 121) } },
             { ECardExpansionType.Megabot,  new List<(int, int)> { (1000, 1112) } },
             { ECardExpansionType.FantasyRPG, new List<(int, int)> { (2000, 2049) } },
