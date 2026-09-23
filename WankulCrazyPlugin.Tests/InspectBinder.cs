@@ -57,10 +57,12 @@ namespace WankulCrazyPlugin.Tests
                 // Look for nested iterator types
                 foreach (var nested in binderAnim.NestedTypes)
                 {
-                    if (nested.Name.Contains("DelayAlbumSort"))
+                    if (nested.Name?.Contains("DelayAlbumSort"))
                     {
                         _output.WriteLine($"Nested: {nested.Name}");
-                        foreach (var m in nested.Methods)
+                        if (nested.Methods != null)
+                        {
+                             foreach (var m in nested.Methods)
                         {
                             _output.WriteLine($"  {m.ReturnType.Name} {m.Name}");
                         }
