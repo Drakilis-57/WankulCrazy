@@ -104,7 +104,20 @@ public class ReplacingCards
         {
             __instance.m_CardFullBGImage.enabled = true;
             __instance.m_CardFullBGImage.gameObject.SetActive(true);
-            __instance.m_CardFullBGImage.sprite = (Sprite)wankulCardData.Sprite;
+
+            if (wankulCardData != null && wankulCardData.Sprite != null)
+            {
+                __instance.m_CardFullBGImage.sprite = (Sprite)wankulCardData.Sprite;
+            }
+            else
+            {
+                WankulCardData fallbackCard = WankulCardsData.GetAJETER();
+                if (fallbackCard != null && fallbackCard.Sprite != null)
+                {
+                    __instance.m_CardFullBGImage.sprite = (Sprite)fallbackCard.Sprite;
+                }
+            }
+
             __instance.m_CardFullBGImage.preserveAspect = false;
 
             RectTransform rect = __instance.m_CardFullBGImage.rectTransform;
