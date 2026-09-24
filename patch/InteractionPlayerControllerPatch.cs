@@ -18,6 +18,8 @@ namespace WankulCrazyPlugin.patch
         const int MaxPacks = 24;
         const int PacksPerColumn = 12;
 
+        private static Transform cachedEnvironmentGrpTransform;
+
         [HarmonyPatch(typeof(InteractionPlayerController), "Awake")]
         [HarmonyPostfix]
         public static void AwakePostfix(InteractionPlayerController __instance)
@@ -205,8 +207,13 @@ namespace WankulCrazyPlugin.patch
                 }
 
 
-                // Déclarer un parent par défaut si nécessaire (remplacer "SomeParentObject" par un objet réel de votre scène)
-                Transform someDefaultParentTransform = GameObject.Find("Level_Environment_Grp")?.transform; // Remplacer "SomeParentObject" par le nom réel de l'objet qui servira de parent par défaut
+                // Optimisation: Utiliser un cache pour éviter de rechercher l'objet "Level_Environment_Grp" à chaque fois
+                if (cachedEnvironmentGrpTransform == null)
+                {
+                    cachedEnvironmentGrpTransform = GameObject.Find("Level_Environment_Grp")?.transform;
+                }
+
+                Transform someDefaultParentTransform = cachedEnvironmentGrpTransform;
 
                 if (someDefaultParentTransform == null)
                 {
