@@ -48,7 +48,7 @@ namespace WankulCrazyPlugin.patch
 
             Transform destinyButton = Plugin.FindChildByPath(CSingleton<CardExpansionSelectScreen>.Instance.m_ScreenGrp.transform, "AnimGrp/Mask/UIGroup/Destiny_Button");
             destinyButton.GetComponentInChildren<TextMeshProUGUI>().text = "Campus";
-            
+
             Transform ghostButton = Plugin.FindChildByPath(CSingleton<CardExpansionSelectScreen>.Instance.m_ScreenGrp.transform, "AnimGrp/Mask/UIGroup/Ghost_Button");
             ghostButton.GetComponentInChildren<TextMeshProUGUI>().text = "Battle";
 
@@ -118,5 +118,5 @@ namespace WankulCrazyPlugin.patch
             currentExpensionIndex = index;
         }
 
-        }
+    }
 }

@@ -547,7 +547,7 @@ namespace WankulCrazyPlugin.patch
                 Plugin.Logger.LogError("Échec du chargement de la texture.");
             }
         }
-    
+
         private static Dictionary<EItemType, string> packTexturePaths = null;
 
         private static Dictionary<EItemType, string> GetPackTexturePaths()

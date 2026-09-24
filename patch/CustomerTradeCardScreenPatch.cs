@@ -1,4 +1,4 @@
-﻿using I2.Loc;
+using I2.Loc;
 using System.Collections.Generic;
 using System.Text;
 using TMPro;
@@ -51,17 +51,18 @@ namespace WankulCrazyPlugin.patch
             __instance.m_TradeGrp_R.SetActive((bool)Plugin.GetPProperty(__instance, "m_IsTrading"));
             __instance.m_SellGrp_R.SetActive(!(bool)Plugin.GetPProperty(__instance, "m_IsTrading"));
             float num3 = 1f;
-            
 
 
-            
+
+
 
 
             if (customerTradeData != null)
             {
                 Plugin.SetPProperty(__instance, "m_CardData_L", customerTradeData.m_CardData_L);
             }
-            else {
+            else
+            {
                 (WankulCardData wankulCardData, CardData cardData, int amount) dropL = WankulInventory.GetWankulCardDataForTradeOffer();
                 Plugin.SetPProperty(__instance, "m_CardData_L", dropL.cardData);
             }
@@ -131,7 +132,7 @@ namespace WankulCrazyPlugin.patch
                     Plugin.SetPProperty(__instance, "m_SellCardAskPrice", customerTradeData.m_SellCardAskPrice);
                     Plugin.SetPProperty(__instance, "m_MaxDeclineCount", customerTradeData.m_MaxDeclineCount);
                     Plugin.SetPProperty(__instance, "m_DeclineCount", customerTradeData.m_DeclineCount);
-                    __instance.m_SetPrice.text = GameInstance.GetPriceString((float)Plugin.GetPProperty(__instance,"m_PriceSet"));
+                    __instance.m_SetPrice.text = GameInstance.GetPriceString((float)Plugin.GetPProperty(__instance, "m_PriceSet"));
                     __instance.m_SetPriceInputDisplay.text = GameInstance.GetPriceString((float)Plugin.GetPProperty(__instance, "m_PriceSet"));
                 }
                 else

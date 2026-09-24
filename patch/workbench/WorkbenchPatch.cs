@@ -31,7 +31,7 @@ namespace WankulCrazyPlugin.patch.workbench
 
         public static void OpenRarityScreen(ERarity initCardRarity)
         {
-            
+
             Transform anyRarityButton = Plugin.FindChildByPath(CSingleton<CardRaritySelectScreen>.Instance.m_ScreenGrp.transform, "AnimGrp/Mask/UIGroup/AnyRarity_Button");
             if (anyRarityButton != null)
             {
@@ -154,7 +154,7 @@ namespace WankulCrazyPlugin.patch.workbench
                     KeyValuePair<int, (EffigyCardData wankulcard, CardData card, int amount)> randomCard = effigyCards.ElementAt(randomIndex);
                     if (currentRarities.Contains(randomCard.Value.wankulcard.Rarity))
                     {
-                        
+
                         selectedCardsData.Add(randomCard.Value.card);
                         CPlayerData.ReduceCard(randomCard.Value.card, 1);
                         totalSelectedAmount += 1;
@@ -185,5 +185,5 @@ namespace WankulCrazyPlugin.patch.workbench
             return false;
         }
 
-        }
+    }
 }

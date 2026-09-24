@@ -508,7 +508,8 @@ public class Plugin : BaseUnityPlugin
         return method;
     }
 
-    public static object GetPProperty(object __instance, string fieldName) {
+    public static object GetPProperty(object __instance, string fieldName)
+    {
         Type type = __instance.GetType();
 
         FieldInfo field = GetCachedField(type, fieldName);

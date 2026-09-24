@@ -289,7 +289,8 @@ namespace WankulCrazyPlugin.utils
                     if (WankulCardsData.IsKeyValid(association.Key))
                     {
                         WankulCardsData.Instance.association[association.Key] = card;
-                    } else
+                    }
+                    else
                     {
                         CardData cardData = WankulCardsData.Instance.GetUnassciatedCardData();
                         WankulCardsData.Instance.association[$"{cardData.monsterType}_{cardData.borderType}_{cardData.expansionType}"] = card;
@@ -328,12 +329,13 @@ namespace WankulCrazyPlugin.utils
                         var cardData = WankulCardsData.Instance.GetCardDataFromKey(item.Value.cardkey);
                         WankulInventory.Instance.wankulCards[item.Key] = (wankulCardData, cardData, item.Value.amount);
                     }
-                    else 
+                    else
                     {
                         if (WankulInventory.Instance.wankulCards.TryGetValue(item.Key, out var existingCard))
                         {
                             existingCard.amount += item.Value.amount;
-                        } else
+                        }
+                        else
                         {
                             CardData cardData = WankulCardsData.Instance.GetCardDataFromWankulCardData(wankulCardData);
                             if (cardData != null)
@@ -384,7 +386,8 @@ namespace WankulCrazyPlugin.utils
                 Plugin.Logger.LogError($"Le champ GetPackContent n'a pas été trouvé.");
             }
 
-            if ( rolledCardDataList != null ) {
+            if (rolledCardDataList != null)
+            {
                 Plugin.Logger.LogInfo("Getting m_RolledCardDataList");
                 List<CardData> m_RolledCardDataList = (List<CardData>)rolledCardDataList.GetValue(CardOpeningSequence.Instance);
                 Plugin.Logger.LogInfo($"Get m_RolledCardDataList count: {m_RolledCardDataList.Count}");
