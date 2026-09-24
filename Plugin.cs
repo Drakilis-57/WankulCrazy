@@ -372,6 +372,24 @@ public class Plugin : BaseUnityPlugin
         );
 
         TryPatch(
+            "Debug.Log(object)",
+            AccessTools.Method(typeof(Debug), "Log", new[] { typeof(object) }),
+            prefix: AccessTools.Method(typeof(DebugFilterPatch), nameof(DebugFilterPatch.LogPrefix))
+        );
+
+        TryPatch(
+            "Debug.Log(object, Object)",
+            AccessTools.Method(typeof(Debug), "Log", new[] { typeof(object), typeof(UnityEngine.Object) }),
+            prefix: AccessTools.Method(typeof(DebugFilterPatch), nameof(DebugFilterPatch.LogContextPrefix))
+        );
+
+        TryPatch(
+            "Debug.LogFormat(string, object[])",
+            AccessTools.Method(typeof(Debug), "LogFormat", new[] { typeof(string), typeof(object[]) }),
+            prefix: AccessTools.Method(typeof(DebugFilterPatch), nameof(DebugFilterPatch.LogFormatPrefix))
+        );
+
+        TryPatch(
             "Debug.LogWarning(object)",
             AccessTools.Method(typeof(Debug), "LogWarning", new[] { typeof(object) }),
             prefix: AccessTools.Method(typeof(DebugFilterPatch), nameof(DebugFilterPatch.LogWarningPrefix))

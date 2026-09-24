@@ -11,7 +11,35 @@ namespace WankulCrazyPlugin.patch
             return text.Contains("The character used for Underline is not available in font asset")
                 || text.Contains("DontDestroyOnLoad only works for root GameObjects")
                 || text.Contains("Parent of RectTransform is being set with parent property")
-                || text.Contains("BoxCollider does not support negative scale or size");
+                || text.Contains("BoxCollider does not support negative scale or size")
+                || text.Contains("percentDone");
+        }
+
+        public static bool LogFormatPrefix(string format, params object[] args)
+        {
+            if (format != null && ShouldIgnore(format))
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public static bool LogContextPrefix(object message, UnityEngine.Object context)
+        {
+            if (message != null && ShouldIgnore(message.ToString()))
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public static bool LogPrefix(object message)
+        {
+            if (message != null && ShouldIgnore(message.ToString()))
+            {
+                return false;
+            }
+            return true;
         }
 
         public static bool LogWarningPrefix(object message)
