@@ -82,19 +82,7 @@ public class ReplacingCards
 
         if (__instance.m_CardBGImage != null)
         {
-            __instance.m_CardBGImage.enabled = true;
-            __instance.m_CardBGImage.gameObject.SetActive(true);
-            __instance.m_CardBGImage.sprite = (Sprite)wankulCardData.Sprite;
-            __instance.m_CardBGImage.preserveAspect = false;
-
-            RectTransform rect = __instance.m_CardBGImage.rectTransform;
-            if (rect != null)
-            {
-                rect.anchorMin = Vector2.zero;
-                rect.anchorMax = Vector2.one;
-                rect.offsetMin = Vector2.zero;
-                rect.offsetMax = Vector2.zero;
-            }
+            __instance.m_CardBGImage.gameObject.SetActive(false);
         }
 
         if (__instance.m_CardBorderImage != null)
@@ -114,7 +102,19 @@ public class ReplacingCards
 
         if (__instance.m_CardFullBGImage != null)
         {
-            __instance.m_CardFullBGImage.gameObject.SetActive(false);
+            __instance.m_CardFullBGImage.enabled = true;
+            __instance.m_CardFullBGImage.gameObject.SetActive(true);
+            __instance.m_CardFullBGImage.sprite = (Sprite)wankulCardData.Sprite;
+            __instance.m_CardFullBGImage.preserveAspect = false;
+
+            RectTransform rect = __instance.m_CardFullBGImage.rectTransform;
+            if (rect != null)
+            {
+                rect.anchorMin = Vector2.zero;
+                rect.anchorMax = Vector2.one;
+                rect.offsetMin = Vector2.zero;
+                rect.offsetMax = Vector2.zero;
+            }
         }
 
         if (__instance.m_CardFullBGOffsetGrp != null)
