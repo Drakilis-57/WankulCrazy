@@ -148,12 +148,12 @@ namespace WankulCrazyPlugin.importer
             return result;
         }
 
-        public static bool ItemTypeToCollectionPackType(EItemType itemType, ref ECollectionPackType __result)
+        public static void ItemTypeToCollectionPackType(EItemType itemType, ref ECollectionPackType __result)
         {
             EItemType test32 = EnumExtensions.SafeParseEItemType("TestCardPack32");
             EItemType test64 = EnumExtensions.SafeParseEItemType("TestCardPack64");
-            if (itemType == test32) { __result = EnumExtensions.SafeParseECollectionPackType("SeasonTestPack32"); return false; }
-            if (itemType == test64) { __result = EnumExtensions.SafeParseECollectionPackType("SeasonTestPack64"); return false; }
+            if (itemType == test32) { __result = EnumExtensions.SafeParseECollectionPackType("SeasonTestPack32"); return; }
+            if (itemType == test64) { __result = EnumExtensions.SafeParseECollectionPackType("SeasonTestPack64"); return; }
 
             EItemType boosterStellar = EnumExtensions.SafeParseEItemType("BoosterStellar");
             EItemType displayStellar = EnumExtensions.SafeParseEItemType("DisplayStellar");
@@ -164,29 +164,25 @@ namespace WankulCrazyPlugin.importer
             ECollectionPackType stellarPack = EnumExtensions.SafeParseECollectionPackType("Stellar");
             ECollectionPackType stellarPackTaux = EnumExtensions.SafeParseECollectionPackType("StellarTaux");
 
-            if (itemType == EItemType.BasicCardPack || itemType == EItemType.BasicCardBox) __result = ECollectionPackType.BasicCardPack;
-            else if (itemType == EItemType.RareCardPack || itemType == EItemType.RareCardBox) __result = ECollectionPackType.RareCardPack;
+            if (itemType == EItemType.BasicCardPack || itemType == EItemType.BasicCardBox) return; // Keep original __result
+            else if (itemType == EItemType.RareCardPack || itemType == EItemType.RareCardBox) return; // Keep original __result
             else if (itemType == EItemType.EpicCardPack || itemType == EItemType.EpicCardBox || itemType == boosterGoldBattle) __result = ECollectionPackType.EpicCardPack;
-            else if (itemType == EItemType.LegendaryCardPack || itemType == EItemType.LegendaryCardBox) __result = ECollectionPackType.LegendaryCardPack;
-            else if (itemType == EItemType.DestinyBasicCardPack || itemType == EItemType.DestinyBasicCardBox) __result = ECollectionPackType.DestinyBasicCardPack;
-            else if (itemType == EItemType.DestinyRareCardPack || itemType == EItemType.DestinyRareCardBox) __result = ECollectionPackType.DestinyRareCardPack;
-            else if (itemType == EItemType.DestinyEpicCardPack || itemType == EItemType.DestinyEpicCardBox) __result = ECollectionPackType.DestinyEpicCardPack;
-            else if (itemType == EItemType.DestinyLegendaryCardPack || itemType == EItemType.DestinyLegendaryCardBox) __result = ECollectionPackType.DestinyLegendaryCardPack;
-            else if (itemType == EItemType.GhostPack) __result = ECollectionPackType.GhostPack;
-            else if (itemType == EItemType.MegabotPack) __result = ECollectionPackType.MegabotPack;
-            else if (itemType == EItemType.FantasyRPGPack) __result = ECollectionPackType.FantasyRPGPack;
-            else if (itemType == EItemType.CatJobPack) __result = ECollectionPackType.CatJobPack;
+            else if (itemType == EItemType.LegendaryCardPack || itemType == EItemType.LegendaryCardBox) return; // Keep original __result
+            else if (itemType == EItemType.DestinyBasicCardPack || itemType == EItemType.DestinyBasicCardBox) return; // Keep original __result
+            else if (itemType == EItemType.DestinyRareCardPack || itemType == EItemType.DestinyRareCardBox) return; // Keep original __result
+            else if (itemType == EItemType.DestinyEpicCardPack || itemType == EItemType.DestinyEpicCardBox) return; // Keep original __result
+            else if (itemType == EItemType.DestinyLegendaryCardPack || itemType == EItemType.DestinyLegendaryCardBox) return; // Keep original __result
+            else if (itemType == EItemType.GhostPack) return; // Keep original __result
+            else if (itemType == EItemType.MegabotPack) return; // Keep original __result
+            else if (itemType == EItemType.FantasyRPGPack) return; // Keep original __result
+            else if (itemType == EItemType.CatJobPack) return; // Keep original __result
             else if (itemType == boosterStellar || itemType == displayStellar || itemType == boosterGoldStellar) __result = stellarPack;
             else if (itemType == boosterStellarTaux || itemType == displayStellarTaux) __result = stellarPackTaux;
-            else __result = ECollectionPackType.None;
-            return false;
         }
 
-        public static bool GetCardExpansionType(ECollectionPackType collectionPackType, ref ECardExpansionType __result)
+        public static void GetCardExpansionType(ECollectionPackType collectionPackType, ref ECardExpansionType __result)
         {
-            if (collectionPackType == EnumExtensions.SafeParseECollectionPackType("SeasonTestPack32") || collectionPackType == EnumExtensions.SafeParseECollectionPackType("SeasonTestPack64")) { __result = ECardExpansionType.Tetramon; return false; }
-            __result = ECardExpansionType.None;
-            return true;
+            if (collectionPackType == EnumExtensions.SafeParseECollectionPackType("SeasonTestPack32") || collectionPackType == EnumExtensions.SafeParseECollectionPackType("SeasonTestPack64")) { __result = ECardExpansionType.Tetramon; }
         }
 
         private static void RegisterCustomItemsToShopCategories(List<ItemData> items)
@@ -199,7 +195,7 @@ namespace WankulCrazyPlugin.importer
             }
         }
 
-        public static bool GetItemMeshDataPrefix(EItemType itemType, ref ItemMeshData __result)
+        public static void GetItemMeshDataPostfix(EItemType itemType, ref ItemMeshData __result)
         {
             if (ItemMeshDataList != null)
             {
@@ -208,7 +204,7 @@ namespace WankulCrazyPlugin.importer
                     if (customMesh != null && EnumExtensions.SafeParseEItemType(customMesh.name) == itemType)
                     {
                         __result = customMesh;
-                        return false;
+                        return;
                     }
                 }
             }
@@ -221,14 +217,11 @@ namespace WankulCrazyPlugin.importer
                 {
                     // Fallback pour tout autre enum custom ou invalide non trouvé par index
                     __result = new ItemMeshData();
-                    return false;
                 }
             }
-
-            return true;
         }
 
-        public static bool GetItemDataPrefix(EItemType itemType, ref ItemData __result)
+        public static void GetItemDataPostfix(EItemType itemType, ref ItemData __result)
         {
             if (ItemDataList != null)
             {
@@ -237,7 +230,7 @@ namespace WankulCrazyPlugin.importer
                     if (customItem != null && EnumExtensions.SafeParseEItemType(customItem.name) == itemType)
                     {
                         __result = customItem;
-                        return false;
+                        return;
                     }
                 }
             }
@@ -250,11 +243,8 @@ namespace WankulCrazyPlugin.importer
                 {
                     // Fallback pour tout autre enum custom ou invalide non trouvé par index
                     __result = new ItemData();
-                    return false;
                 }
             }
-
-            return true;
         }
     }
 }

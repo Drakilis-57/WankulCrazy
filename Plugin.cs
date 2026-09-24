@@ -290,13 +290,13 @@ public class Plugin : BaseUnityPlugin
         TryPatch(
             "InventoryBase.ItemTypeToCollectionPackType",
             AccessTools.Method(typeof(InventoryBase), "ItemTypeToCollectionPackType"),
-            prefix: AccessTools.Method(typeof(CustomItemsImporter), "ItemTypeToCollectionPackType")
+            postfix: AccessTools.Method(typeof(CustomItemsImporter), "ItemTypeToCollectionPackType")
         );
 
         TryPatch(
             "InventoryBase.GetCardExpansionType",
             AccessTools.Method(typeof(InventoryBase), "GetCardExpansionType"),
-            prefix: AccessTools.Method(typeof(CustomItemsImporter), "GetCardExpansionType")
+            postfix: AccessTools.Method(typeof(CustomItemsImporter), "GetCardExpansionType")
         );
 
         TryPatch(
@@ -404,13 +404,13 @@ public class Plugin : BaseUnityPlugin
         TryPatch(
             "InventoryBase.GetItemData",
             AccessTools.Method(typeof(InventoryBase), "GetItemData", new[] { typeof(EItemType) }),
-            prefix: AccessTools.Method(typeof(CustomItemsImporter), nameof(CustomItemsImporter.GetItemDataPrefix))
+            postfix: AccessTools.Method(typeof(CustomItemsImporter), nameof(CustomItemsImporter.GetItemDataPostfix))
         );
 
         TryPatch(
             "InventoryBase.GetItemMeshData",
             AccessTools.Method(typeof(InventoryBase), "GetItemMeshData", new[] { typeof(EItemType) }),
-            prefix: AccessTools.Method(typeof(CustomItemsImporter), nameof(CustomItemsImporter.GetItemMeshDataPrefix))
+            postfix: AccessTools.Method(typeof(CustomItemsImporter), nameof(CustomItemsImporter.GetItemMeshDataPostfix))
         );
 
         TryPatch(
