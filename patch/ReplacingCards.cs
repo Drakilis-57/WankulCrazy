@@ -70,6 +70,10 @@ public class ReplacingCards
         WankulCardData wankulCardData = cardsData.GetFromMonster(gameCardData, true);
         if (wankulCardData == null)
         {
+            wankulCardData = cardsData.GetFromMonster(gameCardData, false);
+        }
+        if (wankulCardData == null)
+        {
             string key = $"{gameCardData.monsterType}_{gameCardData.borderType}_{gameCardData.expansionType}";
             Plugin.Logger.LogError($"wankulCardData is null from {key}, using AJETER");
             wankulCardData = WankulCardsData.GetAJETER();
@@ -336,8 +340,13 @@ public class ReplacingCards
     public static bool GetIcon(ECardExpansionType cardExpansionType, MonsterData __instance, ref Sprite __result)
     {
         WankulCardData aJETER = WankulCardsData.GetAJETER();
-        ;
-        __result = (Sprite)aJETER.Sprite;
-        return false;
+        if (aJETER?.Sprite != null)
+        {
+            __result = (Sprite)aJETER.Sprite;
+            return false;
+        }
+
+        // Si aucun sprite custom n'est disponible, laisser la méthode vanilla s'exécuter
+        return true;
     }
 }

@@ -388,9 +388,6 @@ namespace WankulCrazyPlugin.cards
 
             // Vérifier que l'expansion est valide
             if (expansion == ECardExpansionType.None ||
-                expansion == ECardExpansionType.FantasyRPG ||
-                expansion == ECardExpansionType.Megabot ||
-                expansion == ECardExpansionType.CatJob ||
                 expansion == ECardExpansionType.Ghost ||
                 expansion == ECardExpansionType.FoodieGO ||
                 expansion == ECardExpansionType.MAX)
@@ -466,7 +463,16 @@ namespace WankulCrazyPlugin.cards
 
         public static WankulCardData GetAJETER()
         {
-            return WankulCardsData.Instance.cards.Find(wankulCard => wankulCard is SpecialCardData special && special.Special == Specials.AJETER);
+            var found = WankulCardsData.Instance.cards.Find(wankulCard => wankulCard is SpecialCardData special && special.Special == Specials.AJETER);
+            if (found != null) return found;
+
+            // Fallback robuste : si la carte AJETER n'existe pas dans les JSONs, renvoyer la première carte disponible
+            if (WankulCardsData.Instance.cards.Count > 0)
+            {
+                return WankulCardsData.Instance.cards[0];
+            }
+
+            return null;
         }
 
         public void DebugDisplayAllCardsAssociations()

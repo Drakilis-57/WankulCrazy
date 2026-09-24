@@ -419,6 +419,13 @@ namespace WankulCrazyPlugin.inventory
                 }
             }
 
+            if (seasonalCard.Count > 0)
+            {
+                WankulCardData fallbackCard = seasonalCard[0];
+                alreadySelectedCards.Add(fallbackCard);
+                return fallbackCard;
+            }
+
             LogError("Failed to drop a card");
             return null;
         }
@@ -431,7 +438,13 @@ namespace WankulCrazyPlugin.inventory
             Season season = ConvertPackTypeToSeason(packType);
             List<WankulCardData> seasonalCard = WankulCardsData.GetCardsBySeasonFast(season);
 
-            if (seasonalCard.Count == 0)
+            if (seasonalCard == null || seasonalCard.Count == 0)
+            {
+                // Fallback : si la saison spécifique n'a pas de cartes chargées, prendre parmi toutes les cartes disponibles
+                seasonalCard = WankulCardsData.Instance.cards;
+            }
+
+            if (seasonalCard == null || seasonalCard.Count == 0)
             {
                 LogError("No available cards to drop");
                 return null;
@@ -445,6 +458,12 @@ namespace WankulCrazyPlugin.inventory
 
         public static void AddCard(WankulCardData wankulCardData, CardData cardData, int amount)
         {
+            if (wankulCardData == null)
+            {
+                LogError("Cannot AddCard: wankulCardData is null");
+                return;
+            }
+
             if (!Instance.wankulCards.ContainsKey(wankulCardData.Index))
             {
                 Instance.wankulCards[wankulCardData.Index] = (wankulCardData, cardData, amount);

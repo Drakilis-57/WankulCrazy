@@ -47,7 +47,7 @@ public class Plugin : BaseUnityPlugin
             }
             catch (Exception ex)
             {
-                Logger.LogError($"[HarmonyPatch] Erreur lors du patch de '{targetName}': {ex.Message}");
+                Logger.LogError($"[HarmonyPatch] Erreur lors du patch de '{targetName}': {ex}");
             }
         }
 

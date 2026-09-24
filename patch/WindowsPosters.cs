@@ -35,29 +35,26 @@ namespace WankulCrazyPlugin.patch
 
             for (int i = 0; i < positions.Length; i++)
             {
+                string texturePath = texturePaths[i];
+                Texture2D texture = LoadPNG(texturePath);
+
+                if (texture == null)
+                {
+                    continue;
+                }
+
                 string posterName = "Poster" + (i + 1);
                 GameObject poster = GameObject.CreatePrimitive(PrimitiveType.Quad); // Utiliser un Quad
                 poster.name = posterName;
 
                 MeshRenderer meshRenderer = poster.GetComponent<MeshRenderer>();
                 Material material = new Material(Shader.Find("Standard")); // Utiliser un shader existant
+                material.mainTexture = texture;
                 meshRenderer.material = material;
 
-                string texturePath = texturePaths[i];
-                Texture2D texture = LoadPNG(texturePath);
-
-                if (texture != null)
-                {
-                    material.mainTexture = texture;
-                    meshRenderer.material = material;
-                    // 🔹 Ajuster la taille du Quad pour correspondre au ratio de l’image
-                    float aspectRatio = (float)texture.width / texture.height;
-                    poster.transform.localScale = new Vector3(aspectRatio, 1f, 1f);
-                }
-                else
-                {
-                    Plugin.Logger.LogInfo(posterName + " : Échec du chargement de la texture");
-                }
+                // 🔹 Ajuster la taille du Quad pour correspondre au ratio de l’image
+                float aspectRatio = (float)texture.width / texture.height;
+                poster.transform.localScale = new Vector3(aspectRatio, 1f, 1f);
 
                 poster.transform.SetParent(Windows_Transform, false);
                 poster.transform.localPosition = positions[i];

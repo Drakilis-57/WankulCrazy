@@ -298,7 +298,7 @@ namespace WankulCrazyPlugin.utils
                 }
                 else
                 {
-                    Plugin.Logger.LogError($"WankulCardData not found for index: {association.Value.WankulCardIndex}");
+                    Plugin.Logger.LogWarning($"Obsolete or missing WankulCardData index {association.Value.WankulCardIndex} in save associations; ignoring.");
                 }
             }
 
@@ -351,7 +351,7 @@ namespace WankulCrazyPlugin.utils
                 }
                 else
                 {
-                    Plugin.Logger.LogError($"WankulCardData not found for index: {item.Value.WankulCardIndex}");
+                    Plugin.Logger.LogWarning($"Obsolete or missing WankulCardData index {item.Value.WankulCardIndex} in saved cards; ignoring.");
                 }
             }
         }

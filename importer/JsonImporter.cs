@@ -21,6 +21,17 @@ public class JsonImporter
 
         Dictionary<int, WankulCardData> allCardsDict = new Dictionary<int, WankulCardData>();
 
+        int autoAssignedIndex = 900000;
+        void RegisterCard(WankulCardData card)
+        {
+            if (card == null) return;
+            if (card.Index <= 0)
+            {
+                card.Index = ++autoAssignedIndex;
+            }
+            allCardsDict[card.Index] = card;
+        }
+
         // 2. Load legacy main cards file if present
         string legacyPath = Path.Combine(pluginPath, "data/formated_wankul_cards.json");
         if (File.Exists(legacyPath))
@@ -32,7 +43,7 @@ public class JsonImporter
                 List<WankulCardData> cards = DeserializeToken(token);
                 foreach (var card in cards)
                 {
-                    allCardsDict[card.Index] = card;
+                    RegisterCard(card);
                 }
             }
             catch (Exception ex)
@@ -56,7 +67,7 @@ public class JsonImporter
                     List<WankulCardData> cards = DeserializeToken(token);
                     foreach (var card in cards)
                     {
-                        allCardsDict[card.Index] = card;
+                        RegisterCard(card);
                     }
                 }
                 catch (Exception ex)
