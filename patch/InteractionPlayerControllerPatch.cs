@@ -18,6 +18,8 @@ namespace WankulCrazyPlugin.patch
         const int MaxPacks = 24;
         const int PacksPerColumn = 12;
 
+        private static Transform cachedEnvironmentGrpTransform;
+
         [HarmonyPatch(typeof(InteractionPlayerController), "Awake")]
         [HarmonyPostfix]
         public static void AwakePostfix(InteractionPlayerController __instance)
@@ -205,8 +207,13 @@ namespace WankulCrazyPlugin.patch
                 }
 
 
-                // Déclarer un parent par défaut si nécessaire (remplacer "SomeParentObject" par un objet réel de votre scène)
-                Transform someDefaultParentTransform = GameObject.Find("Level_Environment_Grp")?.transform; // Remplacer "SomeParentObject" par le nom réel de l'objet qui servira de parent par défaut
+                // Optimisation: Utiliser un cache pour éviter de rechercher l'objet "Level_Environment_Grp" à chaque fois
+                if (cachedEnvironmentGrpTransform == null)
+                {
+                    cachedEnvironmentGrpTransform = GameObject.Find("Level_Environment_Grp")?.transform;
+                }
+
+                Transform someDefaultParentTransform = cachedEnvironmentGrpTransform;
 
                 if (someDefaultParentTransform == null)
                 {
@@ -483,13 +490,28 @@ namespace WankulCrazyPlugin.patch
                 Debug.LogError("Le GameObject n'a pas de Renderer.");
             }
         }
+        private static System.Collections.Generic.Dictionary<string, Texture2D> _textureCache = new System.Collections.Generic.Dictionary<string, Texture2D>();
+
         public static Texture2D LoadTexture(string path)
         {
-            // Exemple de chargement d'une texture à partir d'un fichier (ajuste selon ton projet)
+            if (_textureCache.TryGetValue(path, out Texture2D cachedTex))
+            {
+                return cachedTex;
+            }
+
+            // Exemple de chargement d'une texture à partir d'un fichier
+            if (!System.IO.File.Exists(path))
+            {
+                return null;
+            }
+
             byte[] fileData = System.IO.File.ReadAllBytes(path);
             Texture2D tex = new Texture2D(2, 2);
             if (tex.LoadImage(fileData))
+            {
+                _textureCache[path] = tex;
                 return tex;
+            }
             return null;
         }
         public static void ApplyTextureToChild(Transform child, string texturePath)

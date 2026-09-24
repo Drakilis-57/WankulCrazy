@@ -408,6 +408,12 @@ public class Plugin : BaseUnityPlugin
         );
 
         TryPatch(
+            "InventoryBase.GetItemMeshData",
+            AccessTools.Method(typeof(InventoryBase), "GetItemMeshData", new[] { typeof(EItemType) }),
+            prefix: AccessTools.Method(typeof(CustomItemsImporter), nameof(CustomItemsImporter.GetItemMeshDataPrefix))
+        );
+
+        TryPatch(
             "LoadingScreen.CloseScreen",
             AccessTools.Method(typeof(LoadingScreen), "CloseScreen"),
             prefix: AccessTools.Method(typeof(SceneLifecyclePatches), nameof(SceneLifecyclePatches.CloseScreenPrefix))
