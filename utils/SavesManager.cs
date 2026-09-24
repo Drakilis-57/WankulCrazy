@@ -132,7 +132,7 @@ namespace WankulCrazyPlugin.utils
             }
 
             Plugin.Logger.LogInfo("Deserialized Save object successfully.");
-            Plugin.Logger.LogInfo($"Associations count: {save.associationsWithPercents.Count}");
+            //Plugin.Logger.LogInfo($"Associations count: {save.associationsWithPercents.Count}");
 
             if (save.savedebug)
             {
