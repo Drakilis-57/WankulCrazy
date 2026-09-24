@@ -197,9 +197,10 @@ namespace WankulCrazyPlugin.utils
                 UpdateCardPriceIfNeeded(wankulCardData);
             }
 
+            var cardsByIndex = BuildCardIndex();
             foreach (var item in save.wankulCards)
             {
-                AddDebugCard(item);
+                AddDebugCard(item, cardsByIndex);
             }
 
             DebuggingSave = false;
@@ -216,10 +217,9 @@ namespace WankulCrazyPlugin.utils
             CPlayerData.m_CardCollectedListCatJob.Clear();
         }
 
-        private static void AddDebugCard(KeyValuePair<int, (int WankulCardIndex, string cardkey, int amount)> item)
+        private static void AddDebugCard(KeyValuePair<int, (int WankulCardIndex, string cardkey, int amount)> item, Dictionary<int, WankulCardData> cardsByIndex)
         {
-            var wankulCardData = WankulCardsData.Instance.cards.Find(card => card.Index == item.Value.WankulCardIndex);
-            if (wankulCardData != null)
+            if (cardsByIndex.TryGetValue(item.Value.WankulCardIndex, out var wankulCardData))
             {
                 var cardData = WankulCardsData.Instance.GetCardDataFromWankulCardData(wankulCardData);
                 if (cardData != null)
