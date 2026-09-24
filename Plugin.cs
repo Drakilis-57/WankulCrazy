@@ -404,13 +404,13 @@ public class Plugin : BaseUnityPlugin
         TryPatch(
             "InventoryBase.GetItemData",
             AccessTools.Method(typeof(InventoryBase), "GetItemData", new[] { typeof(EItemType) }),
-            postfix: AccessTools.Method(typeof(CustomItemsImporter), nameof(CustomItemsImporter.GetItemDataPostfix))
+            prefix: AccessTools.Method(typeof(CustomItemsImporter), nameof(CustomItemsImporter.GetItemDataPrefix))
         );
 
         TryPatch(
             "InventoryBase.GetItemMeshData",
             AccessTools.Method(typeof(InventoryBase), "GetItemMeshData", new[] { typeof(EItemType) }),
-            postfix: AccessTools.Method(typeof(CustomItemsImporter), nameof(CustomItemsImporter.GetItemMeshDataPostfix))
+            prefix: AccessTools.Method(typeof(CustomItemsImporter), nameof(CustomItemsImporter.GetItemMeshDataPrefix))
         );
 
         TryPatch(

@@ -37,45 +37,53 @@ namespace WankulCrazyPlugin.importer
             string path = Path.Combine(root, "ItemDataList.json");
             try
             {
-                using (var stream = File.OpenRead(path))
-                using (var document = System.Text.Json.JsonDocument.Parse(stream))
+                if (File.Exists(path))
                 {
-                    foreach (var json in document.RootElement.EnumerateArray())
+                    string content = File.ReadAllText(path);
+                    JArray array = JArray.Parse(content);
+                    foreach (JObject json in array)
                     {
                         ItemData item = new ItemData
                         {
-                            name = json.GetProperty("name").GetString(),
-                            category = (EItemCategory)Enum.Parse(typeof(EItemCategory), json.GetProperty("category").GetString()),
-                            iconScale = json.GetProperty("iconScale").GetSingle(),
-                            baseCost = json.GetProperty("baseCost").GetSingle(),
-                            marketPriceMinPercent = json.GetProperty("marketPriceMinPercent").GetSingle(),
-                            marketPriceMaxPercent = json.GetProperty("marketPriceMaxPercent").GetSingle(),
-                            boxFollowItemPrice = EnumExtensions.SafeParseEItemType(json.GetProperty("boxFollowItemPrice").GetString()),
-                            isNotBoosterPack = json.GetProperty("isNotBoosterPack").GetBoolean(),
-                            isTallItem = json.GetProperty("isTallItem").GetBoolean(),
-                            isHideItemUntilUnlocked = json.GetProperty("isHideItemUntilUnlocked").GetBoolean(),
-                            posYOffsetInBox = json.GetProperty("posYOffsetInBox").GetSingle(),
-                            scaleOffsetInBox = json.GetProperty("scaleOffsetInBox").GetSingle()
+                            name = (string)json["name"],
+                            category = (EItemCategory)Enum.Parse(typeof(EItemCategory), (string)json["category"]),
+                            iconScale = (float)(json["iconScale"] ?? 1f),
+                            baseCost = (float)(json["baseCost"] ?? 0f),
+                            marketPriceMinPercent = (float)(json["marketPriceMinPercent"] ?? 0f),
+                            marketPriceMaxPercent = (float)(json["marketPriceMaxPercent"] ?? 0f),
+                            boxFollowItemPrice = EnumExtensions.SafeParseEItemType((string)json["boxFollowItemPrice"]),
+                            isNotBoosterPack = (bool)(json["isNotBoosterPack"] ?? false),
+                            isTallItem = (bool)(json["isTallItem"] ?? false),
+                            isHideItemUntilUnlocked = (bool)(json["isHideItemUntilUnlocked"] ?? false),
+                            posYOffsetInBox = (float)(json["posYOffsetInBox"] ?? 0f),
+                            scaleOffsetInBox = (float)(json["scaleOffsetInBox"] ?? 0f)
                         };
 
                         item.affectedPriceChangeType = new List<EPriceChangeType>();
-                        foreach (var pct in json.GetProperty("affectedPriceChangeType").EnumerateArray())
+                        if (json["affectedPriceChangeType"] is JArray priceArr)
                         {
-                            item.affectedPriceChangeType.Add((EPriceChangeType)Enum.Parse(typeof(EPriceChangeType), pct.GetString()));
+                            foreach (var pct in priceArr)
+                            {
+                                item.affectedPriceChangeType.Add((EPriceChangeType)Enum.Parse(typeof(EPriceChangeType), (string)pct));
+                            }
                         }
 
-                        item.itemDimension = ReadVectorSTJ(json.GetProperty("itemDimension"));
-                        item.colliderPosOffset = ReadVectorSTJ(json.GetProperty("colliderPosOffset"));
-                        item.colliderScale = ReadVectorSTJ(json.GetProperty("colliderScale"));
+                        item.itemDimension = ReadVector(json["itemDimension"]);
+                        item.colliderPosOffset = ReadVector(json["colliderPosOffset"]);
+                        item.colliderScale = ReadVector(json["colliderScale"]);
 
-                        string iconPath = Path.Combine(root, "icons", json.GetProperty("icon").GetString());
-                        if (File.Exists(iconPath))
+                        string iconProp = (string)json["icon"];
+                        if (!string.IsNullOrEmpty(iconProp))
                         {
-                            Texture2D texture = TextureUtils.LoadTexture(iconPath);
-                            item.icon = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(.5f, .5f), 100f, 0, SpriteMeshType.FullRect);
-                            item.icon.name = item.name + "_icon";
+                            string iconPath = Path.Combine(root, "icons", iconProp);
+                            if (File.Exists(iconPath))
+                            {
+                                Texture2D texture = TextureUtils.LoadTexture(iconPath);
+                                item.icon = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(.5f, .5f), 100f, 0, SpriteMeshType.FullRect);
+                                item.icon.name = item.name + "_icon";
+                            }
+                            else Plugin.Logger.LogWarning("Test/custom item icon not found yet: " + iconPath);
                         }
-                        else Plugin.Logger.LogWarning("Test/custom item icon not found yet: " + iconPath);
 
                         result.Add(item);
                     }
@@ -85,8 +93,11 @@ namespace WankulCrazyPlugin.importer
             return result;
         }
 
-
-        private static Vector3 ReadVectorSTJ(System.Text.Json.JsonElement token) => new Vector3(token.GetProperty("x").GetSingle(), token.GetProperty("y").GetSingle(), token.GetProperty("z").GetSingle());
+        private static Vector3 ReadVector(JToken token)
+        {
+            if (token == null) return Vector3.zero;
+            return new Vector3((float)(token["x"] ?? 0f), (float)(token["y"] ?? 0f), (float)(token["z"] ?? 0f));
+        }
 
         public static List<RestockData> DeserializeRestockDataListJson()
         {
@@ -94,23 +105,24 @@ namespace WankulCrazyPlugin.importer
             string path = Path.Combine(Plugin.GetPluginPath(), "data/customitems/restockDataList.json");
             try
             {
-                using (var stream = File.OpenRead(path))
-                using (var document = System.Text.Json.JsonDocument.Parse(stream))
+                if (File.Exists(path))
                 {
-                    foreach (var json in document.RootElement.EnumerateArray())
+                    string content = File.ReadAllText(path);
+                    JArray array = JArray.Parse(content);
+                    foreach (JObject json in array)
                     {
                         result.Add(new RestockData
                         {
-                            index = json.GetProperty("index").GetInt32(),
-                            name = json.GetProperty("name").GetString(),
-                            isBigBox = json.GetProperty("isBigBox").GetBoolean(),
-                            ignoreDoubleImage = json.GetProperty("ignoreDoubleImage").GetBoolean(),
-                            amount = json.GetProperty("amount").GetInt32(),
-                            licenseShopLevelRequired = json.GetProperty("licenseShopLevelRequired").GetInt32(),
-                            licensePrice = json.GetProperty("licensePrice").GetSingle(),
-                            itemType = EnumExtensions.SafeParseEItemType(json.GetProperty("itemType").GetString()),
-                            prologueShow = json.GetProperty("prologueShow").GetBoolean(),
-                            isHideItemUntilUnlocked = json.GetProperty("isHideItemUntilUnlocked").GetBoolean()
+                            index = (int)(json["index"] ?? 0),
+                            name = (string)json["name"],
+                            isBigBox = (bool)(json["isBigBox"] ?? false),
+                            ignoreDoubleImage = (bool)(json["ignoreDoubleImage"] ?? false),
+                            amount = (int)(json["amount"] ?? 0),
+                            licenseShopLevelRequired = (int)(json["licenseShopLevelRequired"] ?? 0),
+                            licensePrice = (float)(json["licensePrice"] ?? 0f),
+                            itemType = EnumExtensions.SafeParseEItemType((string)json["itemType"]),
+                            prologueShow = (bool)(json["prologueShow"] ?? false),
+                            isHideItemUntilUnlocked = (bool)(json["isHideItemUntilUnlocked"] ?? false)
                         });
                     }
                 }
@@ -123,23 +135,31 @@ namespace WankulCrazyPlugin.importer
         {
             List<ItemMeshData> result = new List<ItemMeshData>();
             string root = Path.Combine(Plugin.GetPluginPath(), "data/customitems");
+            string path = Path.Combine(root, "itemMeshDataList.json");
             try
             {
-                using (var stream = File.OpenRead(Path.Combine(root, "itemMeshDataList.json")))
-                using (var document = System.Text.Json.JsonDocument.Parse(stream))
+                if (File.Exists(path))
                 {
-                    foreach (var json in document.RootElement.EnumerateArray())
+                    string content = File.ReadAllText(path);
+                    JArray array = JArray.Parse(content);
+                    foreach (JObject json in array)
                     {
-                        ItemMeshData mesh = new ItemMeshData { name = json.GetProperty("name").GetString() };
-                        ItemMeshData source = InventoryBase.GetItemMeshData(EnumExtensions.SafeParseEItemType(json.GetProperty("copyItemType").GetString()));
-                        mesh.mesh = source.mesh; mesh.meshSecondary = source.meshSecondary; mesh.materialSecondary = source.materialSecondary;
-                        string texturePath = Path.Combine(root, "textures", json.GetProperty("texture").GetString());
-                        if (File.Exists(texturePath))
+                        ItemMeshData mesh = new ItemMeshData { name = (string)json["name"] };
+                        ItemMeshData source = InventoryBase.GetItemMeshData(EnumExtensions.SafeParseEItemType((string)json["copyItemType"]));
+                        mesh.mesh = source.mesh;
+                        mesh.meshSecondary = source.meshSecondary;
+                        mesh.materialSecondary = source.materialSecondary;
+                        string texProp = (string)json["texture"];
+                        if (!string.IsNullOrEmpty(texProp))
                         {
-                            Texture2D texture = TextureUtils.LoadTexture(texturePath);
-                            mesh.material = new Material(Shader.Find("Standard")) { mainTexture = texture };
+                            string texturePath = Path.Combine(root, "textures", texProp);
+                            if (File.Exists(texturePath))
+                            {
+                                Texture2D texture = TextureUtils.LoadTexture(texturePath);
+                                mesh.material = new Material(Shader.Find("Standard")) { mainTexture = texture };
+                            }
+                            else Plugin.Logger.LogWarning("Test/custom item texture not found yet: " + texturePath);
                         }
-                        else Plugin.Logger.LogWarning("Test/custom item texture not found yet: " + texturePath);
                         result.Add(mesh);
                     }
                 }
@@ -195,7 +215,7 @@ namespace WankulCrazyPlugin.importer
             }
         }
 
-        public static void GetItemMeshDataPostfix(EItemType itemType, ref ItemMeshData __result)
+        public static bool GetItemMeshDataPrefix(EItemType itemType, ref ItemMeshData __result)
         {
             if (ItemMeshDataList != null)
             {
@@ -204,7 +224,7 @@ namespace WankulCrazyPlugin.importer
                     if (customMesh != null && EnumExtensions.SafeParseEItemType(customMesh.name) == itemType)
                     {
                         __result = customMesh;
-                        return;
+                        return false;
                     }
                 }
             }
@@ -215,13 +235,16 @@ namespace WankulCrazyPlugin.importer
                 int index = (int)itemType;
                 if (index < 0 || index >= stock.Count)
                 {
-                    // Fallback pour tout autre enum custom ou invalide non trouvé par index
+                    // Fallback pour tout autre enum custom ou hors limites pour éviter l'exception d'index
                     __result = new ItemMeshData();
+                    return false;
                 }
             }
+
+            return true;
         }
 
-        public static void GetItemDataPostfix(EItemType itemType, ref ItemData __result)
+        public static bool GetItemDataPrefix(EItemType itemType, ref ItemData __result)
         {
             if (ItemDataList != null)
             {
@@ -230,7 +253,7 @@ namespace WankulCrazyPlugin.importer
                     if (customItem != null && EnumExtensions.SafeParseEItemType(customItem.name) == itemType)
                     {
                         __result = customItem;
-                        return;
+                        return false;
                     }
                 }
             }
@@ -241,10 +264,13 @@ namespace WankulCrazyPlugin.importer
                 int index = (int)itemType;
                 if (index < 0 || index >= stock.Count)
                 {
-                    // Fallback pour tout autre enum custom ou invalide non trouvé par index
+                    // Fallback pour tout autre enum custom ou hors limites pour éviter l'exception d'index
                     __result = new ItemData();
+                    return false;
                 }
             }
+
+            return true;
         }
     }
 }
