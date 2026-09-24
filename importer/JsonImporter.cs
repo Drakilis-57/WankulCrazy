@@ -19,7 +19,7 @@ public class JsonImporter
         SeasonsManager.LoadFromPluginPath(pluginPath);
         RaritiesManager.LoadFromPluginPath(pluginPath);
 
-        List<WankulCardData> allCards = new List<WankulCardData>();
+        Dictionary<int, WankulCardData> allCardsDict = new Dictionary<int, WankulCardData>();
 
         // 2. Load legacy main cards file if present
         string legacyPath = Path.Combine(pluginPath, "data/formated_wankul_cards.json");
@@ -30,7 +30,10 @@ public class JsonImporter
                 string jsonContent = File.ReadAllText(legacyPath);
                 JToken token = JToken.Parse(jsonContent);
                 List<WankulCardData> cards = DeserializeToken(token);
-                allCards.AddRange(cards);
+                foreach (var card in cards)
+                {
+                    allCardsDict[card.Index] = card;
+                }
             }
             catch (Exception ex)
             {
@@ -39,6 +42,7 @@ public class JsonImporter
         }
 
         // 3. Load multi-file cards from data/cards/ directory if present
+        //    (Overwrites any existing legacy cards with the same Index, giving priority to data/cards/)
         string cardsDirectory = Path.Combine(pluginPath, "data/cards");
         if (Directory.Exists(cardsDirectory))
         {
@@ -50,7 +54,10 @@ public class JsonImporter
                     string jsonContent = File.ReadAllText(filePath);
                     JToken token = JToken.Parse(jsonContent);
                     List<WankulCardData> cards = DeserializeToken(token);
-                    allCards.AddRange(cards);
+                    foreach (var card in cards)
+                    {
+                        allCardsDict[card.Index] = card;
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -58,6 +65,8 @@ public class JsonImporter
                 }
             }
         }
+
+        List<WankulCardData> allCards = new List<WankulCardData>(allCardsDict.Values);
 
         if (allCards.Count > 0)
         {
