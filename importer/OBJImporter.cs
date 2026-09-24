@@ -562,8 +562,11 @@ namespace WankulCrazyPlugin.importer
                     if (meshFilter == null)
                         continue;
 
-                    Renderer renderer = meshFilter.GetComponent<Renderer>();
-                    Material mat = renderer != null ? renderer.material : null;
+                    Material mat = null;
+                    if (meshFilter.TryGetComponent<Renderer>(out Renderer renderer))
+                    {
+                        mat = renderer.material;
+                    }
 
                     if (meshFilter.name.Contains("IdlePose") || meshFilter.name.Contains("AtkPose"))
                     {
