@@ -18,7 +18,6 @@ namespace WankulCrazyPlugin.Tests
             SeasonsManager.LoadFromPluginPath(Directory.GetCurrentDirectory());
             RaritiesManager.ResetToDefaults();
 
-            string rootPath = "/app";
             string jsonContent = "[]";
             JToken token = JToken.Parse(jsonContent);
             List<WankulCardData> cards = JsonImporter.DeserializeToken(token);
@@ -29,7 +28,13 @@ namespace WankulCrazyPlugin.Tests
         [Fact]
         public void CustomItems_JsonFiles_ParseValidly()
         {
-            string rootPath = "/app";
+            string rootPath = AppDomain.CurrentDomain.BaseDirectory;
+            while (rootPath != null && !Directory.Exists(Path.Combine(rootPath, "data")))
+            {
+                rootPath = Directory.GetParent(rootPath)?.FullName;
+            }
+            if (rootPath == null) rootPath = Directory.GetCurrentDirectory();
+
             string itemDataPath = Path.Combine(rootPath, "data/customitems/ItemDataList.json");
             Assert.True(File.Exists(itemDataPath));
 
