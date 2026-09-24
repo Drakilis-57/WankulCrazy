@@ -173,6 +173,35 @@ namespace WankulCrazyPlugin.importer
             }
         }
 
+        public static bool GetItemMeshDataPrefix(EItemType itemType, ref ItemMeshData __result)
+        {
+            if (ItemMeshDataList != null)
+            {
+                foreach (ItemMeshData customMesh in ItemMeshDataList)
+                {
+                    if (customMesh != null && EnumExtensions.SafeParseEItemType(customMesh.name) == itemType)
+                    {
+                        __result = customMesh;
+                        return false;
+                    }
+                }
+            }
+
+            var stock = InventoryBase.Instance?.m_StockItemData_SO?.m_ItemMeshDataList;
+            if (stock != null)
+            {
+                int index = (int)itemType;
+                if (index < 0 || index >= stock.Count)
+                {
+                    // Fallback pour tout autre enum custom ou invalide non trouvé par index
+                    __result = new ItemMeshData();
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
         public static bool GetItemDataPrefix(EItemType itemType, ref ItemData __result)
         {
             if (ItemDataList != null)
