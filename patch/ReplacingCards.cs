@@ -56,7 +56,8 @@ public class ReplacingCards
 
         }
     }
-
+    
+    private const float CardImageScale = 0.88f; // Sert a grandir ou réduire la taille des images des cartes
     static void SetCardUIPostFix(CardData cardData, CardUI __instance)
     {
         if (cardData == null)
@@ -70,21 +71,13 @@ public class ReplacingCards
         WankulCardData wankulCardData = cardsData.GetFromMonster(gameCardData, true);
         if (wankulCardData == null)
         {
-            wankulCardData = cardsData.GetFromMonster(gameCardData, false);
+            return;
         }
-        if (wankulCardData == null)
-        {
-            string key = $"{gameCardData.monsterType}_{gameCardData.borderType}_{gameCardData.expansionType}";
-            Plugin.Logger.LogError($"wankulCardData is null from {key}, using AJETER");
-            wankulCardData = WankulCardsData.GetAJETER();
-        }
-
         if (wankulCardData.Sprite == null)
         {
             Plugin.Logger.LogWarning($"wankulCardData Sprite is null for {wankulCardData.Title} ({wankulCardData.Index})");
             return;
         }
-
         if (__instance.m_CardBGImage != null)
         {
             __instance.m_CardBGImage.gameObject.SetActive(false);
@@ -123,7 +116,7 @@ public class ReplacingCards
                 }
             }
 
-            __instance.m_CardFullBGImage.preserveAspect = false;
+            __instance.m_CardFullBGImage.preserveAspect = true;
 
             RectTransform rect = __instance.m_CardFullBGImage.rectTransform;
             if (rect != null)
@@ -132,14 +125,25 @@ public class ReplacingCards
                 rect.anchorMax = Vector2.one;
                 rect.offsetMin = Vector2.zero;
                 rect.offsetMax = Vector2.zero;
-                rect.localScale = Vector3.one;
+                rect.localScale = new Vector3(CardImageScale, CardImageScale, 1f);
                 rect.localRotation = Quaternion.identity;
             }
         }
 
         if (__instance.m_CardFullBGOffsetGrp != null)
         {
-            __instance.m_CardFullBGOffsetGrp.SetActive(false);
+            __instance.m_CardFullBGOffsetGrp.SetActive(true);
+
+            RectTransform grpRect = __instance.m_CardFullBGOffsetGrp.GetComponent<RectTransform>();
+            if (grpRect != null)
+            {
+                grpRect.anchorMin = Vector2.zero;
+                grpRect.anchorMax = Vector2.one;
+                grpRect.offsetMin = Vector2.zero;
+                grpRect.offsetMax = Vector2.zero;
+                grpRect.localScale = Vector3.one;
+                grpRect.localRotation = Quaternion.identity;
+            }
         }
 
         if (__instance.m_CardFullBGTransparentLayeredOffsetGrp != null)
@@ -198,6 +202,7 @@ public class ReplacingCards
         __instance.m_DescriptionText?.gameObject.SetActive(false);
         __instance.m_ArtistText?.gameObject.SetActive(false);
         __instance.m_FirstEditionText?.gameObject.SetActive(false);
+
     }
 
     class EnterViewUpCloseState__State
@@ -341,13 +346,14 @@ public class ReplacingCards
 
     public static bool GetIcon(ECardExpansionType cardExpansionType, MonsterData __instance, ref Sprite __result)
     {
+        
         WankulCardData aJETER = WankulCardsData.GetAJETER();
         if (aJETER?.Sprite != null)
         {
             __result = (Sprite)aJETER.Sprite;
             return false;
         }
-
+        
         // Si aucun sprite custom n'est disponible, laisser la méthode vanilla s'exécuter
         return true;
     }
