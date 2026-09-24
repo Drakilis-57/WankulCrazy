@@ -189,7 +189,7 @@ namespace WankulCrazyPlugin.importer
         private static Texture2D LoadTexture(string path)
         {
             byte[] bytes = File.ReadAllBytes(path);
-            Texture2D texture = new Texture2D(2, 2);
+            Texture2D texture = new Texture2D(2, 2, TextureFormat.RGBA32, false);
             // markNonReadable : la copie CPU est liberee, ~2x moins de RAM. Ces textures ne sont jamais relues par GetPixels.
             if (!texture.LoadImage(bytes, true))
             {

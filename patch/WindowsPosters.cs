@@ -69,7 +69,7 @@ namespace WankulCrazyPlugin.patch
             if (File.Exists(filePath))
             {
                 byte[] data = File.ReadAllBytes(filePath);
-                tex = new Texture2D(2, 2);
+                tex = new Texture2D(2, 2, TextureFormat.RGBA32, false);
                 if (tex.LoadImage(data))
                 {
                     tex.Compress(false);

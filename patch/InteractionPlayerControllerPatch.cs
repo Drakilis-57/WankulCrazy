@@ -506,7 +506,7 @@ namespace WankulCrazyPlugin.patch
             }
 
             byte[] fileData = System.IO.File.ReadAllBytes(path);
-            Texture2D tex = new Texture2D(2, 2);
+            Texture2D tex = new Texture2D(2, 2, TextureFormat.RGBA32, false);
             if (tex.LoadImage(fileData))
             {
                 _textureCache[path] = tex;
