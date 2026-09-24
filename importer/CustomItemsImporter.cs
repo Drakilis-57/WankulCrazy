@@ -85,7 +85,6 @@ namespace WankulCrazyPlugin.importer
             return result;
         }
 
-        private static Vector3 ReadVector(JToken token) => new Vector3(token["x"].Value<float>(), token["y"].Value<float>(), token["z"].Value<float>());
 
         private static Vector3 ReadVectorSTJ(System.Text.Json.JsonElement token) => new Vector3(token.GetProperty("x").GetSingle(), token.GetProperty("y").GetSingle(), token.GetProperty("z").GetSingle());
 
@@ -95,16 +94,25 @@ namespace WankulCrazyPlugin.importer
             string path = Path.Combine(Plugin.GetPluginPath(), "data/customitems/restockDataList.json");
             try
             {
-                foreach (JObject json in JArray.Parse(File.ReadAllText(path)))
+                using (var stream = File.OpenRead(path))
+                using (var document = System.Text.Json.JsonDocument.Parse(stream))
                 {
-                    result.Add(new RestockData
+                    foreach (var json in document.RootElement.EnumerateArray())
                     {
-                        index = json["index"].Value<int>(), name = json["name"].Value<string>(),
-                        isBigBox = json["isBigBox"].Value<bool>(), ignoreDoubleImage = json["ignoreDoubleImage"].Value<bool>(),
-                        amount = json["amount"].Value<int>(), licenseShopLevelRequired = json["licenseShopLevelRequired"].Value<int>(),
-                        licensePrice = json["licensePrice"].Value<float>(), itemType = EnumExtensions.SafeParseEItemType(json["itemType"].Value<string>()),
-                        prologueShow = json["prologueShow"].Value<bool>(), isHideItemUntilUnlocked = json["isHideItemUntilUnlocked"].Value<bool>()
-                    });
+                        result.Add(new RestockData
+                        {
+                            index = json.GetProperty("index").GetInt32(),
+                            name = json.GetProperty("name").GetString(),
+                            isBigBox = json.GetProperty("isBigBox").GetBoolean(),
+                            ignoreDoubleImage = json.GetProperty("ignoreDoubleImage").GetBoolean(),
+                            amount = json.GetProperty("amount").GetInt32(),
+                            licenseShopLevelRequired = json.GetProperty("licenseShopLevelRequired").GetInt32(),
+                            licensePrice = json.GetProperty("licensePrice").GetSingle(),
+                            itemType = EnumExtensions.SafeParseEItemType(json.GetProperty("itemType").GetString()),
+                            prologueShow = json.GetProperty("prologueShow").GetBoolean(),
+                            isHideItemUntilUnlocked = json.GetProperty("isHideItemUntilUnlocked").GetBoolean()
+                        });
+                    }
                 }
             }
             catch (Exception ex) { Plugin.Logger.LogError("Failed to deserialize JSON RestockData: " + ex.Message); }
@@ -117,19 +125,23 @@ namespace WankulCrazyPlugin.importer
             string root = Path.Combine(Plugin.GetPluginPath(), "data/customitems");
             try
             {
-                foreach (JObject json in JArray.Parse(File.ReadAllText(Path.Combine(root, "itemMeshDataList.json"))))
+                using (var stream = File.OpenRead(Path.Combine(root, "itemMeshDataList.json")))
+                using (var document = System.Text.Json.JsonDocument.Parse(stream))
                 {
-                    ItemMeshData mesh = new ItemMeshData { name = json["name"].Value<string>() };
-                    ItemMeshData source = InventoryBase.GetItemMeshData(EnumExtensions.SafeParseEItemType(json["copyItemType"].Value<string>()));
-                    mesh.mesh = source.mesh; mesh.meshSecondary = source.meshSecondary; mesh.materialSecondary = source.materialSecondary;
-                    string texturePath = Path.Combine(root, "textures", json["texture"].Value<string>());
-                    if (File.Exists(texturePath))
+                    foreach (var json in document.RootElement.EnumerateArray())
                     {
-                        Texture2D texture = TextureUtils.LoadTexture(texturePath);
-                        mesh.material = new Material(Shader.Find("Standard")) { mainTexture = texture };
+                        ItemMeshData mesh = new ItemMeshData { name = json.GetProperty("name").GetString() };
+                        ItemMeshData source = InventoryBase.GetItemMeshData(EnumExtensions.SafeParseEItemType(json.GetProperty("copyItemType").GetString()));
+                        mesh.mesh = source.mesh; mesh.meshSecondary = source.meshSecondary; mesh.materialSecondary = source.materialSecondary;
+                        string texturePath = Path.Combine(root, "textures", json.GetProperty("texture").GetString());
+                        if (File.Exists(texturePath))
+                        {
+                            Texture2D texture = TextureUtils.LoadTexture(texturePath);
+                            mesh.material = new Material(Shader.Find("Standard")) { mainTexture = texture };
+                        }
+                        else Plugin.Logger.LogWarning("Test/custom item texture not found yet: " + texturePath);
+                        result.Add(mesh);
                     }
-                    else Plugin.Logger.LogWarning("Test/custom item texture not found yet: " + texturePath);
-                    result.Add(mesh);
                 }
             }
             catch (Exception ex) { Plugin.Logger.LogError("Failed to deserialize JSON ItemMeshData: " + ex.Message); }
