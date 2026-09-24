@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using WankulCrazyPlugin.cards;
@@ -15,7 +15,8 @@ namespace WankulCrazyPlugin.patch
             {
                 return true;
             }
-            else {
+            else
+            {
                 int amount = WankulInventory.Instance.wankulCards.ContainsKey(wankulCardData.Index) ? WankulInventory.Instance.wankulCards[wankulCardData.Index].amount : 0;
                 __result = amount;
                 return false;

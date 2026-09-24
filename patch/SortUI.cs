@@ -40,7 +40,7 @@ namespace WankulCrazyPlugin.patch
 
                 ((RectTransform)Expansion_BG_Transform).anchoredPosition = new Vector2(
                     0,
-                    - 1.5f
+                    -1.5f
                 );
                 ((RectTransform)Expansion_BG_Transform).anchoredPosition3D = new Vector3(
                     0,
@@ -383,7 +383,7 @@ namespace WankulCrazyPlugin.patch
             MethodInfo UpdateCurrentInteractableCard3dList = Plugin.GetCachedMethod(__instance.GetType(), "UpdateCurrentInteractableCard3dList");
             bool m_CanFlip = (bool)Plugin.GetPProperty(__instance, "m_CanFlip");
 
-            HideCurrentInteractableCard3dList.Invoke(__instance, new object[] {});
+            HideCurrentInteractableCard3dList.Invoke(__instance, new object[] { });
             m_CanFlip = false;
             CanFlip = false;
             Plugin.SetPProperty(__instance, "m_CanFlip", m_CanFlip);
@@ -733,11 +733,11 @@ namespace WankulCrazyPlugin.patch
                     ___m_CanFlipCoroutine = __instance.StartCoroutine(DelayResetCanFlipBook(0.55f, __instance));
                     Plugin.SetPProperty(__instance, "m_CanFlipCoroutine", ___m_CanFlipCoroutine);
                     UpdateBinderAllCardUI(0, ___m_Index, ___m_MaxIndex, __instance);
-                    __instance.StartCoroutine(DelaySetBinderPageCardIndex( 1, ___m_Index + 1, __instance));
+                    __instance.StartCoroutine(DelaySetBinderPageCardIndex(1, ___m_Index + 1, __instance));
                     __instance.m_CollectionBinderUI.SetCurrentPage(___m_Index);
                     if (___m_Index > 1)
                     {
-                        __instance.StartCoroutine(DelaySetBinderPageCardIndex( 2, ___m_Index - 1, __instance));
+                        __instance.StartCoroutine(DelaySetBinderPageCardIndex(2, ___m_Index - 1, __instance));
                     }
 
                     SoundManager.PlayAudio("SFX_AlbumFlip", 0.6f);

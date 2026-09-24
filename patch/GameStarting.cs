@@ -9,7 +9,8 @@ public class GameStarting
     {
         WankulCardsData.Instance.EnsureInitialized();
 
-        if (__instance.m_IsGameLevel) {
+        if (__instance.m_IsGameLevel)
+        {
             PatchTexturesImporter.ReplaceGameTextures("shared1");
             OBJImporter.DoReplace();
             CustomItemsImporter.ImportCustomItems();

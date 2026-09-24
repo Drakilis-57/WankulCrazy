@@ -37,36 +37,48 @@ namespace WankulCrazyPlugin.importer
             string path = Path.Combine(root, "ItemDataList.json");
             try
             {
-                foreach (JObject json in JArray.Parse(File.ReadAllText(path)))
+                using (var stream = File.OpenRead(path))
+                using (var document = System.Text.Json.JsonDocument.Parse(stream))
                 {
-                    ItemData item = new ItemData
+                    foreach (var json in document.RootElement.EnumerateArray())
                     {
-                        name = json["name"].Value<string>(),
-                        category = (EItemCategory)Enum.Parse(typeof(EItemCategory), json["category"].Value<string>()),
-                        iconScale = json["iconScale"].Value<float>(),
-                        baseCost = json["baseCost"].Value<float>(),
-                        marketPriceMinPercent = json["marketPriceMinPercent"].Value<float>(),
-                        marketPriceMaxPercent = json["marketPriceMaxPercent"].Value<float>(),
-                        boxFollowItemPrice = EnumExtensions.SafeParseEItemType(json["boxFollowItemPrice"].Value<string>()),
-                        isNotBoosterPack = json["isNotBoosterPack"].Value<bool>(),
-                        isTallItem = json["isTallItem"].Value<bool>(),
-                        isHideItemUntilUnlocked = json["isHideItemUntilUnlocked"].Value<bool>(),
-                        posYOffsetInBox = json["posYOffsetInBox"].Value<float>(),
-                        scaleOffsetInBox = json["scaleOffsetInBox"].Value<float>()
-                    };
-                    item.affectedPriceChangeType = json["affectedPriceChangeType"].ToObject<List<EPriceChangeType>>();
-                    item.itemDimension = ReadVector(json["itemDimension"]);
-                    item.colliderPosOffset = ReadVector(json["colliderPosOffset"]);
-                    item.colliderScale = ReadVector(json["colliderScale"]);
-                    string iconPath = Path.Combine(root, "icons", json["icon"].Value<string>());
-                    if (File.Exists(iconPath))
-                    {
-                        Texture2D texture = TextureUtils.LoadTexture(iconPath);
-                        item.icon = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(.5f, .5f), 100f, 0, SpriteMeshType.FullRect);
-                        item.icon.name = item.name + "_icon";
+                        ItemData item = new ItemData
+                        {
+                            name = json.GetProperty("name").GetString(),
+                            category = (EItemCategory)Enum.Parse(typeof(EItemCategory), json.GetProperty("category").GetString()),
+                            iconScale = json.GetProperty("iconScale").GetSingle(),
+                            baseCost = json.GetProperty("baseCost").GetSingle(),
+                            marketPriceMinPercent = json.GetProperty("marketPriceMinPercent").GetSingle(),
+                            marketPriceMaxPercent = json.GetProperty("marketPriceMaxPercent").GetSingle(),
+                            boxFollowItemPrice = EnumExtensions.SafeParseEItemType(json.GetProperty("boxFollowItemPrice").GetString()),
+                            isNotBoosterPack = json.GetProperty("isNotBoosterPack").GetBoolean(),
+                            isTallItem = json.GetProperty("isTallItem").GetBoolean(),
+                            isHideItemUntilUnlocked = json.GetProperty("isHideItemUntilUnlocked").GetBoolean(),
+                            posYOffsetInBox = json.GetProperty("posYOffsetInBox").GetSingle(),
+                            scaleOffsetInBox = json.GetProperty("scaleOffsetInBox").GetSingle()
+                        };
+
+                        item.affectedPriceChangeType = new List<EPriceChangeType>();
+                        foreach (var pct in json.GetProperty("affectedPriceChangeType").EnumerateArray())
+                        {
+                            item.affectedPriceChangeType.Add((EPriceChangeType)Enum.Parse(typeof(EPriceChangeType), pct.GetString()));
+                        }
+
+                        item.itemDimension = ReadVectorSTJ(json.GetProperty("itemDimension"));
+                        item.colliderPosOffset = ReadVectorSTJ(json.GetProperty("colliderPosOffset"));
+                        item.colliderScale = ReadVectorSTJ(json.GetProperty("colliderScale"));
+
+                        string iconPath = Path.Combine(root, "icons", json.GetProperty("icon").GetString());
+                        if (File.Exists(iconPath))
+                        {
+                            Texture2D texture = TextureUtils.LoadTexture(iconPath);
+                            item.icon = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(.5f, .5f), 100f, 0, SpriteMeshType.FullRect);
+                            item.icon.name = item.name + "_icon";
+                        }
+                        else Plugin.Logger.LogWarning("Test/custom item icon not found yet: " + iconPath);
+
+                        result.Add(item);
                     }
-                    else Plugin.Logger.LogWarning("Test/custom item icon not found yet: " + iconPath);
-                    result.Add(item);
                 }
             }
             catch (Exception ex) { Plugin.Logger.LogError("Failed to deserialize JSON ItemData: " + ex.Message); }
@@ -74,6 +86,8 @@ namespace WankulCrazyPlugin.importer
         }
 
         private static Vector3 ReadVector(JToken token) => new Vector3(token["x"].Value<float>(), token["y"].Value<float>(), token["z"].Value<float>());
+
+        private static Vector3 ReadVectorSTJ(System.Text.Json.JsonElement token) => new Vector3(token.GetProperty("x").GetSingle(), token.GetProperty("y").GetSingle(), token.GetProperty("z").GetSingle());
 
         public static List<RestockData> DeserializeRestockDataListJson()
         {
@@ -85,11 +99,16 @@ namespace WankulCrazyPlugin.importer
                 {
                     result.Add(new RestockData
                     {
-                        index = json["index"].Value<int>(), name = json["name"].Value<string>(),
-                        isBigBox = json["isBigBox"].Value<bool>(), ignoreDoubleImage = json["ignoreDoubleImage"].Value<bool>(),
-                        amount = json["amount"].Value<int>(), licenseShopLevelRequired = json["licenseShopLevelRequired"].Value<int>(),
-                        licensePrice = json["licensePrice"].Value<float>(), itemType = EnumExtensions.SafeParseEItemType(json["itemType"].Value<string>()),
-                        prologueShow = json["prologueShow"].Value<bool>(), isHideItemUntilUnlocked = json["isHideItemUntilUnlocked"].Value<bool>()
+                        index = json["index"].Value<int>(),
+                        name = json["name"].Value<string>(),
+                        isBigBox = json["isBigBox"].Value<bool>(),
+                        ignoreDoubleImage = json["ignoreDoubleImage"].Value<bool>(),
+                        amount = json["amount"].Value<int>(),
+                        licenseShopLevelRequired = json["licenseShopLevelRequired"].Value<int>(),
+                        licensePrice = json["licensePrice"].Value<float>(),
+                        itemType = EnumExtensions.SafeParseEItemType(json["itemType"].Value<string>()),
+                        prologueShow = json["prologueShow"].Value<bool>(),
+                        isHideItemUntilUnlocked = json["isHideItemUntilUnlocked"].Value<bool>()
                     });
                 }
             }

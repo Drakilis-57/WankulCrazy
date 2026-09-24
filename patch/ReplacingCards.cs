@@ -12,6 +12,7 @@ using WankulCrazyPlugin.inventory;
 using WankulCrazyPlugin.utils;
 
 namespace WankulCrazyPlugin.patch;
+
 public class ReplacingCards
 {
     static void SetCardUIPrefix(CardData cardData)
@@ -104,7 +105,20 @@ public class ReplacingCards
         {
             __instance.m_CardFullBGImage.enabled = true;
             __instance.m_CardFullBGImage.gameObject.SetActive(true);
-            __instance.m_CardFullBGImage.sprite = (Sprite)wankulCardData.Sprite;
+
+            if (wankulCardData != null && wankulCardData.Sprite != null)
+            {
+                __instance.m_CardFullBGImage.sprite = (Sprite)wankulCardData.Sprite;
+            }
+            else
+            {
+                WankulCardData fallbackCard = WankulCardsData.GetAJETER();
+                if (fallbackCard != null && fallbackCard.Sprite != null)
+                {
+                    __instance.m_CardFullBGImage.sprite = (Sprite)fallbackCard.Sprite;
+                }
+            }
+
             __instance.m_CardFullBGImage.preserveAspect = false;
 
             RectTransform rect = __instance.m_CardFullBGImage.rectTransform;
@@ -187,7 +201,7 @@ public class ReplacingCards
         public WankulCardData wankulCardData;
     }
 
-    static void EnterViewUpCloseStatePrefix(out EnterViewUpCloseState__State __state,CollectionBinderFlipAnimCtrl __instance)
+    static void EnterViewUpCloseStatePrefix(out EnterViewUpCloseState__State __state, CollectionBinderFlipAnimCtrl __instance)
     {
         __state = new EnterViewUpCloseState__State();
         if (!__instance.m_IsHoldingCardCloseUp && (bool)__instance.m_CurrentRaycastedInteractableCard3d)
@@ -222,11 +236,12 @@ public class ReplacingCards
                     __instance.m_CollectionBinderUI.m_CardFullRarityNameText.text = RaritiesContainer.Rarities[effigyCard.Rarity];
                     __instance.m_CollectionBinderUI.m_CardNameText.text = effigyCard.Title + "\n" + effigyCard.Effigy;
                 }
-                else if (__state.wankulCardData is SpecialCardData) {
+                else if (__state.wankulCardData is SpecialCardData)
+                {
                     __instance.m_CollectionBinderUI.m_CardFullRarityNameText.text = "SPECIAL";
                     __instance.m_CollectionBinderUI.m_CardNameText.text = wankulCardData.Title;
                 }
-                else if(__state.wankulCardData is TerrainCardData)
+                else if (__state.wankulCardData is TerrainCardData)
                 {
                     __instance.m_CollectionBinderUI.m_CardFullRarityNameText.text = "Terrain";
                     __instance.m_CollectionBinderUI.m_CardNameText.text = wankulCardData.Title;
@@ -236,7 +251,8 @@ public class ReplacingCards
                     __instance.m_CollectionBinderUI.m_CardFullRarityNameText.text = "Erreur";
                     __instance.m_CollectionBinderUI.m_CardNameText.text = "Erreur";
                 }
-            } else
+            }
+            else
             {
                 Plugin.Logger.LogError("EnterViewUpCloseStatePostfix wankulCardData is null");
             }
@@ -320,7 +336,7 @@ public class ReplacingCards
     public static bool GetIcon(ECardExpansionType cardExpansionType, MonsterData __instance, ref Sprite __result)
     {
         WankulCardData aJETER = WankulCardsData.GetAJETER();
-;
+        ;
         __result = (Sprite)aJETER.Sprite;
         return false;
     }

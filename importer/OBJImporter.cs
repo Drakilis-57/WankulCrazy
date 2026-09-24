@@ -188,9 +188,10 @@ namespace WankulCrazyPlugin.importer
                     try
                     {
                         List<Mesh> meshList = new List<Mesh>();
-                        foreach (Component component in OBJImporter.tempmesh.transform)
+                        MeshFilter[] meshFilters = OBJImporter.tempmesh.GetComponentsInChildren<MeshFilter>();
+                        foreach (MeshFilter meshFilter in meshFilters)
                         {
-                            Mesh mesh = component.gameObject.GetComponent<MeshFilter>().mesh;
+                            Mesh mesh = meshFilter.mesh;
                             Vector3[] vertices = mesh.vertices;
                             for (int index = 0; index < vertices.Length; ++index)
                                 vertices[index].z = -vertices[index].z;

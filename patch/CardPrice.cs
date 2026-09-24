@@ -23,7 +23,8 @@ namespace WankulCrazyPlugin.patch
             {
                 priceFactor = 1f;
             }
-            else if (wankulCardData.Season == Season.S02) {
+            else if (wankulCardData.Season == Season.S02)
+            {
                 priceFactor = 1.25f;
             }
             else if (wankulCardData.Season == Season.S03)
@@ -254,10 +255,12 @@ namespace WankulCrazyPlugin.patch
                 CardUI cardUi = __instance.m_CardInBagList[j].m_Card3dUI.m_CardUI;
                 CardData cardData = (CardData)Plugin.GetPProperty(cardUi, "m_CardData");
                 WankulCardData wankulCardData = WankulCardsData.Instance.GetFromMonster(cardData, true);
-                if (wankulCardData != null) {
+                if (wankulCardData != null)
+                {
                     int exp = WankulCardsData.GetExperienceFromWankulCard(wankulCardData);
                     totalCardExp += exp;
-                } else
+                }
+                else
                 {
                     Plugin.Logger.LogError("OnPayingDone Carte non trouvée : " + cardData.monsterType + " " + cardData.borderType + " " + cardData.expansionType);
                 }

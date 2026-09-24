@@ -24,7 +24,8 @@ namespace WankulCrazyPlugin.patch
                     {
                         text = InventoryBase.GetMonsterData(cardData.monsterType).GetName() + " - " + CPlayerData.GetFullCardTypeName(cardData, ignoreRarity: true);
                     }
-                    else if (wankulCardData is EffigyCardData effigyCard) {
+                    else if (wankulCardData is EffigyCardData effigyCard)
+                    {
                         text = effigyCard.Title + " - " + effigyCard.Rarity + " - " + effigyCard.Season;
                     }
                     else if (wankulCardData is WankulCardData wankulCard)

@@ -83,7 +83,7 @@ namespace WankulCrazyPlugin.patch
             }
         }
 
-                /// <summary>
+        /// <summary>
         /// Détermine la taille requise du booster (4 pour les boosters Gold, 10 par défaut).
         /// </summary>
         private static bool DetermineBoosterSize(CardOpeningSequence __instance)
@@ -455,7 +455,7 @@ namespace WankulCrazyPlugin.patch
                 int boosterGoldIndex = -1;
 
                 List<Item> m_HoldItemList = (List<Item>)AccessTools.Field(__instance.GetType(), "m_HoldItemList").GetValue(__instance);
-                List<int>availableHash = new List<int>();
+                List<int> availableHash = new List<int>();
 
                 ECollectionPackType collectionPackType = InventoryBase.ItemTypeToCollectionPackType(m_HoldItemList[0].GetItemType());
                 if (
@@ -501,7 +501,8 @@ namespace WankulCrazyPlugin.patch
                             item.SetMesh(itemMeshData.mesh, itemMeshData.material, EnumExtensions.SafeParseEItemType("BoosterGoldStellar"));
                         }
                     }
-                    else { 
+                    else
+                    {
                         availableHash.Add(item.GetHashCode());
                     }
                 }
@@ -577,7 +578,7 @@ namespace WankulCrazyPlugin.patch
         /// Les propriétés privées du jeu sont accédées via <see cref="CardOpeningHelpers"/>
         /// pour éviter les strings magiques dans Plugin.GetPProperty / SetPProperty.
         /// </summary>
-                /// <summary>
+        /// <summary>
         /// PHASE 1 — Gestion de l'état ReadyingToOpen.
         /// Le joueur tient le booster devant lui. Gère le lerp de position, l'annulation et le lancement de l'ouverture.
         /// </summary>
@@ -1064,7 +1065,7 @@ namespace WankulCrazyPlugin.patch
                 if (CardOpeningHelpers.GetStateTimer(__instance) >= 0.05f)
                 {
                     int num8 = UnityEngine.Random.Range(0, 3);
-                    float num9  = 0.002f * (float)CardOpeningHelpers.GetCurrentOpenedCardIndex(__instance);
+                    float num9 = 0.002f * (float)CardOpeningHelpers.GetCurrentOpenedCardIndex(__instance);
                     float num10 = 0.001f * (float)CardOpeningHelpers.GetCurrentOpenedCardIndex(__instance);
                     switch (num8)
                     {

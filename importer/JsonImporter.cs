@@ -202,56 +202,56 @@ public class JsonImporter
                 try
                 {
                     Texture2D texture = LoadTexture(texturepath);
-                Texture2D texturemask = null;
+                    Texture2D texturemask = null;
 
-                if (File.Exists(texturepathmask))
-                {
-                    texturemask = LoadTexture(texturepathmask);
-                }
+                    if (File.Exists(texturepathmask))
+                    {
+                        texturemask = LoadTexture(texturepathmask);
+                    }
 
-                if (texture != null)
-                {
-                    card.Texture = texture;
-                }
-                else
-                {
-                    Plugin.Logger?.LogError("Failed to load texture: " + texturepath);
-                }
+                    if (texture != null)
+                    {
+                        card.Texture = texture;
+                    }
+                    else
+                    {
+                        Plugin.Logger?.LogError("Failed to load texture: " + texturepath);
+                    }
 
-                if (texturemask != null)
-                {
-                    card.TextureMask = texturemask;
-                }
-                else if (File.Exists(texturepathmask))
-                {
-                    Plugin.Logger?.LogError("Failed to load texture mask: " + texturepathmask);
-                }
+                    if (texturemask != null)
+                    {
+                        card.TextureMask = texturemask;
+                    }
+                    else if (File.Exists(texturepathmask))
+                    {
+                        Plugin.Logger?.LogError("Failed to load texture mask: " + texturepathmask);
+                    }
 
-                Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
-                Sprite spritemask = null;
+                    Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
+                    Sprite spritemask = null;
 
-                if (texturemask != null)
-                {
-                    spritemask = Sprite.Create(texturemask, new Rect(0, 0, texturemask.width, texturemask.height), new Vector2(0.5f, 0.5f));
-                }
+                    if (texturemask != null)
+                    {
+                        spritemask = Sprite.Create(texturemask, new Rect(0, 0, texturemask.width, texturemask.height), new Vector2(0.5f, 0.5f));
+                    }
 
-                if (sprite != null)
-                {
-                    card.Sprite = sprite;
-                }
-                else
-                {
-                    Plugin.Logger?.LogError("Failed to create sprite: " + texturepath);
-                }
+                    if (sprite != null)
+                    {
+                        card.Sprite = sprite;
+                    }
+                    else
+                    {
+                        Plugin.Logger?.LogError("Failed to create sprite: " + texturepath);
+                    }
 
-                if (spritemask != null)
-                {
-                    card.SpriteMask = spritemask;
-                }
-                else if (texturemask != null)
-                {
-                    Plugin.Logger?.LogError("Failed to create sprite mask: " + texturepathmask);
-                }
+                    if (spritemask != null)
+                    {
+                        card.SpriteMask = spritemask;
+                    }
+                    else if (texturemask != null)
+                    {
+                        Plugin.Logger?.LogError("Failed to create sprite mask: " + texturepathmask);
+                    }
                 }
                 catch (Exception ex)
                 {

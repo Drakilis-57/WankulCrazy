@@ -54,14 +54,14 @@ namespace WankulCrazyPlugin.patch
                     continue;
                 }
 
-                // Assurez-vous que l'index est valide avant d'insérer
+                // Assurez-vous que l'index est valide avant d'insï¿½rer
                 if (cardIndexOffset < wankulCardsSet.Count)
                 {
                     wankulCardsSet[cardIndexOffset] = wankulCards[cardIndexOffset];
                 }
                 else
                 {
-                    // Ajoutez des éléments null jusqu'à ce que l'index soit valide
+                    // Ajoutez des ï¿½lï¿½ments null jusqu'ï¿½ ce que l'index soit valide
                     while (wankulCardsSet.Count <= cardIndexOffset)
                     {
                         wankulCardsSet.Add(null);
@@ -166,7 +166,7 @@ namespace WankulCrazyPlugin.patch
             List<float> pastCardPricePercentChange = wankulCardData.PastPercent;
             if (pastCardPricePercentChange.Count > 1)
             {
-                float cardMarketPriceCustomPercent = wankulCardData.generatedMarketPrice * ( pastCardPricePercentChange[pastCardPricePercentChange.Count - 2]/100);
+                float cardMarketPriceCustomPercent = wankulCardData.generatedMarketPrice * (pastCardPricePercentChange[pastCardPricePercentChange.Count - 2] / 100);
                 float num = m_TotalPrice - cardMarketPriceCustomPercent;
                 if (num > 0.005f)
                 {
@@ -219,7 +219,8 @@ namespace WankulCrazyPlugin.patch
 
         public static bool ShowCardPriceChart(int cardIndex, ECardExpansionType expansionType, bool isDestiny, ItemPriceGraphScreen __instance)
         {
-            if (isFromCheckPriceList) {
+            if (isFromCheckPriceList)
+            {
                 __instance.m_CurrentScaleLineIndex = 0;
                 WankulCardData wankulCardData = wankulCardsSet[cardIndex];
                 UpdateCardPriceIfNeeded(wankulCardData);
@@ -227,7 +228,7 @@ namespace WankulCrazyPlugin.patch
 
                 for (int i = 0; i < wankulCardData.PastPercent.Count; i++)
                 {
-                    pricesList.Add(wankulCardData.generatedMarketPrice * (wankulCardData.PastPercent[i])/100);
+                    pricesList.Add(wankulCardData.generatedMarketPrice * (wankulCardData.PastPercent[i]) / 100);
                 }
 
 

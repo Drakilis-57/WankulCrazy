@@ -302,7 +302,8 @@ namespace WankulCrazyPlugin.inventory
             {
                 seasonalCard = allCards.FindAll(card => BattleGoldCards.Contains(card.Index));
             }
-            else if (season == Season.S04) {
+            else if (season == Season.S04)
+            {
                 seasonalCard = allCards.FindAll(card => StellardGoldCards.Contains(card.Index));
             }
             else
@@ -541,7 +542,8 @@ namespace WankulCrazyPlugin.inventory
         }
 
 
-        public static (WankulCardData wankulcard, CardData card, int amount) GetWankulCardDataForTradeOffer() {
+        public static (WankulCardData wankulcard, CardData card, int amount) GetWankulCardDataForTradeOffer()
+        {
             List<ECollectionPackType> dropableExpansion = [
                 ECollectionPackType.BasicCardPack
             ];
@@ -597,11 +599,12 @@ namespace WankulCrazyPlugin.inventory
             WankulCardData wankulCardData = DropCard(selectedPackType, new List<WankulCardData>(), isTerrain, isMinRare, isMinUR, isMinLegendary);
 
             CardData cardData = WankulCardsData.Instance.GetCardDataFromWankulCardData(wankulCardData);
-            if (cardData == null) {
+            if (cardData == null)
+            {
                 cardData = WankulCardsData.Instance.GetUnassciatedCardData();
                 WankulCardsData.Instance.SetFromMonster(cardData, wankulCardData);
             }
-            
+
             int amount = Instance.wankulCards.ContainsKey(wankulCardData.Index) ? Instance.wankulCards[wankulCardData.Index].amount : 0;
 
             return (wankulCardData, cardData, amount);
