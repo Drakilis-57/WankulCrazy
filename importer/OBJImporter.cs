@@ -670,7 +670,7 @@ namespace WankulCrazyPlugin.importer
             if (File.Exists(filePath))
             {
                 byte[] data = File.ReadAllBytes(filePath);
-                tex = new Texture2D(2, 2);
+                tex = new Texture2D(2, 2, TextureFormat.RGBA32, false);
                 tex.LoadImage(data);
             }
             return tex;

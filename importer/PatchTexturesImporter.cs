@@ -262,7 +262,7 @@ namespace WankulCrazyPlugin.importer
                 return null;
             }
             byte[] fileData = File.ReadAllBytes(path);
-            Texture2D tex = new Texture2D(2, 2);
+            Texture2D tex = new Texture2D(2, 2, TextureFormat.RGBA32, false);
             if (tex.LoadImage(fileData))
             {
                 tex.Apply();
