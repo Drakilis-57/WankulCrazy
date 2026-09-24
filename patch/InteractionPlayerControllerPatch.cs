@@ -483,13 +483,28 @@ namespace WankulCrazyPlugin.patch
                 Debug.LogError("Le GameObject n'a pas de Renderer.");
             }
         }
+        private static System.Collections.Generic.Dictionary<string, Texture2D> _textureCache = new System.Collections.Generic.Dictionary<string, Texture2D>();
+
         public static Texture2D LoadTexture(string path)
         {
-            // Exemple de chargement d'une texture à partir d'un fichier (ajuste selon ton projet)
+            if (_textureCache.TryGetValue(path, out Texture2D cachedTex))
+            {
+                return cachedTex;
+            }
+
+            // Exemple de chargement d'une texture à partir d'un fichier
+            if (!System.IO.File.Exists(path))
+            {
+                return null;
+            }
+
             byte[] fileData = System.IO.File.ReadAllBytes(path);
             Texture2D tex = new Texture2D(2, 2);
             if (tex.LoadImage(fileData))
+            {
+                _textureCache[path] = tex;
                 return tex;
+            }
             return null;
         }
         public static void ApplyTextureToChild(Transform child, string texturePath)
