@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Script de build pour WankulCrazy : mode Dev (rapide, injecte la DLL) ou mode Release (package zip complet).
 .PARAMETER Mode
