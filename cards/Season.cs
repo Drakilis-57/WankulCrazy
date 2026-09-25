@@ -1,4 +1,4 @@
-﻿namespace WankulCrazyPlugin.cards
+namespace WankulCrazyPlugin.cards
 {
     public enum Season
     {
@@ -6,6 +6,7 @@
         S02,
         S03,
         S04,
+        S05,
         HS,
     }
 }

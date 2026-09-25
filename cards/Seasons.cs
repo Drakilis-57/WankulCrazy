@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
 namespace WankulCrazyPlugin.cards
 {
@@ -10,6 +10,7 @@ namespace WankulCrazyPlugin.cards
             { Season.S02, "Campus" },
             { Season.S03, "Battle" },
             { Season.S04, "Stellar" },
+            { Season.S05, "Legacy" },
             { Season.HS, "Hors Serie" }
         };
     }

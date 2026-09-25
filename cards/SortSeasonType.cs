@@ -7,6 +7,7 @@ namespace WankulCrazyPlugin.cards
         S02 = Season.S02,
         S03 = Season.S03,
         S04 = Season.S04,
+        S05 = Season.S05,
         HS = Season.HS
     }
 }

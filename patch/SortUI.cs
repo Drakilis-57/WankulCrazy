@@ -19,6 +19,18 @@ namespace WankulCrazyPlugin.patch
         static int currentGameSortMethod = 2;
         static int currentGameExpansionIndex = 0;
         static bool CanFlip = true;
+        static List<GameObject> seasonHighlights = new List<GameObject>();
+
+        public static void UpdateSeasonHighlights(int selectedIdx)
+        {
+            for (int h = 0; h < seasonHighlights.Count; h++)
+            {
+                if (seasonHighlights[h] != null)
+                {
+                    seasonHighlights[h].SetActive(h == selectedIdx);
+                }
+            }
+        }
 
         public static void OpenSortAlbumScreenPrefix(ref int sortingMethodIndex, ref int currentExpansionIndex, CollectionBinderUI __instance)
         {
@@ -28,178 +40,286 @@ namespace WankulCrazyPlugin.patch
 
         public static void OpenSortAlbumScreen(int sortingMethodIndex, int currentExpansionIndex, CollectionBinderUI __instance)
         {
-
+            Plugin.Logger?.LogInfo($"[SortUI] OpenSortAlbumScreen appelé. inited={inited}, sortingMethodIndex={sortingMethodIndex}, currentExpansionIndex={currentExpansionIndex}");
 
             if (!inited)
             {
-                Transform Expansion_AnimGrp_Transform = Plugin.GetByPathIn("Canvas", "CollectionBinderUI/ScreenGrp/SortingSelectScreen/Screen_Grp/Expansion_AnimGrp");
-                Transform Expansion_BG_Transform = Plugin.GetByPathIn("Canvas", "CollectionBinderUI/ScreenGrp/SortingSelectScreen/Screen_Grp/Expansion_AnimGrp/BG");
-                Transform Expansion_Title_BG_Transform = Plugin.GetByPathIn("Canvas", "CollectionBinderUI/ScreenGrp/SortingSelectScreen/Screen_Grp/Expansion_AnimGrp/TitleBG");
-                Transform Expansion_Title_Text_Transform = Plugin.GetByPathIn("Canvas", "CollectionBinderUI/ScreenGrp/SortingSelectScreen/Screen_Grp/Expansion_AnimGrp/TitleText");
-                Transform Expansion_Mask_Transform = Plugin.GetByPathIn("Canvas", "CollectionBinderUI/ScreenGrp/SortingSelectScreen/Screen_Grp/Expansion_AnimGrp/Mask");
-
-                ((RectTransform)Expansion_BG_Transform).anchoredPosition = new Vector2(
-                    0,
-                    -1.5f
-                );
-                ((RectTransform)Expansion_BG_Transform).anchoredPosition3D = new Vector3(
-                    0,
-                    -1.5f,
-                    0
-                );
-                ((RectTransform)Expansion_AnimGrp_Transform).sizeDelta = new Vector2(
-                    934,
-                    1800
-                );
-
-                ((RectTransform)Expansion_Mask_Transform).offsetMin = new Vector2(
-                    85,
-                    370
-                );
-
-                float verticalSpacing = __instance.m_ExpansionBtnList[2].GetComponent<RectTransform>().anchoredPosition.y - __instance.m_ExpansionBtnList[3].GetComponent<RectTransform>().anchoredPosition.y;
-
-                __instance.m_ExpansionBtnList[0].gameObject.name = "ALL_Button";
-                __instance.m_ExpansionBtnList[0].GetComponentInChildren<TextMeshProUGUI>().text = "Tout";
-                __instance.m_ExpansionBtnList[0].GetComponentInChildren<RectTransform>().anchoredPosition = new Vector2(
-                    0,
-                    380
-                );
-
-                __instance.m_ExpansionBtnList[1].gameObject.name = "S01_Button";
-                __instance.m_ExpansionBtnList[1].GetComponentInChildren<TextMeshProUGUI>().text = SeasonsContainer.Seasons[Season.S01];
-                __instance.m_ExpansionBtnList[1].GetComponent<RectTransform>().anchoredPosition = new Vector2(
-                    __instance.m_ExpansionBtnList[0].GetComponent<RectTransform>().anchoredPosition.x,
-                    __instance.m_ExpansionBtnList[0].GetComponent<RectTransform>().anchoredPosition.y - verticalSpacing
-                );
-
-                __instance.m_ExpansionBtnList[2].gameObject.name = "S02_Button";
-                __instance.m_ExpansionBtnList[2].GetComponentInChildren<TextMeshProUGUI>().text = SeasonsContainer.Seasons[Season.S02];
-                __instance.m_ExpansionBtnList[2].GetComponent<RectTransform>().anchoredPosition = new Vector2(
-                    __instance.m_ExpansionBtnList[1].GetComponent<RectTransform>().anchoredPosition.x,
-                    __instance.m_ExpansionBtnList[1].GetComponent<RectTransform>().anchoredPosition.y - verticalSpacing
-                );
-
-                __instance.m_ExpansionBtnList[3].gameObject.SetActive(true);
-                __instance.m_ExpansionBtnList[3].gameObject.name = "S03_Button";
-                __instance.m_ExpansionBtnList[3].GetComponentInChildren<TextMeshProUGUI>().text = SeasonsContainer.Seasons[Season.S03];
-                __instance.m_ExpansionBtnList[3].GetComponent<RectTransform>().anchoredPosition = new Vector2(
-                    __instance.m_ExpansionBtnList[2].GetComponent<RectTransform>().anchoredPosition.x,
-                    __instance.m_ExpansionBtnList[2].GetComponent<RectTransform>().anchoredPosition.y - verticalSpacing
-                );
-
-                GameObject s04GameObject = GameObject.Instantiate(__instance.m_ExpansionBtnList[0].gameObject);
-                s04GameObject.name = "S04_Button";
-                s04GameObject.AddComponent<RectTransform>();
-                s04GameObject.transform.SetParent(__instance.m_ExpansionBtnList[0].parent);
-                s04GameObject.transform.localScale = __instance.m_ExpansionBtnList[0].localScale;
-                s04GameObject.transform.localPosition = __instance.m_ExpansionBtnList[0].localPosition;
-                s04GameObject.transform.localRotation = __instance.m_ExpansionBtnList[0].localRotation;
-                s04GameObject.GetComponent<RectTransform>().anchoredPosition = new Vector2(
-                    __instance.m_ExpansionBtnList[3].GetComponent<RectTransform>().anchoredPosition.x,
-                    __instance.m_ExpansionBtnList[3].GetComponent<RectTransform>().anchoredPosition.y - verticalSpacing  // Espacement vertical
-                );
-                s04GameObject.GetComponentInChildren<TextMeshProUGUI>().text = SeasonsContainer.Seasons[Season.S04];
-                __instance.m_ExpansionBtnList.Add(s04GameObject.transform);
-
-
-                GameObject hsGameObject = GameObject.Instantiate(__instance.m_ExpansionBtnList[0].gameObject);
-                hsGameObject.name = "HS_Button";
-                hsGameObject.AddComponent<RectTransform>();
-                hsGameObject.transform.SetParent(__instance.m_ExpansionBtnList[0].parent);
-                hsGameObject.transform.localScale = __instance.m_ExpansionBtnList[0].localScale;
-                hsGameObject.transform.localPosition = __instance.m_ExpansionBtnList[0].localPosition;
-                hsGameObject.transform.localRotation = __instance.m_ExpansionBtnList[0].localRotation;
-                hsGameObject.GetComponent<RectTransform>().anchoredPosition = new Vector2(
-                    __instance.m_ExpansionBtnList[4].GetComponent<RectTransform>().anchoredPosition.x,
-                    __instance.m_ExpansionBtnList[4].GetComponent<RectTransform>().anchoredPosition.y - verticalSpacing  // Espacement vertical
-                );
-                hsGameObject.GetComponentInChildren<TextMeshProUGUI>().text = SeasonsContainer.Seasons[Season.HS];
-                __instance.m_ExpansionBtnList.Add(hsGameObject.transform);
-
-
-                __instance.m_SortAlbumBtnList[2].GetComponentInChildren<TextMeshProUGUI>().text = "Prix";
-                __instance.m_SortAlbumBtnList[1].GetComponentInChildren<TextMeshProUGUI>().text = "Rareté";
-                __instance.m_SortAlbumBtnList[0].GetComponentInChildren<TextMeshProUGUI>().text = "Numéro de Carte";
-                __instance.m_SortAlbumBtnList[3].GetComponentInChildren<TextMeshProUGUI>().text = "Quantité";
-
-
-                // Utiliser un facteur pour espacer (par exemple 1.5x la hauteur du bouton)
-                float verticalSpacingSort = __instance.m_SortAlbumBtnList[3].GetComponent<RectTransform>().anchoredPosition.y - __instance.m_SortAlbumBtnList[3].GetComponent<RectTransform>().anchoredPosition.y;
-                // Positionner le 5ème bouton en dessous du 4ème, avec un espacement cohérent
-                __instance.m_SortAlbumBtnList[4].GetComponent<RectTransform>().anchoredPosition = new Vector2(
-                    __instance.m_SortAlbumBtnList[3].GetComponent<RectTransform>().anchoredPosition.x,
-                    __instance.m_SortAlbumBtnList[3].GetComponent<RectTransform>().anchoredPosition.y - verticalSpacingSort  // Espacement vertical
-                );
-                __instance.m_SortAlbumBtnList[4].GetComponentInChildren<TextMeshProUGUI>().text = "Doublon";
-                __instance.m_SortAlbumBtnList[4].gameObject.SetActive(true);
-
-                __instance.m_SortAlbumBtnList[5].gameObject.SetActive(false);
-                __instance.m_SortAlbumBtnList[6].gameObject.SetActive(false);
-
-
-                void OnClickSeasonButton(SortSeasonType season, int expansionIdx)
+                try
                 {
-                    currentSeason = season;
-                    currentGameExpansionIndex = expansionIdx;
-                    CSingleton<InteractionPlayerController>.Instance?.HideCursor();
-                    SoundManager.GenericConfirm(1f, 1f);
-                    __instance.m_SortAlbumScreen.SetActive(false);
-                    if (__instance.m_SortAlbumScreenUIExtension != null)
-                    {
-                        ControllerScreenUIExtManager.OnCloseScreen(__instance.m_SortAlbumScreenUIExtension);
-                    }
-                    if (__instance.m_CollectionAlbum != null)
-                    {
-                        OnSortingMethodUpdated(true, __instance.m_CollectionAlbum);
-                    }
-                }
+                    Plugin.Logger?.LogInfo($"[SortUI] Début initialisation UI. m_ExpansionBtnList count={__instance.m_ExpansionBtnList?.Count}, m_SortAlbumBtnList count={__instance.m_SortAlbumBtnList?.Count}");
 
-                __instance.m_ExpansionBtnList[0].GetComponentInChildren<Button>().onClick.AddListener(() =>
+                    Transform Expansion_AnimGrp_Transform = Plugin.GetByPathIn("Canvas", "CollectionBinderUI/ScreenGrp/SortingSelectScreen/Screen_Grp/Expansion_AnimGrp");
+                    Transform Expansion_BG_Transform = Plugin.GetByPathIn("Canvas", "CollectionBinderUI/ScreenGrp/SortingSelectScreen/Screen_Grp/Expansion_AnimGrp/BG");
+                    Transform Expansion_Title_BG_Transform = Plugin.GetByPathIn("Canvas", "CollectionBinderUI/ScreenGrp/SortingSelectScreen/Screen_Grp/Expansion_AnimGrp/TitleBG");
+                    Transform Expansion_Title_Text_Transform = Plugin.GetByPathIn("Canvas", "CollectionBinderUI/ScreenGrp/SortingSelectScreen/Screen_Grp/Expansion_AnimGrp/TitleText");
+                    Transform Expansion_Mask_Transform = Plugin.GetByPathIn("Canvas", "CollectionBinderUI/ScreenGrp/SortingSelectScreen/Screen_Grp/Expansion_AnimGrp/Mask");
+
+                    Plugin.Logger?.LogInfo($"[SortUI] Transforms trouvés : AnimGrp={Expansion_AnimGrp_Transform != null}, BG={Expansion_BG_Transform != null}, Mask={Expansion_Mask_Transform != null}");
+
+                    // Log des propriétés de base pour diagnostic
+                    RectTransform maskRect = Expansion_Mask_Transform as RectTransform;
+                    RectTransform animGrpRect = Expansion_AnimGrp_Transform as RectTransform;
+                    RectTransform btn0Rect = __instance.m_ExpansionBtnList[0].GetComponent<RectTransform>();
+
+                    Plugin.Logger?.LogInfo($"[SortUI] Base: Mask sizeDelta={maskRect?.sizeDelta}, offsetMin={maskRect?.offsetMin}, offsetMax={maskRect?.offsetMax}");
+                    Plugin.Logger?.LogInfo($"[SortUI] Base: Btn0 anchoredPosition={btn0Rect.anchoredPosition}, sizeDelta={btn0Rect.sizeDelta}, anchorMin={btn0Rect.anchorMin}, anchorMax={btn0Rect.anchorMax}");
+
+                    // On s'assure que le Mask ne masque pas tout le bas du panneau :
+                    if (maskRect != null)
+                    {
+                        maskRect.offsetMin = new Vector2(-382f, -530f);
+                        maskRect.offsetMax = new Vector2(382f, 462f);
+                    }
+
+
+
+                    string[] seasonNames = new string[]
+                    {
+                        "Tout",
+                        SeasonsContainer.Seasons[Season.S01],
+                        SeasonsContainer.Seasons[Season.S02],
+                        SeasonsContainer.Seasons[Season.S03],
+                        SeasonsContainer.Seasons[Season.S04],
+                        SeasonsContainer.Seasons[Season.S05],
+                        SeasonsContainer.Seasons[Season.HS]
+                    };
+
+                    string[] btnObjectNames = new string[]
+                    {
+                        "ALL_Button", "S01_Button", "S02_Button", "S03_Button", "S04_Button", "S05_Button", "HS_Button"
+                    };
+
+                    // Modèle de bouton : on clone SortAlbumBtnList[0] qui a le format et le style parfait (bouton orange/propre)
+                    // et on l'adapte pour les 7 saisons.
+                    Transform templateSortBtn = __instance.m_SortAlbumBtnList[0];
+                    Transform expansionParent = __instance.m_ExpansionBtnList[0].parent;
+
+                    // Désactiver tous les anciens boutons de cartes d'extension vanilla
+                    for (int b = 0; b < __instance.m_ExpansionBtnList.Count; b++)
+                    {
+                        __instance.m_ExpansionBtnList[b].gameObject.SetActive(false);
+                    }
+
+                    // Nettoyer d'anciens clones Wankul si déjà créés
+                    List<Transform> existingWankulBtns = new List<Transform>();
+                    for (int c = 0; c < expansionParent.childCount; c++)
+                    {
+                        var child = expansionParent.GetChild(c);
+                        if (child.name.StartsWith("Wankul_Season_"))
+                        {
+                            existingWankulBtns.Add(child);
+                        }
+                    }
+                    foreach (var eb in existingWankulBtns)
+                    {
+                        GameObject.Destroy(eb.gameObject);
+                    }
+
+                    // Cacher tous les vieux boutons vanilla et résidus (bouton bleu 'Carte notée', encadrés blancs, etc.)
+                    Transform titleText = Plugin.GetByPathIn("Canvas", "CollectionBinderUI/ScreenGrp/SortingSelectScreen/Screen_Grp/Expansion_AnimGrp/TitleText");
+                    if (titleText != null) titleText.gameObject.SetActive(false);
+                    Transform titleBG = Plugin.GetByPathIn("Canvas", "CollectionBinderUI/ScreenGrp/SortingSelectScreen/Screen_Grp/Expansion_AnimGrp/TitleBG");
+                    if (titleBG != null) titleBG.gameObject.SetActive(false);
+
+                    // Supprimer ou désactiver tout composant LayoutGroup sur le parent qui pourrait écraser les positions
+                    var layoutGroup = expansionParent.GetComponent<UnityEngine.UI.LayoutGroup>();
+                    if (layoutGroup != null)
+                    {
+                        layoutGroup.enabled = false;
+                    }
+
+                    // On s'inspire des boutons de tri vanilla mais on réduit leur échelle (taille)
+                    RectTransform sortBtn0 = __instance.m_SortAlbumBtnList[0].GetComponent<RectTransform>();
+                    RectTransform sortBtn1 = __instance.m_SortAlbumBtnList[1].GetComponent<RectTransform>();
+                    float vanillaSpacing = Mathf.Abs(sortBtn0.anchoredPosition.y - sortBtn1.anchoredPosition.y);
+                    if (vanillaSpacing < 50f) vanillaSpacing = 115f;
+
+                    // Échelle réduite à 72% pour des boutons plus compacts et fins
+                    float seasonBtnScale = 0.72f;
+                    float seasonSpacing = vanillaSpacing * 0.72f; // ~82px
+                    float startY = sortBtn0.anchoredPosition.y + 40f; // léger décalage vers le haut
+
+                    Plugin.Logger?.LogInfo($"[SortUI] Boutons saisons réduits : scale={seasonBtnScale}, spacing={seasonSpacing}, startY={startY}");
+
+                    List<Button> seasonButtons = new List<Button>();
+                    seasonHighlights.Clear();
+
+                    for (int i = 0; i < 7; i++)
+                    {
+                        GameObject newBtnObj = GameObject.Instantiate(templateSortBtn.gameObject, expansionParent);
+                        newBtnObj.name = $"Wankul_Season_{i}_{btnObjectNames[i]}";
+                        newBtnObj.SetActive(true);
+
+                        RectTransform rt = newBtnObj.GetComponent<RectTransform>();
+                        rt.localScale = new Vector3(seasonBtnScale, seasonBtnScale, 1f);
+                        rt.anchoredPosition = new Vector2(0, startY - (seasonSpacing * i));
+
+                        var textComp = newBtnObj.GetComponentInChildren<TextMeshProUGUI>();
+                        if (textComp != null)
+                        {
+                            textComp.text = seasonNames[i];
+                        }
+
+                        Button btn = newBtnObj.GetComponentInChildren<Button>();
+                        seasonButtons.Add(btn);
+
+                        // Récupérer l'indicateur de sélection (BGHighlight sous AnimGrp)
+                        Transform hl = newBtnObj.transform.Find("AnimGrp/BGHighlight");
+                        if (hl != null)
+                        {
+                            seasonHighlights.Add(hl.gameObject);
+                        }
+                        else
+                        {
+                            // fallback recherche en profondeur
+                            var allHls = newBtnObj.GetComponentsInChildren<Transform>(true)
+                                .Where(t => t.name == "BGHighlight")
+                                .Select(t => t.gameObject)
+                                .FirstOrDefault();
+                            seasonHighlights.Add(allHls);
+                        }
+
+                        Plugin.Logger?.LogInfo($"[SortUI] Bouton de saison cloné {i} ({seasonNames[i]}) placé à pos={rt.anchoredPosition}, scale={rt.localScale}");
+                    }
+
+                    // Inspection détaillée de toute la hiérarchie pour trouver d'où viennent le bouton bleu et le cadre blanc
+                    Transform screenGrp = Plugin.GetByPathIn("Canvas", "CollectionBinderUI/ScreenGrp/SortingSelectScreen/Screen_Grp");
+                    if (screenGrp != null)
+                    {
+                        Plugin.Logger?.LogInfo($"[SortUI] Enfants de Screen_Grp (count={screenGrp.childCount}):");
+                        for (int i = 0; i < screenGrp.childCount; i++)
+                        {
+                            var ch = screenGrp.GetChild(i);
+                            Plugin.Logger?.LogInfo($"  Screen_Grp[{i}] = '{ch.name}', active={ch.gameObject.activeSelf}");
+                        }
+                    }
+
+                    if (Expansion_AnimGrp_Transform != null)
+                    {
+                        Plugin.Logger?.LogInfo($"[SortUI] Enfants de Expansion_AnimGrp (count={Expansion_AnimGrp_Transform.childCount}):");
+                        for (int i = 0; i < Expansion_AnimGrp_Transform.childCount; i++)
+                        {
+                            var ch = Expansion_AnimGrp_Transform.GetChild(i);
+                            Plugin.Logger?.LogInfo($"  Expansion_AnimGrp[{i}] = '{ch.name}', active={ch.gameObject.activeSelf}");
+                            if (ch.name != "BG" && ch.name != "Mask")
+                            {
+                                ch.gameObject.SetActive(false);
+                            }
+                        }
+                    }
+
+                    if (expansionParent != null)
+                    {
+                        Plugin.Logger?.LogInfo($"[SortUI] Enfants de expansionParent '{expansionParent.name}' (count={expansionParent.childCount}):");
+                        for (int i = 0; i < expansionParent.childCount; i++)
+                        {
+                            var ch = expansionParent.GetChild(i);
+                            Plugin.Logger?.LogInfo($"  expansionParent[{i}] = '{ch.name}', active={ch.gameObject.activeSelf}");
+                            if (!ch.name.StartsWith("Wankul_Season_"))
+                            {
+                                ch.gameObject.SetActive(false);
+                            }
+                        }
+                    }
+
+                    // Cacher spécifiquement TitleText et TitleBG s'ils existent n'importe où
+                    if (titleText != null) titleText.gameObject.SetActive(false);
+                    if (titleBG != null) titleBG.gameObject.SetActive(false);
+
+                    __instance.m_SortAlbumBtnList[0].GetComponentInChildren<TextMeshProUGUI>().text = "Numéro de Carte";
+                    __instance.m_SortAlbumBtnList[1].GetComponentInChildren<TextMeshProUGUI>().text = "Rareté";
+                    __instance.m_SortAlbumBtnList[2].GetComponentInChildren<TextMeshProUGUI>().text = "Prix";
+                    __instance.m_SortAlbumBtnList[3].GetComponentInChildren<TextMeshProUGUI>().text = "Quantité";
+
+                    // Aligner proprement le bouton "Doublon" sans chevauchement avec "Quantité"
+                    RectTransform sortBtn2 = __instance.m_SortAlbumBtnList[2].GetComponent<RectTransform>();
+                    RectTransform sortBtn3 = __instance.m_SortAlbumBtnList[3].GetComponent<RectTransform>();
+                    float sortSpacing = Mathf.Abs(sortBtn2.anchoredPosition.y - sortBtn3.anchoredPosition.y);
+                    if (sortSpacing < 40f) sortSpacing = 75f;
+
+                    RectTransform doublonBtnRect = __instance.m_SortAlbumBtnList[4].GetComponent<RectTransform>();
+                    doublonBtnRect.anchoredPosition = new Vector2(
+                        sortBtn3.anchoredPosition.x,
+                        sortBtn3.anchoredPosition.y - sortSpacing
+                    );
+                    __instance.m_SortAlbumBtnList[4].GetComponentInChildren<TextMeshProUGUI>().text = "Doublon";
+                    __instance.m_SortAlbumBtnList[4].gameObject.SetActive(true);
+
+                    __instance.m_SortAlbumBtnList[5].gameObject.SetActive(false);
+                    __instance.m_SortAlbumBtnList[6].gameObject.SetActive(false);
+
+                    void OnClickSeasonButton(SortSeasonType season, int expansionIdx)
+                    {
+                        Plugin.Logger?.LogInfo($"[SortUI] Clic sur saison : {season} (expansionIdx={expansionIdx})");
+                        currentSeason = season;
+                        currentGameExpansionIndex = expansionIdx;
+                        UpdateSeasonHighlights(expansionIdx);
+                        CSingleton<InteractionPlayerController>.Instance?.HideCursor();
+                        SoundManager.GenericConfirm(1f, 1f);
+                        __instance.m_SortAlbumScreen.SetActive(false);
+                        if (__instance.m_SortAlbumScreenUIExtension != null)
+                        {
+                            ControllerScreenUIExtManager.OnCloseScreen(__instance.m_SortAlbumScreenUIExtension);
+                        }
+                        if (__instance.m_CollectionAlbum != null)
+                        {
+                            OnSortingMethodUpdated(true, __instance.m_CollectionAlbum);
+                        }
+                    }
+
+                seasonButtons[0].onClick.AddListener(() =>
                 {
                     OnClickSeasonButton(SortSeasonType.ALL, 0);
                 });
-                __instance.m_ExpansionBtnList[1].GetComponentInChildren<Button>().onClick.AddListener(() =>
+                seasonButtons[1].onClick.AddListener(() =>
                 {
                     OnClickSeasonButton(SortSeasonType.S01, 1);
                 });
-                __instance.m_ExpansionBtnList[2].GetComponentInChildren<Button>().onClick.AddListener(() =>
+                seasonButtons[2].onClick.AddListener(() =>
                 {
                     OnClickSeasonButton(SortSeasonType.S02, 2);
                 });
-                __instance.m_ExpansionBtnList[3].GetComponentInChildren<Button>().onClick.AddListener(() =>
+                seasonButtons[3].onClick.AddListener(() =>
                 {
                     OnClickSeasonButton(SortSeasonType.S03, 3);
                 });
-                __instance.m_ExpansionBtnList[4].GetComponentInChildren<Button>().onClick.AddListener(() =>
+                seasonButtons[4].onClick.AddListener(() =>
                 {
                     OnClickSeasonButton(SortSeasonType.S04, 4);
                 });
-                __instance.m_ExpansionBtnList[5].GetComponentInChildren<Button>().onClick.AddListener(() =>
+                seasonButtons[5].onClick.AddListener(() =>
                 {
-                    OnClickSeasonButton(SortSeasonType.HS, 5);
+                    OnClickSeasonButton(SortSeasonType.S05, 5);
+                });
+                seasonButtons[6].onClick.AddListener(() =>
+                {
+                    OnClickSeasonButton(SortSeasonType.HS, 6);
                 });
 
                 __instance.m_SortAlbumBtnList[2].GetComponentInChildren<Button>().onClick.AddListener(() =>
                 {
+                    Plugin.Logger?.LogInfo("[SortUI] Clic tri : Prix");
                     currentSortType = SortType.Price;
                     __instance.OnPressSwitchSortingMethod(2);
                     currentGameSortMethod = 2;
                 });
                 __instance.m_SortAlbumBtnList[1].GetComponentInChildren<Button>().onClick.AddListener(() =>
                 {
+                    Plugin.Logger?.LogInfo("[SortUI] Clic tri : Rareté");
                     currentSortType = SortType.Rarity;
                     __instance.OnPressSwitchSortingMethod(1);
                     currentGameSortMethod = 1;
                 });
                 __instance.m_SortAlbumBtnList[0].GetComponentInChildren<Button>().onClick.AddListener(() =>
                 {
+                    Plugin.Logger?.LogInfo("[SortUI] Clic tri : Numéro");
                     currentSortType = SortType.Number;
                     __instance.OnPressSwitchSortingMethod(0);
                     currentGameSortMethod = 0;
                 });
                 __instance.m_SortAlbumBtnList[3].GetComponentInChildren<Button>().onClick.AddListener(() =>
                 {
+                    Plugin.Logger?.LogInfo("[SortUI] Clic tri : Quantité");
                     currentSortType = SortType.Amount;
                     __instance.OnPressSwitchSortingMethod(3);
                     currentGameSortMethod = 3;
@@ -207,6 +327,7 @@ namespace WankulCrazyPlugin.patch
 
                 __instance.m_SortAlbumBtnList[4].GetComponentInChildren<Button>().onClick.AddListener(() =>
                 {
+                    Plugin.Logger?.LogInfo("[SortUI] Clic tri : Doublon");
                     currentSortType = SortType.Double;
                     __instance.OnPressSwitchSortingMethod(4);
                     currentGameSortMethod = 4;
@@ -214,8 +335,17 @@ namespace WankulCrazyPlugin.patch
 
                 // Marquer l'initialisation comme terminée
                 inited = true;
+                Plugin.Logger?.LogInfo("[SortUI] Initialisation UI terminée avec succès !");
+            }
+            catch (System.Exception ex)
+            {
+                Plugin.Logger?.LogError($"[SortUI] Exception lors de OpenSortAlbumScreen : {ex}");
             }
         }
+
+        // Mettre à jour le surlignage/lueur de la saison active à chaque ouverture
+        UpdateSeasonHighlights(currentGameExpansionIndex);
+    }
 
         public static Dictionary<int, (WankulCardData wankulcard, CardData card, int amount)> GetWankulCardsBySeason(SortSeasonType season)
         {
@@ -227,8 +357,11 @@ namespace WankulCrazyPlugin.patch
             }
             else
             {
+                Season targetSeason = (Season)season;
+                string targetSeasonStr = targetSeason.ToString();
+
                 var filteredWankulCards = WankulInventory.Instance.wankulCards
-                    .Where(kvp => kvp.Value.wankulcard.Season == (Season)season)
+                    .Where(kvp => kvp.Value.wankulcard.Season == targetSeason || string.Equals(kvp.Value.wankulcard.SeasonId, targetSeasonStr, System.StringComparison.OrdinalIgnoreCase))
                     .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
                 return filteredWankulCards;
             }

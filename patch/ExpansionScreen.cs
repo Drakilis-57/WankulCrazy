@@ -74,7 +74,7 @@ namespace WankulCrazyPlugin.patch
             s04GameObject.transform.localRotation = tetramonButton.localRotation;
             s04GameObject.GetComponent<RectTransform>().anchoredPosition = new Vector2(
                 ghostButton.GetComponent<RectTransform>().anchoredPosition.x,
-                ghostButton.GetComponent<RectTransform>().anchoredPosition.y - verticalSpacing  // Espacement vertical
+                ghostButton.GetComponent<RectTransform>().anchoredPosition.y - verticalSpacing
             );
             s04GameObject.GetComponentInChildren<TextMeshProUGUI>().text = SeasonsContainer.Seasons[Season.S04];
             Button s04Button = Plugin.FindChildByPath(s04GameObject.transform, "AnimGrp/BGBarGrp/BtnRaycast").GetComponent<Button>();
@@ -88,7 +88,27 @@ namespace WankulCrazyPlugin.patch
                 currentExpensionIndex = (int)Season.S04;
             });
 
+            GameObject s05GameObject = GameObject.Instantiate(destinyButton.gameObject);
+            s05GameObject.name = "S05_Button";
+            s05GameObject.transform.SetParent(tetramonButton.parent);
+            s05GameObject.transform.localScale = tetramonButton.localScale;
+            s05GameObject.transform.localPosition = tetramonButton.localPosition;
+            s05GameObject.transform.localRotation = tetramonButton.localRotation;
+            s05GameObject.GetComponent<RectTransform>().anchoredPosition = new Vector2(
+                s04GameObject.GetComponent<RectTransform>().anchoredPosition.x,
+                s04GameObject.GetComponent<RectTransform>().anchoredPosition.y - verticalSpacing
+            );
+            s05GameObject.GetComponentInChildren<TextMeshProUGUI>().text = SeasonsContainer.Seasons[Season.S05];
+            Button s05Button = Plugin.FindChildByPath(s05GameObject.transform, "AnimGrp/BGBarGrp/BtnRaycast").GetComponent<Button>();
+            GameObject s05BHHighlight = Plugin.FindChildByPath(s05GameObject.transform, "AnimGrp/BGHighlight").gameObject;
+            CardExpansionSelectScreen.Instance.m_BtnHighlightList.Add(s05BHHighlight);
 
+            s05Button.onClick.AddListener(() =>
+            {
+                s05BHHighlight.SetActive(true);
+                Plugin.SetPProperty(CardExpansionSelectScreen.Instance, "m_CurrentIndex", (int)Season.S05);
+                currentExpensionIndex = (int)Season.S05;
+            });
 
             GameObject HSGameObject = GameObject.Instantiate(destinyButton.gameObject);
             HSGameObject.name = "HS_Button";
@@ -97,8 +117,8 @@ namespace WankulCrazyPlugin.patch
             HSGameObject.transform.localPosition = tetramonButton.localPosition;
             HSGameObject.transform.localRotation = tetramonButton.localRotation;
             HSGameObject.GetComponent<RectTransform>().anchoredPosition = new Vector2(
-                s04GameObject.GetComponent<RectTransform>().anchoredPosition.x,
-                s04GameObject.GetComponent<RectTransform>().anchoredPosition.y - verticalSpacing  // Espacement vertical
+                s05GameObject.GetComponent<RectTransform>().anchoredPosition.x,
+                s05GameObject.GetComponent<RectTransform>().anchoredPosition.y - verticalSpacing
             );
             HSGameObject.GetComponentInChildren<TextMeshProUGUI>().text = SeasonsContainer.Seasons[Season.HS];
             Button HSButton = Plugin.FindChildByPath(HSGameObject.transform, "AnimGrp/BGBarGrp/BtnRaycast").GetComponent<Button>();
@@ -107,7 +127,7 @@ namespace WankulCrazyPlugin.patch
 
             HSButton.onClick.AddListener(() =>
             {
-                s04BHHighlight.SetActive(true);
+                HSBGHighlight.SetActive(true);
                 Plugin.SetPProperty(CardExpansionSelectScreen.Instance, "m_CurrentIndex", (int)Season.HS);
                 currentExpensionIndex = (int)Season.HS;
             });
