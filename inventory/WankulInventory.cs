@@ -48,9 +48,6 @@ namespace WankulCrazyPlugin.inventory
         public static WankulCardData DropCard(ECollectionPackType packType, List<WankulCardData> alreadySelectedCards, bool isTerrain = false, bool isMinRare = false, bool isMinUR = false, bool isMinLegendary = false, bool isRare = false)
         {
             ECollectionPackType stellarPackTaux = EnumExtensions.SafeParseECollectionPackType("StellarTaux");
-            ECollectionPackType seasonTestPack32 = EnumExtensions.SafeParseECollectionPackType("SeasonTestPack32");
-            ECollectionPackType seasonTestPack64 = EnumExtensions.SafeParseECollectionPackType("SeasonTestPack64");
-            bool isSeasonTestPack = packType == seasonTestPack32 || packType == seasonTestPack64;
 
             bool increaseRarity = false;
             Season season = ConvertPackTypeToSeason(packType);
@@ -69,15 +66,7 @@ namespace WankulCrazyPlugin.inventory
             List<WankulCardData> allCards = WankulCardsData.Instance.cards;
             List<WankulCardData> seasonalCard;
 
-            if (isSeasonTestPack)
-            {
-                seasonalCard = WankulCardsData.GetCardsBySeasonFast("SeasonTest");
-                if (seasonalCard == null || seasonalCard.Count == 0)
-                {
-                    seasonalCard = allCards.FindAll(card => string.Equals(card.SeasonId, "SeasonTest", StringComparison.OrdinalIgnoreCase));
-                }
-            }
-            else if (season != Season.HS)
+            if (season != Season.HS)
             {
                 seasonalCard = allCards.FindAll(card => card.Season == season);
             }
@@ -131,12 +120,9 @@ namespace WankulCrazyPlugin.inventory
                         .ConvertAll(card => (WankulCardData)card);
                 }
 
-                if (!isSeasonTestPack)
-                {
-                    List<WankulCardData> specialCardsData = allCards
-                        .FindAll(card => card is SpecialCardData);
-                    seasonalCard.AddRange(specialCardsData);
-                }
+                List<WankulCardData> specialCardsData = allCards
+                    .FindAll(card => card is SpecialCardData);
+                seasonalCard.AddRange(specialCardsData);
             }
             else if (!isTerrain && !isMinRare)
             {

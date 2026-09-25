@@ -100,6 +100,11 @@ namespace WankulCrazyPlugin.importer
             try
             {
                 Graphics.CopyTexture(replacement, original);
+
+                // Amélioration de la netteté pour les textures de décor/affiches vues à distance et sous des angles rasants
+                original.filterMode = FilterMode.Trilinear;
+                original.anisoLevel = 16;
+                original.mipMapBias = -0.5f;
             }
             catch (Exception ex)
             {

@@ -69,10 +69,13 @@ namespace WankulCrazyPlugin.patch
             if (File.Exists(filePath))
             {
                 byte[] data = File.ReadAllBytes(filePath);
-                tex = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+                tex = new Texture2D(2, 2, TextureFormat.RGBA32, true);
                 if (tex.LoadImage(data))
                 {
-                    tex.Compress(false);
+                    tex.filterMode = FilterMode.Trilinear;
+                    tex.anisoLevel = 16;
+                    tex.mipMapBias = -0.5f;
+                    tex.Apply(true, false);
                 }
             }
             return tex;
