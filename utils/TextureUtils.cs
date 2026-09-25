@@ -31,8 +31,11 @@ namespace WankulCrazyPlugin.utils
         public static Texture2D LoadTexture(string path)
         {
             byte[] bytes = System.IO.File.ReadAllBytes(path);
-            Texture2D texture = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+            Texture2D texture = new Texture2D(2, 2, TextureFormat.RGBA32, true);
             texture.LoadImage(bytes);
+            texture.filterMode = FilterMode.Trilinear;
+            texture.anisoLevel = 16;
+            texture.Apply(true, false);
             // Pas de Apply(false,true) : cette texture peut être relue par PatchTexturesImporter
             return texture;
         }
