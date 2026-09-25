@@ -233,4 +233,14 @@ La logique actuelle montre clairement une volonté d’ouvrir le système à de 
 - `patch/workbench/WorkbenchPatch.cs`
 - `WankulCrazyPlugin.Tests/DocsFeaturesVerificationTests.cs`
 
-Cette liste est un bon point de départ si tu veux aller plus loin dans l’analyse du code ou une future documentation technique plus détaillée.
+Idées pour la suite :   
+
+Rajouter un compteur de carte global dans la vue de l'album ( par exemple on a eu X cartes sur les 910 totaux)
+
+Dans l'album de base il génére des boutons bleus extension , plutot que copier les boutons trier , on peut juste remplacer la logique des boutons par les notres.
+
+Particuliarité de la 1.0 : on peut maintenant jouer avec notre propre deck personallisé au jeux de carte : le jeux de base repose sur des points d'éléments ? Si tout fonctionne et qu'on est vraiment stable,faudrait trouver un moyen de pouvoir y jouer.
+
+Particuliarité de la 1.0 ( possible ) : Notation ! on peut envoyer nos cartes pour les faire note de 1 a 10 , ce qui permet de faire augmenter ou baisser sa valeur de vente. A tester si sa marche
+
+Possible bug : la réduction de la taille des boutons dans UI de l'album a peut etre été recopiée sur la taille des cartes

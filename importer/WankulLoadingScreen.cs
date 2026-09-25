@@ -143,12 +143,12 @@ namespace WankulCrazyPlugin.importer
         {
             if (string.IsNullOrEmpty(card.TexturePath)) return;
 
-            string texturePath = Path.Combine(pluginPath, "data", card.TexturePath);
-            string maskPath = Path.Combine(pluginPath, "data/masks", card.TexturePath);
+            string texturePath = ResolveExistingPath(Path.Combine(pluginPath, "data", card.TexturePath));
+            string maskPath = ResolveExistingPath(Path.Combine(pluginPath, "data/masks", card.TexturePath));
 
             try
             {
-                if (File.Exists(texturePath))
+                if (texturePath != null)
                 {
                     Texture2D texture = LoadTexture(texturePath);
                     if (texture != null)
@@ -165,11 +165,11 @@ namespace WankulCrazyPlugin.importer
                 else
                 {
                     missing++;
-                    Plugin.Logger?.LogDebug($"Texture introuvable : {texturePath}");
+                    Plugin.Logger?.LogDebug($"Texture introuvable : {Path.Combine(pluginPath, "data", card.TexturePath)}");
                 }
 
                 // Le masque est optionnel : son absence est normale.
-                if (File.Exists(maskPath))
+                if (maskPath != null)
                 {
                     Texture2D mask = LoadTexture(maskPath);
                     if (mask != null)
@@ -184,6 +184,30 @@ namespace WankulCrazyPlugin.importer
                 failed++;
                 Plugin.Logger?.LogWarning($"Texture load failed for {card.TexturePath}: {ex.Message}");
             }
+        }
+
+        private static string ResolveExistingPath(string path)
+        {
+            if (File.Exists(path)) return path;
+
+            string ext = Path.GetExtension(path);
+            if (string.IsNullOrEmpty(ext)) return null;
+
+            if (ext.Equals(".png", StringComparison.OrdinalIgnoreCase))
+            {
+                string altJpg = Path.ChangeExtension(path, ".jpg");
+                if (File.Exists(altJpg)) return altJpg;
+
+                string altJpeg = Path.ChangeExtension(path, ".jpeg");
+                if (File.Exists(altJpeg)) return altJpeg;
+            }
+            else if (ext.Equals(".jpg", StringComparison.OrdinalIgnoreCase) || ext.Equals(".jpeg", StringComparison.OrdinalIgnoreCase))
+            {
+                string altPng = Path.ChangeExtension(path, ".png");
+                if (File.Exists(altPng)) return altPng;
+            }
+
+            return null;
         }
 
         private static Texture2D LoadTexture(string path)
