@@ -1,32 +1,32 @@
-# 🛠️ Guide des Commandes de Build — WankulCrazy
+Pour lancer les builds facilement, deux raccourcis sont disponibles à la racine :
 
-Pour éviter de taper `powershell .\build.ps1 -Mode ...`, deux commandes directes ont été créées à la racine du projet : **`dev`** et **`release`**.
+- En **PowerShell** : `.\dev` ou `.\release`
+- En **Invite de commandes (CMD)** : `dev` ou `release`
+- Dans **l'Explorateur Windows** : double-clique directement sur [`dev.cmd`](file:///c:/Users/elias/Downloads/WankulCrazy/dev.cmd) ou [`release.cmd`](file:///c:/Users/elias/Downloads/WankulCrazy/release.cmd).
 
 ---
 
-## 1. Mode Développement : `dev`
+## 1. Mode Développement : `.\dev`
 
-Dans n'importe quel terminal à la racine du projet :
-```cmd
-dev
+Dans ton terminal PowerShell :
+```powershell
+.\dev
 ```
-*(ou double-clic sur [`dev.cmd`](file:///c:/Users/elias/Downloads/WankulCrazy/dev.cmd) depuis l'explorateur Windows)*
 
 ### Ce qu'il fait :
 1. Compile le projet en Release (`dist/WankulCrazy/WankulCrazyPlugin.dll`).
-2. Copie immédiatement le `.dll` mis à jour directement dans le jeu :
-   `E:\jeux\TCG Card Shop Simulator\BepInEx\plugins\WankulCrazy\WankulCrazyPlugin.dll`.
-3. T'avertit si le jeu est ouvert sans faire crasher la commande.
+2. Copie immédiatement le `.dll` mis à jour directement dans ton dossier de jeu (configuré dans [`local.config.json`](file:///c:/Users/elias/Downloads/WankulCrazy/local.config.json)).
+3. T'avertit si le jeu est ouvert et verrouille la DLL sans faire planter la console.
 
 ---
 
-## 2. Mode Release (Package Joueur) : `release`
+## 2. Mode Release (Package Joueur) : `.\release`
 
-Dans n'importe quel terminal à la racine du projet :
-```cmd
-release
+Dans ton terminal PowerShell :
+```powershell
+.\release
 ```
-*(ou double-clic sur [`release.cmd`](file:///c:/Users/elias/Downloads/WankulCrazy/release.cmd))*
+*(ou en invite CMD : `release`, ou double-clic sur [`release.cmd`](file:///c:/Users/elias/Downloads/WankulCrazy/release.cmd))*
 
 ### Ce qu'il fait :
 1. Compile une version propre du projet.

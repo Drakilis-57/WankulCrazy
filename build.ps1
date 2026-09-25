@@ -8,13 +8,48 @@
 param (
     [ValidateSet('dev', 'release')]
     [string]$Mode = 'dev',
-    [string]$GamePluginDir = 'E:\jeux\TCG Card Shop Simulator\BepInEx\plugins\WankulCrazy'
+    [string]$GamePluginDir = ''
 )
 
 $ErrorActionPreference = 'Stop'
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 
+# Forcer l'encodage console en UTF-8 pour éviter les caractères corrompus (é, è, etc.)
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+$OutputEncoding = [System.Text.Encoding]::UTF8
+
 Set-Location $ScriptDir
+
+# Détection automatique du chemin du jeu
+if ([string]::IsNullOrWhiteSpace($GamePluginDir)) {
+    if ($env:TCGCARDSHOP_PLUGIN_DIR -and (Test-Path $env:TCGCARDSHOP_PLUGIN_DIR)) {
+        $GamePluginDir = $env:TCGCARDSHOP_PLUGIN_DIR
+    }
+    elseif (Test-Path (Join-Path $ScriptDir "local.config.json")) {
+        try {
+            $config = Get-Content (Join-Path $ScriptDir "local.config.json") -Raw | ConvertFrom-Json
+            if ($config.GamePluginDir -and (Test-Path $config.GamePluginDir)) {
+                $GamePluginDir = $config.GamePluginDir
+            }
+        } catch {}
+    }
+
+    if ([string]::IsNullOrWhiteSpace($GamePluginDir)) {
+        # Chemins d'installation courants (Steam, etc.)
+        $candidates = @(
+            "E:\jeux\TCG Card Shop Simulator\BepInEx\plugins\WankulCrazy",
+            "C:\Program Files (x86)\Steam\steamapps\common\TCG Card Shop Simulator\BepInEx\plugins\WankulCrazy",
+            "D:\SteamLibrary\steamapps\common\TCG Card Shop Simulator\BepInEx\plugins\WankulCrazy",
+            "E:\SteamLibrary\steamapps\common\TCG Card Shop Simulator\BepInEx\plugins\WankulCrazy"
+        )
+        foreach ($c in $candidates) {
+            if (Test-Path $c) {
+                $GamePluginDir = $c
+                break
+            }
+        }
+    }
+}
 
 Write-Host "==========================================" -ForegroundColor Cyan
 Write-Host "   WankulCrazy Build System - Mode: $Mode" -ForegroundColor Cyan
@@ -29,7 +64,7 @@ if ($Mode -eq 'dev') {
         throw "DLL introuvable après la build : $distDll"
     }
 
-    if (Test-Path $GamePluginDir) {
+    if (-not [string]::IsNullOrWhiteSpace($GamePluginDir) -and (Test-Path $GamePluginDir)) {
         Write-Host "[Dev] Copie de la DLL dans le jeu -> $GamePluginDir" -ForegroundColor Green
         try {
             Copy-Item -Path $distDll -Destination (Join-Path $GamePluginDir "WankulCrazyPlugin.dll") -Force
@@ -38,7 +73,8 @@ if ($Mode -eq 'dev') {
             Write-Warning "Le jeu est actuellement ouvert et verrouille 'WankulCrazyPlugin.dll'. Ferme le jeu pour que la nouvelle DLL soit appliquée."
         }
     } else {
-        Write-Warning "Dossier du jeu non trouvé : $GamePluginDir. La DLL est disponible dans dist/WankulCrazy/."
+        Write-Host "[Dev] Compilation terminée ! La DLL est dans 'dist/WankulCrazy/WankulCrazyPlugin.dll'." -ForegroundColor Green
+        Write-Host "      (Pour copie auto, définis un fichier local.config.json ou la variable TCGCARDSHOP_PLUGIN_DIR)" -ForegroundColor DarkGray
     }
 }
 elseif ($Mode -eq 'release') {

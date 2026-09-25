@@ -73,4 +73,12 @@
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 	</ItemGroup>
+
+    <!-- Déploiement automatique facultatif si configuré localement (via variable d'environnement ou paramètre MSBuild) -->
+    <Target Name="DeployToGame" AfterTargets="Build" Condition="'$(TCGCARDSHOP_PLUGIN_DIR)' != '' and Exists('$(TCGCARDSHOP_PLUGIN_DIR)')">
+        <Copy SourceFiles="$(OutputPath)$(AssemblyName).dll"
+              DestinationFolder="$(TCGCARDSHOP_PLUGIN_DIR)"
+              ContinueOnError="true" />
+        <Message Importance="High" Text="[AutoDeploy] DLL copiée dans $(TCGCARDSHOP_PLUGIN_DIR)\$(AssemblyName).dll" />
+    </Target>
 </Project>

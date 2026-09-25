@@ -17,3 +17,5 @@ WankulCrazyPlugin.Tests/obj/
 download_cards.py
 docu.md
 downloaded_cards/
+local.config.json
+releases/
