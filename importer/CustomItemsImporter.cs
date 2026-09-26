@@ -319,6 +319,42 @@ namespace WankulCrazyPlugin.importer
                 int index = (int)itemType;
                 if (index < 0 || index >= stock.Count)
                 {
+                    EItemType dsStellar = EnumExtensions.SafeParseEItemType("DisplayStellar");
+                    EItemType dsStellarTaux = EnumExtensions.SafeParseEItemType("DisplayStellarTaux");
+                    EItemType dsLegacy = EnumExtensions.SafeParseEItemType("DisplayLegacy");
+                    EItemType ascBox = EnumExtensions.SafeParseEItemType("AscensionCardBox");
+
+                    if (itemType == dsStellar || itemType == dsStellarTaux || itemType == dsLegacy || (ascBox != (EItemType)0 && itemType == ascBox))
+                    {
+                        ItemData baseBoxData = InventoryBase.GetItemData(EItemType.BasicCardBox);
+                        if (baseBoxData != null)
+                        {
+                            string jsonString = UnityEngine.JsonUtility.ToJson(baseBoxData);
+                            __result = UnityEngine.JsonUtility.FromJson<ItemData>(jsonString);
+                            __result.name = itemType.ToString();
+                            return false;
+                        }
+                    }
+
+                    EItemType bsStellar = EnumExtensions.SafeParseEItemType("BoosterStellar");
+                    EItemType bsStellarTaux = EnumExtensions.SafeParseEItemType("BoosterStellarTaux");
+                    EItemType bsLegacy = EnumExtensions.SafeParseEItemType("BoosterLegacy");
+                    EItemType bsGoldBattle = EnumExtensions.SafeParseEItemType("BoosterGoldBattle");
+                    EItemType bsGoldStellar = EnumExtensions.SafeParseEItemType("BoosterGoldStellar");
+                    EItemType ascPack = EnumExtensions.SafeParseEItemType("AscensionCardPack");
+
+                    if (itemType == bsStellar || itemType == bsStellarTaux || itemType == bsLegacy || itemType == bsGoldBattle || itemType == bsGoldStellar || (ascPack != (EItemType)0 && itemType == ascPack))
+                    {
+                        ItemData basePackData = InventoryBase.GetItemData(EItemType.BasicCardPack);
+                        if (basePackData != null)
+                        {
+                            string jsonString = UnityEngine.JsonUtility.ToJson(basePackData);
+                            __result = UnityEngine.JsonUtility.FromJson<ItemData>(jsonString);
+                            __result.name = itemType.ToString();
+                            return false;
+                        }
+                    }
+
                     // Fallback pour tout autre enum custom ou hors limites pour éviter l'exception d'index
                     __result = new ItemData();
                     return false;
