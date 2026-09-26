@@ -184,6 +184,13 @@ namespace WankulCrazyPlugin.importer
             ECollectionPackType stellarPack = EnumExtensions.SafeParseECollectionPackType("Stellar");
             ECollectionPackType stellarPackTaux = EnumExtensions.SafeParseECollectionPackType("StellarTaux");
 
+            EItemType boosterLegacy = EnumExtensions.SafeParseEItemType("BoosterLegacy");
+            EItemType displayLegacy = EnumExtensions.SafeParseEItemType("DisplayLegacy");
+            EItemType ascensionPack = EnumExtensions.SafeParseEItemType("AscensionCardPack");
+            EItemType ascensionBox = EnumExtensions.SafeParseEItemType("AscensionCardBox");
+            ECollectionPackType legacyPack = EnumExtensions.SafeParseECollectionPackType("Legacy");
+            ECollectionPackType ascensionCollectionPack = EnumExtensions.SafeParseECollectionPackType("AscensionCardPack");
+
             if (itemType == EItemType.BasicCardPack || itemType == EItemType.BasicCardBox) return; // Keep original __result
             else if (itemType == EItemType.RareCardPack || itemType == EItemType.RareCardBox) return; // Keep original __result
             else if (itemType == EItemType.EpicCardPack || itemType == EItemType.EpicCardBox || itemType == boosterGoldBattle) __result = ECollectionPackType.EpicCardPack;
@@ -198,6 +205,9 @@ namespace WankulCrazyPlugin.importer
             else if (itemType == EItemType.CatJobPack) return; // Keep original __result
             else if (itemType == boosterStellar || itemType == displayStellar || itemType == boosterGoldStellar) __result = stellarPack;
             else if (itemType == boosterStellarTaux || itemType == displayStellarTaux) __result = stellarPackTaux;
+            else if (itemType == boosterLegacy || itemType == displayLegacy) __result = legacyPack;
+            else if (ascensionPack != (EItemType)0 && (itemType == ascensionPack || (ascensionBox != (EItemType)0 && itemType == ascensionBox)))
+                __result = legacyPack;
         }
 
         public static void GetCardExpansionType(ECollectionPackType collectionPackType, ref ECardExpansionType __result)

@@ -29,9 +29,11 @@ namespace WankulCrazyPlugin.inventory
 
         public static Season ConvertPackTypeToSeason(ECollectionPackType packType)
         {
-            // Récupère la valeur dynamique de "Stellar"
+            // Récupère la valeur dynamique de "Stellar" et "Legacy" / "Ascension"
             ECollectionPackType stellarPack = EnumExtensions.SafeParseECollectionPackType("Stellar");
             ECollectionPackType stellarPackTaux = EnumExtensions.SafeParseECollectionPackType("StellarTaux");
+            ECollectionPackType legacyPack = EnumExtensions.SafeParseECollectionPackType("Legacy");
+            ECollectionPackType ascensionPack = EnumExtensions.SafeParseECollectionPackType("AscensionCardPack");
 
             if (packType == ECollectionPackType.BasicCardPack || packType == ECollectionPackType.DestinyBasicCardPack)
                 return Season.S01;
@@ -41,6 +43,8 @@ namespace WankulCrazyPlugin.inventory
                 return Season.S03;
             else if (packType == stellarPack || packType == stellarPackTaux)
                 return Season.S04;
+            else if (packType == legacyPack || (ascensionPack != (ECollectionPackType)0 && packType == ascensionPack))
+                return Season.S05;
             else
                 return Season.HS;
         }

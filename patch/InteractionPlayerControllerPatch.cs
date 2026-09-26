@@ -103,6 +103,10 @@ namespace WankulCrazyPlugin.patch
             EItemType displayStellarTaux = EnumExtensions.SafeParseEItemType("DisplayStellarTaux");
             EItemType boosterStellar = EnumExtensions.SafeParseEItemType("BoosterStellar");
             EItemType boosterStellarTaux = EnumExtensions.SafeParseEItemType("BoosterStellarTaux");
+            EItemType displayLegacy = EnumExtensions.SafeParseEItemType("DisplayLegacy");
+            EItemType boosterLegacy = EnumExtensions.SafeParseEItemType("BoosterLegacy");
+            EItemType ascensionBox = EnumExtensions.SafeParseEItemType("AscensionCardBox");
+            EItemType ascensionPack = EnumExtensions.SafeParseEItemType("AscensionCardPack");
 
             if (cardBoxItemType == EItemType.BasicCardBox)
                 __result = EItemType.BasicCardPack;
@@ -124,6 +128,10 @@ namespace WankulCrazyPlugin.patch
                 __result = boosterStellar;
             else if (cardBoxItemType == displayStellarTaux)
                 __result = boosterStellarTaux;
+            else if (cardBoxItemType == displayLegacy)
+                __result = boosterLegacy;
+            else if (ascensionBox != (EItemType)0 && cardBoxItemType == ascensionBox)
+                __result = (ascensionPack != (EItemType)0) ? ascensionPack : boosterLegacy;
             else
                 __result = EItemType.None;
 
