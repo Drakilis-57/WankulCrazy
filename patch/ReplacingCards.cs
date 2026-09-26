@@ -130,6 +130,26 @@ public class ReplacingCards
             }
         }
 
+        if (__instance.m_CenterFrameMaskImage != null)
+        {
+            if (wankulCardData != null && wankulCardData.SpriteMask != null)
+            {
+                __instance.m_CenterFrameMaskImage.gameObject.SetActive(true);
+                __instance.m_CenterFrameMaskImage.sprite = (Sprite)wankulCardData.SpriteMask;
+                __instance.m_CenterFrameMaskImage.preserveAspect = true;
+
+                RectTransform maskRect = __instance.m_CenterFrameMaskImage.rectTransform;
+                maskRect.anchorMin = Vector2.zero;
+                maskRect.anchorMax = Vector2.one;
+                maskRect.offsetMin = Vector2.zero;
+                maskRect.offsetMax = Vector2.zero;
+                maskRect.localScale = new Vector3(CardImageScale, CardImageScale, 1f);
+            }
+            else
+            {
+                __instance.m_CenterFrameMaskImage.gameObject.SetActive(false);
+            }
+        }
         if (__instance.m_CardFullBGOffsetGrp != null)
         {
             __instance.m_CardFullBGOffsetGrp.SetActive(true);
