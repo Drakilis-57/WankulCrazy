@@ -53,8 +53,8 @@ public class ReplacingCards
             {
                 gameCardData.isFoil = true;
             }
-
         }
+        Plugin.Logger.LogInfo($"[CardUI.SetCardUIPrefix] Carte '{wankulCardData.Title}' (Index={wankulCardData.Index}, Type={wankulCardData.GetType().Name}) -> isFoil={gameCardData.isFoil}, HasSpriteMask={(wankulCardData.SpriteMask != null)}");
     }
     
     private const float CardImageScale = 0.88f; // Sert a grandir ou réduire la taille des images des cartes
@@ -151,6 +151,63 @@ public class ReplacingCards
             __instance.m_CardFullBGTransparentLayeredOffsetGrp.SetActive(false);
         }
 
+        CleanCardVisuals(__instance, gameCardData.isFoil, wankulCardData);
+    }
+
+    /// <summary>
+    /// Nettoie et configure précisément les calques visuels d'une carte Wankul.
+    /// Éteint complètement les résidus vanilla (StatGrp, RarityImage, CameraFoilShine*, FadeBar*, etc.)
+    /// particulièrement récalcitrants sur les slots 7, 8 et 9 lors de l'ouverture de booster.
+    /// </summary>
+    public static void CleanCardVisuals(CardUI __instance, bool isFoil, WankulCardData wankulCardData)
+    {
+        if (__instance == null) return;
+
+        if (wankulCardData != null && wankulCardData.SpriteMask != null && isFoil)
+        {
+            Plugin.Logger.LogInfo($"[CleanCardVisuals] ACTIVATION FOIL pour '{wankulCardData.Title}' (isFoil=True)");
+            if (__instance.m_FoilGrp != null)
+            {
+                __instance.m_FoilGrp.SetActive(true);
+            }
+            if (__instance.m_FoilShowList != null)
+            {
+                foreach (var foilImg in __instance.m_FoilShowList)
+                {
+                    if (foilImg != null)
+                    {
+                        foilImg.gameObject.SetActive(true);
+                        foilImg.sprite = (Sprite)wankulCardData.SpriteMask;
+                        foilImg.preserveAspect = true;
+
+                        RectTransform maskRect = foilImg.rectTransform;
+                        if (maskRect != null)
+                        {
+                            maskRect.anchorMin = Vector2.zero;
+                            maskRect.anchorMax = Vector2.one;
+                            maskRect.offsetMin = Vector2.zero;
+                            maskRect.offsetMax = Vector2.zero;
+                            maskRect.localScale = new Vector3(CardImageScale, CardImageScale, 1f);
+                        }
+                    }
+                }
+            }
+        }
+        else
+        {
+            if (__instance.m_FoilGrp != null)
+            {
+                __instance.m_FoilGrp.SetActive(false);
+            }
+            if (__instance.m_FoilShowList != null)
+            {
+                foreach (var foilImg in __instance.m_FoilShowList)
+                {
+                    if (foilImg != null) foilImg.gameObject.SetActive(false);
+                }
+            }
+        }
+
         if (__instance.m_CenterFrameImageGrp != null)
         {
             __instance.m_CenterFrameImageGrp.SetActive(false);
@@ -191,6 +248,61 @@ public class ReplacingCards
             __instance.m_DescriptionGrp.SetActive(false);
         }
 
+        if (__instance.m_FoilBlendedShowList != null)
+        {
+            foreach (var img in __instance.m_FoilBlendedShowList)
+            {
+                if (img != null) img.gameObject.SetActive(false);
+            }
+        }
+
+        if (__instance.m_FoilDarkenImageList != null)
+        {
+            foreach (var img in __instance.m_FoilDarkenImageList)
+            {
+                if (img != null) img.gameObject.SetActive(false);
+            }
+        }
+
+        if (__instance.m_CenterFoilGlitter != null) __instance.m_CenterFoilGlitter.SetActive(false);
+        if (__instance.m_CenterFoilGlitterBtm != null) __instance.m_CenterFoilGlitterBtm.SetActive(false);
+        if (__instance.m_BorderFoilGlitter != null) __instance.m_BorderFoilGlitter.SetActive(false);
+        if (__instance.m_FadeBarTopImage != null) __instance.m_FadeBarTopImage.gameObject.SetActive(false);
+        if (__instance.m_FadeBarBtmImage != null) __instance.m_FadeBarBtmImage.gameObject.SetActive(false);
+        if (__instance.m_CardBorderMask != null) __instance.m_CardBorderMask.gameObject.SetActive(false);
+        if (__instance.m_CardFullTransparentLayerBGImage != null) __instance.m_CardFullTransparentLayerBGImage.gameObject.SetActive(false);
+
+        // Désactivation récursive des composants foil/glare parasites si la carte n'est pas foil
+        if (!isFoil || wankulCardData?.SpriteMask == null)
+        {
+            foreach (Transform t in __instance.GetComponentsInChildren<Transform>(true))
+            {
+                if (t == null) continue;
+                string n = t.name;
+                if (n.StartsWith("CameraFoilShine") || n.StartsWith("FadeBar") || n == "FoilGrp" || n.Contains("Glitter") || n == "StatGrp" || n == "RarityImage" || n == "RarityText")
+                {
+                    t.gameObject.SetActive(false);
+                }
+            }
+        }
+        else
+        {
+            // Même pour une carte foil, désactiver les dégradés et glitters parasites du jeu de base non utilisés par le masque Wankul
+            if (__instance.m_CenterFoilGlitter != null) __instance.m_CenterFoilGlitter.SetActive(false);
+            if (__instance.m_CenterFoilGlitterBtm != null) __instance.m_CenterFoilGlitterBtm.SetActive(false);
+            if (__instance.m_BorderFoilGlitter != null) __instance.m_BorderFoilGlitter.SetActive(false);
+            if (__instance.m_FadeBarTopImage != null) __instance.m_FadeBarTopImage.gameObject.SetActive(false);
+            if (__instance.m_FadeBarBtmImage != null) __instance.m_FadeBarBtmImage.gameObject.SetActive(false);
+        }
+
+        // Réinitialiser la luminosité à pleine clarté (alpha = 0 sur m_BrightnessControl)
+        if (__instance.m_BrightnessControl != null)
+        {
+            Color c = __instance.m_BrightnessControl.color;
+            c.a = 0f;
+            __instance.m_BrightnessControl.color = c;
+        }
+
         __instance.m_RarityImage?.gameObject.SetActive(false);
         __instance.m_NumberText?.gameObject.SetActive(false);
         __instance.m_MonsterNameText?.gameObject.SetActive(false);
@@ -202,7 +314,6 @@ public class ReplacingCards
         __instance.m_DescriptionText?.gameObject.SetActive(false);
         __instance.m_ArtistText?.gameObject.SetActive(false);
         __instance.m_FirstEditionText?.gameObject.SetActive(false);
-
     }
 
     class EnterViewUpCloseState__State

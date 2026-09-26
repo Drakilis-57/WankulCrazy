@@ -81,6 +81,22 @@ namespace WankulCrazyPlugin.patch
             {
                 __instance.m_Card3dUIList[activeIndex].transform.SetAsLastSibling();
             }
+
+            // 3. Nettoyer les effets visuels (foil, glitters, stats vanilla) sur la carte active et la suivante
+            List<CardData> rolledList = CardOpeningHelpers.GetRolledCardDataList(__instance);
+            if (rolledList != null)
+            {
+                for (int idx = activeIndex; idx <= activeIndex + 1 && idx < boosterSize && idx < count && idx < rolledList.Count; idx++)
+                {
+                    CardData cd = rolledList[idx];
+                    Card3dUIGroup cGrp = __instance.m_Card3dUIList[idx];
+                    if (cGrp != null && cGrp.m_CardUI != null && cd != null)
+                    {
+                        WankulCardData wk = WankulCardsData.Instance.GetFromMonster(cd, true);
+                        ReplacingCards.CleanCardVisuals(cGrp.m_CardUI, cd.isFoil, wk);
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -156,6 +172,8 @@ namespace WankulCrazyPlugin.patch
                     newLocalPos.z += zStep;
                     newCard3dUIGroup.transform.localPosition = newLocalPos;
 
+                    ReplacingCards.CleanCardVisuals(newCard3dUIGroup.m_CardUI, false, null);
+
                     __instance.m_Card3dUIList.Add(newCard3dUIGroup);
 
                     Transform AnimGrp_Transform = Plugin.FindChildByPath(newCard3dUIGroup.transform, "AnimGrp");
@@ -196,6 +214,20 @@ namespace WankulCrazyPlugin.patch
                     newPos.gameObject.SetActive(true);
 
                     __instance.m_ShowAllCardPosList.Add(newPos);
+                }
+
+                // Sanitize slot 7 (le slot rare d'origine du jeu vanilla) avec les animations propres de slot 0
+                if (__instance.m_Card3dUIList.Count > 7 && __instance.m_Card3dUIList[0] != null && __instance.m_Card3dUIList[7] != null)
+                {
+                    Transform cleanAnim = Plugin.FindChildByPath(__instance.m_Card3dUIList[0].transform, "AnimGrp");
+                    Transform slot7Anim = Plugin.FindChildByPath(__instance.m_Card3dUIList[7].transform, "AnimGrp");
+                    if (cleanAnim != null && slot7Anim != null)
+                    {
+                        AnimationCopier.CopyAnimation(cleanAnim.gameObject, slot7Anim.gameObject, "OpenCardNewCard");
+                        AnimationCopier.CopyAnimation(cleanAnim.gameObject, slot7Anim.gameObject, "OpenCardSlideExit");
+                        AnimationCopier.CopyAnimation(cleanAnim.gameObject, slot7Anim.gameObject, "OpenCardFinalReveal");
+                        AnimationCopier.CopyAnimation(cleanAnim.gameObject, slot7Anim.gameObject, "OpenCardDefaultPos");
+                    }
                 }
             }
             else if (__instance.m_Card3dUIList.Count > boosterSize)
@@ -410,12 +442,14 @@ namespace WankulCrazyPlugin.patch
                 ___m_CardValueList.Add(wankulCard.MarketPrice);
             }
 
-            Plugin.Logger.LogDebug($"[CardOpening] Booster généré: {___m_RolledCardDataList.Count} cartes tirées (boosterSize={boosterSize})");
+            Plugin.Logger.LogInfo($"[CardOpening] === BOOSTER GÉNÉRÉ ({___m_RolledCardDataList.Count} cartes, boosterSize={boosterSize}) ===");
             for (int k = 0; k < ___m_RolledCardDataList.Count; k++)
             {
-                WankulCardData wk = wankulCardsData.GetFromMonster(___m_RolledCardDataList[k], true);
+                CardData cd = ___m_RolledCardDataList[k];
+                WankulCardData wk = wankulCardsData.GetFromMonster(cd, true);
                 string cardTitle = wk != null ? wk.Title : "Inconnue";
-                Plugin.Logger.LogDebug($"  [Tirage Carte {k}] Nom='{cardTitle}' Prix={___m_CardValueList[k]} isNew={((List<bool>)Plugin.GetPProperty(__instance, "m_IsNewlList"))[k]}");
+                bool isNew = ((List<bool>)Plugin.GetPProperty(__instance, "m_IsNewlList"))[k];
+                Plugin.Logger.LogInfo($"  [Carte {k}] Nom='{cardTitle}' | isFoil={cd?.isFoil} | Type={wk?.GetType().Name} | HasMask={(wk?.SpriteMask != null)} | Prix={___m_CardValueList[k]} | isNew={isNew}");
 
                 // Affecter explicitement les données de la carte sur l'objet 3D correspondant pour garantir son visuel dès le début
                 if (k < __instance.m_Card3dUIList.Count && __instance.m_Card3dUIList[k] != null && __instance.m_Card3dUIList[k].m_CardUI != null)
@@ -433,6 +467,13 @@ namespace WankulCrazyPlugin.patch
         public static void EvaluateOpenCardPackPreFix(out EvaluateOpenCardPack__State __state, InteractionPlayerController __instance)
         {
             __state = new EvaluateOpenCardPack__State();
+
+            if (WankulCrazyPlugin.importer.WankulLoadingScreen.IsLoading)
+            {
+                __state.CanOpenCardBox = false;
+                return;
+            }
+
             if (__instance.CanOpenCardBox())
             {
                 __state.CanOpenCardBox = true;
@@ -536,6 +577,20 @@ namespace WankulCrazyPlugin.patch
         /// </summary>
         private static void PlayCardRevealAnimation(CardOpeningSequence __instance, int cardIndex, float cardValue, bool isNew, bool isHighValue)
         {
+            if (cardIndex < __instance.m_Card3dUIList.Count && __instance.m_Card3dUIList[cardIndex] != null && __instance.m_Card3dUIList[cardIndex].m_CardUI != null)
+            {
+                List<CardData> rolledList = CardOpeningHelpers.GetRolledCardDataList(__instance);
+                if (rolledList != null && cardIndex < rolledList.Count)
+                {
+                    CardData cd = rolledList[cardIndex];
+                    if (cd != null)
+                    {
+                        WankulCardData wk = WankulCardsData.Instance.GetFromMonster(cd, true);
+                        ReplacingCards.CleanCardVisuals(__instance.m_Card3dUIList[cardIndex].m_CardUI, cd.isFoil, wk);
+                    }
+                }
+            }
+
             if (isHighValue)
             {
                 SoundManager.PlayAudio("SFX_FinalizeCard", 0.6f, 1.2f);
@@ -909,6 +964,68 @@ namespace WankulCrazyPlugin.patch
 
                         __instance.m_Card3dUIList[timerIndex].gameObject.SetActive(value: true);
                         __instance.m_CardAnimList[timerIndex].Play("OpenCardFinalReveal");
+
+                        // Nettoyage visuel strict sur chaque carte lors de la révélation finale
+                        List<CardData> rolledList = CardOpeningHelpers.GetRolledCardDataList(__instance);
+                        if (rolledList != null && timerIndex >= 0 && timerIndex < rolledList.Count && timerIndex < __instance.m_Card3dUIList.Count)
+                        {
+                            CardData cd = rolledList[timerIndex];
+                            if (__instance.m_Card3dUIList[timerIndex] != null && __instance.m_Card3dUIList[timerIndex].m_CardUI != null && cd != null)
+                            {
+                                WankulCardData wk = WankulCardsData.Instance.GetFromMonster(cd, true);
+                                ReplacingCards.CleanCardVisuals(__instance.m_Card3dUIList[timerIndex].m_CardUI, cd.isFoil, wk);
+                            }
+                        }
+
+                        // Diagnostic complet sur les cartes à problème (7, 8, 9) vs normale (0)
+                        if (timerIndex == 0 || timerIndex >= 7)
+                        {
+                            try
+                            {
+                                Card3dUIGroup cardGroup = __instance.m_Card3dUIList[timerIndex];
+                                Plugin.Logger.LogInfo($"=== [DIAGNOSTIC REVEAL CARTE {timerIndex}] ===");
+                                Plugin.Logger.LogInfo($"  Position: {cardGroup.transform.position}, ShowAllPos: {__instance.m_ShowAllCardPosList[timerIndex].position}");
+                                
+                                // Lister tous les enfants actifs et leurs composants
+                                foreach (Transform child in cardGroup.GetComponentsInChildren<Transform>(true))
+                                {
+                                    if (child != null && child.gameObject.activeSelf)
+                                    {
+                                        string comps = string.Join(", ", System.Array.ConvertAll(child.GetComponents<Component>(), c => c != null ? c.GetType().Name : "null"));
+                                        Plugin.Logger.LogInfo($"    Enfant Actif: '{child.name}' [Comps: {comps}]");
+                                        
+                                        var img = child.GetComponent<UnityEngine.UI.Image>();
+                                        if (img != null)
+                                        {
+                                            string matName = img.material != null ? img.material.name : "None";
+                                            string shaderName = img.material != null && img.material.shader != null ? img.material.shader.name : "None";
+                                            Plugin.Logger.LogInfo($"      -> Image '{child.name}': color={img.color}, mat='{matName}', shader='{shaderName}'");
+                                        }
+
+                                        var renderer = child.GetComponent<Renderer>();
+                                        if (renderer != null)
+                                        {
+                                            string matName = renderer.material != null ? renderer.material.name : "None";
+                                            Plugin.Logger.LogInfo($"      -> Renderer '{child.name}': enabled={renderer.enabled}, mat='{matName}'");
+                                        }
+                                    }
+                                }
+
+                                // Vérifier s'il y a des lumières ou des particules sur ShowAllCardPos
+                                Transform posTransform = __instance.m_ShowAllCardPosList[timerIndex];
+                                foreach (Transform pChild in posTransform.GetComponentsInChildren<Transform>(true))
+                                {
+                                    if (pChild != null && pChild != posTransform)
+                                    {
+                                        Plugin.Logger.LogInfo($"    ShowAllCardPos Enfant: '{pChild.name}' (active={pChild.gameObject.activeSelf})");
+                                    }
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                Plugin.Logger.LogError($"Erreur Diagnostic Carte {timerIndex}: {ex}");
+                            }
+                        }
                     }
                     CardOpeningHelpers.SetStateTimer(__instance, CardOpeningHelpers.GetStateTimer(__instance) + 1f);
                     if (CardOpeningHelpers.GetStateTimer(__instance) >= (float)__instance.m_Card3dUIList.Count)
