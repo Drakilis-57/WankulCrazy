@@ -245,6 +245,51 @@ namespace WankulCrazyPlugin.importer
                 int index = (int)itemType;
                 if (index < 0 || index >= stock.Count)
                 {
+                    // Pour les boîtes de display custom, utiliser le mesh et material de base d'une boîte de boosters
+                    EItemType displayStellar = EnumExtensions.SafeParseEItemType("DisplayStellar");
+                    EItemType displayStellarTaux = EnumExtensions.SafeParseEItemType("DisplayStellarTaux");
+                    EItemType displayLegacy = EnumExtensions.SafeParseEItemType("DisplayLegacy");
+
+                    if (itemType == displayStellar || itemType == displayStellarTaux || itemType == displayLegacy)
+                    {
+                        ItemMeshData baseBoxMesh = InventoryBase.GetItemMeshData(EItemType.BasicCardBox);
+                        if (baseBoxMesh != null)
+                        {
+                            __result = new ItemMeshData
+                            {
+                                name = itemType.ToString(),
+                                mesh = baseBoxMesh.mesh,
+                                material = baseBoxMesh.material,
+                                meshSecondary = baseBoxMesh.meshSecondary,
+                                materialSecondary = baseBoxMesh.materialSecondary
+                            };
+                            return false;
+                        }
+                    }
+
+                    // Pour les boosters custom, utiliser le mesh et material de base d'un booster de base
+                    EItemType boosterStellar = EnumExtensions.SafeParseEItemType("BoosterStellar");
+                    EItemType boosterStellarTaux = EnumExtensions.SafeParseEItemType("BoosterStellarTaux");
+                    EItemType boosterLegacy = EnumExtensions.SafeParseEItemType("BoosterLegacy");
+                    EItemType ascensionPack = EnumExtensions.SafeParseEItemType("AscensionCardPack");
+
+                    if (itemType == boosterStellar || itemType == boosterStellarTaux || itemType == boosterLegacy || (ascensionPack != (EItemType)0 && itemType == ascensionPack))
+                    {
+                        ItemMeshData basePackMesh = InventoryBase.GetItemMeshData(EItemType.BasicCardPack);
+                        if (basePackMesh != null)
+                        {
+                            __result = new ItemMeshData
+                            {
+                                name = itemType.ToString(),
+                                mesh = basePackMesh.mesh,
+                                material = basePackMesh.material,
+                                meshSecondary = basePackMesh.meshSecondary,
+                                materialSecondary = basePackMesh.materialSecondary
+                            };
+                            return false;
+                        }
+                    }
+
                     // Fallback pour tout autre enum custom ou hors limites pour éviter l'exception d'index
                     __result = new ItemMeshData();
                     return false;

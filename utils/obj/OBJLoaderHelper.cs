@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 using UnityEngine;
+using WankulCrazyPlugin.utils;
 
 namespace WankulCrazyPlugin.utils.obj
 {
@@ -77,7 +78,9 @@ namespace WankulCrazyPlugin.utils.obj
             return flag ? -num : num;
         }
 
-        public static Material CreateNullMaterial() => new Material(Shader.Find("Standard"));
+        // AVANT: new Material(Shader.Find("Standard")) — "Standard" n'existe pas en HDRP/URP,
+        // Shader.Find renvoie null et le material s'affiche en magenta plein écran.
+        public static Material CreateNullMaterial() => ShaderUtils.CreateSafeMaterial();
 
         public static Vector3 VectorFromStrArray(string[] cmps)
         {

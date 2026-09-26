@@ -360,17 +360,19 @@ namespace WankulCrazyPlugin.patch
                                         ChangeTextureColorInUVRectangle(child.gameObject, uvTopLeft, uvBottomRight, Color.white);
                                         StartChildAnimation(child);
                                     }
-                                    else if (child.name.StartsWith("StaticMesh"))
+                                    else if (child.name.StartsWith("StaticMesh") || child.name.StartsWith("CardPackStaticMesh"))
                                     {
-                                        child.localPosition = new Vector3(-0.001f, 0.08f - 0.08f, 0);
-                                        child.localRotation = Quaternion.Euler(90, 180, 0);
-                                        child.localScale = new Vector3(0.15f, 0.15f, 0.15f);
+                                        if (child.name.StartsWith("StaticMesh"))
+                                        {
+                                            child.localPosition = new Vector3(-0.001f, 0.08f - 0.08f, 0);
+                                            child.localRotation = Quaternion.Euler(90, 180, 0);
+                                            child.localScale = new Vector3(0.15f, 0.15f, 0.15f);
+                                        }
                                         Dictionary<EItemType, string> texturePaths = GetPackTexturePaths();
 
                                         // Vérifie si le cardPack a une texture associée dans le dictionnaire
                                         if (texturePaths.TryGetValue(cardPack, out string texturePath))
                                         {
-                                            //Plugin.Logger.LogError($"{cardPack} détecté, application d'une nouvelle texture.");
                                             ApplyTextureToChild(child, texturePath);
                                         }
                                     }
@@ -444,6 +446,9 @@ namespace WankulCrazyPlugin.patch
             Renderer renderer = targetObject.GetComponent<Renderer>();
             if (renderer != null)
             {
+                // Le shader "Standard" est strippé/cassé dans ce build (magenta silencieux).
+                renderer.sharedMaterial = ShaderUtils.EnsureNotBrokenStandard(renderer.sharedMaterial);
+
                 Material material = renderer.material;
                 Texture2D texture = null;
                 if (material.HasProperty("_BaseColorMap"))
@@ -536,19 +541,18 @@ namespace WankulCrazyPlugin.patch
                 Renderer renderer = child.GetComponent<Renderer>();
                 if (renderer != null)
                 {
-                    // Cloner le matériau existant au lieu d'utiliser Shader.Find("Standard") (incompatible HDRP)
+                    // Neutraliser le shader Standard cassé avant toute manipulation
+                    renderer.sharedMaterial = ShaderUtils.EnsureNotBrokenStandard(renderer.sharedMaterial);
+
                     Material sourceMat = renderer.sharedMaterial;
-                    if (sourceMat != null)
-                    {
-                        Material material = new Material(sourceMat);
-                        if (material.HasProperty("_BaseColorMap"))
-                            material.SetTexture("_BaseColorMap", newTexture);
-                        if (material.HasProperty("_BaseMap"))
-                            material.SetTexture("_BaseMap", newTexture);
-                        if (material.HasProperty("_MainTex"))
-                            material.SetTexture("_MainTex", newTexture);
-                        renderer.material = material;
-                    }
+                    Material material = ShaderUtils.CreateSafeMaterial(sourceMat);
+                    if (material.HasProperty("_BaseColorMap"))
+                        material.SetTexture("_BaseColorMap", newTexture);
+                    if (material.HasProperty("_BaseMap"))
+                        material.SetTexture("_BaseMap", newTexture);
+                    if (material.HasProperty("_MainTex"))
+                        material.SetTexture("_MainTex", newTexture);
+                    renderer.material = material;
                 }
                 else
                 {
@@ -569,23 +573,23 @@ namespace WankulCrazyPlugin.patch
             {
                 packTexturePaths = new Dictionary<EItemType, string>
                 {
-                    { EItemType.BasicCardPack, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S1.png") },
-                    { EItemType.RareCardPack, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S2.png") },
-                    { EItemType.EpicCardPack, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S3.png") },
-                    { EnumExtensions.SafeParseEItemType("BoosterStellar"), Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S4.png") },
-                    { EItemType.LegendaryCardPack, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_HS.png") },
-                    { EItemType.DestinyBasicCardPack, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S1_TauxDrop.png") },
-                    { EItemType.DestinyRareCardPack, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S2_TauxDrop.png") },
-                    { EItemType.DestinyEpicCardPack, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S3_TauxDrop.png") },
-                    { EnumExtensions.SafeParseEItemType("BoosterStellarTaux"), Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S4_TauxDrop.png") },
-                    { EItemType.DestinyLegendaryCardPack, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_HS_TauxDrop.png") },
-                    { EnumExtensions.SafeParseEItemType("BoosterLegacy"), Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S5.png") },
+                    { EItemType.BasicCardPack, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "T_CardPackCommon.png") },
+                    { EItemType.RareCardPack, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "T_CardPackRare.png") },
+                    { EItemType.EpicCardPack, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "T_CardPackEpic.png") },
+                    { EnumExtensions.SafeParseEItemType("BoosterStellar"), Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Booster_S4.png") },
+                    { EItemType.LegendaryCardPack, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "T_CardPackLegnd.png") },
+                    { EItemType.DestinyBasicCardPack, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "T_CardPackDestinyCommon.png") },
+                    { EItemType.DestinyRareCardPack, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "T_CardPackDestinyRare.png") },
+                    { EItemType.DestinyEpicCardPack, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "T_CardPackDestinyEpic.png") },
+                    { EnumExtensions.SafeParseEItemType("BoosterStellarTaux"), Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Booster_S4_TauxDrop.png") },
+                    { EItemType.DestinyLegendaryCardPack, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "T_CardPackDestinyLegend.png") },
+                    { EnumExtensions.SafeParseEItemType("BoosterLegacy"), Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Booster_S5.png") },
                 };
 
                 EItemType ascensionPack = EnumExtensions.SafeParseEItemType("AscensionCardPack");
                 if (ascensionPack != (EItemType)0)
                 {
-                    packTexturePaths[ascensionPack] = Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S5.png");
+                    packTexturePaths[ascensionPack] = Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Booster_S5.png");
                 }
             }
             return packTexturePaths;

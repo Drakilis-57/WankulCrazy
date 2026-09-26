@@ -45,7 +45,22 @@ namespace WankulCrazyPlugin.importer
                     }
                     else
                     {
-                        Plugin.Logger.LogWarning($"Texture {textureName} not found");
+                        // Les textures custom pour les displays, boosters, statues, etc. ne sont pas dans les ressources du jeu de base
+                        // Elles sont gérées directement par nos propres hooks (OBJImporter, GetBoxTexturePaths, etc.).
+                        bool isKnownCustomTexture = textureName.StartsWith("Texture_Display_") ||
+                                                   textureName.StartsWith("Texture_Booster_") ||
+                                                   textureName.StartsWith("MonsterStatue_") ||
+                                                   textureName.StartsWith("Texture_Starter_") ||
+                                                   textureName.StartsWith("Texture_Tapis_") ||
+                                                   textureName.StartsWith("T_CardSleeve") ||
+                                                   textureName.StartsWith("T_BasicCardBox") ||
+                                                   textureName.StartsWith("T_EpicCardBox") ||
+                                                   textureName.StartsWith("T_RareCardBox");
+
+                        if (!isKnownCustomTexture)
+                        {
+                            Plugin.Logger.LogWarning($"Texture {textureName} not found");
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -240,13 +255,25 @@ namespace WankulCrazyPlugin.importer
                     { EItemType.RareCardBox, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S2.png") },
                     { EItemType.EpicCardBox, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S3.png") },
                     { EnumExtensions.SafeParseEItemType("DisplayStellar"), Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S4.png") },
+                    { EnumExtensions.SafeParseEItemType("DisplayStellarTaux"), Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S4_TauxDrop.png") },
                     { EnumExtensions.SafeParseEItemType("DisplayLegacy"), Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S5.png") },
                     { EItemType.LegendaryCardBox, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_HS.png") },
                     { EItemType.DestinyBasicCardBox, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S1_TauxDrop.png") },
                     { EItemType.DestinyRareCardBox, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S2_TauxDrop.png") },
                     { EItemType.DestinyEpicCardBox, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S3_TauxDrop.png") },
                     { EItemType.DestinyLegendaryCardBox, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_HS_TauxDrop.png") },
+
+                    // Boosters custom
+                    { EnumExtensions.SafeParseEItemType("BoosterStellar"), Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Booster_S4.png") },
+                    { EnumExtensions.SafeParseEItemType("BoosterStellarTaux"), Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Booster_S4_TauxDrop.png") },
+                    { EnumExtensions.SafeParseEItemType("BoosterLegacy"), Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Booster_S5.png") },
                 };
+
+                EItemType ascensionPack = EnumExtensions.SafeParseEItemType("AscensionCardPack");
+                if (ascensionPack != (EItemType)0)
+                {
+                    boxTexturePaths[ascensionPack] = Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Booster_S5.png");
+                }
             }
             return boxTexturePaths;
         }
@@ -294,16 +321,15 @@ namespace WankulCrazyPlugin.importer
             // On clone le material existant du renderer pour conserver le shader et les propriétés
             // du pipeline de rendu du jeu (HDRP/URP). Shader.Find("Standard") est incompatible.
             Material sourceMat = sourceRenderer != null ? sourceRenderer.sharedMaterial : null;
-            Material newMat;
-            if (sourceMat != null)
+            if (sourceMat == null)
             {
-                newMat = new Material(sourceMat);
+                ItemMeshData fallbackMesh = InventoryBase.GetItemMeshData(EItemType.BasicCardPack) ?? InventoryBase.GetItemMeshData(EItemType.BasicCardBox);
+                sourceMat = fallbackMesh?.material;
             }
-            else
-            {
-                Plugin.Logger.LogError($"Renderer sans material pour {itemType}, impossible de créer le material.");
-                return null;
-            }
+
+            // Neutraliser le shader Standard cassé
+            sourceMat = WankulCrazyPlugin.utils.ShaderUtils.EnsureNotBrokenStandard(sourceMat);
+            Material newMat = WankulCrazyPlugin.utils.ShaderUtils.CreateSafeMaterial(sourceMat);
 
             // Assigner la texture sur la propriété principale (HDRP = _BaseColorMap, URP = _BaseMap, Built-in = _MainTex)
             // Ne PAS assigner newMat.mainTexture pour éviter l'erreur si le shader ne supporte pas _MainTex
@@ -338,12 +364,20 @@ namespace WankulCrazyPlugin.importer
                 return;
             }
 
-            if (renderer.sharedMaterial == targetMaterial)
+            if (renderer.sharedMaterial != targetMaterial)
             {
-                return;
+                renderer.sharedMaterial = targetMaterial;
             }
 
-            renderer.sharedMaterial = targetMaterial;
+            // Pour les boosters et items disposant d'un mesh secondaire (volume/dos)
+            if (item.m_MeshSecondary != null)
+            {
+                Renderer secondaryRenderer = item.m_MeshSecondary.GetComponent<Renderer>();
+                if (secondaryRenderer != null && secondaryRenderer.sharedMaterial != targetMaterial)
+                {
+                    secondaryRenderer.sharedMaterial = targetMaterial;
+                }
+            }
         }
     }
 }

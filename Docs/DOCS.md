@@ -233,9 +233,8 @@ La logique actuelle montre clairement une volonté d’ouvrir le système à de 
 - `patch/workbench/WorkbenchPatch.cs`
 - `WankulCrazyPlugin.Tests/DocsFeaturesVerificationTests.cs`
 
-## Etat actuelle : 
+## État actuel : 
 
-Booster stellar ne marche pas ; Booster Legacy ne marche pas.
+- Pack Stellar a un "Etat fonctionnel" mais il manque dans le shop + a une texture buggé (il est en boule o.o , probablement car texture d'un display ?)
+- 
 
-Manque les textures pour Legacy , et pour stellar un message d'erreur en boucle.
-Reste a Analyser.

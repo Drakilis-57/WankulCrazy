@@ -590,8 +590,30 @@ public class Plugin : BaseUnityPlugin
         return FindChildByPath(GameObject.Find(source).transform, path);
     }
 
+    private static bool _doorObstacleFixed = false;
+
     private void Update()
     {
+        // Correction du bug natif du jeu : BoxCollider Door_Obstacle avec échelle négative qui spamme le moteur physique Unity
+        if (!_doorObstacleFixed)
+        {
+            try
+            {
+                var obstacle = GameObject.Find("PathfindingColliderAndFloorGrp/Door_Obstacle");
+                if (obstacle != null)
+                {
+                    Vector3 ls = obstacle.transform.localScale;
+                    if (ls.x < 0 || ls.y < 0 || ls.z < 0)
+                    {
+                        obstacle.transform.localScale = new Vector3(Mathf.Abs(ls.x), Mathf.Abs(ls.y), Mathf.Abs(ls.z));
+                        Logger?.LogInfo("[Fix] Échelle négative de 'Door_Obstacle' corrigée avec succès (fin du spam BoxCollider).");
+                    }
+                    _doorObstacleFixed = true;
+                }
+            }
+            catch { }
+        }
+
         // Raccourcis temporaires de test pour spawner directement des boîtes de boosters dans les mains du joueur
         // F5 : S01 (Origins)
         // F6 : S02 (Campus)
@@ -622,10 +644,56 @@ public class Plugin : BaseUnityPlugin
                 EItemType displayLegacy = EnumExtensions.SafeParseEItemType("DisplayLegacy");
                 SpawnBoosterBoxInHand(displayLegacy, "Legacy (S05)");
             }
+            else if (Input.GetKeyDown(KeyCode.F10))
+            {
+                ForceOpenCardBoxDebug(EnumExtensions.SafeParseEItemType("DisplayStellar"), "Stellar (S04) - FORCE OPEN");
+            }
         }
         catch (Exception ex)
         {
             Logger?.LogWarning($"[DebugSpawn] Erreur touche: {ex.Message}");
+        }
+    }
+
+    private static void ForceOpenCardBoxDebug(EItemType boxItemType, string seasonName)
+    {
+        var playerController = CSingleton<InteractionPlayerController>.Instance;
+        if (playerController == null)
+        {
+            Logger?.LogWarning("[DebugForceOpen] InteractionPlayerController non disponible (es-tu en jeu ?)");
+            return;
+        }
+
+        ItemMeshData itemMeshData = InventoryBase.GetItemMeshData(boxItemType);
+        if (itemMeshData == null)
+        {
+            Logger?.LogWarning($"[DebugForceOpen] ItemMeshData introuvable pour {boxItemType}");
+            return;
+        }
+
+        Item item = ItemSpawnManager.GetItem(playerController.m_HoldItemPos);
+        if (item == null)
+        {
+            Logger?.LogWarning("[DebugForceOpen] ItemSpawnManager.GetItem a renvoyé null.");
+            return;
+        }
+
+        item.SetMesh(itemMeshData.mesh, itemMeshData.material, boxItemType, itemMeshData.meshSecondary, itemMeshData.materialSecondary);
+        playerController.AddHoldItemToFront(item);
+
+        Logger?.LogInfo($"[DebugForceOpen] 📦 {seasonName} ({boxItemType}) — déclenchement direct de EvaluateOpenCardPack...");
+        WankulCrazyPlugin.patch.InteractionPlayerControllerPatch.EvaluateOpenCardPack(playerController);
+
+        // AJOUT DIAGNOSTIC
+        var openCardBoxInnerMeshField = HarmonyLib.AccessTools.Field(typeof(InteractionPlayerController), "m_OpenCardBoxInnerMesh");
+        var openCardBoxInnerMesh = openCardBoxInnerMeshField?.GetValue(playerController) as Animation;
+        if (openCardBoxInnerMesh != null)
+        {
+            WankulCrazyPlugin.utils.MaterialDiagnostics.DumpRenderers(openCardBoxInnerMesh.gameObject, "CardBoxOpen");
+        }
+        else
+        {
+            Logger?.LogWarning("[DebugForceOpen] m_OpenCardBoxInnerMesh introuvable ou null — impossible de dumper.");
         }
     }
 

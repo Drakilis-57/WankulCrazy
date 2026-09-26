@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 using System.IO;
+using WankulCrazyPlugin.utils;
 
 namespace WankulCrazyPlugin.patch
 {
@@ -48,8 +49,13 @@ namespace WankulCrazyPlugin.patch
                 poster.name = posterName;
 
                 MeshRenderer meshRenderer = poster.GetComponent<MeshRenderer>();
-                Material material = new Material(Shader.Find("Standard")); // Utiliser un shader existant
+                // AVANT: new Material(Shader.Find("Standard")) — invalide en HDRP/URP (magenta plein écran).
+                Material material = ShaderUtils.CreateSafeMaterial();
                 material.mainTexture = texture;
+                if (material.HasProperty("_BaseColorMap"))
+                    material.SetTexture("_BaseColorMap", texture);
+                if (material.HasProperty("_BaseMap"))
+                    material.SetTexture("_BaseMap", texture);
                 meshRenderer.material = material;
 
                 // 🔹 Ajuster la taille du Quad pour correspondre au ratio de l’image
