@@ -247,12 +247,6 @@ namespace WankulCrazyPlugin.importer
                     { EItemType.DestinyEpicCardBox, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S3_TauxDrop.png") },
                     { EItemType.DestinyLegendaryCardBox, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_HS_TauxDrop.png") },
                 };
-
-                EItemType ascensionBox = EnumExtensions.SafeParseEItemType("AscensionCardBox");
-                if (ascensionBox != (EItemType)0)
-                {
-                    boxTexturePaths[ascensionBox] = Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S5.png");
-                }
             }
             return boxTexturePaths;
         }

@@ -27,7 +27,9 @@ public static class EnumExtensions
                 { 135, "BoosterGoldBattle" },
                 { 136, "BoosterGoldStellar" },
                 { 137, "TestCardPack32" },
-                { 138, "TestCardPack64" }
+                { 138, "TestCardPack64" },
+                { 139, "BoosterLegacy" },
+                { 140, "DisplayLegacy" }
             }
         },
         {
@@ -36,7 +38,8 @@ public static class EnumExtensions
                 { 15, "Stellar" },
                 { 16, "StellarTaux" },
                 { 17, "SeasonTestPack32" },
-                { 18, "SeasonTestPack64" }
+                { 18, "SeasonTestPack64" },
+                { 19, "Legacy" }
             }
         },
         {
@@ -112,7 +115,9 @@ public static class EnumExtensions
         { "Tapi Stellar 2", "TapisS42" }, { "Tapis Stellar 1", "TapisS41" },
         { "Tapis Stellar 2", "TapisS42" }, { "Classeur Stellar", "ClasseurS4" },
         { "Booster Gold Battle", "BoosterGoldBattle" }, { "Booster Gold Stellar", "BoosterGoldStellar" },
-        { "Test Card Pack 32", "TestCardPack32" }, { "Test Card Pack 64", "TestCardPack64" }
+        { "Test Card Pack 32", "TestCardPack32" }, { "Test Card Pack 64", "TestCardPack64" },
+        { "AscensionCardBox", "AscensionCardPack" }, { "Ascension Card Box", "AscensionCardPack" },
+        { "Booster Legacy", "BoosterLegacy" }, { "Display Legacy", "DisplayLegacy" }
     };
 
     public static EItemType SafeParseEItemType(string value)

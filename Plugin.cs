@@ -589,4 +589,69 @@ public class Plugin : BaseUnityPlugin
     {
         return FindChildByPath(GameObject.Find(source).transform, path);
     }
+
+    private void Update()
+    {
+        // Raccourcis temporaires de test pour spawner directement des boîtes de boosters dans les mains du joueur
+        // F5 : S01 (Origins)
+        // F6 : S02 (Campus)
+        // F7 : S03 (Battle)
+        // F8 : S04 (Stellar)
+        // F9 : S05 (Legacy / Ascension)
+        try
+        {
+            if (Input.GetKeyDown(KeyCode.F5))
+            {
+                SpawnBoosterBoxInHand(EItemType.BasicCardBox, "Origins (S01)");
+            }
+            else if (Input.GetKeyDown(KeyCode.F6))
+            {
+                SpawnBoosterBoxInHand(EItemType.RareCardBox, "Campus (S02)");
+            }
+            else if (Input.GetKeyDown(KeyCode.F7))
+            {
+                SpawnBoosterBoxInHand(EItemType.EpicCardBox, "Battle (S03)");
+            }
+            else if (Input.GetKeyDown(KeyCode.F8))
+            {
+                EItemType displayStellar = EnumExtensions.SafeParseEItemType("DisplayStellar");
+                SpawnBoosterBoxInHand(displayStellar, "Stellar (S04)");
+            }
+            else if (Input.GetKeyDown(KeyCode.F9))
+            {
+                EItemType displayLegacy = EnumExtensions.SafeParseEItemType("DisplayLegacy");
+                SpawnBoosterBoxInHand(displayLegacy, "Legacy (S05)");
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger?.LogWarning($"[DebugSpawn] Erreur touche: {ex.Message}");
+        }
+    }
+
+    private static void SpawnBoosterBoxInHand(EItemType boxItemType, string seasonName)
+    {
+        var playerController = CSingleton<InteractionPlayerController>.Instance;
+        if (playerController == null)
+        {
+            Logger?.LogWarning($"[DebugSpawn] InteractionPlayerController non disponible (es-tu en jeu ?)");
+            return;
+        }
+
+        ItemMeshData itemMeshData = InventoryBase.GetItemMeshData(boxItemType);
+        if (itemMeshData == null)
+        {
+            Logger?.LogWarning($"[DebugSpawn] ItemMeshData introuvable pour {boxItemType}");
+            return;
+        }
+
+        Item item = ItemSpawnManager.GetItem(playerController.m_HoldItemPos);
+        if (item != null)
+        {
+            item.SetMesh(itemMeshData.mesh, itemMeshData.material, boxItemType, itemMeshData.meshSecondary, itemMeshData.materialSecondary);
+            playerController.AddHoldItemToFront(item);
+            Logger?.LogInfo($"[DebugSpawn] 📦 Boîte de 24/32 boosters {seasonName} ({boxItemType}) spawnée dans tes mains !");
+        }
+    }
 }
+

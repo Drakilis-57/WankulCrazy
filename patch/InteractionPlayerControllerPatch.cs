@@ -574,7 +574,14 @@ namespace WankulCrazyPlugin.patch
                     { EItemType.DestinyEpicCardPack, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S3_TauxDrop.png") },
                     { EnumExtensions.SafeParseEItemType("BoosterStellarTaux"), Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S4_TauxDrop.png") },
                     { EItemType.DestinyLegendaryCardPack, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_HS_TauxDrop.png") },
+                    { EnumExtensions.SafeParseEItemType("BoosterLegacy"), Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S5.png") },
                 };
+
+                EItemType ascensionPack = EnumExtensions.SafeParseEItemType("AscensionCardPack");
+                if (ascensionPack != (EItemType)0)
+                {
+                    packTexturePaths[ascensionPack] = Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S5.png");
+                }
             }
             return packTexturePaths;
         }
