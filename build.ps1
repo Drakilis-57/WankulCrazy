@@ -1,6 +1,6 @@
 ﻿<#
 .SYNOPSIS
-    Script de build pour WankulCrazy : mode Dev (rapide, injecte la DLL) ou mode Release (package zip complet).
+    Script de build pour WankulCrazy : mode Dev (rapide et direct en jeux) ou mode Release (package zip complet).
 .PARAMETER Mode
     'dev' : Compile le code et copie directement la DLL dans le dossier BepInEx du jeu.
     'release' : Compile en Release, prépare un dossier propre et crée une archive zip prête pour les joueurs.
@@ -14,9 +14,13 @@ param (
 $ErrorActionPreference = 'Stop'
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 
-# Forcer l'encodage console en UTF-8 pour éviter les caractères corrompus (é, è, etc.)
-[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
-$OutputEncoding = [System.Text.Encoding]::UTF8
+# Forcer l'encodage console en UTF-8 (chcp 65001 + System.Text.Encoding) pour éviter les caractères corrompus (é, è, etc.)
+try {
+    [Console]::InputEncoding = [System.Text.Encoding]::UTF8
+    [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+    $OutputEncoding = [System.Text.Encoding]::UTF8
+    chcp 65001 > $null
+} catch {}
 
 Set-Location $ScriptDir
 
@@ -68,10 +72,25 @@ if ($Mode -eq 'dev') {
         Write-Host "[Dev] Copie de la DLL dans le jeu -> $GamePluginDir" -ForegroundColor Green
         try {
             Copy-Item -Path $distDll -Destination (Join-Path $GamePluginDir "WankulCrazyPlugin.dll") -Force
-            Write-Host "[Dev] Déploiement terminé avec succès !" -ForegroundColor Green
+            Write-Host "[Dev] DLL copiée avec succès !" -ForegroundColor Green
         } catch {
             Write-Warning "Le jeu est actuellement ouvert et verrouille 'WankulCrazyPlugin.dll'. Ferme le jeu pour que la nouvelle DLL soit appliquée."
         }
+
+        # Synchronisation du dossier data (textures patchées dont shared1, cartes, sprites, configs, etc.)
+        $srcData = Join-Path $ScriptDir "data"
+        if (Test-Path $srcData) {
+            Write-Host "[Dev] Synchronisation du dossier data (textures, etc.) -> $GamePluginDir\data" -ForegroundColor Green
+            $destData = Join-Path $GamePluginDir "data"
+            if (-not (Test-Path $destData)) {
+                New-Item -ItemType Directory -Path $destData -Force | Out-Null
+            }
+            # Robocopy /E /XO /FFT pour ne copier rapidement que les fichiers nouveaux/modifiés
+            & robocopy $srcData $destData /E /XO /FFT /NDL /NFL /NJH /NJS /nc /ns /np | Out-Null
+            Write-Host "[Dev] Dossier data synchronisé avec succès !" -ForegroundColor Green
+        }
+
+        Write-Host "[Dev] Déploiement terminé avec succès !" -ForegroundColor Green
     } else {
         Write-Host "[Dev] Compilation terminée ! La DLL est dans 'dist/WankulCrazy/WankulCrazyPlugin.dll'." -ForegroundColor Green
         Write-Host "      (Pour copie auto, définis un fichier local.config.json ou la variable TCGCARDSHOP_PLUGIN_DIR)" -ForegroundColor DarkGray
@@ -128,3 +147,4 @@ elseif ($Mode -eq 'release') {
     Write-Host "   Release prête : $zipPath" -ForegroundColor Green
     Write-Host "==========================================" -ForegroundColor Green
 }
+
