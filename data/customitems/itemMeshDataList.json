@@ -1,2 +1,22 @@
 [
+  {
+    "name": "BoosterStellar",
+    "copyItemType": "BasicCardPack",
+    "texture": "Texture_Booster_S4.png"
+  },
+  {
+    "name": "DisplayStellar",
+    "copyItemType": "BasicCardBox",
+    "texture": "Texture_Display_S4.png"
+  },
+  {
+    "name": "BoosterStellarTaux",
+    "copyItemType": "BasicCardPack",
+    "texture": "Texture_Booster_S4_TauxDrop.png"
+  },
+  {
+    "name": "DisplayStellarTaux",
+    "copyItemType": "BasicCardBox",
+    "texture": "Texture_Display_S4_TauxDrop.png"
+  }
 ]
