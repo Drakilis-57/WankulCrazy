@@ -433,6 +433,13 @@ namespace WankulCrazyPlugin.patch
         public static void EvaluateOpenCardPackPreFix(out EvaluateOpenCardPack__State __state, InteractionPlayerController __instance)
         {
             __state = new EvaluateOpenCardPack__State();
+
+            if (WankulCrazyPlugin.importer.WankulLoadingScreen.IsLoading)
+            {
+                __state.CanOpenCardBox = false;
+                return;
+            }
+
             if (__instance.CanOpenCardBox())
             {
                 __state.CanOpenCardBox = true;
