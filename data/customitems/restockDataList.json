@@ -1,2 +1,98 @@
 [
+  {
+    "index": 100,
+    "name": "BoosterStellar",
+    "isBigBox": false,
+    "ignoreDoubleImage": false,
+    "amount": 32,
+    "licenseShopLevelRequired": 15,
+    "licensePrice": 1000,
+    "itemType": "BoosterStellar",
+    "prologueShow": false,
+    "isHideItemUntilUnlocked": false
+  },
+  {
+    "index": 101,
+    "name": "BoosterStellar",
+    "isBigBox": true,
+    "ignoreDoubleImage": false,
+    "amount": 64,
+    "licenseShopLevelRequired": 20,
+    "licensePrice": 1500,
+    "itemType": "BoosterStellar",
+    "prologueShow": false,
+    "isHideItemUntilUnlocked": false
+  },
+  {
+    "index": 102,
+    "name": "DisplayStellar",
+    "isBigBox": false,
+    "ignoreDoubleImage": false,
+    "amount": 4,
+    "licenseShopLevelRequired": 18,
+    "licensePrice": 2000,
+    "itemType": "DisplayStellar",
+    "prologueShow": false,
+    "isHideItemUntilUnlocked": false
+  },
+  {
+    "index": 103,
+    "name": "DisplayStellar",
+    "isBigBox": true,
+    "ignoreDoubleImage": false,
+    "amount": 8,
+    "licenseShopLevelRequired": 25,
+    "licensePrice": 3000,
+    "itemType": "DisplayStellar",
+    "prologueShow": false,
+    "isHideItemUntilUnlocked": false
+  },
+  {
+    "index": 104,
+    "name": "BoosterStellarTaux",
+    "isBigBox": false,
+    "ignoreDoubleImage": false,
+    "amount": 32,
+    "licenseShopLevelRequired": 45,
+    "licensePrice": 5500,
+    "itemType": "BoosterStellarTaux",
+    "prologueShow": false,
+    "isHideItemUntilUnlocked": false
+  },
+  {
+    "index": 105,
+    "name": "BoosterStellarTaux",
+    "isBigBox": true,
+    "ignoreDoubleImage": false,
+    "amount": 64,
+    "licenseShopLevelRequired": 50,
+    "licensePrice": 6500,
+    "itemType": "BoosterStellarTaux",
+    "prologueShow": false,
+    "isHideItemUntilUnlocked": false
+  },
+  {
+    "index": 106,
+    "name": "DisplayStellarTaux",
+    "isBigBox": false,
+    "ignoreDoubleImage": false,
+    "amount": 4,
+    "licenseShopLevelRequired": 48,
+    "licensePrice": 7000,
+    "itemType": "DisplayStellarTaux",
+    "prologueShow": false,
+    "isHideItemUntilUnlocked": false
+  },
+  {
+    "index": 107,
+    "name": "DisplayStellarTaux",
+    "isBigBox": true,
+    "ignoreDoubleImage": false,
+    "amount": 8,
+    "licenseShopLevelRequired": 55,
+    "licensePrice": 8500,
+    "itemType": "DisplayStellarTaux",
+    "prologueShow": false,
+    "isHideItemUntilUnlocked": false
+  }
 ]

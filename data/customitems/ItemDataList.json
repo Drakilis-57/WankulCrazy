@@ -1,2 +1,74 @@
 [
+  {
+    "name": "BoosterStellar",
+    "category": "TCG",
+    "iconScale": 1,
+    "baseCost": 15,
+    "marketPriceMinPercent": 0.8,
+    "marketPriceMaxPercent": 1.2,
+    "boxFollowItemPrice": "None",
+    "isNotBoosterPack": false,
+    "isTallItem": false,
+    "isHideItemUntilUnlocked": false,
+    "posYOffsetInBox": 0,
+    "scaleOffsetInBox": 0,
+    "affectedPriceChangeType": [
+      "TCG"
+    ],
+    "icon": "BoosterStellar.png"
+  },
+  {
+    "name": "DisplayStellar",
+    "category": "TCG",
+    "iconScale": 1,
+    "baseCost": 450,
+    "marketPriceMinPercent": 0.8,
+    "marketPriceMaxPercent": 1.2,
+    "boxFollowItemPrice": "BoosterStellar",
+    "isNotBoosterPack": true,
+    "isTallItem": false,
+    "isHideItemUntilUnlocked": false,
+    "posYOffsetInBox": 0,
+    "scaleOffsetInBox": 0,
+    "affectedPriceChangeType": [
+      "TCG"
+    ],
+    "icon": "DisplayStellar.png"
+  },
+  {
+    "name": "BoosterStellarTaux",
+    "category": "TCG",
+    "iconScale": 1,
+    "baseCost": 150,
+    "marketPriceMinPercent": 0.8,
+    "marketPriceMaxPercent": 1.2,
+    "boxFollowItemPrice": "None",
+    "isNotBoosterPack": false,
+    "isTallItem": false,
+    "isHideItemUntilUnlocked": false,
+    "posYOffsetInBox": 0,
+    "scaleOffsetInBox": 0,
+    "affectedPriceChangeType": [
+      "TCG"
+    ],
+    "icon": "BoosterStellarTaux.png"
+  },
+  {
+    "name": "DisplayStellarTaux",
+    "category": "TCG",
+    "iconScale": 1,
+    "baseCost": 4500,
+    "marketPriceMinPercent": 0.8,
+    "marketPriceMaxPercent": 1.2,
+    "boxFollowItemPrice": "BoosterStellarTaux",
+    "isNotBoosterPack": true,
+    "isTallItem": false,
+    "isHideItemUntilUnlocked": false,
+    "posYOffsetInBox": 0,
+    "scaleOffsetInBox": 0,
+    "affectedPriceChangeType": [
+      "TCG"
+    ],
+    "icon": "DisplayStellarTaux.png"
+  }
 ]

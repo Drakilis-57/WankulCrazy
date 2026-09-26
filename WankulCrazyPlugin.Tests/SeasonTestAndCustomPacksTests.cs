@@ -31,7 +31,7 @@ public void LegacyCards_JsonLoading_RegistersSeasonAndRarities()
     // validations conservées...
 }
 
-        [Fact(Skip="Missing custom items asset in CI")]
+        [Fact]
         public void CustomItems_JsonFiles_ParseValidly()
         {
             string rootPath = AppDomain.CurrentDomain.BaseDirectory;
@@ -47,7 +47,7 @@ public void LegacyCards_JsonLoading_RegistersSeasonAndRarities()
             string jsonText = File.ReadAllText(itemDataPath);
             JArray array = JArray.Parse(jsonText);
 
-            Assert.Equal(2, array.Count);
+            Assert.Equal(4, array.Count);
             foreach (JObject item in array)
             {
                 string? catString = (string?)item["category"];
@@ -63,17 +63,17 @@ public void LegacyCards_JsonLoading_RegistersSeasonAndRarities()
             Assert.True(File.Exists(restockPath));
             JArray restockArray = JArray.Parse(File.ReadAllText(restockPath));
 
-            Assert.Equal(2, restockArray.Count);
+            Assert.Equal(8, restockArray.Count);
             Assert.Equal(32, (int?)restockArray[0]["amount"]);
             Assert.Equal(64, (int?)restockArray[1]["amount"]);
-            Assert.Equal(1, (int?)restockArray[0]["licenseShopLevelRequired"]);
-            Assert.Equal(1, (int?)restockArray[1]["licenseShopLevelRequired"]);
+            Assert.Equal(15, (int?)restockArray[0]["licenseShopLevelRequired"]);
+            Assert.Equal(20, (int?)restockArray[1]["licenseShopLevelRequired"]);
 
             string meshPath = Path.Combine(rootPath, "data/customitems/itemMeshDataList.json");
             Assert.True(File.Exists(meshPath));
             JArray meshArray = JArray.Parse(File.ReadAllText(meshPath));
 
-            Assert.Equal(2, meshArray.Count);
+            Assert.Equal(4, meshArray.Count);
             string? texture0 = (string?)meshArray[0]["texture"];
             string? texture1 = (string?)meshArray[1]["texture"];
             Assert.NotNull(texture0);
