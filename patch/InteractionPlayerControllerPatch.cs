@@ -151,11 +151,6 @@ namespace WankulCrazyPlugin.patch
         [HarmonyPatch(typeof(InteractionPlayerController), "EvaluateOpenCardPack")]
         public static bool EvaluateOpenCardPack(InteractionPlayerController __instance)
         {
-            if (WankulCrazyPlugin.importer.WankulLoadingScreen.IsLoading)
-            {
-                return false;
-            }
-
             List<Item> m_HoldItemList = (List<Item>)Plugin.GetPProperty(__instance, "m_HoldItemList");
             var canOpenPackMethod = AccessTools.Method(__instance.GetType(), "CanOpenPack");
             bool canOpenPack = (bool)canOpenPackMethod.Invoke(__instance, null);
