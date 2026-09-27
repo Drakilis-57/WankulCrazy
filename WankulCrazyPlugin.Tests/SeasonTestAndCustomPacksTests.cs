@@ -26,7 +26,7 @@ public void LegacyCards_JsonLoading_RegistersSeasonAndRarities()
 
     string jsonContent = File.ReadAllText(jsonPath);
     JToken token = JToken.Parse(jsonContent);
-    List<WankulCardData> cards = JsonImporter.DeserializeToken(token);
+    List<WankulCardData> cards = JsonImporter.DeserializeToken(token)!;
 
     // validations conservées...
 }
@@ -34,7 +34,7 @@ public void LegacyCards_JsonLoading_RegistersSeasonAndRarities()
         [Fact]
         public void CustomItems_JsonFiles_ParseValidly()
         {
-            string rootPath = AppDomain.CurrentDomain.BaseDirectory;
+            string? rootPath = AppDomain.CurrentDomain.BaseDirectory;
             while (rootPath != null && !Directory.Exists(Path.Combine(rootPath, "data")))
             {
                 rootPath = Directory.GetParent(rootPath)?.FullName;
@@ -50,10 +50,10 @@ public void LegacyCards_JsonLoading_RegistersSeasonAndRarities()
             Assert.True(array.Count >= 8);
             foreach (JObject item in array)
             {
-                string? catString = (string?)item["category"];
+                string? catString = item["category"]?.ToString();
                 Assert.NotNull(catString);
 
-                string? icon = (string?)item["icon"];
+                string? icon = item["icon"]?.ToString();
                 Assert.NotNull(icon);
                 Assert.EndsWith(".png", icon);
             }
@@ -70,8 +70,8 @@ public void LegacyCards_JsonLoading_RegistersSeasonAndRarities()
             JArray meshArray = JArray.Parse(File.ReadAllText(meshPath));
 
             Assert.True(meshArray.Count >= 8);
-            string? texture0 = (string?)meshArray[0]["texture"];
-            string? texture1 = (string?)meshArray[1]["texture"];
+            string? texture0 = meshArray[0]["texture"]?.ToString();
+            string? texture1 = meshArray[1]["texture"]?.ToString();
             Assert.NotNull(texture0);
             Assert.NotNull(texture1);
             Assert.EndsWith(".png", texture0);
