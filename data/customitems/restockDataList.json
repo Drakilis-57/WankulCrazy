@@ -94,5 +94,53 @@
     "itemType": "DisplayStellarTaux",
     "prologueShow": false,
     "isHideItemUntilUnlocked": false
+  },
+  {
+    "index": 108,
+    "name": "ClasseurS4",
+    "isBigBox": false,
+    "ignoreDoubleImage": false,
+    "amount": 2,
+    "licenseShopLevelRequired": 15,
+    "licensePrice": 1000,
+    "itemType": "ClasseurS4",
+    "prologueShow": false,
+    "isHideItemUntilUnlocked": false
+  },
+  {
+    "index": 109,
+    "name": "TapisS41",
+    "isBigBox": false,
+    "ignoreDoubleImage": false,
+    "amount": 2,
+    "licenseShopLevelRequired": 15,
+    "licensePrice": 1000,
+    "itemType": "TapisS41",
+    "prologueShow": false,
+    "isHideItemUntilUnlocked": false
+  },
+  {
+    "index": 110,
+    "name": "TapisS42",
+    "isBigBox": false,
+    "ignoreDoubleImage": false,
+    "amount": 2,
+    "licenseShopLevelRequired": 15,
+    "licensePrice": 1000,
+    "itemType": "TapisS42",
+    "prologueShow": false,
+    "isHideItemUntilUnlocked": false
+  },
+  {
+    "index": 111,
+    "name": "CaleconStellar",
+    "isBigBox": false,
+    "ignoreDoubleImage": false,
+    "amount": 2,
+    "licenseShopLevelRequired": 15,
+    "licensePrice": 1000,
+    "itemType": "CaleconStellar",
+    "prologueShow": false,
+    "isHideItemUntilUnlocked": false
   }
 ]

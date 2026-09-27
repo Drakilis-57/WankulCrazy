@@ -18,5 +18,25 @@
     "name": "DisplayStellarTaux",
     "copyItemType": "BasicCardBox",
     "texture": "Texture_Display_S4_TauxDrop.png"
+  },
+  {
+    "name": "ClasseurS4",
+    "copyItemType": "CardAlbum",
+    "texture": "Texture_Classeur_S4.png"
+  },
+  {
+    "name": "TapisS41",
+    "copyItemType": "Playmat_01",
+    "texture": "Texture_Tapis_S4_1.png"
+  },
+  {
+    "name": "TapisS42",
+    "copyItemType": "Playmat_01",
+    "texture": "Texture_Tapis_S4_2.png"
+  },
+  {
+    "name": "CaleconStellar",
+    "copyItemType": "Plushie_Small",
+    "texture": "Texture_Calecon_S4.png"
   }
 ]

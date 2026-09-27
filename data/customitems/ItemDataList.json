@@ -15,7 +15,22 @@
     "affectedPriceChangeType": [
       "TCG"
     ],
-    "icon": "BoosterStellar.png"
+    "icon": "BoosterStellar.png",
+    "itemDimension": {
+      "x": 1,
+      "y": 1,
+      "z": 1
+    },
+    "colliderPosOffset": {
+      "x": 0,
+      "y": 0,
+      "z": 0
+    },
+    "colliderScale": {
+      "x": 1,
+      "y": 1,
+      "z": 1
+    }
   },
   {
     "name": "DisplayStellar",
@@ -33,7 +48,22 @@
     "affectedPriceChangeType": [
       "TCG"
     ],
-    "icon": "DisplayStellar.png"
+    "icon": "DisplayStellar.png",
+    "itemDimension": {
+      "x": 1,
+      "y": 1,
+      "z": 1
+    },
+    "colliderPosOffset": {
+      "x": 0,
+      "y": 0,
+      "z": 0
+    },
+    "colliderScale": {
+      "x": 1,
+      "y": 1,
+      "z": 1
+    }
   },
   {
     "name": "BoosterStellarTaux",
@@ -51,7 +81,22 @@
     "affectedPriceChangeType": [
       "TCG"
     ],
-    "icon": "BoosterStellarTaux.png"
+    "icon": "BoosterStellarTaux.png",
+    "itemDimension": {
+      "x": 1,
+      "y": 1,
+      "z": 1
+    },
+    "colliderPosOffset": {
+      "x": 0,
+      "y": 0,
+      "z": 0
+    },
+    "colliderScale": {
+      "x": 1,
+      "y": 1,
+      "z": 1
+    }
   },
   {
     "name": "DisplayStellarTaux",
@@ -69,6 +114,153 @@
     "affectedPriceChangeType": [
       "TCG"
     ],
-    "icon": "DisplayStellarTaux.png"
+    "icon": "DisplayStellarTaux.png",
+    "itemDimension": {
+      "x": 1,
+      "y": 1,
+      "z": 1
+    },
+    "colliderPosOffset": {
+      "x": 0,
+      "y": 0,
+      "z": 0
+    },
+    "colliderScale": {
+      "x": 1,
+      "y": 1,
+      "z": 1
+    }
+  },
+  {
+    "name": "ClasseurS4",
+    "category": "Accessories",
+    "iconScale": 1,
+    "baseCost": 200,
+    "marketPriceMinPercent": 0.8,
+    "marketPriceMaxPercent": 1.2,
+    "boxFollowItemPrice": "None",
+    "isNotBoosterPack": true,
+    "isTallItem": false,
+    "isHideItemUntilUnlocked": false,
+    "posYOffsetInBox": 0,
+    "scaleOffsetInBox": 0,
+    "affectedPriceChangeType": [
+      "Accessories"
+    ],
+    "icon": "ClasseurS4.png",
+    "itemDimension": {
+      "x": 1,
+      "y": 1,
+      "z": 1
+    },
+    "colliderPosOffset": {
+      "x": 0,
+      "y": 0,
+      "z": 0
+    },
+    "colliderScale": {
+      "x": 1,
+      "y": 1,
+      "z": 1
+    }
+  },
+  {
+    "name": "TapisS41",
+    "category": "Accessories",
+    "iconScale": 1,
+    "baseCost": 150,
+    "marketPriceMinPercent": 0.8,
+    "marketPriceMaxPercent": 1.2,
+    "boxFollowItemPrice": "None",
+    "isNotBoosterPack": true,
+    "isTallItem": false,
+    "isHideItemUntilUnlocked": false,
+    "posYOffsetInBox": 0,
+    "scaleOffsetInBox": 0,
+    "affectedPriceChangeType": [
+      "Accessories"
+    ],
+    "icon": "TapisS41.png",
+    "itemDimension": {
+      "x": 1,
+      "y": 1,
+      "z": 1
+    },
+    "colliderPosOffset": {
+      "x": 0,
+      "y": 0,
+      "z": 0
+    },
+    "colliderScale": {
+      "x": 1,
+      "y": 1,
+      "z": 1
+    }
+  },
+  {
+    "name": "TapisS42",
+    "category": "Accessories",
+    "iconScale": 1,
+    "baseCost": 150,
+    "marketPriceMinPercent": 0.8,
+    "marketPriceMaxPercent": 1.2,
+    "boxFollowItemPrice": "None",
+    "isNotBoosterPack": true,
+    "isTallItem": false,
+    "isHideItemUntilUnlocked": false,
+    "posYOffsetInBox": 0,
+    "scaleOffsetInBox": 0,
+    "affectedPriceChangeType": [
+      "Accessories"
+    ],
+    "icon": "TapisS42.png",
+    "itemDimension": {
+      "x": 1,
+      "y": 1,
+      "z": 1
+    },
+    "colliderPosOffset": {
+      "x": 0,
+      "y": 0,
+      "z": 0
+    },
+    "colliderScale": {
+      "x": 1,
+      "y": 1,
+      "z": 1
+    }
+  },
+  {
+    "name": "CaleconStellar",
+    "category": "Figurines",
+    "iconScale": 1,
+    "baseCost": 120,
+    "marketPriceMinPercent": 0.8,
+    "marketPriceMaxPercent": 1.2,
+    "boxFollowItemPrice": "None",
+    "isNotBoosterPack": true,
+    "isTallItem": false,
+    "isHideItemUntilUnlocked": false,
+    "posYOffsetInBox": 0,
+    "scaleOffsetInBox": 0,
+    "affectedPriceChangeType": [
+      "Figurines"
+    ],
+    "icon": "CaleconStellar.png",
+    "itemDimension": {
+      "x": 1,
+      "y": 1,
+      "z": 1
+    },
+    "colliderPosOffset": {
+      "x": 0,
+      "y": 0,
+      "z": 0
+    },
+    "colliderScale": {
+      "x": 1,
+      "y": 1,
+      "z": 1
+    }
   }
 ]
