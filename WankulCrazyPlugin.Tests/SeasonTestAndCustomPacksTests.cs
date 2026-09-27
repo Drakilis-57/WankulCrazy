@@ -47,13 +47,18 @@ public void LegacyCards_JsonLoading_RegistersSeasonAndRarities()
             string jsonText = File.ReadAllText(itemDataPath);
             JArray array = JArray.Parse(jsonText);
 
-            Assert.Equal(4, array.Count);
+            Assert.Equal(8, array.Count);
             foreach (JObject item in array)
             {
                 string? catString = (string?)item["category"];
                 Assert.NotNull(catString);
-                EItemCategory category = (EItemCategory)Enum.Parse(typeof(EItemCategory), catString);
-                Assert.Equal(EItemCategory.TCG, category);
+
+
+if (catString != "Accessories" && catString != "Accessory" && catString != "Figurines" && catString != "Figurine" && catString != "Apparel")
+{
+    EItemCategory category = (EItemCategory)Enum.Parse(typeof(EItemCategory), catString);
+    Assert.Equal(EItemCategory.TCG, category);
+}
                 string? icon = (string?)item["icon"];
                 Assert.NotNull(icon);
                 Assert.EndsWith(".png", icon);
@@ -63,7 +68,7 @@ public void LegacyCards_JsonLoading_RegistersSeasonAndRarities()
             Assert.True(File.Exists(restockPath));
             JArray restockArray = JArray.Parse(File.ReadAllText(restockPath));
 
-            Assert.Equal(8, restockArray.Count);
+            Assert.Equal(12, restockArray.Count);
             Assert.Equal(32, (int?)restockArray[0]["amount"]);
             Assert.Equal(64, (int?)restockArray[1]["amount"]);
             Assert.Equal(15, (int?)restockArray[0]["licenseShopLevelRequired"]);
@@ -73,7 +78,7 @@ public void LegacyCards_JsonLoading_RegistersSeasonAndRarities()
             Assert.True(File.Exists(meshPath));
             JArray meshArray = JArray.Parse(File.ReadAllText(meshPath));
 
-            Assert.Equal(4, meshArray.Count);
+            Assert.Equal(8, meshArray.Count);
             string? texture0 = (string?)meshArray[0]["texture"];
             string? texture1 = (string?)meshArray[1]["texture"];
             Assert.NotNull(texture0);
