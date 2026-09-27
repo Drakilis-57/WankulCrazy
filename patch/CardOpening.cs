@@ -1235,11 +1235,61 @@ namespace WankulCrazyPlugin.patch
         }
 
         /// <summary>
-        /// Méthode Update principale.
+        /// Méthode Update principale protégée par un try/catch global (Docs/DOCS.md §8.4).
         /// Remplace la méthode Update() d'origine du jeu (Harmony Prefix).
-        /// Reçoit chaque frame et délègue le traitement aux sous-méthodes associées selon la phase/état.
+        /// En cas d'exception, logue l'erreur et tente un repli propre (m_StateIndex = 11 ou désactivation d'urgence)
+        /// pour éviter de bloquer la boucle de jeu du joueur à chaque frame.
         /// </summary>
         public static bool Update(CardOpeningSequence __instance)
+        {
+            try
+            {
+                return UpdateCore(__instance);
+            }
+            catch (Exception ex)
+            {
+                int stateAtCrash = __instance != null ? __instance.m_StateIndex : -999;
+                Plugin.Logger.LogError($"[CardOpening] Update a levé une exception (state={stateAtCrash}) : {ex}");
+
+                try
+                {
+                    // Réutilise le chemin de fermeture déjà existant (cf. soupape de
+                    // sécurité "Booster incomplet" plus bas dans UpdateCore) : state 11
+                    // nettoie l'UI, attribue l'XP déjà calculée et referme l'écran.
+                    if (__instance != null)
+                    {
+                        __instance.m_StateIndex = 11;
+                    }
+                }
+                catch (Exception fallbackEx)
+                {
+                    Plugin.Logger.LogError($"[CardOpening] Échec du repli sur state=11, désactivation forcée de l'écran : {fallbackEx}");
+                    try
+                    {
+                        if (__instance != null)
+                        {
+                            CardOpeningHelpers.SetIsScreenActive(__instance, false);
+                            CardOpeningHelpers.SetIsReadyToOpen(__instance, false);
+                            CSingleton<InteractionPlayerController>.Instance?.ExitLockMoveMode();
+                            CSingleton<InteractionPlayerController>.Instance?.OnExitOpenPackState();
+                        }
+                    }
+                    catch
+                    {
+                        // Dernier recours : on ne relance jamais l'exception vers Harmony/Unity,
+                        // le but de ce patch est justement d'éviter le blocage en boucle par frame.
+                    }
+                }
+
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Corps original de la méthode Update (inchangé) — voir Update() ci-dessus
+        /// pour la protection contre les exceptions non gérées.
+        /// </summary>
+        private static bool UpdateCore(CardOpeningSequence __instance)
         {
             // Update() est appelé à chaque frame : on ne résout plus la MethodInfo à chaque appel,
             // Plugin.GetCachedMethod la met en cache après la première résolution.
