@@ -235,6 +235,4 @@ La logique actuelle montre clairement une volonté d’ouvrir le système à de 
 
 ## État actuel : 
 
-- Pack Stellar a un "Etat fonctionnel" mais il manque dans le shop + a une texture buggé (il est en boule o.o , probablement car texture d'un display ?)
-- 
-
+- Pack stellar fonctionnel a 100% !
