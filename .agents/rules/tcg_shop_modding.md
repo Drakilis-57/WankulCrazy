@@ -1,3 +1,7 @@
+---
+trigger: always_on
+---
+
 # Directives d'architecture & Modding TCG Card Shop Simulator
 
 ## 1. Gestion des Objets Custom & Catalogue Boutique
@@ -19,3 +23,31 @@
 ## 3. Débogage & Rendu
 - Si un comportement de shop ou de licence diverge, privilégier des logs exhaustifs de l'ordre des listes réelles au runtime plutôt que de simples suppositions.
 - Prêter attention au mapping des textures 3D (ne pas assigner une texture de Display sur un modèle de Booster).
+
+## 4. Performance & Réflexion
+- Ne jamais faire `AccessTools.Field/Method` ou `Type.GetField` dans une méthode appelée par frame (`Update`) ou en boucle sur les cartes — toujours passer par le cache existant (`Plugin.GetCachedMethod`, `GetCachedField`) ou en ajouter un si besoin.
+- Pas de `Enum.GetValues(typeof(X))` répété à chaque appel : le mettre en `static readonly` (voir `CachedSeasons`, `CachedExpansions`, `CachedBorders`).
+- Toute opération sur `WankulCardsData.Instance.cards` (900+ cartes) appelée fréquemment doit passer par un index précalculé (`cardsBySeason`, `parsedKeyCache`, `reverseAssociation`), jamais un `List.FindAll`/`Find` brut sur toute la collection.
+
+## 5. Shaders / Rendu
+- Ne jamais faire `new Material(Shader.Find("Standard"))` — ce shader est cassé/strippé en HDRP/URP dans ce build et produit un rendu magenta silencieux (pas d'exception). Toujours passer par `ShaderUtils.CreateSafeMaterial()` / `ShaderUtils.EnsureNotBrokenStandard()`.
+
+## 6. Harmony Patches
+- Toujours enregistrer les patches manuels via le helper `TryPatch` dans `Plugin.cs` (garde contre `MethodInfo` null) plutôt qu'un `harmony.Patch(...)` direct — sinon un changement de signature côté jeu de base fait planter tout le chargement du plugin.
+- Un prefix qui retourne `false` (remplace totalement la méthode d'origine, ex: `CardOpening.Update`) doit être traité avec une extrême prudence : toute exception non catchée dedans peut bloquer le joueur à chaque frame. Wrapper la logique complexe dans try/catch (cf. `OpenBooster` qui délègue à `OpenBoosterCore` sous try/catch).
+
+## 7. Enums Custom (EItemType, ECollectionPackType, EMonsterType)
+- Ne jamais écrire une valeur custom en dur (`EItemType.MaValeur`) — toujours passer par `EnumExtensions.SafeParseEItemType("...")` / `SafeParseECollectionPackType("...")`, car ces valeurs n'existent pas dans l'enum natif du jeu.
+- Toute nouvelle valeur custom doit être ajoutée à `EnumExtensions.customEnumValues`, et avoir son alias dans `itemTypeAliases` si le nom utilisé côté JSON diffère du nom interne.
+
+## 8. JSON / Données Dynamiques
+- Season/Rarity : ne jamais assumer que l'enum C# (`Season`, `Rarity`) suffit — privilégier `SeasonId`/`RarityId` (string) et passer par `SeasonsManager`/`RaritiesManager`, qui permettent d'ajouter de nouvelles valeurs sans recompilation.
+- Toute nouvelle carte/saison ajoutée doit mettre à jour `Docs/inventaire.md` (comptages par saison/rareté) pour éviter la dérive entre données réelles et documentation.
+
+## 9. Tests & CI
+- Un test qui dépend d'un fichier hors-repo ou absent en CI doit rester explicitement `[Fact(Skip = "raison")]` avec la raison indiquée, jamais planter silencieusement ou être supprimé.
+- Les tests qui touchent un état statique partagé (`SeasonsManager`, `RaritiesManager`) doivent être dans `[Collection("StaticStateTests")]` (`DisableParallelization = true`) pour éviter une corruption d'état entre tests exécutés en parallèle.
+
+## 10. Robustesse Générale
+- Toute méthode qui manipule une carte doit gérer le cas "carte introuvable" avec un fallback documenté (`WankulCardsData.GetAJETER()`, `GetUnassciatedCardData()`) plutôt que de laisser une `NullReferenceException` remonter.
+- Logger avec du contexte utile (`Plugin.Logger.LogError($"... {détails pertinents}")`) plutôt qu'un message générique — le debug se fait en jeu compilé, sans debugger attaché.
