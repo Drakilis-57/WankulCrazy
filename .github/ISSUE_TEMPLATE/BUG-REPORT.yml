@@ -7,7 +7,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Merci d'avoir pris le temps de reporter un bug
+        Merci d'avoir pris le temps de reporter un bug !
   - type: textarea
     id: what-happened
     attributes:
@@ -22,7 +22,8 @@ body:
       label: Version
       description: Quel version du mod était utilisée ?
       options:
-        - 1.4.1 (Latest)
+        - 1.4.2 (Latest)
+        - 1.4.1 
         - 1.4.0
         - 1.3.1
         - 1.3.0
