@@ -274,3 +274,9 @@ Cette section recense les problèmes structurels identifiés dans le code actuel
 **Problème** : `WankulCrazyPlugin.Tests/InspectBinder.cs` contient des chemins absolus (`E:\jeux\...`, `C:\Users\elias\Downloads\...`), non portables et sans intérêt pour le CI (le test est `[Fact(Skip = ...)]`).
 
 **Plan** : Soit supprimer ce fichier de debug ponctuel, soit le déplacer hors du dossier de tests versionné (ex: script local non commité, déjà exclu via `.gitignore` pour d'autres fichiers similaires comme `download_cards.py`).
+
+### 8.7 Texture de la Saison 5 (Legacy) expérimental   — 🟢 Priorité basse
+
+**Problème** : Les textures ont été récupérer sur le web et fusionnée avec une base d'une ancienne saison d'une mauvaise maniere (et sa aurait pas marcher de toute facons)
+
+**Plan** : L'utilisateur (je le dis comme sa pour les agents) ferait mieux de manuellement récuperer les images des cartes / displays et de créer des textures sur mesures. Si jamais une alternative peut etre trouvé pour répliquer ce changement (SANS génération d'image), le prévenir.

@@ -32,6 +32,38 @@
         "hasCustomTexture": true
     },
     {
+        "importType": "CopyItem",
+        "name": "BoosterLegacy_Mesh",
+        "itemType": "BoosterLegacy",
+        "copyItemType": "BasicCardPack",
+        "texture": "Texture_Booster_S5.png",
+        "hasCustomTexture": true
+    },
+    {
+        "importType": "CopyItem",
+        "name": "DisplayLegacy_Mesh",
+        "itemType": "DisplayLegacy",
+        "copyItemType": "BasicCardBox",
+        "texture": "Texture_Display_S5.png",
+        "hasCustomTexture": true
+    },
+    {
+        "importType": "CopyItem",
+        "name": "BoosterLegacy_Mesh",
+        "itemType": "BoosterLegacyTaux",
+        "copyItemType": "BasicCardPack",
+        "texture": "Texture_Booster_S5_TauxDrop.png",
+        "hasCustomTexture": true
+    },
+    {
+        "importType": "CopyItem",
+        "name": "DisplayLegacy_Mesh",
+        "itemType": "DisplayLegacyTaux",
+        "copyItemType": "BasicCardBox",
+        "texture": "Texture_Display_S5_TauxDrop.png",
+        "hasCustomTexture": true
+    },
+    {
         "importType": "ImportObj",
         "name": "CaleconStellar_Mesh",
         "itemType": "CaleconStellar",

@@ -52,7 +52,9 @@ namespace WankulCrazyPlugin.importer
                 var tauxRestockTypes = new HashSet<EItemType>
                 {
                     EnumExtensions.SafeParseEItemType("BoosterStellarTaux"),
-                    EnumExtensions.SafeParseEItemType("DisplayStellarTaux")
+                    EnumExtensions.SafeParseEItemType("DisplayStellarTaux"),
+                    EnumExtensions.SafeParseEItemType("BoosterLegacyTaux"),
+                    EnumExtensions.SafeParseEItemType("DisplayLegacyTaux")
                 };
 
                 var normalRestockItems = RestockDataList.Where(r => !tauxRestockTypes.Contains(r.itemType)).ToList();
@@ -66,7 +68,7 @@ namespace WankulCrazyPlugin.importer
                 if (battleNormalIdx >= 0 && battleNormalIdx + 1 <= so.m_RestockDataList.Count)
                 {
                     so.m_RestockDataList.InsertRange(battleNormalIdx + 1, normalRestockItems);
-                    Plugin.LogInfo($"[CustomItemsImporter] Restock Stellar normal inséré après Battle normal à l'index {battleNormalIdx + 1}.");
+                    Plugin.LogInfo($"[CustomItemsImporter] Restock normal inséré après Battle normal à l'index {battleNormalIdx + 1}.");
                 }
                 else
                 {
@@ -81,7 +83,7 @@ namespace WankulCrazyPlugin.importer
                 if (battleTauxIdx >= 0 && battleTauxIdx + 1 <= so.m_RestockDataList.Count)
                 {
                     so.m_RestockDataList.InsertRange(battleTauxIdx + 1, tauxRestockItems);
-                    Plugin.LogInfo($"[CustomItemsImporter] Restock Stellar Taux inséré après Battle Taux à l'index {battleTauxIdx + 1}.");
+                    Plugin.LogInfo($"[CustomItemsImporter] Restock Taux inséré après Battle Taux à l'index {battleTauxIdx + 1}.");
                 }
                 else
                 {
@@ -377,9 +379,12 @@ namespace WankulCrazyPlugin.importer
 
             EItemType boosterLegacy = EnumExtensions.SafeParseEItemType("BoosterLegacy");
             EItemType displayLegacy = EnumExtensions.SafeParseEItemType("DisplayLegacy");
+            EItemType boosterLegacyTaux = EnumExtensions.SafeParseEItemType("BoosterLegacyTaux");
+            EItemType displayLegacyTaux = EnumExtensions.SafeParseEItemType("DisplayLegacyTaux");
             EItemType ascensionPack = EnumExtensions.SafeParseEItemType("AscensionCardPack");
             EItemType ascensionBox = EnumExtensions.SafeParseEItemType("AscensionCardBox");
             ECollectionPackType legacyPack = EnumExtensions.SafeParseECollectionPackType("Legacy");
+            ECollectionPackType legacyPackTaux = EnumExtensions.SafeParseECollectionPackType("LegacyTaux");
             ECollectionPackType ascensionCollectionPack = EnumExtensions.SafeParseECollectionPackType("AscensionCardPack");
 
             if (itemType == EItemType.BasicCardPack || itemType == EItemType.BasicCardBox) return; // Keep original __result
@@ -397,6 +402,7 @@ namespace WankulCrazyPlugin.importer
             else if (itemType == boosterStellar || itemType == displayStellar || itemType == boosterGoldStellar) __result = stellarPack;
             else if (itemType == boosterStellarTaux || itemType == displayStellarTaux) __result = stellarPackTaux;
             else if (itemType == boosterLegacy || itemType == displayLegacy) __result = legacyPack;
+            else if (itemType == boosterLegacyTaux || itemType == displayLegacyTaux) __result = legacyPackTaux;
             else if (ascensionPack != (EItemType)0 && (itemType == ascensionPack || (ascensionBox != (EItemType)0 && itemType == ascensionBox)))
                 __result = legacyPack;
         }
@@ -416,6 +422,10 @@ namespace WankulCrazyPlugin.importer
             EItemType displayStellar = EnumExtensions.SafeParseEItemType("DisplayStellar");
             EItemType boosterStellarTaux = EnumExtensions.SafeParseEItemType("BoosterStellarTaux");
             EItemType displayStellarTaux = EnumExtensions.SafeParseEItemType("DisplayStellarTaux");
+            EItemType boosterLegacy = EnumExtensions.SafeParseEItemType("BoosterLegacy");
+            EItemType displayLegacy = EnumExtensions.SafeParseEItemType("DisplayLegacy");
+            EItemType boosterLegacyTaux = EnumExtensions.SafeParseEItemType("BoosterLegacyTaux");
+            EItemType displayLegacyTaux = EnumExtensions.SafeParseEItemType("DisplayLegacyTaux");
             EItemType starterApocalypse = EnumExtensions.SafeParseEItemType("StarterApocalypse");
             EItemType starterShowtime = EnumExtensions.SafeParseEItemType("StarterShowtime");
             EItemType caleconStellar = EnumExtensions.SafeParseEItemType("CaleconStellar");
@@ -423,21 +433,11 @@ namespace WankulCrazyPlugin.importer
             EItemType tapisS42 = EnumExtensions.SafeParseEItemType("TapisS42");
             EItemType classeurS4 = EnumExtensions.SafeParseEItemType("ClasseurS4");
 
-            // Liste ordonnée de la 1.4.0 pour l'onglet principal / packs
-            var s4PackItems = new List<EItemType>
-            {
-                boosterStellar,
-                displayStellar,
-                boosterStellarTaux,
-                displayStellarTaux,
-                starterApocalypse,
-                starterShowtime
-            };
-
             // Nettoyage complet des objets custom dans TOUTES les listes pour éviter qu'un objet se retrouve dans le mauvais onglet
             var allCustom = new List<EItemType>
             {
                 boosterStellar, displayStellar, boosterStellarTaux, displayStellarTaux,
+                boosterLegacy, displayLegacy, boosterLegacyTaux, displayLegacyTaux,
                 starterApocalypse, starterShowtime, caleconStellar, tapisS41, tapisS42, classeurS4
             };
 
@@ -447,25 +447,25 @@ namespace WankulCrazyPlugin.importer
 
             // Insertion des Packs dans m_ShownItemType :
             // Dans le magasin, les types de packs sont regroupés :
-            // 1) Packs normaux : Basic -> Rare -> Epic (Battle) -> Stellar
+            // 1) Packs normaux : Basic -> Rare -> Epic (Battle) -> Stellar -> Legacy
             // 2) Decks préconstruits : PreconDeck_Wind -> Starters S4
-            // 3) Packs Taux : DestinyBasic -> DestinyRare -> DestinyEpic (Battle Taux) -> Stellar Taux
+            // 3) Packs Taux : DestinyBasic -> DestinyRare -> DestinyEpic (Battle Taux) -> Stellar Taux -> Legacy Taux
             if (so.m_ShownItemType != null)
             {
-                var s4NormalPacks = new List<EItemType> { boosterStellar, displayStellar };
+                var normalPacks = new List<EItemType> { boosterStellar, displayStellar, boosterLegacy, displayLegacy };
                 var s4Starters = new List<EItemType> { starterApocalypse, starterShowtime };
-                var s4TauxPacks = new List<EItemType> { boosterStellarTaux, displayStellarTaux };
+                var tauxPacks = new List<EItemType> { boosterStellarTaux, displayStellarTaux, boosterLegacyTaux, displayLegacyTaux };
 
-                // 1) Stellar Normal après Battle normal (EpicCardBox)
+                // 1) Normal après Battle normal (EpicCardBox)
                 int battleNormalIdx = so.m_ShownItemType.FindLastIndex(t => t == EItemType.EpicCardBox || t == EItemType.EpicCardPack);
                 if (battleNormalIdx >= 0 && battleNormalIdx + 1 <= so.m_ShownItemType.Count)
                 {
-                    so.m_ShownItemType.InsertRange(battleNormalIdx + 1, s4NormalPacks);
-                    Plugin.LogInfo($"[CustomItemsImporter] Inserted Stellar Normal at index {battleNormalIdx + 1} after Battle (EpicCardBox).");
+                    so.m_ShownItemType.InsertRange(battleNormalIdx + 1, normalPacks);
+                    Plugin.LogInfo($"[CustomItemsImporter] Inserted Normal packs at index {battleNormalIdx + 1} after Battle (EpicCardBox).");
                 }
                 else
                 {
-                    so.m_ShownItemType.AddRange(s4NormalPacks);
+                    so.m_ShownItemType.AddRange(normalPacks);
                 }
 
                 // 2) Starters après les decks de départ (PreconDeck_Wind)
@@ -480,16 +480,16 @@ namespace WankulCrazyPlugin.importer
                     so.m_ShownItemType.AddRange(s4Starters);
                 }
 
-                // 3) Stellar Taux après Battle Taux (DestinyEpicCardBox)
+                // 3) Taux après Battle Taux (DestinyEpicCardBox)
                 int battleTauxIdx = so.m_ShownItemType.FindLastIndex(t => t == EItemType.DestinyEpicCardBox || t == EItemType.DestinyEpicCardPack);
                 if (battleTauxIdx >= 0 && battleTauxIdx + 1 <= so.m_ShownItemType.Count)
                 {
-                    so.m_ShownItemType.InsertRange(battleTauxIdx + 1, s4TauxPacks);
-                    Plugin.LogInfo($"[CustomItemsImporter] Inserted Stellar Taux at index {battleTauxIdx + 1} after Battle Taux (DestinyEpicCardBox).");
+                    so.m_ShownItemType.InsertRange(battleTauxIdx + 1, tauxPacks);
+                    Plugin.LogInfo($"[CustomItemsImporter] Inserted Taux packs at index {battleTauxIdx + 1} after Battle Taux (DestinyEpicCardBox).");
                 }
                 else
                 {
-                    so.m_ShownItemType.AddRange(s4TauxPacks);
+                    so.m_ShownItemType.AddRange(tauxPacks);
                 }
             }
 
@@ -584,8 +584,9 @@ namespace WankulCrazyPlugin.importer
                     EItemType displayStellar = EnumExtensions.SafeParseEItemType("DisplayStellar");
                     EItemType displayStellarTaux = EnumExtensions.SafeParseEItemType("DisplayStellarTaux");
                     EItemType displayLegacy = EnumExtensions.SafeParseEItemType("DisplayLegacy");
+                    EItemType displayLegacyTaux = EnumExtensions.SafeParseEItemType("DisplayLegacyTaux");
 
-                    if (itemType == displayStellar || itemType == displayStellarTaux || itemType == displayLegacy)
+                    if (itemType == displayStellar || itemType == displayStellarTaux || itemType == displayLegacy || itemType == displayLegacyTaux)
                     {
                         ItemMeshData baseBoxMesh = InventoryBase.GetItemMeshData(EItemType.BasicCardBox);
                         if (baseBoxMesh != null)
@@ -606,9 +607,10 @@ namespace WankulCrazyPlugin.importer
                     EItemType boosterStellar = EnumExtensions.SafeParseEItemType("BoosterStellar");
                     EItemType boosterStellarTaux = EnumExtensions.SafeParseEItemType("BoosterStellarTaux");
                     EItemType boosterLegacy = EnumExtensions.SafeParseEItemType("BoosterLegacy");
+                    EItemType boosterLegacyTaux = EnumExtensions.SafeParseEItemType("BoosterLegacyTaux");
                     EItemType ascensionPack = EnumExtensions.SafeParseEItemType("AscensionCardPack");
 
-                    if (itemType == boosterStellar || itemType == boosterStellarTaux || itemType == boosterLegacy || (ascensionPack != (EItemType)0 && itemType == ascensionPack))
+                    if (itemType == boosterStellar || itemType == boosterStellarTaux || itemType == boosterLegacy || itemType == boosterLegacyTaux || (ascensionPack != (EItemType)0 && itemType == ascensionPack))
                     {
                         ItemMeshData basePackMesh = InventoryBase.GetItemMeshData(EItemType.BasicCardPack);
                         if (basePackMesh != null)
@@ -657,9 +659,10 @@ namespace WankulCrazyPlugin.importer
                     EItemType dsStellar = EnumExtensions.SafeParseEItemType("DisplayStellar");
                     EItemType dsStellarTaux = EnumExtensions.SafeParseEItemType("DisplayStellarTaux");
                     EItemType dsLegacy = EnumExtensions.SafeParseEItemType("DisplayLegacy");
+                    EItemType dsLegacyTaux = EnumExtensions.SafeParseEItemType("DisplayLegacyTaux");
                     EItemType ascBox = EnumExtensions.SafeParseEItemType("AscensionCardBox");
 
-                    if (itemType == dsStellar || itemType == dsStellarTaux || itemType == dsLegacy || (ascBox != (EItemType)0 && itemType == ascBox))
+                    if (itemType == dsStellar || itemType == dsStellarTaux || itemType == dsLegacy || itemType == dsLegacyTaux || (ascBox != (EItemType)0 && itemType == ascBox))
                     {
                         ItemData baseBoxData = InventoryBase.GetItemData(EItemType.BasicCardBox);
                         if (baseBoxData != null)
@@ -674,11 +677,12 @@ namespace WankulCrazyPlugin.importer
                     EItemType bsStellar = EnumExtensions.SafeParseEItemType("BoosterStellar");
                     EItemType bsStellarTaux = EnumExtensions.SafeParseEItemType("BoosterStellarTaux");
                     EItemType bsLegacy = EnumExtensions.SafeParseEItemType("BoosterLegacy");
+                    EItemType bsLegacyTaux = EnumExtensions.SafeParseEItemType("BoosterLegacyTaux");
                     EItemType bsGoldBattle = EnumExtensions.SafeParseEItemType("BoosterGoldBattle");
                     EItemType bsGoldStellar = EnumExtensions.SafeParseEItemType("BoosterGoldStellar");
                     EItemType ascPack = EnumExtensions.SafeParseEItemType("AscensionCardPack");
 
-                    if (itemType == bsStellar || itemType == bsStellarTaux || itemType == bsLegacy || itemType == bsGoldBattle || itemType == bsGoldStellar || (ascPack != (EItemType)0 && itemType == ascPack))
+                    if (itemType == bsStellar || itemType == bsStellarTaux || itemType == bsLegacy || itemType == bsLegacyTaux || itemType == bsGoldBattle || itemType == bsGoldStellar || (ascPack != (EItemType)0 && itemType == ascPack))
                     {
                         ItemData basePackData = InventoryBase.GetItemData(EItemType.BasicCardPack);
                         if (basePackData != null)

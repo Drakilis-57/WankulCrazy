@@ -510,7 +510,9 @@ namespace WankulCrazyPlugin.patch
                     collectionPackType == ECollectionPackType.EpicCardPack ||
                     collectionPackType == ECollectionPackType.DestinyEpicCardPack ||
                     collectionPackType == EnumExtensions.SafeParseECollectionPackType("Stellar") ||
-                    collectionPackType == EnumExtensions.SafeParseECollectionPackType("StellarTaux")
+                    collectionPackType == EnumExtensions.SafeParseECollectionPackType("StellarTaux") ||
+                    collectionPackType == EnumExtensions.SafeParseECollectionPackType("Legacy") ||
+                    collectionPackType == EnumExtensions.SafeParseECollectionPackType("LegacyTaux")
                 )
                 {
                     int random = UnityEngine.Random.Range(0, randomGoldBoosterSeed);
@@ -543,6 +545,14 @@ namespace WankulCrazyPlugin.patch
                         }
                         else if (collectionPackType == EnumExtensions.SafeParseECollectionPackType("Stellar") || collectionPackType == EnumExtensions.SafeParseECollectionPackType("StellarTaux"))
                         {
+                            Plugin.SetPProperty(item, "m_ItemType", EnumExtensions.SafeParseEItemType("BoosterGoldStellar"));
+
+                            ItemMeshData itemMeshData = InventoryBase.GetItemMeshData(item.GetItemType());
+                            item.SetMesh(itemMeshData.mesh, itemMeshData.material, EnumExtensions.SafeParseEItemType("BoosterGoldStellar"));
+                        }
+                        else if (collectionPackType == EnumExtensions.SafeParseECollectionPackType("Legacy") || collectionPackType == EnumExtensions.SafeParseECollectionPackType("LegacyTaux"))
+                        {
+                            // Pas encore d'asset Gold Legacy dédié : on réutilise le mesh Gold Stellar
                             Plugin.SetPProperty(item, "m_ItemType", EnumExtensions.SafeParseEItemType("BoosterGoldStellar"));
 
                             ItemMeshData itemMeshData = InventoryBase.GetItemMeshData(item.GetItemType());

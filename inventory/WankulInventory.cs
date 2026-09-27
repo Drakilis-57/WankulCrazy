@@ -33,6 +33,7 @@ namespace WankulCrazyPlugin.inventory
             ECollectionPackType stellarPack = EnumExtensions.SafeParseECollectionPackType("Stellar");
             ECollectionPackType stellarPackTaux = EnumExtensions.SafeParseECollectionPackType("StellarTaux");
             ECollectionPackType legacyPack = EnumExtensions.SafeParseECollectionPackType("Legacy");
+            ECollectionPackType legacyPackTaux = EnumExtensions.SafeParseECollectionPackType("LegacyTaux");
             ECollectionPackType ascensionPack = EnumExtensions.SafeParseECollectionPackType("AscensionCardPack");
 
             if (packType == ECollectionPackType.BasicCardPack || packType == ECollectionPackType.DestinyBasicCardPack)
@@ -43,7 +44,7 @@ namespace WankulCrazyPlugin.inventory
                 return Season.S03;
             else if (packType == stellarPack || packType == stellarPackTaux)
                 return Season.S04;
-            else if (packType == legacyPack || (ascensionPack != (ECollectionPackType)0 && packType == ascensionPack))
+            else if (packType == legacyPack || packType == legacyPackTaux || (ascensionPack != (ECollectionPackType)0 && packType == ascensionPack))
                 return Season.S05;
             else
                 return Season.HS;
@@ -52,6 +53,7 @@ namespace WankulCrazyPlugin.inventory
         public static WankulCardData DropCard(ECollectionPackType packType, List<WankulCardData> alreadySelectedCards, bool isTerrain = false, bool isMinRare = false, bool isMinUR = false, bool isMinLegendary = false, bool isRare = false)
         {
             ECollectionPackType stellarPackTaux = EnumExtensions.SafeParseECollectionPackType("StellarTaux");
+            ECollectionPackType legacyPackTaux = EnumExtensions.SafeParseECollectionPackType("LegacyTaux");
 
             bool increaseRarity = false;
             Season season = ConvertPackTypeToSeason(packType);
@@ -61,7 +63,8 @@ namespace WankulCrazyPlugin.inventory
                 packType == ECollectionPackType.DestinyRareCardPack ||
                 packType == ECollectionPackType.DestinyEpicCardPack ||
                 packType == ECollectionPackType.DestinyLegendaryCardPack ||
-                packType == stellarPackTaux
+                packType == stellarPackTaux ||
+                packType == legacyPackTaux
             )
             {
                 increaseRarity = true;
@@ -245,6 +248,7 @@ namespace WankulCrazyPlugin.inventory
         public static WankulCardData DropCardGold(ECollectionPackType packType, List<WankulCardData> alreadySelectedCards)
         {
             ECollectionPackType stellarPackTaux = EnumExtensions.SafeParseECollectionPackType("StellarTaux");
+            ECollectionPackType legacyPackTaux = EnumExtensions.SafeParseECollectionPackType("LegacyTaux");
             bool increaseRarity = false;
             Season season = ConvertPackTypeToSeason(packType);
 
@@ -253,7 +257,8 @@ namespace WankulCrazyPlugin.inventory
                 packType == ECollectionPackType.DestinyRareCardPack ||
                 packType == ECollectionPackType.DestinyEpicCardPack ||
                 packType == ECollectionPackType.DestinyLegendaryCardPack ||
-                packType == stellarPackTaux
+                packType == stellarPackTaux ||
+                packType == legacyPackTaux
             )
             {
                 increaseRarity = true;
@@ -288,6 +293,15 @@ namespace WankulCrazyPlugin.inventory
                 741,
             ];
 
+            List<int> LegacyGoldCards = [
+                500170, // Rage LA
+                500171, // Rage LA
+                500172, // Dieu de la guerre LA
+                500173, // Demi-dieu nordique LA
+                500174, // Fin stratège LO
+                500175, // Fin stratège LO
+            ];
+
             if (season == Season.S03)
             {
                 seasonalCard = allCards.FindAll(card => BattleGoldCards.Contains(card.Index));
@@ -295,6 +309,10 @@ namespace WankulCrazyPlugin.inventory
             else if (season == Season.S04)
             {
                 seasonalCard = allCards.FindAll(card => StellardGoldCards.Contains(card.Index));
+            }
+            else if (season == Season.S05)
+            {
+                seasonalCard = allCards.FindAll(card => LegacyGoldCards.Contains(card.Index));
             }
             else
             {
@@ -562,6 +580,11 @@ namespace WankulCrazyPlugin.inventory
             ECollectionPackType stellarCardExpansion = EnumExtensions.SafeParseECollectionPackType("Stellar");
             ECollectionPackType stellarCardExpansionTaux = EnumExtensions.SafeParseECollectionPackType("StellarTaux");
 
+            EItemType legacyCardPack = EnumExtensions.SafeParseEItemType("BoosterLegacy");
+            EItemType legacyCardPackTaux = EnumExtensions.SafeParseEItemType("BoosterLegacyTaux");
+            ECollectionPackType legacyCardExpansion = EnumExtensions.SafeParseECollectionPackType("Legacy");
+            ECollectionPackType legacyCardExpansionTaux = EnumExtensions.SafeParseECollectionPackType("LegacyTaux");
+
             if (CPlayerData.m_ShopLevel >= InventoryBase.GetUnlockItemLevelRequired(EItemType.RareCardPack))
             {
                 dropableExpansion.Add(ECollectionPackType.RareCardPack);
@@ -597,6 +620,14 @@ namespace WankulCrazyPlugin.inventory
             if (CPlayerData.m_ShopLevel >= InventoryBase.GetUnlockItemLevelRequired(EItemType.DestinyLegendaryCardPack))
             {
                 dropableExpansion.Add(ECollectionPackType.DestinyLegendaryCardPack);
+            }
+            if (legacyCardPack != (EItemType)0 && CPlayerData.m_ShopLevel >= InventoryBase.GetUnlockItemLevelRequired(legacyCardPack))
+            {
+                dropableExpansion.Add(legacyCardExpansion);
+            }
+            if (legacyCardPackTaux != (EItemType)0 && CPlayerData.m_ShopLevel >= InventoryBase.GetUnlockItemLevelRequired(legacyCardPackTaux))
+            {
+                dropableExpansion.Add(legacyCardExpansionTaux);
             }
 
             ECollectionPackType selectedPackType = dropableExpansion[RandomUtils.Range(0, dropableExpansion.Count)];

@@ -65,6 +65,8 @@ namespace WankulCrazyPlugin.patch
             bool result = false;
             EItemType boosterStellar = EnumExtensions.SafeParseEItemType("BoosterStellar");
             EItemType boosterStellarTaux = EnumExtensions.SafeParseEItemType("BoosterStellarTaux");
+            EItemType boosterLegacy = EnumExtensions.SafeParseEItemType("BoosterLegacy");
+            EItemType boosterLegacyTaux = EnumExtensions.SafeParseEItemType("BoosterLegacyTaux");
             EItemType BoosterGoldBattle = EnumExtensions.SafeParseEItemType("BoosterGoldBattle");
             EItemType BoosterGoldStellar = EnumExtensions.SafeParseEItemType("BoosterGoldStellar");
             EItemType test32 = EnumExtensions.SafeParseEItemType("TestCardPack32");
@@ -74,7 +76,7 @@ namespace WankulCrazyPlugin.patch
             if (m_HoldItemList.Count > 0)
             {
                 Item item = m_HoldItemList[0];
-                result = item.GetItemType() == EItemType.BasicCardPack || item.GetItemType() == EItemType.RareCardPack || item.GetItemType() == EItemType.EpicCardPack || item.GetItemType() == EItemType.LegendaryCardPack || item.GetItemType() == EItemType.DestinyBasicCardPack || item.GetItemType() == EItemType.DestinyRareCardPack || item.GetItemType() == EItemType.DestinyEpicCardPack || item.GetItemType() == EItemType.DestinyLegendaryCardPack || item.GetItemType() == EItemType.GhostPack || item.GetItemType() == EItemType.MegabotPack || item.GetItemType() == EItemType.FantasyRPGPack || item.GetItemType() == EItemType.CatJobPack || item.GetItemType() == boosterStellar || item.GetItemType() == boosterStellarTaux || item.GetItemType() == BoosterGoldBattle || item.GetItemType() == BoosterGoldStellar || item.GetItemType() == test32 || item.GetItemType() == test64;
+                result = item.GetItemType() == EItemType.BasicCardPack || item.GetItemType() == EItemType.RareCardPack || item.GetItemType() == EItemType.EpicCardPack || item.GetItemType() == EItemType.LegendaryCardPack || item.GetItemType() == EItemType.DestinyBasicCardPack || item.GetItemType() == EItemType.DestinyRareCardPack || item.GetItemType() == EItemType.DestinyEpicCardPack || item.GetItemType() == EItemType.DestinyLegendaryCardPack || item.GetItemType() == EItemType.GhostPack || item.GetItemType() == EItemType.MegabotPack || item.GetItemType() == EItemType.FantasyRPGPack || item.GetItemType() == EItemType.CatJobPack || item.GetItemType() == boosterStellar || item.GetItemType() == boosterStellarTaux || item.GetItemType() == boosterLegacy || item.GetItemType() == boosterLegacyTaux || item.GetItemType() == BoosterGoldBattle || item.GetItemType() == BoosterGoldStellar || item.GetItemType() == test32 || item.GetItemType() == test64;
             }
             __result = result;
             return false;
@@ -85,12 +87,14 @@ namespace WankulCrazyPlugin.patch
             bool result = false;
             EItemType displayStellar = EnumExtensions.SafeParseEItemType("DisplayStellar");
             EItemType displayStellarTaux = EnumExtensions.SafeParseEItemType("DisplayStellarTaux");
+            EItemType displayLegacy = EnumExtensions.SafeParseEItemType("DisplayLegacy");
+            EItemType displayLegacyTaux = EnumExtensions.SafeParseEItemType("DisplayLegacyTaux");
 
             List<Item> m_HoldItemList = (List<Item>)AccessTools.Field(typeof(InteractionPlayerController), "m_HoldItemList").GetValue(__instance);
             if (m_HoldItemList.Count > 0)
             {
                 Item item = m_HoldItemList[0];
-                result = item.GetItemType() == EItemType.BasicCardBox || item.GetItemType() == EItemType.RareCardBox || item.GetItemType() == EItemType.EpicCardBox || item.GetItemType() == EItemType.LegendaryCardBox || item.GetItemType() == EItemType.DestinyBasicCardBox || item.GetItemType() == EItemType.DestinyRareCardBox || item.GetItemType() == EItemType.DestinyEpicCardBox || item.GetItemType() == EItemType.DestinyLegendaryCardBox || item.GetItemType() == displayStellar || item.GetItemType() == displayStellarTaux;
+                result = item.GetItemType() == EItemType.BasicCardBox || item.GetItemType() == EItemType.RareCardBox || item.GetItemType() == EItemType.EpicCardBox || item.GetItemType() == EItemType.LegendaryCardBox || item.GetItemType() == EItemType.DestinyBasicCardBox || item.GetItemType() == EItemType.DestinyRareCardBox || item.GetItemType() == EItemType.DestinyEpicCardBox || item.GetItemType() == EItemType.DestinyLegendaryCardBox || item.GetItemType() == displayStellar || item.GetItemType() == displayStellarTaux || item.GetItemType() == displayLegacy || item.GetItemType() == displayLegacyTaux;
             }
             __result = result;
             return false;
@@ -104,7 +108,9 @@ namespace WankulCrazyPlugin.patch
             EItemType boosterStellar = EnumExtensions.SafeParseEItemType("BoosterStellar");
             EItemType boosterStellarTaux = EnumExtensions.SafeParseEItemType("BoosterStellarTaux");
             EItemType displayLegacy = EnumExtensions.SafeParseEItemType("DisplayLegacy");
+            EItemType displayLegacyTaux = EnumExtensions.SafeParseEItemType("DisplayLegacyTaux");
             EItemType boosterLegacy = EnumExtensions.SafeParseEItemType("BoosterLegacy");
+            EItemType boosterLegacyTaux = EnumExtensions.SafeParseEItemType("BoosterLegacyTaux");
             EItemType ascensionBox = EnumExtensions.SafeParseEItemType("AscensionCardBox");
             EItemType ascensionPack = EnumExtensions.SafeParseEItemType("AscensionCardPack");
 
@@ -130,6 +136,8 @@ namespace WankulCrazyPlugin.patch
                 __result = boosterStellarTaux;
             else if (cardBoxItemType == displayLegacy)
                 __result = boosterLegacy;
+            else if (cardBoxItemType == displayLegacyTaux)
+                __result = boosterLegacyTaux;
             else if (ascensionBox != (EItemType)0 && cardBoxItemType == ascensionBox)
                 __result = (ascensionPack != (EItemType)0) ? ascensionPack : boosterLegacy;
             else
@@ -584,6 +592,7 @@ namespace WankulCrazyPlugin.patch
                     { EnumExtensions.SafeParseEItemType("BoosterStellarTaux"), Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Booster_S4_TauxDrop.png") },
                     { EItemType.DestinyLegendaryCardPack, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "T_CardPackDestinyLegend.png") },
                     { EnumExtensions.SafeParseEItemType("BoosterLegacy"), Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Booster_S5.png") },
+                    { EnumExtensions.SafeParseEItemType("BoosterLegacyTaux"), Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Booster_S5_TauxDrop.png") },
                 };
 
                 EItemType ascensionPack = EnumExtensions.SafeParseEItemType("AscensionCardPack");
