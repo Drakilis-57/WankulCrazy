@@ -278,13 +278,6 @@ public class JsonImporter
         {
             return null;
         }
-        byte[] bytes = System.IO.File.ReadAllBytes(path);
-        Texture2D texture = new Texture2D(2, 2, TextureFormat.RGBA32, false);
-        if (texture.LoadImage(bytes))
-        {
-            texture.wrapMode = TextureWrapMode.Clamp;
-            return texture;
-        }
-        return null;
+        return WankulCrazyPlugin.utils.TextureCacheManager.LoadTextureCached(path, false);
     }
 }
