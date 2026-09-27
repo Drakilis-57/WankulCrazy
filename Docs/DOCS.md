@@ -233,6 +233,53 @@ La logique actuelle montre clairement une volonté d’ouvrir le système à de 
 - `patch/workbench/WorkbenchPatch.cs`
 - `WankulCrazyPlugin.Tests/DocsFeaturesVerificationTests.cs`
 
-## État actuel : 
+## 8. Problèmes connus et plan de correction
 
-- Pack stellar fonctionnel a 100% !
+Cette section recense les problèmes structurels identifiés dans le code actuel, classés par priorité, avec un plan d'action concret pour chacun.
+
+### 8.1 Raretés Legacy (S05) non reconnues par l'enum `Rarity` — 🔴 Priorité haute
+
+**Problème** : `data/cards/Legacy/legacy.json` utilise des identifiants de rareté `"L-B"`, `"L-A"`, `"L-O"` et `"DUO"` qui ne correspondent à aucune valeur de l'enum `Rarity` (`LB`, `LA`, `LO`). `RarityJsonConverter.ReadJson` échoue silencieusement le `Enum.TryParse`, enregistre une nouvelle rareté dynamique via `RaritiesManager.RegisterRarity` avec des multiplicateurs par défaut (`1.0f`, `1.0f`), et retombe sur `Rarity.C`. Conséquence : ces cartes (~11 cartes légendaires/duo de la saison Legacy) ont un calcul d'XP et de prix erroné (`RaritiesManager.CalculateExperience` utilise `GetExperienceMultiplier(effigyCardData.RarityId)`, qui renverra `1.0f` au lieu du multiplicateur légendaire attendu).
+
+**Plan** :
+1. Corriger `data/cards/Legacy/legacy.json` : remplacer `"L-B"` → `"LB"`, `"L-A"` → `"LA"`, `"L-O"` → `"LO"` (recherche/remplacement simple, ~11 occurrences).
+2. Ajouter une entrée `"DUO"` dans `data/rarities.json` avec des multiplicateurs cohérents (ex: équivalent à `LB`/`LA`), ou mapper `Duo` vers une rareté existante si c'est voulu.
+3. Ajouter un test de non-régression dans `WankulCrazyPlugin.Tests` qui charge `legacy.json` et vérifie que chaque `RarityId` matche une entrée connue de `RaritiesManager` (test actuellement skip via `[Fact(Skip = "Missing legacy.json asset in CI")]` — à réactiver en copiant le fichier dans le dossier de test, ou en committant une fixture réduite).
+
+### 8.2 Duplication du calcul de `increaseFactor` — 🟡 Priorité moyenne
+
+**Problème** : Le switch sur `effigyCard.Rarity` (R → 0.25f, UR1/UR2 → 1f, LB/LA/LO → 2f) est dupliqué à l'identique 4 fois dans `WankulInventory.cs` (`DropCard` ×2, `DropCardGold` ×2). Toute correction future du barème appliquée à un seul bloc laisse les 3 autres désynchronisés.
+
+**Plan** :
+1. Extraire la logique dans une méthode statique unique : `WankulInventory.GetRarityIncreaseFactor(EffigyCardData card, Season season)`.
+2. Remplacer les 4 occurrences par un appel à cette méthode.
+3. Ajouter un test unitaire couvrant les cas `R`, `UR1`, `UR2`, `LB/LA/LO`, et le cas spécial `Season.HS` avec `Rarity >= PGW23`.
+
+### 8.3 Accès par réflexion sans garde-fou (`Plugin.GetPProperty`/`SetPProperty`) — 🟡 Priorité moyenne
+
+**Problème** : Toute lecture de champ privé du jeu passe par `GetPProperty`, qui logue une erreur et renvoie `null` si le champ est introuvable (ex : après une mise à jour du jeu qui renomme un champ). Le code appelant ne vérifie presque jamais ce `null`, ce qui déplace le crash plus loin dans la pile (`NullReferenceException` moins lisible, loin de la cause réelle).
+
+**Plan** :
+1. Ajouter une variante `TryGetPProperty<T>(object instance, string fieldName, out T value)` qui renvoie `false` proprement au lieu de `null`.
+2. Identifier les call sites critiques (au minimum `CardOpening.cs`, `SortUI.cs`) et les faire échouer proprement (ex: fermer l'écran, logguer, plutôt que continuer avec une valeur `null`/`default`).
+3. Documenter dans `.agents/rules/tcg_shop_modding.md` (section 4) la nécessité de vérifier le retour de `GetPProperty` dans le code touchant l'UI en boucle.
+
+### 8.4 `CardOpeningSequence.Update` sans try/catch global — 🔴 Priorité haute
+
+**Problème** : `CardOpening.Update` remplace entièrement la boucle `Update()` du jeu vanilla via un prefix Harmony retournant `false`. `OpenBooster` est bien protégé par un `try/catch` (`OpenBoosterCore`), mais **pas** `Update` lui-même ni ses sous-méthodes (`HandleState_PackOpening`, `HandleState_RotateToFront`, `HandleState_CardReveal`, `HandleState_FinalSummary`). Une exception non gérée dans l'un de ces handlers bloque le joueur à chaque frame (le prefix retourne `false`, donc le code vanilla ne s'exécute jamais en secours).
+
+**Plan** :
+1. Wrapper le corps de `CardOpening.Update` dans un `try/catch` global, avec un comportement de repli sûr (forcer `m_StateIndex = 11` pour fermer proprement la séquence, comme déjà fait pour le cas "booster incomplet").
+2. Logguer l'exception complète avec le `state` courant pour faciliter le diagnostic en cas de bug report utilisateur.
+
+### 8.5 Enums custom patchés globalement via Harmony transpiler — 🟢 Priorité basse (risque architectural, pas de bug connu actuellement)
+
+**Problème** : `Patch_Enum_GetName`, `Patch_Enum_IsDefined`, `Patch_Enum_Parse` patchent `Enum.GetName`/`IsDefined`/`Parse` pour **tous les types du processus**, afin de simuler des valeurs custom sur `EItemType`/`ECollectionPackType`/`EMonsterType`. Le `Patch_Enum_Transpiler` va jusqu'à insérer un appel après chaque `Conv_I4` IL sur les méthodes ciblées. C'est très intrusif et rend le débogage de tout problème lié aux enums (même hors du mod) plus difficile.
+
+**Plan** : Pas de correctif immédiat recommandé (fonctionne actuellement et les tests passent) — mais à documenter clairement comme dette technique, et à surveiller en priorité en cas de mise à jour de BepInEx/Harmony ou du jeu de base.
+
+### 8.6 Chemin personnel en dur dans les tests — 🟢 Priorité basse
+
+**Problème** : `WankulCrazyPlugin.Tests/InspectBinder.cs` contient des chemins absolus (`E:\jeux\...`, `C:\Users\elias\Downloads\...`), non portables et sans intérêt pour le CI (le test est `[Fact(Skip = ...)]`).
+
+**Plan** : Soit supprimer ce fichier de debug ponctuel, soit le déplacer hors du dossier de tests versionné (ex: script local non commité, déjà exclu via `.gitignore` pour d'autres fichiers similaires comme `download_cards.py`).
