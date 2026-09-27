@@ -1,266 +1,242 @@
 [
-  {
-    "name": "BoosterStellar",
-    "category": "TCG",
-    "iconScale": 1,
-    "baseCost": 15,
-    "marketPriceMinPercent": 0.8,
-    "marketPriceMaxPercent": 1.2,
-    "boxFollowItemPrice": "None",
-    "isNotBoosterPack": false,
-    "isTallItem": false,
-    "isHideItemUntilUnlocked": false,
-    "posYOffsetInBox": 0,
-    "scaleOffsetInBox": 0,
-    "affectedPriceChangeType": [
-      "TCG"
-    ],
-    "icon": "BoosterStellar.png",
-    "itemDimension": {
-      "x": 1,
-      "y": 1,
-      "z": 1
+    {
+        "itemType": "BoosterStellar",
+        "name": "Booster Stellar",
+        "category": "TCG",
+        "icon": "Icon_Booster_S4.png",
+        "iconScale": 1.0,
+        "baseCost": 20,
+        "marketPriceMinPercent": 1.5,
+        "marketPriceMaxPercent": 2.0,
+        "boxFollowItemPrice": "None",
+        "isNotBoosterPack": false,
+        "isTallItem": false,
+        "isHideItemUntilUnlocked": false,
+        "posYOffsetInBox": 0.0,
+        "scaleOffsetInBox": -0.13,
+        "itemDimension": {"x": 1.0, "y": 1.0, "z": 1.0},
+        "colliderPosOffset": {"x": 0.0, "y": 0.0, "z": 0.0},
+        "colliderScale": {"x": 0.08, "y": 0.14, "z": 0.022},
+        "affectedPriceChangeType": ["LegendPackCard"]
     },
-    "colliderPosOffset": {
-      "x": 0,
-      "y": 0,
-      "z": 0
+    {
+        "itemType": "DisplayStellar",
+        "name": "Display Stellar",
+        "category": "TCG",
+        "icon": "Icon_Display_S4.png",
+        "iconScale": 0.85,
+        "baseCost": 100,
+        "marketPriceMinPercent": 0.9,
+        "marketPriceMaxPercent": 1.1,
+        "boxFollowItemPrice": "BoosterStellar",
+        "isNotBoosterPack": false,
+        "isTallItem": false,
+        "isHideItemUntilUnlocked": false,
+        "posYOffsetInBox": 0.0,
+        "scaleOffsetInBox": -0.2,
+        "itemDimension": {"x": 2.0, "y": 4.0, "z": 1.0},
+        "colliderPosOffset": {"x": 0.0, "y": 0.0, "z": 0.0},
+        "colliderScale": {"x": 0.178, "y": 0.13, "z": 0.107},
+        "affectedPriceChangeType": ["LegendPackCard"]
     },
-    "colliderScale": {
-      "x": 1,
-      "y": 1,
-      "z": 1
+    {
+        "itemType": "BoosterStellarTaux",
+        "name": "Booster Stellar Taux +",
+        "category": "TCG",
+        "icon": "Icon_Booster_S4_TauxDrop.png",
+        "iconScale": 1.0,
+        "baseCost": 40,
+        "marketPriceMinPercent": 1.5,
+        "marketPriceMaxPercent": 2.0,
+        "boxFollowItemPrice": "None",
+        "isNotBoosterPack": false,
+        "isTallItem": false,
+        "isHideItemUntilUnlocked": false,
+        "posYOffsetInBox": 0.0,
+        "scaleOffsetInBox": -0.13,
+        "itemDimension": {"x": 1.0, "y": 1.0, "z": 1.0},
+        "colliderPosOffset": {"x": 0.0, "y": 0.0, "z": 0.0},
+        "colliderScale": {"x": 0.08, "y": 0.14, "z": 0.022},
+        "affectedPriceChangeType": ["LegendPackCard"]
+    },
+    {
+        "itemType": "DisplayStellarTaux",
+        "name": "Display Stellar Taux +",
+        "category": "TCG",
+        "icon": "Icon_Display_S4_TauxDrop.png",
+        "iconScale": 0.85,
+        "baseCost": 200,
+        "marketPriceMinPercent": 0.9,
+        "marketPriceMaxPercent": 1.1,
+        "boxFollowItemPrice": "BoosterStellar",
+        "isNotBoosterPack": false,
+        "isTallItem": false,
+        "isHideItemUntilUnlocked": false,
+        "posYOffsetInBox": 0.0,
+        "scaleOffsetInBox": -0.2,
+        "itemDimension": {"x": 2.0, "y": 4.0, "z": 1.0},
+        "colliderPosOffset": {"x": 0.0, "y": 0.0, "z": 0.0},
+        "colliderScale": {"x": 0.178, "y": 0.13, "z": 0.107},
+        "affectedPriceChangeType": ["LegendPackCard"]
+    },
+    {
+        "itemType": "CaleconStellar",
+        "name": "Boxer Stellar",
+        "category": "Figurine",
+        "icon": "Icon_Calecon.png",
+        "iconScale": 0.85,
+        "baseCost": 30,
+        "marketPriceMinPercent": 0.7,
+        "marketPriceMaxPercent": 2.35,
+        "boxFollowItemPrice": "None",
+        "isNotBoosterPack": true,
+        "isTallItem": false,
+        "isHideItemUntilUnlocked": false,
+        "posYOffsetInBox": 0.0,
+        "scaleOffsetInBox": -0.38,
+        "itemDimension": {"x": 2.0, "y": 8.0, "z": 1.0},
+        "colliderPosOffset": {"x": 0.0, "y": 0.02, "z": 0.0},
+        "colliderScale": {"x": 0.1, "y": 0.16, "z": 0.08},
+        "affectedPriceChangeType": []
+    },
+    {
+        "itemType": "StarterApocalypse",
+        "name": "Starter Apocalypse",
+        "category": "TCG",
+        "icon": "Icon_Starter_Apocalypse.png",
+        "iconScale": 1,
+        "baseCost": 35,
+        "marketPriceMinPercent": 1.2,
+        "marketPriceMaxPercent": 1.75,
+        "boxFollowItemPrice": "None",
+        "isNotBoosterPack": false,
+        "isTallItem": false,
+        "isHideItemUntilUnlocked": false,
+        "posYOffsetInBox": 0.0,
+        "scaleOffsetInBox": -0.28,
+        "itemDimension": {"x": 1.5, "y": 3, "z": 1.0},
+        "colliderPosOffset": {"x": 0.0, "y": 0.017, "z": 0.007},
+        "colliderScale": {"x": 0.11, "y": 0.17, "z": 0.05},
+        "affectedPriceChangeType": []
+    },
+    {
+        "itemType": "StarterShowtime",
+        "name": "Starter Showtime",
+        "category": "TCG",
+        "icon": "Icon_Starter_Showtime.png",
+        "iconScale": 1,
+        "baseCost": 30,
+        "marketPriceMinPercent": 1.2,
+        "marketPriceMaxPercent": 1.75,
+        "boxFollowItemPrice": "None",
+        "isNotBoosterPack": false,
+        "isTallItem": false,
+        "isHideItemUntilUnlocked": false,
+        "posYOffsetInBox": 0.0,
+        "scaleOffsetInBox": -0.28,
+        "itemDimension": {"x": 1.5, "y": 3, "z": 1.0},
+        "colliderPosOffset": {"x": 0.0, "y": 0.017, "z": 0.007},
+        "colliderScale": {"x": 0.11, "y": 0.17, "z": 0.05},
+        "affectedPriceChangeType": []
+    },
+    {
+        "itemType": "TapisS41",
+        "name": "Tapi Stellar 1",
+        "category": "Playmat",
+        "icon": "Icon_Tapis_S4_1.png",
+        "iconScale": 1,
+        "baseCost": 45,
+        "marketPriceMinPercent": 1.85,
+        "marketPriceMaxPercent": 2.6,
+        "boxFollowItemPrice": "None",
+        "isNotBoosterPack": true,
+        "isTallItem": true,
+        "isHideItemUntilUnlocked": false,
+        "posYOffsetInBox": 0.02,
+        "scaleOffsetInBox": -0.1,
+        "itemDimension": {"x": 1.0, "y": 2.0, "z": 1.0},
+        "colliderPosOffset": {"x": 0.0, "y": 0.105, "z": 0.0},
+        "colliderScale": {"x": 0.05, "y": 0.29, "z": 0.05},
+        "affectedPriceChangeType": []
+    },
+    {
+        "itemType": "TapisS42",
+        "name": "Tapi Stellar 2",
+        "category": "Playmat",
+        "icon": "Icon_Tapis_S4_2.png",
+        "iconScale": 1,
+        "baseCost": 35,
+        "marketPriceMinPercent": 1.85,
+        "marketPriceMaxPercent": 2.6,
+        "boxFollowItemPrice": "None",
+        "isNotBoosterPack": true,
+        "isTallItem": true,
+        "isHideItemUntilUnlocked": false,
+        "posYOffsetInBox": 0.02,
+        "scaleOffsetInBox": -0.1,
+        "itemDimension": {"x": 1.0, "y": 2.0, "z": 1.0},
+        "colliderPosOffset": {"x": 0.0, "y": 0.105, "z": 0.0},
+        "colliderScale": {"x": 0.05, "y": 0.29, "z": 0.05},
+        "affectedPriceChangeType": []
+    },
+    {
+        "itemType": "ClasseurS4",
+        "name": "Classeur Stellar",
+        "category": "TCG",
+        "icon": "Icon_Classeur_S4.png",
+        "iconScale": 1,
+        "baseCost": 50,
+        "marketPriceMinPercent": 1.5,
+        "marketPriceMaxPercent": 2,
+        "boxFollowItemPrice": "None",
+        "isNotBoosterPack": true,
+        "isTallItem": true,
+        "isHideItemUntilUnlocked": false,
+        "posYOffsetInBox": 0.015,
+        "scaleOffsetInBox": -0.05,
+        "itemDimension": {"x": 4.0, "y": 2.0, "z": 1.0},
+        "colliderPosOffset": {"x": 0.0, "y": 0.08, "z": 0.0},
+        "colliderScale": {"x": 0.3, "y": 0.29, "z": 0.06},
+        "affectedPriceChangeType": []
+    },
+    {
+        "itemType": "BoosterGoldBattle",
+        "name": "Booster Gold Battle",
+        "category": "TCG",
+        "icon": "Icon_BoosterGold.png",
+        "iconScale": 1.0,
+        "baseCost": 80,
+        "marketPriceMinPercent": 100.0,
+        "marketPriceMaxPercent": 250.0,
+        "boxFollowItemPrice": "None",
+        "isNotBoosterPack": false,
+        "isTallItem": false,
+        "isHideItemUntilUnlocked": false,
+        "posYOffsetInBox": 0.0,
+        "scaleOffsetInBox": -0.13,
+        "itemDimension": {"x": 1.0, "y": 1.0, "z": 1.0},
+        "colliderPosOffset": {"x": 0.0, "y": 0.0, "z": 0.0},
+        "colliderScale": {"x": 0.08, "y": 0.14, "z": 0.022},
+        "affectedPriceChangeType": []
+    },
+    {
+        "itemType": "BoosterGoldStellar",
+        "name": "Booster Gold Stellar",
+        "category": "TCG",
+        "icon": "Icon_BoosterGold.png",
+        "iconScale": 1.0,
+        "baseCost": 100,
+        "marketPriceMinPercent": 100.0,
+        "marketPriceMaxPercent": 250.0,
+        "boxFollowItemPrice": "None",
+        "isNotBoosterPack": false,
+        "isTallItem": false,
+        "isHideItemUntilUnlocked": false,
+        "posYOffsetInBox": 0.0,
+        "scaleOffsetInBox": -0.13,
+        "itemDimension": {"x": 1.0, "y": 1.0, "z": 1.0},
+        "colliderPosOffset": {"x": 0.0, "y": 0.0, "z": 0.0},
+        "colliderScale": {"x": 0.08, "y": 0.14, "z": 0.022},
+        "affectedPriceChangeType": []
     }
-  },
-  {
-    "name": "DisplayStellar",
-    "category": "TCG",
-    "iconScale": 1,
-    "baseCost": 450,
-    "marketPriceMinPercent": 0.8,
-    "marketPriceMaxPercent": 1.2,
-    "boxFollowItemPrice": "BoosterStellar",
-    "isNotBoosterPack": true,
-    "isTallItem": false,
-    "isHideItemUntilUnlocked": false,
-    "posYOffsetInBox": 0,
-    "scaleOffsetInBox": 0,
-    "affectedPriceChangeType": [
-      "TCG"
-    ],
-    "icon": "DisplayStellar.png",
-    "itemDimension": {
-      "x": 1,
-      "y": 1,
-      "z": 1
-    },
-    "colliderPosOffset": {
-      "x": 0,
-      "y": 0,
-      "z": 0
-    },
-    "colliderScale": {
-      "x": 1,
-      "y": 1,
-      "z": 1
-    }
-  },
-  {
-    "name": "BoosterStellarTaux",
-    "category": "TCG",
-    "iconScale": 1,
-    "baseCost": 150,
-    "marketPriceMinPercent": 0.8,
-    "marketPriceMaxPercent": 1.2,
-    "boxFollowItemPrice": "None",
-    "isNotBoosterPack": false,
-    "isTallItem": false,
-    "isHideItemUntilUnlocked": false,
-    "posYOffsetInBox": 0,
-    "scaleOffsetInBox": 0,
-    "affectedPriceChangeType": [
-      "TCG"
-    ],
-    "icon": "BoosterStellarTaux.png",
-    "itemDimension": {
-      "x": 1,
-      "y": 1,
-      "z": 1
-    },
-    "colliderPosOffset": {
-      "x": 0,
-      "y": 0,
-      "z": 0
-    },
-    "colliderScale": {
-      "x": 1,
-      "y": 1,
-      "z": 1
-    }
-  },
-  {
-    "name": "DisplayStellarTaux",
-    "category": "TCG",
-    "iconScale": 1,
-    "baseCost": 4500,
-    "marketPriceMinPercent": 0.8,
-    "marketPriceMaxPercent": 1.2,
-    "boxFollowItemPrice": "BoosterStellarTaux",
-    "isNotBoosterPack": true,
-    "isTallItem": false,
-    "isHideItemUntilUnlocked": false,
-    "posYOffsetInBox": 0,
-    "scaleOffsetInBox": 0,
-    "affectedPriceChangeType": [
-      "TCG"
-    ],
-    "icon": "DisplayStellarTaux.png",
-    "itemDimension": {
-      "x": 1,
-      "y": 1,
-      "z": 1
-    },
-    "colliderPosOffset": {
-      "x": 0,
-      "y": 0,
-      "z": 0
-    },
-    "colliderScale": {
-      "x": 1,
-      "y": 1,
-      "z": 1
-    }
-  },
-  {
-    "name": "ClasseurS4",
-    "category": "Accessories",
-    "iconScale": 1,
-    "baseCost": 200,
-    "marketPriceMinPercent": 0.8,
-    "marketPriceMaxPercent": 1.2,
-    "boxFollowItemPrice": "None",
-    "isNotBoosterPack": true,
-    "isTallItem": false,
-    "isHideItemUntilUnlocked": false,
-    "posYOffsetInBox": 0,
-    "scaleOffsetInBox": 0,
-    "affectedPriceChangeType": [
-      "Accessories"
-    ],
-    "icon": "ClasseurS4.png",
-    "itemDimension": {
-      "x": 1,
-      "y": 1,
-      "z": 1
-    },
-    "colliderPosOffset": {
-      "x": 0,
-      "y": 0,
-      "z": 0
-    },
-    "colliderScale": {
-      "x": 1,
-      "y": 1,
-      "z": 1
-    }
-  },
-  {
-    "name": "TapisS41",
-    "category": "Accessories",
-    "iconScale": 1,
-    "baseCost": 150,
-    "marketPriceMinPercent": 0.8,
-    "marketPriceMaxPercent": 1.2,
-    "boxFollowItemPrice": "None",
-    "isNotBoosterPack": true,
-    "isTallItem": false,
-    "isHideItemUntilUnlocked": false,
-    "posYOffsetInBox": 0,
-    "scaleOffsetInBox": 0,
-    "affectedPriceChangeType": [
-      "Accessories"
-    ],
-    "icon": "TapisS41.png",
-    "itemDimension": {
-      "x": 1,
-      "y": 1,
-      "z": 1
-    },
-    "colliderPosOffset": {
-      "x": 0,
-      "y": 0,
-      "z": 0
-    },
-    "colliderScale": {
-      "x": 1,
-      "y": 1,
-      "z": 1
-    }
-  },
-  {
-    "name": "TapisS42",
-    "category": "Accessories",
-    "iconScale": 1,
-    "baseCost": 150,
-    "marketPriceMinPercent": 0.8,
-    "marketPriceMaxPercent": 1.2,
-    "boxFollowItemPrice": "None",
-    "isNotBoosterPack": true,
-    "isTallItem": false,
-    "isHideItemUntilUnlocked": false,
-    "posYOffsetInBox": 0,
-    "scaleOffsetInBox": 0,
-    "affectedPriceChangeType": [
-      "Accessories"
-    ],
-    "icon": "TapisS42.png",
-    "itemDimension": {
-      "x": 1,
-      "y": 1,
-      "z": 1
-    },
-    "colliderPosOffset": {
-      "x": 0,
-      "y": 0,
-      "z": 0
-    },
-    "colliderScale": {
-      "x": 1,
-      "y": 1,
-      "z": 1
-    }
-  },
-  {
-    "name": "CaleconStellar",
-    "category": "Figurines",
-    "iconScale": 1,
-    "baseCost": 120,
-    "marketPriceMinPercent": 0.8,
-    "marketPriceMaxPercent": 1.2,
-    "boxFollowItemPrice": "None",
-    "isNotBoosterPack": true,
-    "isTallItem": false,
-    "isHideItemUntilUnlocked": false,
-    "posYOffsetInBox": 0,
-    "scaleOffsetInBox": 0,
-    "affectedPriceChangeType": [
-      "Figurines"
-    ],
-    "icon": "CaleconStellar.png",
-    "itemDimension": {
-      "x": 1,
-      "y": 1,
-      "z": 1
-    },
-    "colliderPosOffset": {
-      "x": 0,
-      "y": 0,
-      "z": 0
-    },
-    "colliderScale": {
-      "x": 1,
-      "y": 1,
-      "z": 1
-    }
-  }
 ]

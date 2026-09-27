@@ -442,6 +442,12 @@ public class Plugin : BaseUnityPlugin
             AccessTools.Method(typeof(ScreenRatioScaler), "Init"),
             prefix: AccessTools.Method(typeof(SceneLifecyclePatches), nameof(SceneLifecyclePatches.ScreenRatioScalerInitPrefix))
         );
+
+        TryPatch(
+            "RestockItemScreen.EvaluateRestockItemPanelUI",
+            AccessTools.Method(typeof(RestockItemScreen), "EvaluateRestockItemPanelUI", new[] { typeof(int) }),
+            prefix: AccessTools.Method(typeof(CustomItemsImporter), nameof(CustomItemsImporter.LogShopEvaluation))
+        );
     }
 
     public static string GetPluginPath()

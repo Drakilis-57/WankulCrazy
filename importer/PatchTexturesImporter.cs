@@ -267,6 +267,12 @@ namespace WankulCrazyPlugin.importer
                     { EnumExtensions.SafeParseEItemType("BoosterStellar"), Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Booster_S4.png") },
                     { EnumExtensions.SafeParseEItemType("BoosterStellarTaux"), Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Booster_S4_TauxDrop.png") },
                     { EnumExtensions.SafeParseEItemType("BoosterLegacy"), Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Booster_S5.png") },
+
+                    // Accessoires & goodies custom
+                    { EnumExtensions.SafeParseEItemType("TapisS41"), Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Tapis_S4_1.png") },
+                    { EnumExtensions.SafeParseEItemType("TapisS42"), Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Tapis_S4_2.png") },
+                    { EnumExtensions.SafeParseEItemType("ClasseurS4"), Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "T_BinderBook.png") },
+                    { EnumExtensions.SafeParseEItemType("CaleconStellar"), Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "T_PiggyA.png") },
                 };
 
                 EItemType ascensionPack = EnumExtensions.SafeParseEItemType("AscensionCardPack");

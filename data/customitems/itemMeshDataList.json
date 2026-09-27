@@ -1,42 +1,99 @@
 [
-  {
-    "name": "BoosterStellar",
-    "copyItemType": "BasicCardPack",
-    "texture": "Texture_Booster_S4.png"
-  },
-  {
-    "name": "DisplayStellar",
-    "copyItemType": "BasicCardBox",
-    "texture": "Texture_Display_S4.png"
-  },
-  {
-    "name": "BoosterStellarTaux",
-    "copyItemType": "BasicCardPack",
-    "texture": "Texture_Booster_S4_TauxDrop.png"
-  },
-  {
-    "name": "DisplayStellarTaux",
-    "copyItemType": "BasicCardBox",
-    "texture": "Texture_Display_S4_TauxDrop.png"
-  },
-  {
-    "name": "ClasseurS4",
-    "copyItemType": "CardAlbum",
-    "texture": "Texture_Classeur_S4.png"
-  },
-  {
-    "name": "TapisS41",
-    "copyItemType": "Playmat_01",
-    "texture": "Texture_Tapis_S4_1.png"
-  },
-  {
-    "name": "TapisS42",
-    "copyItemType": "Playmat_01",
-    "texture": "Texture_Tapis_S4_2.png"
-  },
-  {
-    "name": "CaleconStellar",
-    "copyItemType": "Plushie_Small",
-    "texture": "Texture_Calecon_S4.png"
-  }
+    {
+        "importType": "CopyItem",
+        "name": "BoosterStellar_Mesh",
+        "itemType": "BoosterStellar",
+        "copyItemType": "BasicCardPack",
+        "texture": "Texture_Booster_S4.png",
+        "hasCustomTexture": true
+    },
+    {
+        "importType": "CopyItem",
+        "name": "DisplayStellar_Mesh",
+        "itemType": "DisplayStellar",
+        "copyItemType": "BasicCardBox",
+        "texture": "Texture_Display_S4.png",
+        "hasCustomTexture": true
+    },
+    {
+        "importType": "CopyItem",
+        "name": "BoosterStellar_Mesh",
+        "itemType": "BoosterStellarTaux",
+        "copyItemType": "BasicCardPack",
+        "texture": "Texture_Booster_S4_TauxDrop.png",
+        "hasCustomTexture": true
+    },
+    {
+        "importType": "CopyItem",
+        "name": "DisplayStellar_Mesh",
+        "itemType": "DisplayStellarTaux",
+        "copyItemType": "BasicCardBox",
+        "texture": "Texture_Display_S4_TauxDrop.png",
+        "hasCustomTexture": true
+    },
+    {
+        "importType": "ImportObj",
+        "name": "CaleconStellar_Mesh",
+        "itemType": "CaleconStellar",
+        "texture": "Texture_Calecon.png",
+        "obj": "Calecon_S4.obj",
+        "scale": 3.0,
+        "hasCustomTexture": true
+    },
+    {
+        "importType": "CopyItem",
+        "name": "StarterApocalypse_Mesh",
+        "itemType": "StarterApocalypse",
+        "copyItemType": "PreconDeck_Fire",
+        "texture": "Texture_Starter_Apocalypse.png",
+        "hasCustomTexture": true
+    },
+    {
+        "importType": "CopyItem",
+        "name": "StarterShowtime_Mesh",
+        "itemType": "StarterShowtime",
+        "copyItemType": "PreconDeck_Fire",
+        "texture": "Texture_Starter_Showtime.png",
+        "hasCustomTexture": true
+    },
+    {
+        "importType": "CopyItem",
+        "name": "TapisS41_Mesh",
+        "itemType": "TapisS41",
+        "copyItemType": "Playmat1",
+        "texture": "Texture_Tapis_S4_1.png",
+        "hasCustomTexture": true
+    },
+    {
+        "importType": "CopyItem",
+        "name": "TapisS42_Mesh",
+        "itemType": "TapisS42",
+        "copyItemType": "Playmat1",
+        "texture": "Texture_Tapis_S4_2.png",
+        "hasCustomTexture": true
+    },
+    {
+        "importType": "CopyItem",
+        "name": "ClasseurS4_Mesh",
+        "itemType": "ClasseurS4",
+        "copyItemType": "BinderBook",
+        "texture": "Texture_Classeur_S4.png",
+        "hasCustomTexture": true
+    },
+    {
+        "importType": "CopyItem",
+        "name": "BoosterGoldBattle_Mesh",
+        "itemType": "BoosterGoldBattle",
+        "copyItemType": "BasicCardPack",
+        "texture": "Texture_BoosterGold.png",
+        "hasCustomTexture": true
+    },
+    {
+        "importType": "CopyItem",
+        "name": "BoosterGoldStellar_Mesh",
+        "itemType": "BoosterGoldStellar",
+        "copyItemType": "BasicCardPack",
+        "texture": "Texture_BoosterGold.png",
+        "hasCustomTexture": true
+    }
 ]

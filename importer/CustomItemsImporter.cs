@@ -20,14 +20,80 @@ namespace WankulCrazyPlugin.importer
         public static void ImportCustomItems()
         {
             if (isImported) return;
+            if (InventoryBase.Instance?.m_StockItemData_SO == null) return;
+
+            var so = InventoryBase.Instance.m_StockItemData_SO;
+
             ItemDataList = DeserializeItemDataListJson();
             RestockDataList = DeserializeRestockDataListJson();
             ItemMeshDataList = DeserializeItemMeshDataList();
-            InventoryBase.Instance.m_StockItemData_SO.m_ItemDataList.AddRange(ItemDataList);
-            InventoryBase.Instance.m_StockItemData_SO.m_RestockDataList.AddRange(RestockDataList);
-            InventoryBase.Instance.m_StockItemData_SO.m_ItemMeshDataList.AddRange(ItemMeshDataList);
+
+            // 1. Déduplication préventive pour éviter les apparitions en double ou en triple
+            if (ItemDataList != null && so.m_ItemDataList != null)
+            {
+                var customItemNames = new HashSet<string>(ItemDataList.Select(i => i.name), StringComparer.OrdinalIgnoreCase);
+                so.m_ItemDataList.RemoveAll(i => i != null && customItemNames.Contains(i.name));
+                so.m_ItemDataList.AddRange(ItemDataList);
+            }
+
+            if (ItemMeshDataList != null && so.m_ItemMeshDataList != null)
+            {
+                var customMeshNames = new HashSet<string>(ItemMeshDataList.Select(m => m.name), StringComparer.OrdinalIgnoreCase);
+                so.m_ItemMeshDataList.RemoveAll(m => m != null && customMeshNames.Contains(m.name));
+                so.m_ItemMeshDataList.AddRange(ItemMeshDataList);
+            }
+
+            // 2. Positionnement des licences Restock dans l'ordre chronologique (normal après Battle normal, Taux après Battle Taux)
+            if (RestockDataList != null && so.m_RestockDataList != null)
+            {
+                var customRestockTypes = new HashSet<EItemType>(RestockDataList.Select(r => r.itemType));
+                so.m_RestockDataList.RemoveAll(r => customRestockTypes.Contains(r.itemType));
+
+                var tauxRestockTypes = new HashSet<EItemType>
+                {
+                    EnumExtensions.SafeParseEItemType("BoosterStellarTaux"),
+                    EnumExtensions.SafeParseEItemType("DisplayStellarTaux")
+                };
+
+                var normalRestockItems = RestockDataList.Where(r => !tauxRestockTypes.Contains(r.itemType)).ToList();
+                var tauxRestockItems = RestockDataList.Where(r => tauxRestockTypes.Contains(r.itemType)).ToList();
+
+                // 2.a Inserer les normaux apres Battle normal (EpicCardBox)
+                int battleNormalIdx = so.m_RestockDataList.FindLastIndex(r => 
+                    r.itemType == EItemType.EpicCardBox || r.itemType == EItemType.EpicCardPack ||
+                    (r.name != null && r.name.IndexOf("Epic", StringComparison.OrdinalIgnoreCase) >= 0 && r.name.IndexOf("Destiny", StringComparison.OrdinalIgnoreCase) < 0));
+
+                if (battleNormalIdx >= 0 && battleNormalIdx + 1 <= so.m_RestockDataList.Count)
+                {
+                    so.m_RestockDataList.InsertRange(battleNormalIdx + 1, normalRestockItems);
+                    Plugin.Logger.LogInfo($"[CustomItemsImporter] Restock Stellar normal inséré après Battle normal à l'index {battleNormalIdx + 1}.");
+                }
+                else
+                {
+                    so.m_RestockDataList.AddRange(normalRestockItems);
+                }
+
+                // 2.b Inserer les Taux apres Battle Taux (DestinyEpicCardBox)
+                int battleTauxIdx = so.m_RestockDataList.FindLastIndex(r => 
+                    r.itemType == EItemType.DestinyEpicCardBox || r.itemType == EItemType.DestinyEpicCardPack ||
+                    (r.name != null && (r.name.IndexOf("Destiny Epic", StringComparison.OrdinalIgnoreCase) >= 0 || (r.name.IndexOf("Battle", StringComparison.OrdinalIgnoreCase) >= 0 && r.name.IndexOf("Taux", StringComparison.OrdinalIgnoreCase) >= 0))));
+
+                if (battleTauxIdx >= 0 && battleTauxIdx + 1 <= so.m_RestockDataList.Count)
+                {
+                    so.m_RestockDataList.InsertRange(battleTauxIdx + 1, tauxRestockItems);
+                    Plugin.Logger.LogInfo($"[CustomItemsImporter] Restock Stellar Taux inséré après Battle Taux à l'index {battleTauxIdx + 1}.");
+                }
+                else
+                {
+                    so.m_RestockDataList.AddRange(tauxRestockItems);
+                }
+            }
+
+            // 3. Positionnement dans les catégories du shop (m_ShownItemType, m_ShownAccessoryItemType, m_ShownFigurineItemType)
             RegisterCustomItemsToShopCategories(ItemDataList);
+
             isImported = true;
+            Plugin.Logger.LogInfo("[CustomItemsImporter] Custom items successfully imported & positioned in shop categories.");
         }
 
         public static List<ItemData> DeserializeItemDataListJson()
@@ -43,10 +109,22 @@ namespace WankulCrazyPlugin.importer
                     JArray array = JArray.Parse(content);
                     foreach (JObject json in array)
                     {
+                        string catStr = (string)json["category"];
+                        EItemCategory cat = EItemCategory.None;
+                        if (!string.IsNullOrEmpty(catStr))
+                        {
+                            if (!Enum.TryParse(catStr, true, out cat))
+                            {
+                                Plugin.Logger.LogWarning($"[CustomItemsImporter] Unknown category '{catStr}', defaulting to None.");
+                            }
+                        }
+
+                        string itemTypeName = (string)json["itemType"];
+                        string displayName = (string)json["name"];
                         ItemData item = new ItemData
                         {
-                            name = (string)json["name"],
-                            category = (EItemCategory)Enum.Parse(typeof(EItemCategory), (string)json["category"]),
+                            name = !string.IsNullOrEmpty(itemTypeName) ? itemTypeName : displayName,
+                            category = cat,
                             iconScale = (float)(json["iconScale"] ?? 1f),
                             baseCost = (float)(json["baseCost"] ?? 0f),
                             marketPriceMinPercent = (float)(json["marketPriceMinPercent"] ?? 0f),
@@ -64,7 +142,15 @@ namespace WankulCrazyPlugin.importer
                         {
                             foreach (var pct in priceArr)
                             {
-                                item.affectedPriceChangeType.Add((EPriceChangeType)Enum.Parse(typeof(EPriceChangeType), (string)pct));
+                                string pctStr = (string)pct;
+                                if (!string.IsNullOrEmpty(pctStr) && Enum.TryParse(pctStr, true, out EPriceChangeType parsedPct))
+                                {
+                                    item.affectedPriceChangeType.Add(parsedPct);
+                                }
+                                else
+                                {
+                                    Plugin.Logger.LogWarning($"[CustomItemsImporter] Unknown EPriceChangeType '{pctStr}', ignored.");
+                                }
                             }
                         }
 
@@ -76,6 +162,23 @@ namespace WankulCrazyPlugin.importer
                         if (!string.IsNullOrEmpty(iconProp))
                         {
                             string iconPath = Path.Combine(root, "icons", iconProp);
+                            if (!File.Exists(iconPath))
+                            {
+                                string spritesPath = Path.Combine(Plugin.GetPluginPath(), "data", "sprites", iconProp);
+                                if (File.Exists(spritesPath))
+                                {
+                                    iconPath = spritesPath;
+                                }
+                                else
+                                {
+                                    string patchTexPath = Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", iconProp);
+                                    if (File.Exists(patchTexPath))
+                                    {
+                                        iconPath = patchTexPath;
+                                    }
+                                }
+                            }
+
                             if (File.Exists(iconPath))
                             {
                                 Texture2D texture = TextureUtils.LoadTexture(iconPath);
@@ -144,19 +247,107 @@ namespace WankulCrazyPlugin.importer
                     JArray array = JArray.Parse(content);
                     foreach (JObject json in array)
                     {
-                        ItemMeshData mesh = new ItemMeshData { name = (string)json["name"] };
-                        ItemMeshData source = InventoryBase.GetItemMeshData(EnumExtensions.SafeParseEItemType((string)json["copyItemType"]));
-                        mesh.mesh = source.mesh;
-                        mesh.meshSecondary = source.meshSecondary;
-                        mesh.materialSecondary = source.materialSecondary;
+                        string itemTypeStr = (string)json["itemType"];
+                        string nameStr = (string)json["name"];
+                        ItemMeshData mesh = new ItemMeshData { name = !string.IsNullOrEmpty(itemTypeStr) ? itemTypeStr : nameStr };
+                        
+                        string importType = (string)json["importType"] ?? "CopyItem";
+                        string objProp = (string)json["obj"];
+
+                        if (importType.Equals("ImportObj", StringComparison.OrdinalIgnoreCase) || !string.IsNullOrEmpty(objProp))
+                        {
+                            string objPath = Path.Combine(root, "meshes", objProp ?? "Calecon_S4.obj");
+                            if (File.Exists(objPath))
+                            {
+                                try
+                                {
+                                    GameObject loadedObj = new OBJLoader().Load(objPath);
+                                    if (loadedObj != null)
+                                    {
+                                        List<Mesh> meshList = new List<Mesh>();
+                                        MeshFilter[] meshFilters = loadedObj.GetComponentsInChildren<MeshFilter>();
+                                        foreach (MeshFilter mf in meshFilters)
+                                        {
+                                            if (mf.mesh != null)
+                                            {
+                                                Mesh m = mf.mesh;
+                                                Vector3[] vertices = m.vertices;
+                                                for (int i = 0; i < vertices.Length; i++)
+                                                    vertices[i].z = -vertices[i].z;
+                                                int[] triangles = m.triangles;
+                                                for (int i = 0; i < triangles.Length; i += 3)
+                                                {
+                                                    int temp = triangles[i];
+                                                    triangles[i] = triangles[i + 2];
+                                                    triangles[i + 2] = temp;
+                                                }
+                                                m.vertices = vertices;
+                                                m.triangles = triangles;
+                                                meshList.Add(m);
+                                            }
+                                        }
+
+                                        CombineInstance[] combine = new CombineInstance[meshList.Count];
+                                        for (int i = 0; i < meshList.Count; i++)
+                                        {
+                                            combine[i].mesh = meshList[i];
+                                            combine[i].transform = Matrix4x4.identity;
+                                        }
+
+                                        Mesh finalMesh = new Mesh();
+                                        finalMesh.CombineMeshes(combine, false);
+                                        finalMesh.name = mesh.name;
+                                        mesh.mesh = finalMesh;
+
+                                        loadedObj.SetActive(false);
+                                        UnityEngine.Object.Destroy(loadedObj);
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    Plugin.Logger.LogError($"[CustomItemsImporter] Error loading OBJ {objPath}: {ex.Message}");
+                                }
+                            }
+                        }
+                        else
+                        {
+                            string copyType = (string)json["copyItemType"];
+                            if (string.IsNullOrEmpty(copyType) && !string.IsNullOrEmpty(itemTypeStr))
+                            {
+                                copyType = "BasicCardPack";
+                            }
+                            
+                            ItemMeshData source = InventoryBase.GetItemMeshData(EnumExtensions.SafeParseEItemType(copyType));
+                            if (source != null)
+                            {
+                                mesh.mesh = source.mesh;
+                                mesh.meshSecondary = source.meshSecondary;
+                                mesh.materialSecondary = source.materialSecondary;
+                                mesh.material = source.material;
+                            }
+                        }
+
                         string texProp = (string)json["texture"];
                         if (!string.IsNullOrEmpty(texProp))
                         {
                             string texturePath = Path.Combine(root, "textures", texProp);
+                            if (!File.Exists(texturePath))
+                            {
+                                string patchTexPath = Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", texProp);
+                                if (File.Exists(patchTexPath))
+                                {
+                                    texturePath = patchTexPath;
+                                }
+                            }
+
                             if (File.Exists(texturePath))
                             {
                                 Texture2D texture = TextureUtils.LoadTexture(texturePath);
-                                mesh.material = new Material(Shader.Find("Standard")) { mainTexture = texture };
+                                Material newMat = WankulCrazyPlugin.utils.ShaderUtils.CreateSafeMaterial(mesh.material);
+                                if (newMat.HasProperty("_BaseColorMap")) newMat.SetTexture("_BaseColorMap", texture);
+                                if (newMat.HasProperty("_BaseMap")) newMat.SetTexture("_BaseMap", texture);
+                                if (newMat.HasProperty("_MainTex")) newMat.SetTexture("_MainTex", texture);
+                                mesh.material = newMat;
                             }
                             else Plugin.Logger.LogWarning("Test/custom item texture not found yet: " + texturePath);
                         }
@@ -217,12 +408,156 @@ namespace WankulCrazyPlugin.importer
 
         private static void RegisterCustomItemsToShopCategories(List<ItemData> items)
         {
-            if (items == null || InventoryBase.Instance?.m_StockItemData_SO == null) return;
-            foreach (ItemData item in items)
+            if (InventoryBase.Instance?.m_StockItemData_SO == null) return;
+            var so = InventoryBase.Instance.m_StockItemData_SO;
+
+            // Définition des types custom
+            EItemType boosterStellar = EnumExtensions.SafeParseEItemType("BoosterStellar");
+            EItemType displayStellar = EnumExtensions.SafeParseEItemType("DisplayStellar");
+            EItemType boosterStellarTaux = EnumExtensions.SafeParseEItemType("BoosterStellarTaux");
+            EItemType displayStellarTaux = EnumExtensions.SafeParseEItemType("DisplayStellarTaux");
+            EItemType starterApocalypse = EnumExtensions.SafeParseEItemType("StarterApocalypse");
+            EItemType starterShowtime = EnumExtensions.SafeParseEItemType("StarterShowtime");
+            EItemType caleconStellar = EnumExtensions.SafeParseEItemType("CaleconStellar");
+            EItemType tapisS41 = EnumExtensions.SafeParseEItemType("TapisS41");
+            EItemType tapisS42 = EnumExtensions.SafeParseEItemType("TapisS42");
+            EItemType classeurS4 = EnumExtensions.SafeParseEItemType("ClasseurS4");
+
+            // Liste ordonnée de la 1.4.0 pour l'onglet principal / packs
+            var s4PackItems = new List<EItemType>
             {
-                EItemType type = EnumExtensions.SafeParseEItemType(item.name);
-                if (type != EItemType.None && !InventoryBase.Instance.m_StockItemData_SO.m_ShownItemType.Contains(type)) InventoryBase.Instance.m_StockItemData_SO.m_ShownItemType.Add(type);
+                boosterStellar,
+                displayStellar,
+                boosterStellarTaux,
+                displayStellarTaux,
+                starterApocalypse,
+                starterShowtime
+            };
+
+            // Nettoyage complet des objets custom dans TOUTES les listes pour éviter qu'un objet se retrouve dans le mauvais onglet
+            var allCustom = new List<EItemType>
+            {
+                boosterStellar, displayStellar, boosterStellarTaux, displayStellarTaux,
+                starterApocalypse, starterShowtime, caleconStellar, tapisS41, tapisS42, classeurS4
+            };
+
+            if (so.m_ShownItemType != null) so.m_ShownItemType.RemoveAll(t => allCustom.Contains(t));
+            if (so.m_ShownAccessoryItemType != null) so.m_ShownAccessoryItemType.RemoveAll(t => allCustom.Contains(t));
+            if (so.m_ShownFigurineItemType != null) so.m_ShownFigurineItemType.RemoveAll(t => allCustom.Contains(t));
+
+            // Insertion des Packs dans m_ShownItemType :
+            // Dans le magasin, les types de packs sont regroupés :
+            // 1) Packs normaux : Basic -> Rare -> Epic (Battle) -> Stellar
+            // 2) Decks préconstruits : PreconDeck_Wind -> Starters S4
+            // 3) Packs Taux : DestinyBasic -> DestinyRare -> DestinyEpic (Battle Taux) -> Stellar Taux
+            if (so.m_ShownItemType != null)
+            {
+                var s4NormalPacks = new List<EItemType> { boosterStellar, displayStellar };
+                var s4Starters = new List<EItemType> { starterApocalypse, starterShowtime };
+                var s4TauxPacks = new List<EItemType> { boosterStellarTaux, displayStellarTaux };
+
+                // 1) Stellar Normal après Battle normal (EpicCardBox)
+                int battleNormalIdx = so.m_ShownItemType.FindLastIndex(t => t == EItemType.EpicCardBox || t == EItemType.EpicCardPack);
+                if (battleNormalIdx >= 0 && battleNormalIdx + 1 <= so.m_ShownItemType.Count)
+                {
+                    so.m_ShownItemType.InsertRange(battleNormalIdx + 1, s4NormalPacks);
+                    Plugin.Logger.LogInfo($"[CustomItemsImporter] Inserted Stellar Normal at index {battleNormalIdx + 1} after Battle (EpicCardBox).");
+                }
+                else
+                {
+                    so.m_ShownItemType.AddRange(s4NormalPacks);
+                }
+
+                // 2) Starters après les decks de départ (PreconDeck_Wind)
+                int deckIdx = so.m_ShownItemType.FindLastIndex(t => t == EItemType.PreconDeck_Wind || t == EItemType.PreconDeck_Water || t == EItemType.PreconDeck_Earth || t == EItemType.PreconDeck_Fire);
+                if (deckIdx >= 0 && deckIdx + 1 <= so.m_ShownItemType.Count)
+                {
+                    so.m_ShownItemType.InsertRange(deckIdx + 1, s4Starters);
+                    Plugin.Logger.LogInfo($"[CustomItemsImporter] Inserted Starters at index {deckIdx + 1} after PreconDeck_Wind.");
+                }
+                else
+                {
+                    so.m_ShownItemType.AddRange(s4Starters);
+                }
+
+                // 3) Stellar Taux après Battle Taux (DestinyEpicCardBox)
+                int battleTauxIdx = so.m_ShownItemType.FindLastIndex(t => t == EItemType.DestinyEpicCardBox || t == EItemType.DestinyEpicCardPack);
+                if (battleTauxIdx >= 0 && battleTauxIdx + 1 <= so.m_ShownItemType.Count)
+                {
+                    so.m_ShownItemType.InsertRange(battleTauxIdx + 1, s4TauxPacks);
+                    Plugin.Logger.LogInfo($"[CustomItemsImporter] Inserted Stellar Taux at index {battleTauxIdx + 1} after Battle Taux (DestinyEpicCardBox).");
+                }
+                else
+                {
+                    so.m_ShownItemType.AddRange(s4TauxPacks);
+                }
             }
+
+            // Onglet Figurines (CaleconStellar uniquement)
+            if (so.m_ShownFigurineItemType != null)
+            {
+                so.m_ShownFigurineItemType.Add(caleconStellar);
+                Plugin.Logger.LogInfo("[CustomItemsImporter] Added CaleconStellar to m_ShownFigurineItemType.");
+            }
+
+            // Onglet Accessoires (TapisS41, TapisS42, ClasseurS4)
+            if (so.m_ShownAccessoryItemType != null)
+            {
+                var s4Accessories = new List<EItemType> { tapisS41, tapisS42, classeurS4 };
+                so.m_ShownAccessoryItemType.AddRange(s4Accessories);
+                Plugin.Logger.LogInfo($"[CustomItemsImporter] Added {s4Accessories.Count} accessories to m_ShownAccessoryItemType.");
+            }
+
+            // Affichage exhaustif des listes pour debug immédiat dans la console
+            Plugin.Logger.LogInfo("=== [SHOP DEBUG: m_ShownItemType (Boosters)] ===");
+            if (so.m_ShownItemType != null)
+            {
+                for (int i = 0; i < so.m_ShownItemType.Count; i++)
+                {
+                    Plugin.Logger.LogInfo($"  [{i}] {so.m_ShownItemType[i]}");
+                }
+            }
+
+            Plugin.Logger.LogInfo("=== [SHOP DEBUG: m_ShownAccessoryItemType (Accessoires)] ===");
+            if (so.m_ShownAccessoryItemType != null)
+            {
+                for (int i = 0; i < so.m_ShownAccessoryItemType.Count; i++)
+                {
+                    Plugin.Logger.LogInfo($"  [{i}] {so.m_ShownAccessoryItemType[i]}");
+                }
+            }
+
+            Plugin.Logger.LogInfo("=== [SHOP DEBUG: m_ShownFigurineItemType (Figurines)] ===");
+            if (so.m_ShownFigurineItemType != null)
+            {
+                for (int i = 0; i < so.m_ShownFigurineItemType.Count; i++)
+                {
+                    Plugin.Logger.LogInfo($"  [{i}] {so.m_ShownFigurineItemType[i]}");
+                }
+            }
+
+            Plugin.Logger.LogInfo("=== [SHOP DEBUG: m_RestockDataList (Licences boutique)] ===");
+            if (so.m_RestockDataList != null)
+            {
+                for (int i = 0; i < so.m_RestockDataList.Count; i++)
+                {
+                    var r = so.m_RestockDataList[i];
+                    Plugin.Logger.LogInfo($"  [{i}] {r.name} (itemType={r.itemType}, Level={r.licenseShopLevelRequired})");
+                }
+            }
+        }
+
+        public static void LogShopEvaluation(int pageIndex)
+        {
+            string tabName = pageIndex switch
+            {
+                0 => "Boosters",
+                1 => "Accessoires",
+                2 => "Figurines",
+                3 => "Tous",
+                _ => $"Onglet #{pageIndex}"
+            };
+            Plugin.Logger.LogInfo($"[SHOP EVALUATE] Ouverture de l'onglet: {tabName} (index={pageIndex})");
         }
 
         public static bool GetItemMeshDataPrefix(EItemType itemType, ref ItemMeshData __result)
