@@ -34,7 +34,7 @@ public void LegacyCards_JsonLoading_RegistersSeasonAndRarities()
         [Fact]
         public void CustomItems_JsonFiles_ParseValidly()
         {
-            string rootPath = AppDomain.CurrentDomain.BaseDirectory;
+            string? rootPath = AppDomain.CurrentDomain.BaseDirectory;
             while (rootPath != null && !Directory.Exists(Path.Combine(rootPath, "data")))
             {
                 rootPath = Directory.GetParent(rootPath)?.FullName;
