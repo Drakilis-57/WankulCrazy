@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using WankulCrazyPlugin;
 
 public class AnimationCopier : MonoBehaviour
@@ -49,7 +49,7 @@ public class AnimationCopier : MonoBehaviour
         if (targetAnimation.GetClip(clipName) == null)
         {
             targetAnimation.AddClip(clip, clipName);
-            //Plugin.Logger.LogInfo($"Animation clip '{clipName}' copied from source object to target object.");
+            //Plugin.LogInfo($"Animation clip '{clipName}' copied from source object to target object.");
         }
     }
 }

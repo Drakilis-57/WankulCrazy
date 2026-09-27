@@ -108,11 +108,11 @@ namespace WankulCrazyPlugin.patch
 
             if (cardData == null)
             {
-                //Plugin.Logger.LogInfo("CardData is null");
+                //Plugin.LogInfo("CardData is null");
                 cardData = WankulCardsData.Instance.GetUnassciatedCardData();
                 if (cardData == null)
                 {
-                    //Plugin.Logger.LogInfo("UnassciatedCardData is null");
+                    //Plugin.LogInfo("UnassciatedCardData is null");
                 }
                 WankulCardsData.Instance.SetFromMonster(cardData, wankulCardData);
             }

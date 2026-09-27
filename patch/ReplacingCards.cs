@@ -15,7 +15,7 @@ namespace WankulCrazyPlugin.patch;
 
 public class ReplacingCards
 {
-    static void SetCardUIPrefix(CardData cardData)
+    public static bool SetCardUIPrefix(CardData cardData, CardUI __instance)
     {
         WankulCardsData cardsData = WankulCardsData.Instance;
 
@@ -39,7 +39,15 @@ public class ReplacingCards
         WankulCardData wankulCardData = cardsData.GetFromMonster(gameCardData, true);
         if (wankulCardData == null)
         {
-            return;
+            // Si la carte n'a pas de MonsterData vanilla valide (ex: slot corrompu ou au-delà des monstres jeu),
+            // la méthode originale du jeu crasherait avec une NullReferenceException en faisant monsterData.something.
+            // On empêche ce crash en interceptant l'exécution.
+            if (InventoryBase.GetMonsterData(gameCardData.monsterType) == null)
+            {
+                Plugin.SetPProperty(__instance, "m_CardData", gameCardData);
+                return false;
+            }
+            return true;
         }
 
         gameCardData.isFoil = false;
@@ -54,25 +62,27 @@ public class ReplacingCards
                 gameCardData.isFoil = true;
             }
         }
-        Plugin.Logger.LogInfo($"[CardUI.SetCardUIPrefix] Carte '{wankulCardData.Title}' (Index={wankulCardData.Index}, Type={wankulCardData.GetType().Name}) -> isFoil={gameCardData.isFoil}, HasSpriteMask={(wankulCardData.SpriteMask != null)}");
+        Plugin.LogInfo($"[CardUI.SetCardUIPrefix] Carte '{wankulCardData.Title}' (Index={wankulCardData.Index}, Type={wankulCardData.GetType().Name}) -> isFoil={gameCardData.isFoil}, HasSpriteMask={(wankulCardData.SpriteMask != null)}");
+
+        // Si monsterData est null (ex: cartes sauvées avec un ID >= 122 dans save_0.json),
+        // le code original de CardUI.SetCardUI crashe en déréférençant monsterData.
+        // On assigne manuellement m_CardData, on applique les visuels Wankul et on saute le code vanilla !
+        if (InventoryBase.GetMonsterData(gameCardData.monsterType) == null)
+        {
+            Plugin.SetPProperty(__instance, "m_CardData", gameCardData);
+            ApplyWankulCardVisuals(__instance, gameCardData, wankulCardData);
+            return false;
+        }
+
+        return true;
     }
     
     private const float CardImageScale = 0.88f; // Sert a grandir ou réduire la taille des images des cartes
-    static void SetCardUIPostFix(CardData cardData, CardUI __instance)
-    {
-        if (cardData == null)
-        {
-            Plugin.Logger.LogError("gameCardData is null");
-            return;
-        }
-        CardData gameCardData = cardData;
-        WankulCardsData cardsData = WankulCardsData.Instance;
 
-        WankulCardData wankulCardData = cardsData.GetFromMonster(gameCardData, true);
-        if (wankulCardData == null)
-        {
-            return;
-        }
+    public static void ApplyWankulCardVisuals(CardUI __instance, CardData gameCardData, WankulCardData wankulCardData)
+    {
+        if (__instance == null || gameCardData == null || wankulCardData == null) return;
+
         if (wankulCardData.Sprite == null)
         {
             Plugin.Logger.LogWarning($"wankulCardData Sprite is null for {wankulCardData.Title} ({wankulCardData.Index})");
@@ -154,6 +164,25 @@ public class ReplacingCards
         CleanCardVisuals(__instance, gameCardData.isFoil, wankulCardData);
     }
 
+    static void SetCardUIPostFix(CardData cardData, CardUI __instance)
+    {
+        if (cardData == null)
+        {
+            Plugin.Logger.LogError("gameCardData is null");
+            return;
+        }
+        CardData gameCardData = cardData;
+        WankulCardsData cardsData = WankulCardsData.Instance;
+
+        WankulCardData wankulCardData = cardsData.GetFromMonster(gameCardData, true);
+        if (wankulCardData == null)
+        {
+            return;
+        }
+
+        ApplyWankulCardVisuals(__instance, gameCardData, wankulCardData);
+    }
+
     /// <summary>
     /// Nettoie et configure précisément les calques visuels d'une carte Wankul.
     /// Éteint complètement les résidus vanilla (StatGrp, RarityImage, CameraFoilShine*, FadeBar*, etc.)
@@ -165,7 +194,7 @@ public class ReplacingCards
 
         if (wankulCardData != null && wankulCardData.SpriteMask != null && isFoil)
         {
-            Plugin.Logger.LogInfo($"[CleanCardVisuals] ACTIVATION FOIL pour '{wankulCardData.Title}' (isFoil=True)");
+            Plugin.LogInfo($"[CleanCardVisuals] ACTIVATION FOIL pour '{wankulCardData.Title}' (isFoil=True)");
             if (__instance.m_FoilGrp != null)
             {
                 __instance.m_FoilGrp.SetActive(true);

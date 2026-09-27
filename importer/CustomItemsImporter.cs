@@ -66,7 +66,7 @@ namespace WankulCrazyPlugin.importer
                 if (battleNormalIdx >= 0 && battleNormalIdx + 1 <= so.m_RestockDataList.Count)
                 {
                     so.m_RestockDataList.InsertRange(battleNormalIdx + 1, normalRestockItems);
-                    Plugin.Logger.LogInfo($"[CustomItemsImporter] Restock Stellar normal inséré après Battle normal à l'index {battleNormalIdx + 1}.");
+                    Plugin.LogInfo($"[CustomItemsImporter] Restock Stellar normal inséré après Battle normal à l'index {battleNormalIdx + 1}.");
                 }
                 else
                 {
@@ -81,7 +81,7 @@ namespace WankulCrazyPlugin.importer
                 if (battleTauxIdx >= 0 && battleTauxIdx + 1 <= so.m_RestockDataList.Count)
                 {
                     so.m_RestockDataList.InsertRange(battleTauxIdx + 1, tauxRestockItems);
-                    Plugin.Logger.LogInfo($"[CustomItemsImporter] Restock Stellar Taux inséré après Battle Taux à l'index {battleTauxIdx + 1}.");
+                    Plugin.LogInfo($"[CustomItemsImporter] Restock Stellar Taux inséré après Battle Taux à l'index {battleTauxIdx + 1}.");
                 }
                 else
                 {
@@ -93,7 +93,7 @@ namespace WankulCrazyPlugin.importer
             RegisterCustomItemsToShopCategories(ItemDataList);
 
             isImported = true;
-            Plugin.Logger.LogInfo("[CustomItemsImporter] Custom items successfully imported & positioned in shop categories.");
+            Plugin.LogInfo("[CustomItemsImporter] Custom items successfully imported & positioned in shop categories.");
         }
 
         public static List<ItemData> DeserializeItemDataListJson()
@@ -461,7 +461,7 @@ namespace WankulCrazyPlugin.importer
                 if (battleNormalIdx >= 0 && battleNormalIdx + 1 <= so.m_ShownItemType.Count)
                 {
                     so.m_ShownItemType.InsertRange(battleNormalIdx + 1, s4NormalPacks);
-                    Plugin.Logger.LogInfo($"[CustomItemsImporter] Inserted Stellar Normal at index {battleNormalIdx + 1} after Battle (EpicCardBox).");
+                    Plugin.LogInfo($"[CustomItemsImporter] Inserted Stellar Normal at index {battleNormalIdx + 1} after Battle (EpicCardBox).");
                 }
                 else
                 {
@@ -473,7 +473,7 @@ namespace WankulCrazyPlugin.importer
                 if (deckIdx >= 0 && deckIdx + 1 <= so.m_ShownItemType.Count)
                 {
                     so.m_ShownItemType.InsertRange(deckIdx + 1, s4Starters);
-                    Plugin.Logger.LogInfo($"[CustomItemsImporter] Inserted Starters at index {deckIdx + 1} after PreconDeck_Wind.");
+                    Plugin.LogInfo($"[CustomItemsImporter] Inserted Starters at index {deckIdx + 1} after PreconDeck_Wind.");
                 }
                 else
                 {
@@ -485,7 +485,7 @@ namespace WankulCrazyPlugin.importer
                 if (battleTauxIdx >= 0 && battleTauxIdx + 1 <= so.m_ShownItemType.Count)
                 {
                     so.m_ShownItemType.InsertRange(battleTauxIdx + 1, s4TauxPacks);
-                    Plugin.Logger.LogInfo($"[CustomItemsImporter] Inserted Stellar Taux at index {battleTauxIdx + 1} after Battle Taux (DestinyEpicCardBox).");
+                    Plugin.LogInfo($"[CustomItemsImporter] Inserted Stellar Taux at index {battleTauxIdx + 1} after Battle Taux (DestinyEpicCardBox).");
                 }
                 else
                 {
@@ -497,7 +497,7 @@ namespace WankulCrazyPlugin.importer
             if (so.m_ShownFigurineItemType != null)
             {
                 so.m_ShownFigurineItemType.Add(caleconStellar);
-                Plugin.Logger.LogInfo("[CustomItemsImporter] Added CaleconStellar to m_ShownFigurineItemType.");
+                Plugin.LogInfo("[CustomItemsImporter] Added CaleconStellar to m_ShownFigurineItemType.");
             }
 
             // Onglet Accessoires (TapisS41, TapisS42, ClasseurS4)
@@ -505,44 +505,44 @@ namespace WankulCrazyPlugin.importer
             {
                 var s4Accessories = new List<EItemType> { tapisS41, tapisS42, classeurS4 };
                 so.m_ShownAccessoryItemType.AddRange(s4Accessories);
-                Plugin.Logger.LogInfo($"[CustomItemsImporter] Added {s4Accessories.Count} accessories to m_ShownAccessoryItemType.");
+                Plugin.LogInfo($"[CustomItemsImporter] Added {s4Accessories.Count} accessories to m_ShownAccessoryItemType.");
             }
 
             // Affichage exhaustif des listes pour debug immédiat dans la console
-            Plugin.Logger.LogInfo("=== [SHOP DEBUG: m_ShownItemType (Boosters)] ===");
+            Plugin.LogInfo("=== [SHOP DEBUG: m_ShownItemType (Boosters)] ===");
             if (so.m_ShownItemType != null)
             {
                 for (int i = 0; i < so.m_ShownItemType.Count; i++)
                 {
-                    Plugin.Logger.LogInfo($"  [{i}] {so.m_ShownItemType[i]}");
+                    Plugin.LogInfo($"  [{i}] {so.m_ShownItemType[i]}");
                 }
             }
 
-            Plugin.Logger.LogInfo("=== [SHOP DEBUG: m_ShownAccessoryItemType (Accessoires)] ===");
+            Plugin.LogInfo("=== [SHOP DEBUG: m_ShownAccessoryItemType (Accessoires)] ===");
             if (so.m_ShownAccessoryItemType != null)
             {
                 for (int i = 0; i < so.m_ShownAccessoryItemType.Count; i++)
                 {
-                    Plugin.Logger.LogInfo($"  [{i}] {so.m_ShownAccessoryItemType[i]}");
+                    Plugin.LogInfo($"  [{i}] {so.m_ShownAccessoryItemType[i]}");
                 }
             }
 
-            Plugin.Logger.LogInfo("=== [SHOP DEBUG: m_ShownFigurineItemType (Figurines)] ===");
+            Plugin.LogInfo("=== [SHOP DEBUG: m_ShownFigurineItemType (Figurines)] ===");
             if (so.m_ShownFigurineItemType != null)
             {
                 for (int i = 0; i < so.m_ShownFigurineItemType.Count; i++)
                 {
-                    Plugin.Logger.LogInfo($"  [{i}] {so.m_ShownFigurineItemType[i]}");
+                    Plugin.LogInfo($"  [{i}] {so.m_ShownFigurineItemType[i]}");
                 }
             }
 
-            Plugin.Logger.LogInfo("=== [SHOP DEBUG: m_RestockDataList (Licences boutique)] ===");
+            Plugin.LogInfo("=== [SHOP DEBUG: m_RestockDataList (Licences boutique)] ===");
             if (so.m_RestockDataList != null)
             {
                 for (int i = 0; i < so.m_RestockDataList.Count; i++)
                 {
                     var r = so.m_RestockDataList[i];
-                    Plugin.Logger.LogInfo($"  [{i}] {r.name} (itemType={r.itemType}, Level={r.licenseShopLevelRequired})");
+                    Plugin.LogInfo($"  [{i}] {r.name} (itemType={r.itemType}, Level={r.licenseShopLevelRequired})");
                 }
             }
         }
@@ -557,7 +557,7 @@ namespace WankulCrazyPlugin.importer
                 3 => "Tous",
                 _ => $"Onglet #{pageIndex}"
             };
-            Plugin.Logger.LogInfo($"[SHOP EVALUATE] Ouverture de l'onglet: {tabName} (index={pageIndex})");
+            Plugin.LogInfo($"[SHOP EVALUATE] Ouverture de l'onglet: {tabName} (index={pageIndex})");
         }
 
         public static bool GetItemMeshDataPrefix(EItemType itemType, ref ItemMeshData __result)

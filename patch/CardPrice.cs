@@ -175,7 +175,7 @@ namespace WankulCrazyPlugin.patch
             }
             else
             {
-                //Plugin.Logger.LogInfo("Postfix_GetCardMarketPrice_CardData Carte non trouvée : " + cardData.monsterType + " " + cardData.borderType + " " + cardData.expansionType);
+                //Plugin.LogInfo("Postfix_GetCardMarketPrice_CardData Carte non trouvée : " + cardData.monsterType + " " + cardData.borderType + " " + cardData.expansionType);
                 __result = 0; // Valeur par défaut si la carte n'est pas trouvée
             }
         }

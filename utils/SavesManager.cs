@@ -66,20 +66,20 @@ namespace WankulCrazyPlugin.utils
         public static string SaveVersion = "1.1.0";
         public static void ModSave()
         {
-            Plugin.Logger.LogInfo("Saving cards associations");
+            Plugin.LogInfo("Saving cards associations");
             Dictionary<string, WankulCardData> associations = WankulCardsData.Instance.association;
             string pluginPath = Plugin.GetPluginPath();
 
             int saveIndex = CGameManager.Instance.m_CurrentSaveLoadSlotSelectedIndex;
 
-            Plugin.Logger.LogInfo("Save index: " + saveIndex);
+            Plugin.LogInfo("Save index: " + saveIndex);
 
             string path = pluginPath + "/data/save_" + saveIndex + ".json";
 
             Dictionary<string, (int WankulCardIndex, List<float> pastPercent, float generatedMarketPrice)> knewAssociations = new Dictionary<string, (int WankulCardIndex, List<float> pastPercent, float generatedMarketPrice)>();
             foreach (var association in associations)
             {
-                //Plugin.Logger.LogInfo("Saving association: " + association.Key + " => " + association.Value.Index);
+                //Plugin.LogInfo("Saving association: " + association.Key + " => " + association.Value.Index);
                 knewAssociations.Add(association.Key, (association.Value.Index, association.Value.PastPercent, association.Value.generatedMarketPrice));
             }
 
@@ -101,13 +101,13 @@ namespace WankulCrazyPlugin.utils
             SortUI.inited = false;
             WankulCardsData.Instance.EnsureInitialized();
 
-            Plugin.Logger.LogInfo("Loading cards associations");
+            Plugin.LogInfo("Loading cards associations");
             string pluginPath = Plugin.GetPluginPath();
             int saveIndex = CGameManager.Instance.m_CurrentSaveLoadSlotSelectedIndex;
             string path = $"{pluginPath}/data/save_{saveIndex}.json";
 
-            Plugin.Logger.LogInfo($"Save index: {saveIndex}");
-            Plugin.Logger.LogInfo($"Path: {path}");
+            Plugin.LogInfo($"Save index: {saveIndex}");
+            Plugin.LogInfo($"Path: {path}");
 
             if (!System.IO.File.Exists(path))
             {
@@ -121,7 +121,7 @@ namespace WankulCrazyPlugin.utils
             if (save.associationsWithPercents == null)
             {
                 Plugin.Logger.LogError("Failed to deserialize save file.");
-                Plugin.Logger.LogInfo("Trying to deserialize old save file.");
+                Plugin.LogInfo("Trying to deserialize old save file.");
                 save = DeserializeOldSave(json);
             }
 
@@ -131,8 +131,8 @@ namespace WankulCrazyPlugin.utils
                 return;
             }
 
-            Plugin.Logger.LogInfo("Deserialized Save object successfully.");
-            //Plugin.Logger.LogInfo($"Associations count: {save.associationsWithPercents.Count}");
+            Plugin.LogInfo("Deserialized Save object successfully.");
+            //Plugin.LogInfo($"Associations count: {save.associationsWithPercents.Count}");
 
             if (save.savedebug)
             {
@@ -172,7 +172,7 @@ namespace WankulCrazyPlugin.utils
             try
             {
                 var oldSave = JsonConvert.DeserializeObject<OldSave>(json);
-                Plugin.Logger.LogInfo("Deserialized OldSave object successfully.");
+                Plugin.LogInfo("Deserialized OldSave object successfully.");
                 return new Save(oldSave.associations, oldSave.wankulCards, oldSave.savedebug);
             }
             catch (JsonSerializationException ex)
@@ -186,7 +186,7 @@ namespace WankulCrazyPlugin.utils
         {
             DebuggingSave = true;
             Plugin.Logger.LogWarning("Debugging Save");
-            Plugin.Logger.LogInfo("Clearing save");
+            Plugin.LogInfo("Clearing save");
 
             ClearPlayerData();
 
@@ -266,7 +266,7 @@ namespace WankulCrazyPlugin.utils
                 }
                 if (WankulCardsData.Instance.association.ContainsKey(association.Key) || associatedIndexes.Contains(association.Value.WankulCardIndex))
                 {
-                    //Plugin.Logger.LogInfo($"Association already exists: {association.Key}");
+                    //Plugin.LogInfo($"Association already exists: {association.Key}");
                     continue;
                 }
 
@@ -302,7 +302,7 @@ namespace WankulCrazyPlugin.utils
                 }
             }
 
-            Plugin.Logger.LogInfo($"Associations loaded: {WankulCardsData.Instance.association.Count} in {sw.ElapsedMilliseconds} ms");
+            Plugin.LogInfo($"Associations loaded: {WankulCardsData.Instance.association.Count} in {sw.ElapsedMilliseconds} ms");
         }
 
         private static void UpdateCardPriceIfNeeded(WankulCardData card)
@@ -366,9 +366,9 @@ namespace WankulCrazyPlugin.utils
 
             if (collectionPackType != null)
             {
-                Plugin.Logger.LogInfo("Setting m_CollectionPackType");
+                Plugin.LogInfo("Setting m_CollectionPackType");
                 collectionPackType.SetValue(CardOpeningSequence.Instance, ECollectionPackType.BasicCardPack);
-                Plugin.Logger.LogInfo("Set m_CollectionPackType");
+                Plugin.LogInfo("Set m_CollectionPackType");
             }
             else
             {
@@ -377,9 +377,9 @@ namespace WankulCrazyPlugin.utils
 
             if (methodInfo != null)
             {
-                Plugin.Logger.LogInfo("Calling GetPackContent");
+                Plugin.LogInfo("Calling GetPackContent");
                 methodInfo.Invoke(CardOpeningSequence.Instance, new object[] { true, false, false, ECollectionPackType.BasicCardPack });
-                Plugin.Logger.LogInfo("GetPackContent called");
+                Plugin.LogInfo("GetPackContent called");
             }
             else
             {
@@ -388,9 +388,9 @@ namespace WankulCrazyPlugin.utils
 
             if (rolledCardDataList != null)
             {
-                Plugin.Logger.LogInfo("Getting m_RolledCardDataList");
+                Plugin.LogInfo("Getting m_RolledCardDataList");
                 List<CardData> m_RolledCardDataList = (List<CardData>)rolledCardDataList.GetValue(CardOpeningSequence.Instance);
-                Plugin.Logger.LogInfo($"Get m_RolledCardDataList count: {m_RolledCardDataList.Count}");
+                Plugin.LogInfo($"Get m_RolledCardDataList count: {m_RolledCardDataList.Count}");
                 return m_RolledCardDataList;
             }
             else

@@ -19,7 +19,7 @@ namespace WankulCrazyPlugin.cards
         {
             if (cards == null || cards.Count == 0)
             {
-                Plugin.Logger?.LogInfo("[WankulCardsData] Initialisation des cartes déclenchée par EnsureInitialized.");
+                Plugin.LogInfo("[WankulCardsData] Initialisation des cartes déclenchée par EnsureInitialized.");
                 JsonImporter.ImportJson();
             }
         }
@@ -78,17 +78,14 @@ namespace WankulCrazyPlugin.cards
 
         public WankulCardData GetFromMonster(CardData monster, bool allowNull)
         {
-            ECardExpansionType expansionType = monster.expansionType;
-            MonsterData monsterData = InventoryBase.GetMonsterData(monster.monsterType);
-            if (monsterData == null)
-            {
-                return null;
-            }
-            ERarity rarity = monsterData.Rarity;
+            if (monster == null) return null;
 
+            ECardExpansionType expansionType = monster.expansionType;
             string key = $"{monster.monsterType}_{monster.borderType}_{expansionType}";
 
-            // Vérification de l'association déjà existante
+            // 1. Vérification de l'association déjà existante EN PREMIER
+            // Ne dépend pas de monsterData : si la carte est déjà mappée (y compris depuis save_0.json),
+            // on retourne directement la carte Wankul sans risquer de null sur monsterData.
             if (association.TryGetValue(key, out WankulCardData card))
             {
                 return card;
@@ -98,6 +95,13 @@ namespace WankulCrazyPlugin.cards
                 // dans les drop on peut avoir des cartes qui ne sont pas dans l'association
                 return null;
             }
+
+            MonsterData monsterData = InventoryBase.GetMonsterData(monster.monsterType);
+            if (monsterData == null)
+            {
+                return null;
+            }
+            ERarity rarity = monsterData.Rarity;
 
             // Si pas trouvé dans l'association, déterminer le pack de carte
             ECollectionPackType packType = ECollectionPackType.BasicCardPack;
@@ -134,7 +138,7 @@ namespace WankulCrazyPlugin.cards
             // On ne stocke pas dans l'association pour de futures drops
             if (wankulCardData != null)
             {
-                //Plugin.Logger.LogInfo($"GetFromMonster Setting association for {key}");
+                //Plugin.LogInfo($"GetFromMonster Setting association for {key}");
                 association[key] = wankulCardData;
                 reverseAssociation[wankulCardData.Index] = monster;
             }
@@ -219,7 +223,7 @@ namespace WankulCrazyPlugin.cards
             // Vérifiez si la clé existe déjà
             if (!association.ContainsKey(key))
             {
-                //Plugin.Logger.LogInfo($"SetFromMonster Setting association for {key}");
+                //Plugin.LogInfo($"SetFromMonster Setting association for {key}");
                 association[key] = card;  // Créez une nouvelle association
                 if (card != null)
                 {
@@ -283,6 +287,12 @@ namespace WankulCrazyPlugin.cards
                             EMonsterType monster = (EMonsterType)i;
                             if (IsExcludedMonster(monster)) continue;
 
+                            try
+                            {
+                                if (InventoryBase.GetMonsterData(monster) == null) continue;
+                            }
+                            catch { }
+
                             slots.Add(new Slot
                             {
                                 Expansion = expansion,
@@ -326,17 +336,17 @@ namespace WankulCrazyPlugin.cards
             return null; // Aucune CardData manquante
         }
 
-        // Plages de EMonsterType valides par expansion. Chaque expansion peut avoir plusieurs
-        // segments disjoints (ex: plage native du jeu + plage custom Wankul), évitant d'itérer
-        // sur des dizaines de milliers de valeurs vides entre deux segments éloignés.
+        // Plages de EMonsterType valides par expansion (valeurs réelles du jeu de base).
+        // Au-delà de ces index (ex: > 121 pour Tetramon), InventoryBase.GetMonsterData renvoie null
+        // ce qui provoque une NullReferenceException dans CardUI.SetCardUI vanilla.
         private static readonly Dictionary<ECardExpansionType, List<(int start, int end)>> MonsterRanges =
             new Dictionary<ECardExpansionType, List<(int start, int end)>>
         {
-            { ECardExpansionType.Tetramon, new List<(int, int)> { (0, 500) } },
-            { ECardExpansionType.Destiny,  new List<(int, int)> { (0, 500) } },
-            { ECardExpansionType.Megabot,  new List<(int, int)> { (1000, 1500) } },
-            { ECardExpansionType.FantasyRPG, new List<(int, int)> { (2000, 2500) } },
-            { ECardExpansionType.CatJob,   new List<(int, int)> { (3000, 3500) } },
+            { ECardExpansionType.Tetramon, new List<(int, int)> { (0, 121) } },
+            { ECardExpansionType.Destiny,  new List<(int, int)> { (0, 121) } },
+            { ECardExpansionType.Megabot,  new List<(int, int)> { (1000, 1112) } },
+            { ECardExpansionType.FantasyRPG, new List<(int, int)> { (2000, 2049) } },
+            { ECardExpansionType.CatJob,   new List<(int, int)> { (3000, 3039) } },
         };
 
         private static List<(int start, int end)> GetMonsterRanges(ECardExpansionType expansion)

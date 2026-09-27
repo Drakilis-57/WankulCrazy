@@ -1,0 +1,757 @@
+Mono path[0] = 'E:/jeux/TCG Card Shop Simulator/Card Shop Simulator_Data/Managed'
+Mono config path = 'E:/jeux/TCG Card Shop Simulator/MonoBleedingEdge/etc'
+Fallback handler could not load library E:/jeux/TCG Card Shop Simulator/Card Shop Simulator_Data/MonoBleedingEdge/data-0000022C09483880.dll
+Fallback handler could not load library E:/jeux/TCG Card Shop Simulator/Card Shop Simulator_Data/MonoBleedingEdge/data-0000022C0EDA9040.dll
+[Physics::Module] Initialized MultithreadedJobDispatcher with {0} workers.
+Initialize engine version: 2021.3.38f1 (7a2fa5d8d101)
+[Subsystems] Discovering subsystems at path E:/jeux/TCG Card Shop Simulator/Card Shop Simulator_Data/UnitySubsystems
+GfxDevice: creating device client; threaded=1; jobified=1
+Direct3D:
+    Version:  Direct3D 11.0 [level 11.1]
+    Renderer: NVIDIA GeForce RTX 4060 Laptop GPU (ID=0x28a0)
+    Vendor:   NVIDIA
+    VRAM:     7956 MB
+    Driver:   32.0.15.9649
+Begin MonoManager ReloadAssembly
+- Completed reload, in  0.216 seconds
+[Message:   BepInEx] BepInEx 5.4.23.5 - Card Shop Simulator (18/09/2026 08:26:51)
+[Info   :   BepInEx] Running under Unity v2021.3.38.8007589
+[Info   :   BepInEx] CLR runtime version: 4.0.30319.42000
+[Info   :   BepInEx] Supports SRE: True
+[Info   :   BepInEx] System platform: Bits64, Windows
+[Message:   BepInEx] Preloader started
+[Info   :   BepInEx] Loaded 1 patcher method from [BepInEx.Preloader 5.4.23.5]
+[Info   :   BepInEx] 1 patcher plugin loaded
+[Info   :   BepInEx] Patching [UnityEngine.CoreModule] with [BepInEx.Chainloader]
+[Message:   BepInEx] Preloader finished
+[Message:   BepInEx] Chainloader ready
+[Message:   BepInEx] Chainloader started
+[Info   :   BepInEx] 3 plugins to load
+[Info   :   BepInEx] Loading [Configuration Manager 19.0]
+[Info   :   BepInEx] Loading [UnityExplorer 4.9.0]
+[Message:UnityExplorer] UnityExplorer 4.9.0 initializing...
+[Message:UnityExplorer] [UniverseLib] UniverseLib 1.5.1 initializing...
+[Message:UnityExplorer] [UniverseLib] Finished UniverseLib initial setup.
+Fallback handler could not load library E:/jeux/TCG Card Shop Simulator/Card Shop Simulator_Data/MonoBleedingEdge/data-0000022CA8772040.dll
+[Message:UnityExplorer] Initialized UnityCrashPrevention for: Canvas.get_renderingDisplaySize
+[Info   :   BepInEx] Loading [WankulCrazy 1.4.1]
+[Info   :WankulCrazy] Plugin WankulCrazyPlugin is loaded! (VerboseLogs: True)
+[Info   :WankulCrazy] [HarmonyPatch] Patch appliqué avec succès sur 'Enum.GetName'.
+[Info   :WankulCrazy] [HarmonyPatch] Patch appliqué avec succès sur 'Enum.IsDefined'.
+[Info   :WankulCrazy] [HarmonyPatch] Patch appliqué avec succès sur 'Enum.Parse'.
+[Info   :WankulCrazy] [HarmonyPatch] Patch appliqué avec succès sur 'CGameManager.OnLevelFinishedLoading'.
+[Info   :WankulCrazy] [HarmonyPatch] Patch appliqué avec succès sur 'PriceChangeManager.OnDayStarted'.
+[Info   :WankulCrazy] [HarmonyPatch] Patch appliqué avec succès sur 'CardUI.SetCardUI'.
+[Info   :WankulCrazy] [HarmonyPatch] Patch appliqué avec succès sur 'CollectionBinderFlipAnimCtrl.EnterViewUpCloseState'.
+[Info   :WankulCrazy] [HarmonyPatch] Patch appliqué avec succès sur 'CardOpeningSequence.OpenScreen'.
+[Info   :WankulCrazy] [HarmonyPatch] Patch appliqué avec succès sur 'CardOpeningSequence.GetPackContent'.
+[Info   :WankulCrazy] [HarmonyPatch] Patch appliqué avec succès sur 'CardOpeningSequence.Update (CardOpening)'.
+[Info   :WankulCrazy] [HarmonyPatch] Patch appliqué avec succès sur 'CardOpeningSequence.Update (UpdatePreFix)'.
+[Info   :WankulCrazy] [HarmonyPatch] Patch appliqué avec succès sur 'CollectionBinderFlipAnimCtrl.UpdateBinderAllCardUI'.
+[Info   :WankulCrazy] [HarmonyPatch] Patch appliqué avec succès sur 'CSaveLoad.Save'.
+[Info   :WankulCrazy] [HarmonyPatch] Patch appliqué avec succès sur 'CSaveLoad.Load'.
+[Info   :WankulCrazy] [HarmonyPatch] Patch appliqué avec succès sur 'CPlayerData.GetCardMarketPrice(CardData)'.
+[Info   :WankulCrazy] [HarmonyPatch] Patch appliqué avec succès sur 'CPlayerData.GetCardMarketPrice(int, ECardExpansionType, bool, int)'.
+[Info   :WankulCrazy] [HarmonyPatch] Patch appliqué avec succès sur 'CheckPricePanelUI.InitCard'.
+[Info   :WankulCrazy] [HarmonyPatch] Patch appliqué avec succès sur 'CheckPriceScreen.EvaluateCardPanelUI'.
+[Info   :WankulCrazy] [HarmonyPatch] Patch appliqué avec succès sur 'CheckPriceScreen.OnPressOpenCardPriceGraph'.
+[Info   :WankulCrazy] [HarmonyPatch] Patch appliqué avec succès sur 'ItemPriceGraphScreen.ShowCardPriceChart'.
+[Info   :WankulCrazy] [HarmonyPatch] Patch appliqué avec succès sur 'CPlayerData.AddCard'.
+[Info   :WankulCrazy] [HarmonyPatch] Patch appliqué avec succès sur 'CPlayerData.ReduceCard'.
+[Info   :WankulCrazy] [HarmonyPatch] Patch appliqué avec succès sur 'MonsterData.GetIcon'.
+[Info   :WankulCrazy] [HarmonyPatch] Patch appliqué avec succès sur 'CollectionBinderUI.OpenSortAlbumScreen'.
+[Info   :WankulCrazy] [HarmonyPatch] Patch appliqué avec succès sur 'CollectionBinderFlipAnimCtrl.Update'.
+[Info   :WankulCrazy] [HarmonyPatch] Patch appliqué avec succès sur 'CollectionBinderFlipAnimCtrl.OnSortingMethodUpdated'.
+[Info   :WankulCrazy] [HarmonyPatch] Patch appliqué avec succès sur 'CardExpansionSelectScreen.OpenScreen'.
+[Info   :WankulCrazy] [HarmonyPatch] Patch appliqué avec succès sur 'CardExpansionSelectScreen.OnPressButton'.
+[Info   :WankulCrazy] [HarmonyPatch] Patch appliqué avec succès sur 'WorkbenchUIScreen.OnCardExpansionUpdated'.
+[Info   :WankulCrazy] [HarmonyPatch] Patch appliqué avec succès sur 'CardRaritySelectScreen.OpenScreen'.
+[Info   :WankulCrazy] [HarmonyPatch] Patch appliqué avec succès sur 'CardRaritySelectScreen.OnPressButton'.
+[Info   :WankulCrazy] [HarmonyPatch] Patch appliqué avec succès sur 'WorkbenchUIScreen.OnRarityLimitUpdated'.
+[Info   :WankulCrazy] [HarmonyPatch] Patch appliqué avec succès sur 'WorkbenchUIScreen.OpenScreen'.
+[Info   :WankulCrazy] [HarmonyPatch] Patch appliqué avec succès sur 'WorkbenchUIScreen.RunBundleCardBulkFunction'.
+[Info   :WankulCrazy] [HarmonyPatch] Patch appliqué avec succès sur 'BinderPageGrp.SetSingleCard'.
+[Info   :WankulCrazy] [HarmonyPatch] Patch appliqué avec succès sur 'InteractionPlayerController.EvaluateOpenCardPack'.
+[Info   :WankulCrazy] [HarmonyPatch] Patch appliqué avec succès sur 'CollectionBinderFlipAnimCtrl.OnRightMouseButtonUp'.
+[Info   :WankulCrazy] [HarmonyPatch] Patch appliqué avec succès sur 'Customer.OnPayingDone'.
+[Info   :WankulCrazy] [HarmonyPatch] Patch appliqué avec succès sur 'InventoryBase.ItemTypeToCollectionPackType'.
+[Info   :WankulCrazy] [HarmonyPatch] Patch appliqué avec succès sur 'InventoryBase.GetCardExpansionType'.
+[Info   :WankulCrazy] [HarmonyPatch] Patch appliqué avec succès sur 'InteractionPlayerController.CardBoxToCardPack'.
+[Info   :WankulCrazy] [HarmonyPatch] Patch appliqué avec succès sur 'InteractionPlayerController.Awake'.
+[Info   :WankulCrazy] [HarmonyPatch] Patch appliqué avec succès sur 'InteractionPlayerController.EvaluateOpenCardPack (V2)'.
+[Info   :WankulCrazy] [HarmonyPatch] Patch appliqué avec succès sur 'InteractionPlayerController.RemoveToolTip'.
+[Info   :WankulCrazy] [HarmonyPatch] Patch appliqué avec succès sur 'InteractionPlayerController.CanOpenPack'.
+[Info   :WankulCrazy] [HarmonyPatch] Patch appliqué avec succès sur 'InteractionPlayerController.CanOpenCardBox'.
+[Info   :WankulCrazy] [HarmonyPatch] Patch appliqué avec succès sur 'InteractionPlayerController.DelayLerpSpawnedCardPackToHand'.
+[Info   :WankulCrazy] [HarmonyPatch] Patch appliqué avec succès sur 'Item.SetMesh'.
+[Info   :WankulCrazy] [HarmonyPatch] Patch appliqué avec succès sur 'UnlockRoomManager.Init'.
+[Info   :WankulCrazy] [HarmonyPatch] Patch appliqué avec succès sur 'CustomerTradeCardScreen.SetCustomer'.
+[Info   :WankulCrazy] [HarmonyPatch] Patch appliqué avec succès sur 'UI_CashCounterScreen.OnCardScanned'.
+[Info   :WankulCrazy] [HarmonyPatch] Patch appliqué avec succès sur 'CPlayerData.GetCardAmount'.
+[Info   :WankulCrazy] [HarmonyPatch] Patch appliqué avec succès sur 'Debug.Log(object)'.
+[Info   :WankulCrazy] [HarmonyPatch] Patch appliqué avec succès sur 'Debug.Log(object, Object)'.
+[Info   :WankulCrazy] [HarmonyPatch] Patch appliqué avec succès sur 'Debug.LogFormat(string, object[])'.
+[Info   :WankulCrazy] [HarmonyPatch] Patch appliqué avec succès sur 'Debug.LogWarning(object)'.
+[Info   :WankulCrazy] [HarmonyPatch] Patch appliqué avec succès sur 'Debug.LogWarning(object, Object)'.
+[Info   :WankulCrazy] [HarmonyPatch] Patch appliqué avec succès sur 'Debug.LogWarningFormat(string, object[])'.
+[Info   :WankulCrazy] [HarmonyPatch] Patch appliqué avec succès sur 'PlayCardSetUI.Update'.
+[Info   :WankulCrazy] [HarmonyPatch] Patch appliqué avec succès sur 'PlayCardSetUI.LateUpdate'.
+[Info   :WankulCrazy] [HarmonyPatch] Patch appliqué avec succès sur 'InventoryBase.GetItemData'.
+[Info   :WankulCrazy] [HarmonyPatch] Patch appliqué avec succès sur 'InventoryBase.GetItemMeshData'.
+[Info   :WankulCrazy] [HarmonyPatch] Patch appliqué avec succès sur 'LoadingScreen.CloseScreen'.
+[Info   :WankulCrazy] [HarmonyPatch] Patch appliqué avec succès sur 'ScreenRatioScaler.Init'.
+[Info   :WankulCrazy] [HarmonyPatch] Patch appliqué avec succès sur 'RestockItemScreen.EvaluateRestockItemPanelUI'.
+[Message:   BepInEx] Chainloader startup complete
+<RI> Initializing input.
+New input system (experimental) initialized
+Using XInput
+<RI> Input initialized.
+<RI> Initialized touch support.
+UnloadTime: 2.439400 ms
+Local User: AnkerGames:100
+Steam API was able to initialize however the user does not have an active logon; no real-time services provided by the Steamworks API will be enabled. The Steam client will automatically be trying to recreate the connection as often as possible. When the connection is restored a API.App.Client.EvenServersConnected event will be posted.
+DontDestroyOnLoad only works for root GameObjects or components on root GameObjects.
+DontDestroyOnLoad only works for root GameObjects or components on root GameObjects.
+[Info   :WankulCrazy] [WankulCardsData] Initialisation des cartes déclenchée par EnsureInitialized.
+[Info   :WankulCrazy] Cards data loaded: 882 cards
+[Info   :WankulCrazy] Loading 3D Objects...
+[Info   :WankulCrazy] Checking for .obj files...
+[Info   :WankulCrazy] Meshes cached at start
+Textures cached at start
+Unloading 6 Unused Serialized files (Serialized files now loaded: 0)
+Failed to load the Steam App List: State = ProtocolError, Error Message = HTTP/1.1 404 Not Found
+Unloading 77 unused Assets to reduce memory usage. Loaded Objects now: 17771.
+Total: 22.188300 ms (FindLiveObjects: 0.964900 ms CreateObjectMapping: 0.293800 ms MarkObjects: 20.796100 ms  DeleteObjects: 0.132400 ms)
+
+[Debug  :   BepInEx] [UnityInput] Using LegacyInputSystem
+[Message:UnityExplorer] [UniverseLib] Initialized Legacy Input support
+Fallback handler could not load library E:/jeux/TCG Card Shop Simulator/Card Shop Simulator_Data/MonoBleedingEdge/data-0000022D82EE86F0.dll
+Fallback handler could not load library E:/jeux/TCG Card Shop Simulator/Card Shop Simulator_Data/MonoBleedingEdge/data-0000022D82EC5B30.dll
+Fallback handler could not load library E:/jeux/TCG Card Shop Simulator/Card Shop Simulator_Data/MonoBleedingEdge/data-0000022D82EDA910.dll
+[Message:UnityExplorer] [UniverseLib] Loaded modern bundle for Unity 2021.3.38f1
+[Message:UnityExplorer] [UniverseLib] UniverseLib 1.5.1 initialized.
+[Message:UnityExplorer] Creating UI...
+Fallback handler could not load library E:/jeux/TCG Card Shop Simulator/Card Shop Simulator_Data/MonoBleedingEdge/data-0000022D82F98BF0.dll
+[Message:UnityExplorer] UnityExplorer 4.9.0 (Mono) initialized.
+[Info   :WankulCrazy] [WankulLoadingScreen] 882 cartes traitees en 7136 ms (0 sans fichier texture, 0 en echec).
+[Info   :WankulCrazy] [WankulLoadingScreen] Toutes les 882 textures de cartes ont été chargées avec succès !
+Unloading 5 Unused Serialized files (Serialized files now loaded: 1)
+UnloadTime: 14.934800 ms
+DontDestroyOnLoad only works for root GameObjects or components on root GameObjects.
+DontDestroyOnLoad only works for root GameObjects or components on root GameObjects.
+DontDestroyOnLoad only works for root GameObjects or components on root GameObjects.
+DontDestroyOnLoad only works for root GameObjects or components on root GameObjects.
+DontDestroyOnLoad only works for root GameObjects or components on root GameObjects.
+[Info   :WankulCrazy] Custom 3D Objects loaded!
+[Info   :WankulCrazy] Custom Textures loaded!
+[Info   :WankulCrazy] [CustomItemsImporter] Restock Stellar normal inséré après Battle normal à l'index 12.
+[Info   :WankulCrazy] [CustomItemsImporter] Restock Stellar Taux inséré après Battle Taux à l'index 44.
+[Info   :WankulCrazy] [CustomItemsImporter] Inserted Stellar Normal at index 6 after Battle (EpicCardBox).
+[Info   :WankulCrazy] [CustomItemsImporter] Inserted Starters at index 14 after PreconDeck_Wind.
+[Info   :WankulCrazy] [CustomItemsImporter] Inserted Stellar Taux at index 22 after Battle Taux (DestinyEpicCardBox).
+[Info   :WankulCrazy] [CustomItemsImporter] Added CaleconStellar to m_ShownFigurineItemType.
+[Info   :WankulCrazy] [CustomItemsImporter] Added 3 accessories to m_ShownAccessoryItemType.
+[Info   :WankulCrazy] === [SHOP DEBUG: m_ShownItemType (Boosters)] ===
+[Info   :WankulCrazy]   [0] BasicCardPack
+[Info   :WankulCrazy]   [1] BasicCardBox
+[Info   :WankulCrazy]   [2] RareCardPack
+[Info   :WankulCrazy]   [3] RareCardBox
+[Info   :WankulCrazy]   [4] EpicCardPack
+[Info   :WankulCrazy]   [5] EpicCardBox
+[Info   :WankulCrazy]   [6] BoosterStellar
+[Info   :WankulCrazy]   [7] DisplayStellar
+[Info   :WankulCrazy]   [8] LegendaryCardPack
+[Info   :WankulCrazy]   [9] LegendaryCardBox
+[Info   :WankulCrazy]   [10] PreconDeck_Fire
+[Info   :WankulCrazy]   [11] PreconDeck_Earth
+[Info   :WankulCrazy]   [12] PreconDeck_Water
+[Info   :WankulCrazy]   [13] PreconDeck_Wind
+[Info   :WankulCrazy]   [14] StarterApocalypse
+[Info   :WankulCrazy]   [15] StarterShowtime
+[Info   :WankulCrazy]   [16] DestinyBasicCardPack
+[Info   :WankulCrazy]   [17] DestinyBasicCardBox
+[Info   :WankulCrazy]   [18] DestinyRareCardPack
+[Info   :WankulCrazy]   [19] DestinyRareCardBox
+[Info   :WankulCrazy]   [20] DestinyEpicCardPack
+[Info   :WankulCrazy]   [21] DestinyEpicCardBox
+[Info   :WankulCrazy]   [22] BoosterStellarTaux
+[Info   :WankulCrazy]   [23] DisplayStellarTaux
+[Info   :WankulCrazy]   [24] DestinyLegendaryCardPack
+[Info   :WankulCrazy]   [25] DestinyLegendaryCardBox
+[Info   :WankulCrazy]   [26] PreconDeck_FireDestiny
+[Info   :WankulCrazy]   [27] PreconDeck_EarthDestiny
+[Info   :WankulCrazy]   [28] PreconDeck_WaterDestiny
+[Info   :WankulCrazy]   [29] PreconDeck_WindDestiny
+[Info   :WankulCrazy]   [30] BulkBox_TetramonBase
+[Info   :WankulCrazy]   [31] BulkBox_TetramonBaseGradeHG
+[Info   :WankulCrazy]   [32] BulkBox_TetramonBaseGradeMG
+[Info   :WankulCrazy]   [33] BulkBox_TetramonBaseGradePG
+[Info   :WankulCrazy]   [34] BulkBox_TetramonDestiny
+[Info   :WankulCrazy]   [35] BulkBox_TetramonDestinyGradeHG
+[Info   :WankulCrazy]   [36] BulkBox_TetramonDestinyGradeMG
+[Info   :WankulCrazy]   [37] BulkBox_TetramonDestinyGradePG
+[Info   :WankulCrazy] === [SHOP DEBUG: m_ShownAccessoryItemType (Accessoires)] ===
+[Info   :WankulCrazy]   [0] Deodorant
+[Info   :WankulCrazy]   [1] CardSleeve_Clear
+[Info   :WankulCrazy]   [2] CardSleeve_Tetramon
+[Info   :WankulCrazy]   [3] D20DiceBox
+[Info   :WankulCrazy]   [4] D20DiceBox2
+[Info   :WankulCrazy]   [5] D20DiceBox3
+[Info   :WankulCrazy]   [6] D20DiceBox4
+[Info   :WankulCrazy]   [7] CardSleeve_Fire
+[Info   :WankulCrazy]   [8] CardSleeve_Earth
+[Info   :WankulCrazy]   [9] CardSleeve_Water
+[Info   :WankulCrazy]   [10] CardSleeve_Wind
+[Info   :WankulCrazy]   [11] DeckBox1
+[Info   :WankulCrazy]   [12] DeckBox2
+[Info   :WankulCrazy]   [13] DeckBox3
+[Info   :WankulCrazy]   [14] DeckBox4
+[Info   :WankulCrazy]   [15] BinderBook
+[Info   :WankulCrazy]   [16] BinderBookPremium
+[Info   :WankulCrazy]   [17] Playmat2b
+[Info   :WankulCrazy]   [18] Playmat1
+[Info   :WankulCrazy]   [19] Playmat6
+[Info   :WankulCrazy]   [20] Playmat14
+[Info   :WankulCrazy]   [21] Playmat9
+[Info   :WankulCrazy]   [22] Playmat2
+[Info   :WankulCrazy]   [23] Playmat5
+[Info   :WankulCrazy]   [24] Playmat4
+[Info   :WankulCrazy]   [25] Playmat3
+[Info   :WankulCrazy]   [26] Playmat7
+[Info   :WankulCrazy]   [27] Playmat10
+[Info   :WankulCrazy]   [28] Playmat11
+[Info   :WankulCrazy]   [29] Playmat13
+[Info   :WankulCrazy]   [30] Playmat12
+[Info   :WankulCrazy]   [31] Playmat8
+[Info   :WankulCrazy]   [32] PlayMat15
+[Info   :WankulCrazy]   [33] PlayMat16
+[Info   :WankulCrazy]   [34] PlayMat17
+[Info   :WankulCrazy]   [35] PlayMat18
+[Info   :WankulCrazy]   [36] Manga1
+[Info   :WankulCrazy]   [37] Manga2
+[Info   :WankulCrazy]   [38] Manga3
+[Info   :WankulCrazy]   [39] Manga4
+[Info   :WankulCrazy]   [40] Manga5
+[Info   :WankulCrazy]   [41] Manga6
+[Info   :WankulCrazy]   [42] Manga7
+[Info   :WankulCrazy]   [43] Manga8
+[Info   :WankulCrazy]   [44] Manga9
+[Info   :WankulCrazy]   [45] Manga10
+[Info   :WankulCrazy]   [46] Manga11
+[Info   :WankulCrazy]   [47] Manga12
+[Info   :WankulCrazy]   [48] TapisS41
+[Info   :WankulCrazy]   [49] TapisS42
+[Info   :WankulCrazy]   [50] ClasseurS4
+[Info   :WankulCrazy] === [SHOP DEBUG: m_ShownFigurineItemType (Figurines)] ===
+[Info   :WankulCrazy]   [0] Toy_PiggyA
+[Info   :WankulCrazy]   [1] Toy_GolemA
+[Info   :WankulCrazy]   [2] Toy_StarfishA
+[Info   :WankulCrazy]   [3] Toy_BatA
+[Info   :WankulCrazy]   [4] Toy_PiggyB
+[Info   :WankulCrazy]   [5] Toy_GolemB
+[Info   :WankulCrazy]   [6] Toy_StarfishB
+[Info   :WankulCrazy]   [7] Toy_BatB
+[Info   :WankulCrazy]   [8] Toy_PiggyC
+[Info   :WankulCrazy]   [9] Toy_GolemC
+[Info   :WankulCrazy]   [10] Toy_StarfishC
+[Info   :WankulCrazy]   [11] Toy_BatC
+[Info   :WankulCrazy]   [12] Toy_PiggyD
+[Info   :WankulCrazy]   [13] Toy_GolemD
+[Info   :WankulCrazy]   [14] Toy_StarfishD
+[Info   :WankulCrazy]   [15] Toy_BatD
+[Info   :WankulCrazy]   [16] Toy_FoxB
+[Info   :WankulCrazy]   [17] Toy_Beetle
+[Info   :WankulCrazy]   [18] Toy_ToonZ
+[Info   :WankulCrazy]   [19] CaleconStellar
+[Info   :WankulCrazy] === [SHOP DEBUG: m_RestockDataList (Licences boutique)] ===
+[Info   :WankulCrazy]   [0] Common Pack (32) (itemType=BasicCardPack, Level=1)
+[Info   :WankulCrazy]   [1] Common Pack (64) (itemType=BasicCardPack, Level=2)
+[Info   :WankulCrazy]   [2] Common Box (4) (itemType=BasicCardBox, Level=3)
+[Info   :WankulCrazy]   [3] Common Box (8) (itemType=BasicCardBox, Level=4)
+[Info   :WankulCrazy]   [4] Rare Pack (32) (itemType=RareCardPack, Level=5)
+[Info   :WankulCrazy]   [5] Rare Pack (64) (itemType=RareCardPack, Level=8)
+[Info   :WankulCrazy]   [6] Rare Box (4) (itemType=RareCardBox, Level=9)
+[Info   :WankulCrazy]   [7] Rare Box (8) (itemType=RareCardBox, Level=12)
+[Info   :WankulCrazy]   [8] Epic Pack (32) (itemType=EpicCardPack, Level=12)
+[Info   :WankulCrazy]   [9] Epic Pack (64) (itemType=EpicCardPack, Level=15)
+[Info   :WankulCrazy]   [10] Epic Box (4) (itemType=EpicCardBox, Level=16)
+[Info   :WankulCrazy]   [11] Epic Box (8) (itemType=EpicCardBox, Level=19)
+[Info   :WankulCrazy]   [12] BoosterStellar (itemType=BoosterStellar, Level=15)
+[Info   :WankulCrazy]   [13] BoosterStellar (itemType=BoosterStellar, Level=20)
+[Info   :WankulCrazy]   [14] DisplayStellar (itemType=DisplayStellar, Level=18)
+[Info   :WankulCrazy]   [15] DisplayStellar (itemType=DisplayStellar, Level=25)
+[Info   :WankulCrazy]   [16] ClasseurS4 (itemType=ClasseurS4, Level=15)
+[Info   :WankulCrazy]   [17] TapisS41 (itemType=TapisS41, Level=15)
+[Info   :WankulCrazy]   [18] TapisS42 (itemType=TapisS42, Level=15)
+[Info   :WankulCrazy]   [19] CaleconStellar (itemType=CaleconStellar, Level=15)
+[Info   :WankulCrazy]   [20] Legend Pack (32) (itemType=LegendaryCardPack, Level=20)
+[Info   :WankulCrazy]   [21] Legend Pack (64) (itemType=LegendaryCardPack, Level=26)
+[Info   :WankulCrazy]   [22] Legend Box (4) (itemType=LegendaryCardBox, Level=23)
+[Info   :WankulCrazy]   [23] Legend Box (8) (itemType=LegendaryCardBox, Level=30)
+[Info   :WankulCrazy]   [24] Deck Box Red (Sm) (itemType=DeckBox1, Level=5)
+[Info   :WankulCrazy]   [25] Deck Box Red (itemType=DeckBox1, Level=8)
+[Info   :WankulCrazy]   [26] Deck Box Green (Sm) (itemType=DeckBox2, Level=5)
+[Info   :WankulCrazy]   [27] Deck Box Green (itemType=DeckBox2, Level=8)
+[Info   :WankulCrazy]   [28] Deck Box Blue (Sm) (itemType=DeckBox3, Level=6)
+[Info   :WankulCrazy]   [29] Deck Box Blue (itemType=DeckBox3, Level=8)
+[Info   :WankulCrazy]   [30] Deck Box Yellow (Sm) (itemType=DeckBox4, Level=6)
+[Info   :WankulCrazy]   [31] Deck Box Yellow (itemType=DeckBox4, Level=8)
+[Info   :WankulCrazy]   [32] Destiny Common Pack (32) (itemType=DestinyBasicCardPack, Level=25)
+[Info   :WankulCrazy]   [33] Destiny Common Pack (64) (itemType=DestinyBasicCardPack, Level=29)
+[Info   :WankulCrazy]   [34] Destiny Common Box (4) (itemType=DestinyBasicCardBox, Level=27)
+[Info   :WankulCrazy]   [35] Destiny Common Box (8) (itemType=DestinyBasicCardBox, Level=31)
+[Info   :WankulCrazy]   [36] Destiny Rare Pack (32) (itemType=DestinyRareCardPack, Level=30)
+[Info   :WankulCrazy]   [37] Destiny Rare Pack (64) (itemType=DestinyRareCardPack, Level=35)
+[Info   :WankulCrazy]   [38] Destiny Rare Box (4) (itemType=DestinyRareCardBox, Level=32)
+[Info   :WankulCrazy]   [39] Destiny Rare Box (8) (itemType=DestinyRareCardBox, Level=37)
+[Info   :WankulCrazy]   [40] Destiny Epic Pack (32) (itemType=DestinyEpicCardPack, Level=40)
+[Info   :WankulCrazy]   [41] Destiny Epic Pack (64) (itemType=DestinyEpicCardPack, Level=48)
+[Info   :WankulCrazy]   [42] Destiny Epic Box (4) (itemType=DestinyEpicCardBox, Level=45)
+[Info   :WankulCrazy]   [43] Destiny Epic Box (8) (itemType=DestinyEpicCardBox, Level=55)
+[Info   :WankulCrazy]   [44] BoosterStellarTaux (itemType=BoosterStellarTaux, Level=45)
+[Info   :WankulCrazy]   [45] BoosterStellarTaux (itemType=BoosterStellarTaux, Level=50)
+[Info   :WankulCrazy]   [46] DisplayStellarTaux (itemType=DisplayStellarTaux, Level=48)
+[Info   :WankulCrazy]   [47] DisplayStellarTaux (itemType=DisplayStellarTaux, Level=55)
+[Info   :WankulCrazy]   [48] Destiny Legend Pack (32) (itemType=DestinyLegendaryCardPack, Level=50)
+[Info   :WankulCrazy]   [49] Destiny Legend Pack (64) (itemType=DestinyLegendaryCardPack, Level=65)
+[Info   :WankulCrazy]   [50] Destiny Legend Box (4) (itemType=DestinyLegendaryCardBox, Level=60)
+[Info   :WankulCrazy]   [51] Destiny Legend Box (8) (itemType=DestinyLegendaryCardBox, Level=75)
+[Info   :WankulCrazy]   [52] Cleanser (16) (itemType=Deodorant, Level=2)
+[Info   :WankulCrazy]   [53] Cleanser (32) (itemType=Deodorant, Level=9)
+[Info   :WankulCrazy]   [54] Collection Book (itemType=BinderBook, Level=11)
+[Info   :WankulCrazy]   [55] D20 Dice Red (itemType=D20DiceBox, Level=3)
+[Info   :WankulCrazy]   [56] D20 Dice Blue (itemType=D20DiceBox2, Level=3)
+[Info   :WankulCrazy]   [57] D20 Dice Black (itemType=D20DiceBox3, Level=4)
+[Info   :WankulCrazy]   [58] D20 Dice White (itemType=D20DiceBox4, Level=4)
+[Info   :WankulCrazy]   [59] PiggyA Plushie (itemType=Toy_PiggyA, Level=6)
+[Info   :WankulCrazy]   [60] GolemA Plushie (itemType=Toy_GolemA, Level=8)
+[Info   :WankulCrazy]   [61] StarfishA Plushie (itemType=Toy_StarfishA, Level=10)
+[Info   :WankulCrazy]   [62] BatA Plushie (itemType=Toy_BatA, Level=12)
+[Info   :WankulCrazy]   [63] ToonZ Plushie (itemType=Toy_ToonZ, Level=12)
+[Info   :WankulCrazy]   [64] Burpig Figurine (itemType=Toy_PiggyB, Level=15)
+[Info   :WankulCrazy]   [65] Inferhog Figurine (itemType=Toy_PiggyC, Level=30)
+[Info   :WankulCrazy]   [66] Blazoar Plushie (itemType=Toy_PiggyD, Level=55)
+[Info   :WankulCrazy]   [67] Decimite Figurine (itemType=Toy_GolemB, Level=18)
+[Info   :WankulCrazy]   [68] Meganite Figurine (itemType=Toy_GolemC, Level=34)
+[Info   :WankulCrazy]   [69] Giganite Statue (itemType=Toy_GolemD, Level=70)
+[Info   :WankulCrazy]   [70] Trickstar Figurine (itemType=Toy_StarfishB, Level=20)
+[Info   :WankulCrazy]   [71] Princestar Figurine (itemType=Toy_StarfishC, Level=42)
+[Info   :WankulCrazy]   [72] Kingstar Plushie (itemType=Toy_StarfishD, Level=65)
+[Info   :WankulCrazy]   [73] Lunight Figurine (itemType=Toy_BatB, Level=24)
+[Info   :WankulCrazy]   [74] Vampicant Figurine (itemType=Toy_BatC, Level=50)
+[Info   :WankulCrazy]   [75] Dracunix Figurine (itemType=Toy_BatD, Level=75)
+[Info   :WankulCrazy]   [76] Drilceros Action Figure (itemType=Toy_Beetle, Level=77)
+[Info   :WankulCrazy]   [77] Bonfiox Plushie (itemType=Toy_FoxB, Level=28)
+[Info   :WankulCrazy]   [78] Premium Collection Book (itemType=BinderBookPremium, Level=50)
+[Info   :WankulCrazy]   [79] Fire Battle Deck (itemType=PreconDeck_Fire, Level=9)
+[Info   :WankulCrazy]   [80] Earth Battle Deck (itemType=PreconDeck_Earth, Level=14)
+[Info   :WankulCrazy]   [81] Water Battle Deck (itemType=PreconDeck_Water, Level=17)
+[Info   :WankulCrazy]   [82] Wind Battle Deck (itemType=PreconDeck_Wind, Level=22)
+[Info   :WankulCrazy]   [83] Fire Destiny Deck (itemType=PreconDeck_FireDestiny, Level=33)
+[Info   :WankulCrazy]   [84] Earth Destiny Deck (itemType=PreconDeck_EarthDestiny, Level=45)
+[Info   :WankulCrazy]   [85] Water Destiny Deck (itemType=PreconDeck_WaterDestiny, Level=39)
+[Info   :WankulCrazy]   [86] Wind Destiny Deck (itemType=PreconDeck_WindDestiny, Level=50)
+[Info   :WankulCrazy]   [87] Card Sleeves (Clear) (itemType=CardSleeve_Clear, Level=2)
+[Info   :WankulCrazy]   [88] Card Sleeves (Tetramon) (itemType=CardSleeve_Tetramon, Level=10)
+[Info   :WankulCrazy]   [89] Card Sleeves (Fire) (itemType=CardSleeve_Fire, Level=14)
+[Info   :WankulCrazy]   [90] Card Sleeves (Earth) (itemType=CardSleeve_Earth, Level=20)
+[Info   :WankulCrazy]   [91] Card Sleeves (Water) (itemType=CardSleeve_Water, Level=25)
+[Info   :WankulCrazy]   [92] Card Sleeves (Wind) (itemType=CardSleeve_Wind, Level=30)
+[Info   :WankulCrazy]   [93] Playmat (Clamigo) (itemType=Playmat1, Level=13)
+[Info   :WankulCrazy]   [94] Playmat (Duel) (itemType=Playmat2, Level=21)
+[Info   :WankulCrazy]   [95] Playmat (Drilceros) (itemType=Playmat2b, Level=7)
+[Info   :WankulCrazy]   [96] Playmat (Drakon) (itemType=Playmat3, Level=36)
+[Info   :WankulCrazy]   [97] Playmat (The Four Dragons) (itemType=Playmat4, Level=35)
+[Info   :WankulCrazy]   [98] Playmat (Dracunix) (itemType=Playmat5, Level=26)
+[Info   :WankulCrazy]   [99] Playmat (Wispo) (itemType=Playmat6, Level=16)
+[Info   :WankulCrazy]   [100] Playmat (GigatronX Evo) (itemType=Playmat7, Level=38)
+[Info   :WankulCrazy]   [101] Playmat (Tetramon) (itemType=Playmat8, Level=60)
+[Info   :WankulCrazy]   [102] Playmat (Kyrone) (itemType=Playmat9, Level=19)
+[Info   :WankulCrazy]   [103] Playmat (Fire) (itemType=Playmat10, Level=43)
+[Info   :WankulCrazy]   [104] Playmat (Earth) (itemType=Playmat11, Level=47)
+[Info   :WankulCrazy]   [105] Playmat (Wind) (itemType=Playmat12, Level=55)
+[Info   :WankulCrazy]   [106] Playmat (Water) (itemType=Playmat13, Level=52)
+[Info   :WankulCrazy]   [107] Playmat (Lunight) (itemType=Playmat14, Level=16)
+[Info   :WankulCrazy]   [108] Necromansters (itemType=Boardgame_Speedrobo_Necro, Level=17)
+[Info   :WankulCrazy]   [109] Mafia Works (itemType=Boardgame_Speedrobo_Mafia, Level=11)
+[Info   :WankulCrazy]   [110] Claim! (itemType=Boardgame_Speedrobo_Claim, Level=24)
+[Info   :WankulCrazy]   [111] System Gate #1 (itemType=Boardgame_Speedrobo_SystemGate1, Level=5)
+[Info   :WankulCrazy]   [112] System Gate #2 (itemType=Boardgame_Speedrobo_SystemGate2, Level=7)
+[Info   :WankulCrazy]   [113] Comic 1 (itemType=Manga1, Level=13)
+[Info   :WankulCrazy]   [114] Comic 2 (itemType=Manga2, Level=21)
+[Info   :WankulCrazy]   [115] Comic 3 (itemType=Manga3, Level=29)
+[Info   :WankulCrazy]   [116] Comic 4 (itemType=Manga4, Level=36)
+[Info   :WankulCrazy]   [117] Comic 5 (itemType=Manga5, Level=41)
+[Info   :WankulCrazy]   [118] Comic 6 (itemType=Manga6, Level=46)
+[Info   :WankulCrazy]   [119] Comic 7 (itemType=Manga7, Level=53)
+[Info   :WankulCrazy]   [120] Comic 8 (itemType=Manga8, Level=56)
+[Info   :WankulCrazy]   [121] Comic 9 (itemType=Manga9, Level=59)
+[Info   :WankulCrazy]   [122] Comic 10 (itemType=Manga10, Level=64)
+[Info   :WankulCrazy]   [123] Comic 11 (itemType=Manga11, Level=69)
+[Info   :WankulCrazy]   [124] Comic 12 (itemType=Manga12, Level=72)
+[Info   :WankulCrazy]   [125] Comic 13 (itemType=Manga13, Level=76)
+[Info   :WankulCrazy]   [126] Comic 14 (itemType=Manga14, Level=79)
+[Info   :WankulCrazy]   [127] Playmat (Dracunix) (itemType=PlayMat15, Level=63)
+[Info   :WankulCrazy]   [128] Playmat (GigatronX) (itemType=PlayMat16, Level=68)
+[Info   :WankulCrazy]   [129] Playmat (Katengu Black) (itemType=PlayMat17, Level=74)
+[Info   :WankulCrazy]   [130] Playmat (Katengu White) (itemType=PlayMat18, Level=77)
+[Info   :WankulCrazy]   [131] Magnetic Holder (itemType=UP_MagneticHolder, Level=19)
+[Info   :WankulCrazy]   [132] Card Preserver (itemType=UP_CardPreserver, Level=28)
+[Info   :WankulCrazy]   [133] Pocket Pages (itemType=UP_PlatinumSeriesPocketPages, Level=39)
+[Info   :WankulCrazy]   [134] Card Holder (itemType=UP_SemiRigidCardHolder, Level=44)
+[Info   :WankulCrazy]   [135] Toploader (itemType=UP_Toploader, Level=23)
+[Info   :WankulCrazy]   [136] Penny Sleeves (itemType=UP_PennySleeves, Level=10)
+[Info   :WankulCrazy]   [137] Playmat Gray (itemType=UP_Playmat1, Level=31)
+[Info   :WankulCrazy]   [138] Playmat Green (itemType=UP_Playmat2, Level=32)
+[Info   :WankulCrazy]   [139] Playmat Purple (itemType=UP_Playmat3, Level=33)
+[Info   :WankulCrazy]   [140] Playmat Yellow (itemType=UP_Playmat4, Level=34)
+[Info   :WankulCrazy]   [141] Collectors Album (itemType=UP_Album, Level=49)
+[Info   :WankulCrazy]   [142] Tower Deckbox (itemType=UP_TowerDeckbox, Level=14)
+[Info   :WankulCrazy] [CustomItemsImporter] Custom items successfully imported & positioned in shop categories.
+[Info   :WankulCrazy] [Fix] Échelle négative de 'Door_Obstacle' corrigée avec succès (fin du spam BoxCollider).
+Unloading 579 unused Assets to reduce memory usage. Loaded Objects now: 522157.
+Total: 268.444800 ms (FindLiveObjects: 65.864500 ms CreateObjectMapping: 19.811800 ms MarkObjects: 175.963600 ms  DeleteObjects: 6.804400 ms)
+
+Unloading 2 Unused Serialized files (Serialized files now loaded: 1)
+Unloading 1 unused Assets to reduce memory usage. Loaded Objects now: 522157.
+Total: 225.721500 ms (FindLiveObjects: 56.272900 ms CreateObjectMapping: 16.271200 ms MarkObjects: 151.280800 ms  DeleteObjects: 1.895700 ms)
+
+BoxCollider does not support negative scale or size.
+The effective box size has been forced positive and is likely to give unexpected collision geometry.
+If you absolutely need to use negative scaling you can use the convex MeshCollider. Scene hierarchy path "PathfindingColliderAndFloorGrp/Door_Obstacle (1)"
+BoxCollider does not support negative scale or size.
+The effective box size has been forced positive and is likely to give unexpected collision geometry.
+If you absolutely need to use negative scaling you can use the convex MeshCollider. Scene hierarchy path "DecorationBlockerGrp/Door_Obstacle (2)"
+BoxCollider does not support negative scale or size.
+The effective box size has been forced positive and is likely to give unexpected collision geometry.
+If you absolutely need to use negative scaling you can use the convex MeshCollider. Scene hierarchy path "DecorationBlockerGrp/Door_Obstacle (3)"
+BoxCollider does not support negative scale or size.
+The effective box size has been forced positive and is likely to give unexpected collision geometry.
+If you absolutely need to use negative scaling you can use the convex MeshCollider. Scene hierarchy path "Level_Environment_Grp/Env_Grp/House/House_01 (1)/Inner_Door_01_LOD0.001"
+BoxCollider does not support negative scale or size.
+The effective box size has been forced positive and is likely to give unexpected collision geometry.
+If you absolutely need to use negative scaling you can use the convex MeshCollider. Scene hierarchy path "Level_Environment_Grp/Env_Grp/House/House_01 (1)/Inner_Door_01_LOD0.001"
+BoxCollider does not support negative scale or size.
+The effective box size has been forced positive and is likely to give unexpected collision geometry.
+If you absolutely need to use negative scaling you can use the convex MeshCollider. Scene hierarchy path "Level_Environment_Grp/Env_Grp/House/House_01 (1)/Inner_Door_01_LOD0.002"
+BoxCollider does not support negative scale or size.
+The effective box size has been forced positive and is likely to give unexpected collision geometry.
+If you absolutely need to use negative scaling you can use the convex MeshCollider. Scene hierarchy path "Level_Environment_Grp/Env_Grp/House/House_01 (1)/Inner_Door_01_LOD0.002"
+BoxCollider does not support negative scale or size.
+The effective box size has been forced positive and is likely to give unexpected collision geometry.
+If you absolutely need to use negative scaling you can use the convex MeshCollider. Scene hierarchy path "UnlockRoomManager/WarehouseBlockerGrp/WHLockedRoomBlocker_Grp_Depth_B_1/AnimGrp/LockedRoomBlocker"
+BoxCollider does not support negative scale or size.
+The effective box size has been forced positive and is likely to give unexpected collision geometry.
+If you absolutely need to use negative scaling you can use the convex MeshCollider. Scene hierarchy path "UnlockRoomManager/WarehouseBlockerGrp/WHLockedRoomBlocker_Grp_Depth_B_2/AnimGrp/LockedRoomBlocker"
+BoxCollider does not support negative scale or size.
+The effective box size has been forced positive and is likely to give unexpected collision geometry.
+If you absolutely need to use negative scaling you can use the convex MeshCollider. Scene hierarchy path "UnlockRoomManager/WarehouseBlockerGrp/WHLockedRoomBlocker_Grp4/AnimGrp/QueueBlocker"
+BoxCollider does not support negative scale or size.
+The effective box size has been forced positive and is likely to give unexpected collision geometry.
+If you absolutely need to use negative scaling you can use the convex MeshCollider. Scene hierarchy path "UnlockRoomManager/WarehouseBlockerGrp/WHLockedRoomBlocker_Grp4/AnimGrp/LockedRoomBlocker"
+BoxCollider does not support negative scale or size.
+The effective box size has been forced positive and is likely to give unexpected collision geometry.
+If you absolutely need to use negative scaling you can use the convex MeshCollider. Scene hierarchy path "UnlockRoomManager/WarehouseBlockerGrp/WHLockedRoomBlocker_Grp_Depth_A_1/AnimGrp/LockedRoomBlocker"
+BoxCollider does not support negative scale or size.
+The effective box size has been forced positive and is likely to give unexpected collision geometry.
+If you absolutely need to use negative scaling you can use the convex MeshCollider. Scene hierarchy path "UnlockRoomManager/WarehouseBlockerGrp/WHLockedRoomBlocker_Grp2/AnimGrp/QueueBlocker"
+BoxCollider does not support negative scale or size.
+The effective box size has been forced positive and is likely to give unexpected collision geometry.
+If you absolutely need to use negative scaling you can use the convex MeshCollider. Scene hierarchy path "UnlockRoomManager/WarehouseBlockerGrp/WHLockedRoomBlocker_Grp/AnimGrp/LockedRoomBlocker"
+BoxCollider does not support negative scale or size.
+The effective box size has been forced positive and is likely to give unexpected collision geometry.
+If you absolutely need to use negative scaling you can use the convex MeshCollider. Scene hierarchy path "UnlockRoomManager/WarehouseBlockerGrp/WHLockedRoomBlocker_Grp_Depth_A_2/AnimGrp/QueueBlocker"
+BoxCollider does not support negative scale or size.
+The effective box size has been forced positive and is likely to give unexpected collision geometry.
+If you absolutely need to use negative scaling you can use the convex MeshCollider. Scene hierarchy path "UnlockRoomManager/WarehouseBlockerGrp/WHLockedRoomBlocker_Grp_Depth_B_2/AnimGrp/QueueBlocker"
+BoxCollider does not support negative scale or size.
+The effective box size has been forced positive and is likely to give unexpected collision geometry.
+If you absolutely need to use negative scaling you can use the convex MeshCollider. Scene hierarchy path "UnlockRoomManager/WarehouseBlockerGrp/WHLockedRoomBlocker_Grp_Depth_B_1/AnimGrp/QueueBlocker"
+BoxCollider does not support negative scale or size.
+The effective box size has been forced positive and is likely to give unexpected collision geometry.
+If you absolutely need to use negative scaling you can use the convex MeshCollider. Scene hierarchy path "UnlockRoomManager/WarehouseBlockerGrp/WHLockedRoomBlocker_Grp/AnimGrp/QueueBlocker"
+BoxCollider does not support negative scale or size.
+The effective box size has been forced positive and is likely to give unexpected collision geometry.
+If you absolutely need to use negative scaling you can use the convex MeshCollider. Scene hierarchy path "UnlockRoomManager/WarehouseBlockerGrp/WHLockedRoomBlocker_Grp_Depth_A_2/AnimGrp/LockedRoomBlocker"
+BoxCollider does not support negative scale or size.
+The effective box size has been forced positive and is likely to give unexpected collision geometry.
+If you absolutely need to use negative scaling you can use the convex MeshCollider. Scene hierarchy path "UnlockRoomManager/WarehouseBlockerGrp/WHLockedRoomBlocker_Grp4/AnimGrp/LockedRoomBlocker"
+BoxCollider does not support negative scale or size.
+The effective box size has been forced positive and is likely to give unexpected collision geometry.
+If you absolutely need to use negative scaling you can use the convex MeshCollider. Scene hierarchy path "UnlockRoomManager/WarehouseBlockerGrp/WHLockedRoomBlocker_Grp_Depth_A_1/AnimGrp/QueueBlocker"
+BoxCollider does not support negative scale or size.
+The effective box size has been forced positive and is likely to give unexpected collision geometry.
+If you absolutely need to use negative scaling you can use the convex MeshCollider. Scene hierarchy path "UnlockRoomManager/WarehouseBlockerGrp/WHLockedRoomBlocker_Grp4/AnimGrp/QueueBlocker"
+BoxCollider does not support negative scale or size.
+The effective box size has been forced positive and is likely to give unexpected collision geometry.
+If you absolutely need to use negative scaling you can use the convex MeshCollider. Scene hierarchy path "UnlockRoomManager/WarehouseBlockerGrp/WHLockedRoomBlocker_Grp2/AnimGrp/LockedRoomBlocker"
+BoxCollider does not support negative scale or size.
+The effective box size has been forced positive and is likely to give unexpected collision geometry.
+If you absolutely need to use negative scaling you can use the convex MeshCollider. Scene hierarchy path "UnlockRoomManager/WarehouseBlockerGrp/WHLockedRoomBlocker_Grp_Depth_C_2/AnimGrp/QueueBlocker"
+BoxCollider does not support negative scale or size.
+The effective box size has been forced positive and is likely to give unexpected collision geometry.
+If you absolutely need to use negative scaling you can use the convex MeshCollider. Scene hierarchy path "UnlockRoomManager/WarehouseBlockerGrp/WHLockedRoomBlocker_Grp2/AnimGrp/LockedRoomBlocker"
+BoxCollider does not support negative scale or size.
+The effective box size has been forced positive and is likely to give unexpected collision geometry.
+If you absolutely need to use negative scaling you can use the convex MeshCollider. Scene hierarchy path "UnlockRoomManager/WarehouseBlockerGrp/WHLockedRoomBlocker_Grp3/AnimGrp/QueueBlocker"
+BoxCollider does not support negative scale or size.
+The effective box size has been forced positive and is likely to give unexpected collision geometry.
+If you absolutely need to use negative scaling you can use the convex MeshCollider. Scene hierarchy path "UnlockRoomManager/WarehouseBlockerGrp/WHLockedRoomBlocker_Grp_Depth_C_1/AnimGrp/QueueBlocker"
+BoxCollider does not support negative scale or size.
+The effective box size has been forced positive and is likely to give unexpected collision geometry.
+If you absolutely need to use negative scaling you can use the convex MeshCollider. Scene hierarchy path "UnlockRoomManager/WarehouseBlockerGrp/WHLockedRoomBlocker_Grp3/AnimGrp/LockedRoomBlocker"
+BoxCollider does not support negative scale or size.
+The effective box size has been forced positive and is likely to give unexpected collision geometry.
+If you absolutely need to use negative scaling you can use the convex MeshCollider. Scene hierarchy path "UnlockRoomManager/WarehouseBlockerGrp/WHLockedRoomBlocker_GrpB/AnimGrp/QueueBlocker"
+BoxCollider does not support negative scale or size.
+The effective box size has been forced positive and is likely to give unexpected collision geometry.
+If you absolutely need to use negative scaling you can use the convex MeshCollider. Scene hierarchy path "UnlockRoomManager/WarehouseBlockerGrp/WHLockedRoomBlocker_Grp2/AnimGrp/QueueBlocker"
+BoxCollider does not support negative scale or size.
+The effective box size has been forced positive and is likely to give unexpected collision geometry.
+If you absolutely need to use negative scaling you can use the convex MeshCollider. Scene hierarchy path "UnlockRoomManager/WarehouseBlockerGrp/WHLockedRoomBlocker_Grp_Depth_C_2/AnimGrp/LockedRoomBlocker"
+BoxCollider does not support negative scale or size.
+The effective box size has been forced positive and is likely to give unexpected collision geometry.
+If you absolutely need to use negative scaling you can use the convex MeshCollider. Scene hierarchy path "UnlockRoomManager/WarehouseBlockerGrp/WHLockedRoomBlocker_Grp_Depth_C_1/AnimGrp/LockedRoomBlocker"
+BoxCollider does not support negative scale or size.
+The effective box size has been forced positive and is likely to give unexpected collision geometry.
+If you absolutely need to use negative scaling you can use the convex MeshCollider. Scene hierarchy path "UnlockRoomManager/WarehouseBlockerGrp/WHLockedRoomBlocker_Grp3/AnimGrp/QueueBlocker"
+BoxCollider does not support negative scale or size.
+The effective box size has been forced positive and is likely to give unexpected collision geometry.
+If you absolutely need to use negative scaling you can use the convex MeshCollider. Scene hierarchy path "UnlockRoomManager/WarehouseBlockerGrp/WHLockedRoomBlocker_GrpB/AnimGrp/LockedRoomBlocker"
+BoxCollider does not support negative scale or size.
+The effective box size has been forced positive and is likely to give unexpected collision geometry.
+If you absolutely need to use negative scaling you can use the convex MeshCollider. Scene hierarchy path "UnlockRoomManager/WarehouseBlockerGrp/WHLockedRoomBlocker_Grp3/AnimGrp/LockedRoomBlocker"
+BoxCollider does not support negative scale or size.
+The effective box size has been forced positive and is likely to give unexpected collision geometry.
+If you absolutely need to use negative scaling you can use the convex MeshCollider. Scene hierarchy path "UnlockRoomManager/WarehouseBlockerGrp/WHLockedRoomBlocker_Grp_Depth_C_1/AnimGrp/LockedRoomBlockerDeco"
+BoxCollider does not support negative scale or size.
+The effective box size has been forced positive and is likely to give unexpected collision geometry.
+If you absolutely need to use negative scaling you can use the convex MeshCollider. Scene hierarchy path "UnlockRoomManager/WarehouseBlockerGrp/WHLockedRoomBlocker_GrpB/AnimGrp/LockedRoomBlockerDeco"
+BoxCollider does not support negative scale or size.
+The effective box size has been forced positive and is likely to give unexpected collision geometry.
+If you absolutely need to use negative scaling you can use the convex MeshCollider. Scene hierarchy path "UnlockRoomManager/WarehouseBlockerGrp/WHLockedRoomBlocker_Grp3/AnimGrp/LockedRoomBlockerDeco"
+BoxCollider does not support negative scale or size.
+The effective box size has been forced positive and is likely to give unexpected collision geometry.
+If you absolutely need to use negative scaling you can use the convex MeshCollider. Scene hierarchy path "UnlockRoomManager/WarehouseBlockerGrp/WHLockedRoomBlocker_Grp_Depth_C_2/AnimGrp/LockedRoomBlockerDeco"
+BoxCollider does not support negative scale or size.
+The effective box size has been forced positive and is likely to give unexpected collision geometry.
+If you absolutely need to use negative scaling you can use the convex MeshCollider. Scene hierarchy path "UnlockRoomManager/WarehouseBlockerGrp/WHLockedRoomBlocker_Grp3/AnimGrp/LockedRoomBlockerDeco"
+BoxCollider does not support negative scale or size.
+The effective box size has been forced positive and is likely to give unexpected collision geometry.
+If you absolutely need to use negative scaling you can use the convex MeshCollider. Scene hierarchy path "UnlockRoomManager/WarehouseBlockerGrp/WHLockedRoomBlocker_Grp2/AnimGrp/LockedRoomBlockerDeco"
+BoxCollider does not support negative scale or size.
+The effective box size has been forced positive and is likely to give unexpected collision geometry.
+If you absolutely need to use negative scaling you can use the convex MeshCollider. Scene hierarchy path "UnlockRoomManager/WarehouseBlockerGrp/WHLockedRoomBlocker_Grp_Depth_A_2/AnimGrp/LockedRoomBlockerDeco"
+BoxCollider does not support negative scale or size.
+The effective box size has been forced positive and is likely to give unexpected collision geometry.
+If you absolutely need to use negative scaling you can use the convex MeshCollider. Scene hierarchy path "UnlockRoomManager/WarehouseBlockerGrp/WHLockedRoomBlocker_Grp4/AnimGrp/LockedRoomBlockerDeco"
+BoxCollider does not support negative scale or size.
+The effective box size has been forced positive and is likely to give unexpected collision geometry.
+If you absolutely need to use negative scaling you can use the convex MeshCollider. Scene hierarchy path "UnlockRoomManager/WarehouseBlockerGrp/WHLockedRoomBlocker_Grp2/AnimGrp/LockedRoomBlockerDeco"
+BoxCollider does not support negative scale or size.
+The effective box size has been forced positive and is likely to give unexpected collision geometry.
+If you absolutely need to use negative scaling you can use the convex MeshCollider. Scene hierarchy path "UnlockRoomManager/WarehouseBlockerGrp/WHLockedRoomBlocker_Grp_Depth_A_1/AnimGrp/LockedRoomBlockerDeco"
+BoxCollider does not support negative scale or size.
+The effective box size has been forced positive and is likely to give unexpected collision geometry.
+If you absolutely need to use negative scaling you can use the convex MeshCollider. Scene hierarchy path "UnlockRoomManager/WarehouseBlockerGrp/WHLockedRoomBlocker_Grp4/AnimGrp/LockedRoomBlockerDeco"
+BoxCollider does not support negative scale or size.
+The effective box size has been forced positive and is likely to give unexpected collision geometry.
+If you absolutely need to use negative scaling you can use the convex MeshCollider. Scene hierarchy path "UnlockRoomManager/WarehouseBlockerGrp/WHLockedRoomBlocker_Grp/AnimGrp/LockedRoomBlockerDeco"
+BoxCollider does not support negative scale or size.
+The effective box size has been forced positive and is likely to give unexpected collision geometry.
+If you absolutely need to use negative scaling you can use the convex MeshCollider. Scene hierarchy path "UnlockRoomManager/WarehouseBlockerGrp/WHLockedRoomBlocker_Grp_Depth_B_1/AnimGrp/LockedRoomBlockerDeco"
+BoxCollider does not support negative scale or size.
+The effective box size has been forced positive and is likely to give unexpected collision geometry.
+If you absolutely need to use negative scaling you can use the convex MeshCollider. Scene hierarchy path "UnlockRoomManager/WarehouseBlockerGrp/WHLockedRoomBlocker_Grp_Depth_B_2/AnimGrp/LockedRoomBlockerDeco"
+LoadData m_CurrentSaveLoadSlotSelectedIndex 0
+[Info   :WankulCrazy] Loading cards associations
+[Info   :WankulCrazy] Save index: 0
+[Info   :WankulCrazy] Path: E:/jeux/TCG Card Shop Simulator/Card Shop Simulator_Data\../BepInEx/plugins\WankulCrazy/data/save_0.json
+[Info   :WankulCrazy] Deserialized Save object successfully.
+[Info   :WankulCrazy] Associations loaded: 141 in 44 ms
+[Info   :WankulCrazy] [SHOP EVALUATE] Ouverture de l'onglet: Boosters (index=0)
+[Info   :WankulCrazy] [DebugForceOpen] 📦 Stellar (S04) - FORCE OPEN (DisplayStellar) — déclenchement direct de EvaluateOpenCardPack...
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen] GameObject 'CardBoxInnerMesh' — 74 Renderer(s) trouvé(s).
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'CardBoxStaticMesh' slot 0: material='CardBoxMat_Lightweight (Instance)' shader='Unlit/UnlitWithShadowcaster' supported=True renderQueue=2000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=OK
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'StaticMesh' slot 0: material='MAT_CardBoxInner' shader='Unlit/UnlitWithShadowcaster' supported=True renderQueue=2000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=OK
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'CardPackStaticMesh' slot 0: material='MAT_CardPackCommon_Lightweight' shader='Unlit/UnlitWithShadowcaster' supported=True renderQueue=2000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=OK
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'SecondaryStaticMesh' slot 0: material='MAT_CardPackCommon_Lightweight' shader='Unlit/UnlitWithShadowcaster' supported=True renderQueue=2000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=OK
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 0: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 1: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 2: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 3: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 4: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'CardPackStaticMesh' slot 0: material='MAT_CardPackCommon_Lightweight' shader='Unlit/UnlitWithShadowcaster' supported=True renderQueue=2000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=OK
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'SecondaryStaticMesh' slot 0: material='MAT_CardPackCommon_Lightweight' shader='Unlit/UnlitWithShadowcaster' supported=True renderQueue=2000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=OK
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 0: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 1: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 2: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 3: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 4: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'CardPackStaticMesh' slot 0: material='MAT_CardPackCommon_Lightweight' shader='Unlit/UnlitWithShadowcaster' supported=True renderQueue=2000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=OK
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'SecondaryStaticMesh' slot 0: material='MAT_CardPackCommon_Lightweight' shader='Unlit/UnlitWithShadowcaster' supported=True renderQueue=2000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=OK
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 0: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 1: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 2: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 3: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 4: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'CardPackStaticMesh' slot 0: material='MAT_CardPackCommon_Lightweight' shader='Unlit/UnlitWithShadowcaster' supported=True renderQueue=2000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=OK
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'SecondaryStaticMesh' slot 0: material='MAT_CardPackCommon_Lightweight' shader='Unlit/UnlitWithShadowcaster' supported=True renderQueue=2000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=OK
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 0: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 1: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 2: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 3: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 4: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'CardPackStaticMesh' slot 0: material='MAT_CardPackCommon_Lightweight' shader='Unlit/UnlitWithShadowcaster' supported=True renderQueue=2000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=OK
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'SecondaryStaticMesh' slot 0: material='MAT_CardPackCommon_Lightweight' shader='Unlit/UnlitWithShadowcaster' supported=True renderQueue=2000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=OK
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 0: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 1: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 2: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 3: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 4: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'CardPackStaticMesh' slot 0: material='MAT_CardPackCommon_Lightweight' shader='Unlit/UnlitWithShadowcaster' supported=True renderQueue=2000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=OK
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'SecondaryStaticMesh' slot 0: material='MAT_CardPackCommon_Lightweight' shader='Unlit/UnlitWithShadowcaster' supported=True renderQueue=2000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=OK
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 0: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 1: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 2: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 3: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 4: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'CardPackStaticMesh' slot 0: material='MAT_CardPackCommon_Lightweight' shader='Unlit/UnlitWithShadowcaster' supported=True renderQueue=2000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=OK
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'SecondaryStaticMesh' slot 0: material='MAT_CardPackCommon_Lightweight' shader='Unlit/UnlitWithShadowcaster' supported=True renderQueue=2000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=OK
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 0: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 1: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 2: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 3: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 4: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'CardPackStaticMesh' slot 0: material='MAT_CardPackCommon_Lightweight' shader='Unlit/UnlitWithShadowcaster' supported=True renderQueue=2000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=OK
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'SecondaryStaticMesh' slot 0: material='MAT_CardPackCommon_Lightweight' shader='Unlit/UnlitWithShadowcaster' supported=True renderQueue=2000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=OK
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 0: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 1: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 2: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 3: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 4: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'CardPackStaticMesh' slot 0: material='MAT_CardPackCommon_Lightweight' shader='Unlit/UnlitWithShadowcaster' supported=True renderQueue=2000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=OK
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'SecondaryStaticMesh' slot 0: material='MAT_CardPackCommon_Lightweight' shader='Unlit/UnlitWithShadowcaster' supported=True renderQueue=2000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=OK
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 0: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 1: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 2: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 3: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 4: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'CardPackStaticMesh' slot 0: material='MAT_CardPackCommon_Lightweight' shader='Unlit/UnlitWithShadowcaster' supported=True renderQueue=2000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=OK
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'SecondaryStaticMesh' slot 0: material='MAT_CardPackCommon_Lightweight' shader='Unlit/UnlitWithShadowcaster' supported=True renderQueue=2000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=OK
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 0: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 1: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 2: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 3: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 4: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'CardPackStaticMesh' slot 0: material='MAT_CardPackCommon_Lightweight' shader='Unlit/UnlitWithShadowcaster' supported=True renderQueue=2000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=OK
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'SecondaryStaticMesh' slot 0: material='MAT_CardPackCommon_Lightweight' shader='Unlit/UnlitWithShadowcaster' supported=True renderQueue=2000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=OK
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 0: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 1: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 2: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 3: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 4: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'CardPackStaticMesh' slot 0: material='MAT_CardPackCommon_Lightweight' shader='Unlit/UnlitWithShadowcaster' supported=True renderQueue=2000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=OK
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'SecondaryStaticMesh' slot 0: material='MAT_CardPackCommon_Lightweight' shader='Unlit/UnlitWithShadowcaster' supported=True renderQueue=2000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=OK
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 0: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 1: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 2: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 3: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 4: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'CardPackStaticMesh' slot 0: material='MAT_CardPackCommon_Lightweight' shader='Unlit/UnlitWithShadowcaster' supported=True renderQueue=2000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=OK
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'SecondaryStaticMesh' slot 0: material='MAT_CardPackCommon_Lightweight' shader='Unlit/UnlitWithShadowcaster' supported=True renderQueue=2000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=OK
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 0: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 1: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 2: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 3: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 4: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'CardPackStaticMesh' slot 0: material='MAT_CardPackCommon_Lightweight' shader='Unlit/UnlitWithShadowcaster' supported=True renderQueue=2000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=OK
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'SecondaryStaticMesh' slot 0: material='MAT_CardPackCommon_Lightweight' shader='Unlit/UnlitWithShadowcaster' supported=True renderQueue=2000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=OK
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 0: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 1: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 2: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 3: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 4: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'CardPackStaticMesh' slot 0: material='MAT_CardPackCommon_Lightweight' shader='Unlit/UnlitWithShadowcaster' supported=True renderQueue=2000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=OK
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'SecondaryStaticMesh' slot 0: material='MAT_CardPackCommon_Lightweight' shader='Unlit/UnlitWithShadowcaster' supported=True renderQueue=2000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=OK
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 0: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 1: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 2: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 3: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 4: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'CardPackStaticMesh' slot 0: material='MAT_CardPackCommon_Lightweight' shader='Unlit/UnlitWithShadowcaster' supported=True renderQueue=2000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=OK
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'SecondaryStaticMesh' slot 0: material='MAT_CardPackCommon_Lightweight' shader='Unlit/UnlitWithShadowcaster' supported=True renderQueue=2000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=OK
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 0: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 1: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 2: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 3: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 4: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'CardPackStaticMesh' slot 0: material='MAT_CardPackCommon_Lightweight' shader='Unlit/UnlitWithShadowcaster' supported=True renderQueue=2000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=OK
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'SecondaryStaticMesh' slot 0: material='MAT_CardPackCommon_Lightweight' shader='Unlit/UnlitWithShadowcaster' supported=True renderQueue=2000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=OK
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 0: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 1: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 2: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 3: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 4: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'CardPackStaticMesh' slot 0: material='MAT_CardPackCommon_Lightweight' shader='Unlit/UnlitWithShadowcaster' supported=True renderQueue=2000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=OK
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'SecondaryStaticMesh' slot 0: material='MAT_CardPackCommon_Lightweight' shader='Unlit/UnlitWithShadowcaster' supported=True renderQueue=2000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=OK
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 0: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 1: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 2: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 3: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 4: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'CardPackStaticMesh' slot 0: material='MAT_CardPackCommon_Lightweight' shader='Unlit/UnlitWithShadowcaster' supported=True renderQueue=2000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=OK
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'SecondaryStaticMesh' slot 0: material='MAT_CardPackCommon_Lightweight' shader='Unlit/UnlitWithShadowcaster' supported=True renderQueue=2000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=OK
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 0: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 1: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 2: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 3: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 4: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'CardPackStaticMesh' slot 0: material='MAT_CardPackCommon_Lightweight' shader='Unlit/UnlitWithShadowcaster' supported=True renderQueue=2000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=OK
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'SecondaryStaticMesh' slot 0: material='MAT_CardPackCommon_Lightweight' shader='Unlit/UnlitWithShadowcaster' supported=True renderQueue=2000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=OK
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 0: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 1: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 2: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 3: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 4: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'CardPackStaticMesh' slot 0: material='MAT_CardPackCommon_Lightweight' shader='Unlit/UnlitWithShadowcaster' supported=True renderQueue=2000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=OK
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'SecondaryStaticMesh' slot 0: material='MAT_CardPackCommon_Lightweight' shader='Unlit/UnlitWithShadowcaster' supported=True renderQueue=2000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=OK
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 0: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 1: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 2: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 3: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 4: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'CardPackStaticMesh' slot 0: material='MAT_CardPackCommon_Lightweight' shader='Unlit/UnlitWithShadowcaster' supported=True renderQueue=2000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=OK
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'SecondaryStaticMesh' slot 0: material='MAT_CardPackCommon_Lightweight' shader='Unlit/UnlitWithShadowcaster' supported=True renderQueue=2000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=OK
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 0: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 1: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 2: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 3: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 4: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'CardPackStaticMesh' slot 0: material='MAT_CardPackCommon_Lightweight' shader='Unlit/UnlitWithShadowcaster' supported=True renderQueue=2000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=OK
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'SecondaryStaticMesh' slot 0: material='MAT_CardPackCommon_Lightweight' shader='Unlit/UnlitWithShadowcaster' supported=True renderQueue=2000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=OK
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 0: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 1: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 2: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 3: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 4: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'CardPackStaticMesh' slot 0: material='MAT_CardPackCommon_Lightweight' shader='Unlit/UnlitWithShadowcaster' supported=True renderQueue=2000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=OK
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'SecondaryStaticMesh' slot 0: material='MAT_CardPackCommon_Lightweight' shader='Unlit/UnlitWithShadowcaster' supported=True renderQueue=2000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=OK
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 0: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 1: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 2: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 3: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen]   'Outline' slot 4: material='MAT_OutlineItem' shader='Toony Colors Pro 2/Outline Only/Blended' supported=True renderQueue=3000 _BaseColorMap=n/a _BaseMap=n/a _MainTex=vide
+[Info   :WankulCrazy] [MatDiag:CardBoxOpen] Pipeline actif: Built-in (aucun SRP)
+[Debug  :WankulCrazy] [CardOpening] === NOUVEAU BOOSTER OUVERT === boosterSize=10, Card3dUIList.Count=10, CardAnimList.Count=10, ShowAllCardPosList.Count=10
+[Info   :WankulCrazy] [CardOpening] === BOOSTER GÉNÉRÉ (10 cartes, boosterSize=10) ===
+[Info   :WankulCrazy]   [Carte 0] Nom='Inconnue' | isFoil=False | Type= | HasMask=False | Prix=0,2298501 | isNew=False
+[Error  :WankulCrazy] [CardOpening] OpenBooster a echoue : System.NullReferenceException: Object reference not set to an instance of an object
+  at (wrapper dynamic-method) CardUI.DMD<CardUI::SetCardUI>(CardUI,CardData)
+  at WankulCrazyPlugin.patch.CardOpening.OpenBoosterCore (System.Collections.Generic.List`1[T] ___m_RolledCardDataList, System.Collections.Generic.List`1[T] ___m_CardValueList, ECollectionPackType ___m_CollectionPackType, Item ___m_CurrentItem, System.Collections.Generic.List`1[T] ___m_SecondaryRolledCardDataList, CardOpeningSequence __instance) [0x0044f] in <e86a276bf29e465a9011c45dafd5bd7d>:0 
+  at WankulCrazyPlugin.patch.CardOpening.OpenBooster (System.Collections.Generic.List`1[T] ___m_RolledCardDataList, System.Collections.Generic.List`1[T] ___m_CardValueList, ECollectionPackType ___m_CollectionPackType, Item ___m_CurrentItem, System.Collections.Generic.List`1[T] ___m_SecondaryRolledCardDataList, CardOpeningSequence __instance) [0x00000] in <e86a276bf29e465a9011c45dafd5bd7d>:0 
+[Warning:WankulCrazy] wankulCardData is null, using AJETER
+[Error  :WankulCrazy] [HandlePhase_ReadyingToOpen] OpenScreen a échoué (collectionPackType=Stellar): System.NullReferenceException: Object reference not set to an instance of an object
+  at (wrapper dynamic-method) CardUI.DMD<CardUI::SetCardUI>(CardUI,CardData)
+  at (wrapper dynamic-method) CardOpeningSequence.DMD<CardOpeningSequence::OpenScreen>(CardOpeningSequence,ECollectionPackType,bool,bool)
+  at WankulCrazyPlugin.patch.CardOpening.HandlePhase_ReadyingToOpen (CardOpeningSequence __instance) [0x001cc] in <e86a276bf29e465a9011c45dafd5bd7d>:0 

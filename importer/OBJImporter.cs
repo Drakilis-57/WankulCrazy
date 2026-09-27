@@ -108,9 +108,9 @@ namespace WankulCrazyPlugin.importer
 
         public static void InitFiles()
         {
-            Plugin.Logger.LogInfo("Loading 3D Objects...");
+            Plugin.LogInfo("Loading 3D Objects...");
             checkFolders();
-            Plugin.Logger.LogInfo("Checking for .obj files...");
+            Plugin.LogInfo("Checking for .obj files...");
             try
             {
                 string[] strArray = new string[2]
@@ -232,7 +232,7 @@ namespace WankulCrazyPlugin.importer
                     }
                 }
             }
-            Plugin.Logger.LogInfo("Meshes cached at start");
+            Plugin.LogInfo("Meshes cached at start");
         }
 
         private static Mesh GetCachedMesh(string name)
@@ -258,7 +258,7 @@ namespace WankulCrazyPlugin.importer
                         }
                     }
                 }
-                Plugin.Logger.LogInfo("Custom 3D Objects loaded!");
+                Plugin.LogInfo("Custom 3D Objects loaded!");
             }
             // Remplacement des textures podium
             var renderers = UnityEngine.Resources.FindObjectsOfTypeAll<Renderer>();
@@ -359,7 +359,7 @@ namespace WankulCrazyPlugin.importer
             }
             FixNewStatues();
             ReplaceSpriteLists();
-            Plugin.Logger.LogInfo("Custom Textures loaded!");
+            Plugin.LogInfo("Custom Textures loaded!");
         }
 
         private static void ReplaceSpriteLists()

@@ -38,7 +38,7 @@ namespace WankulCrazyPlugin.patch
             try
             {
                 CheckBoosterSize(__instance);
-                Plugin.Logger.LogDebug($"[CardOpening] === NOUVEAU BOOSTER OUVERT === boosterSize={boosterSize}, Card3dUIList.Count={__instance.m_Card3dUIList.Count}, CardAnimList.Count={__instance.m_CardAnimList.Count}, ShowAllCardPosList.Count={__instance.m_ShowAllCardPosList.Count}");
+                Plugin.LogDebug($"[CardOpening] === NOUVEAU BOOSTER OUVERT === boosterSize={boosterSize}, Card3dUIList.Count={__instance.m_Card3dUIList.Count}, CardAnimList.Count={__instance.m_CardAnimList.Count}, ShowAllCardPosList.Count={__instance.m_ShowAllCardPosList.Count}");
             }
             catch (Exception ex)
             {
@@ -381,7 +381,7 @@ namespace WankulCrazyPlugin.patch
 
                 Item currentItem = (Item)Plugin.GetPProperty(__instance, "m_CurrentItem");
                 WankulCardData wankulCard;
-                if (currentItem.GetItemType() == EnumExtensions.SafeParseEItemType("BoosterGoldBattle") || currentItem.GetItemType() == EnumExtensions.SafeParseEItemType("BoosterGoldStellar") && boosterSize == 4)
+                if ((currentItem.GetItemType() == EnumExtensions.SafeParseEItemType("BoosterGoldBattle") || currentItem.GetItemType() == EnumExtensions.SafeParseEItemType("BoosterGoldStellar")) && boosterSize == 4)
                 {
                     wankulCard = WankulInventory.DropCardGold(___m_CollectionPackType, alreadySelectedCards);
                 }
@@ -442,19 +442,26 @@ namespace WankulCrazyPlugin.patch
                 ___m_CardValueList.Add(wankulCard.MarketPrice);
             }
 
-            Plugin.Logger.LogInfo($"[CardOpening] === BOOSTER GÉNÉRÉ ({___m_RolledCardDataList.Count} cartes, boosterSize={boosterSize}) ===");
+            Plugin.LogInfo($"[CardOpening] === BOOSTER GÉNÉRÉ ({___m_RolledCardDataList.Count} cartes, boosterSize={boosterSize}) ===");
             for (int k = 0; k < ___m_RolledCardDataList.Count; k++)
             {
                 CardData cd = ___m_RolledCardDataList[k];
                 WankulCardData wk = wankulCardsData.GetFromMonster(cd, true);
                 string cardTitle = wk != null ? wk.Title : "Inconnue";
                 bool isNew = ((List<bool>)Plugin.GetPProperty(__instance, "m_IsNewlList"))[k];
-                Plugin.Logger.LogInfo($"  [Carte {k}] Nom='{cardTitle}' | isFoil={cd?.isFoil} | Type={wk?.GetType().Name} | HasMask={(wk?.SpriteMask != null)} | Prix={___m_CardValueList[k]} | isNew={isNew}");
+                Plugin.LogInfo($"  [Carte {k}] Nom='{cardTitle}' | isFoil={cd?.isFoil} | Type={wk?.GetType().Name} | HasMask={(wk?.SpriteMask != null)} | Prix={___m_CardValueList[k]} | isNew={isNew}");
 
                 // Affecter explicitement les données de la carte sur l'objet 3D correspondant pour garantir son visuel dès le début
                 if (k < __instance.m_Card3dUIList.Count && __instance.m_Card3dUIList[k] != null && __instance.m_Card3dUIList[k].m_CardUI != null)
                 {
-                    __instance.m_Card3dUIList[k].m_CardUI.SetCardUI(___m_RolledCardDataList[k]);
+                    try
+                    {
+                        __instance.m_Card3dUIList[k].m_CardUI.SetCardUI(___m_RolledCardDataList[k]);
+                    }
+                    catch (Exception ex)
+                    {
+                        Plugin.Logger.LogError($"[CardOpening] SetCardUI a échoué pour la carte {k}: {ex.Message}");
+                    }
                 }
             }
         }
@@ -507,8 +514,8 @@ namespace WankulCrazyPlugin.patch
                 )
                 {
                     int random = UnityEngine.Random.Range(0, randomGoldBoosterSeed);
-                    //Plugin.Logger.LogInfo($"Random Gold booster: {random}");
-                    //Plugin.Logger.LogInfo($"Random Gold booster seed: {randomGoldBoosterSeed}");
+                    //Plugin.LogInfo($"Random Gold booster: {random}");
+                    //Plugin.LogInfo($"Random Gold booster seed: {randomGoldBoosterSeed}");
                     shouldGenGoldBooster = random == 0;
                 }
 
@@ -682,7 +689,30 @@ namespace WankulCrazyPlugin.patch
             {
                 CardOpeningHelpers.SetIsReadyingToOpen(__instance, false);
                 ECollectionPackType collectionPackType = InventoryBase.ItemTypeToCollectionPackType(CardOpeningHelpers.GetCurrentItem(__instance).GetItemType());
-                __instance.OpenScreen(collectionPackType, false);
+
+                // InventoryBase.ItemTypeToCollectionPackType ne connaît pas nos types custom (Stellar, etc.).
+                // Si elle retourne 0 (valeur invalide), on résout manuellement via notre mapping.
+                if (collectionPackType == (ECollectionPackType)0)
+                {
+                    EItemType itemType = CardOpeningHelpers.GetCurrentItem(__instance).GetItemType();
+                    collectionPackType = EnumExtensions.ItemTypeToCollectionPackTypeSafe(itemType);
+                    Plugin.LogInfo($"[HandlePhase_ReadyingToOpen] collectionPackType résolu manuellement : {itemType} -> {collectionPackType}");
+                }
+
+                try
+                {
+                    __instance.OpenScreen(collectionPackType, false);
+                }
+                catch (Exception ex)
+                {
+                    Plugin.Logger.LogError($"[HandlePhase_ReadyingToOpen] OpenScreen a échoué (collectionPackType={collectionPackType}): {ex}");
+                    // Réinitialiser l'état pour éviter de bloquer le joueur en boucle
+                    CardOpeningHelpers.SetIsReadyingToOpen(__instance, false);
+                    CardOpeningHelpers.SetIsReadyToOpen(__instance, false);
+                    CardOpeningHelpers.SetIsScreenActive(__instance, false);
+                    CSingleton<InteractionPlayerController>.Instance.ExitLockMoveMode();
+                    CSingleton<InteractionPlayerController>.Instance.OnExitOpenPackState();
+                }
             }
             else if (InputManager.GetKeyDownAction(EGameAction.CancelOpenPack) && !CardOpeningHelpers.GetIsCanceling(__instance))
             {
@@ -844,7 +874,7 @@ namespace WankulCrazyPlugin.patch
                     CardOpeningHelpers.SetIsAutoFire(__instance, false);
 
                     int curIndex = CardOpeningHelpers.GetCurrentOpenedCardIndex(__instance);
-                    Plugin.Logger.LogDebug($"[CardOpening] [State 5 -> Clic/Suivant] curIndex={curIndex}, lance OpenCardSlideExit sur la carte {curIndex}");
+                    Plugin.LogDebug($"[CardOpening] [State 5 -> Clic/Suivant] curIndex={curIndex}, lance OpenCardSlideExit sur la carte {curIndex}");
 
                     int num3 = UnityEngine.Random.Range(0, 3);
                     float num4 = 0.002f * (float)curIndex;
@@ -911,11 +941,11 @@ namespace WankulCrazyPlugin.patch
 
                 int nextCardIndex = curIndex + 1;
                 CardOpeningHelpers.SetCurrentOpenedCardIndex(__instance, nextCardIndex);
-                Plugin.Logger.LogDebug($"[CardOpening] [State 6 -> Fini Slide] curIndex={curIndex} masqué. Prochaine carte nextCardIndex={nextCardIndex} / {boosterSize}");
+                Plugin.LogDebug($"[CardOpening] [State 6 -> Fini Slide] curIndex={curIndex} masqué. Prochaine carte nextCardIndex={nextCardIndex} / {boosterSize}");
 
                 if (nextCardIndex >= boosterSize)
                 {
-                    Plugin.Logger.LogDebug($"[CardOpening] Toutes les {boosterSize} cartes terminées -> Passage à State 7 (Récapitulatif)");
+                    Plugin.LogDebug($"[CardOpening] Toutes les {boosterSize} cartes terminées -> Passage à State 7 (Récapitulatif)");
                     CardOpeningHelpers.SetIsGetHighValueCard(__instance, false);
                     __instance.m_StateIndex = 7;
                     return false;
@@ -930,7 +960,7 @@ namespace WankulCrazyPlugin.patch
                 bool isNew = isNewList[nextCardIndex];
                 bool isHighValue = cardValue >= threshold;
 
-                Plugin.Logger.LogDebug($"[CardOpening] [State 6 -> Carte Suivante] Index={nextCardIndex}, isNew={isNew}, isHighValue={isHighValue}");
+                Plugin.LogDebug($"[CardOpening] [State 6 -> Carte Suivante] Index={nextCardIndex}, isNew={isNew}, isHighValue={isHighValue}");
 
                 PlayCardRevealAnimation(__instance, nextCardIndex, cardValue, isNew, isHighValue);
             }
@@ -983,8 +1013,8 @@ namespace WankulCrazyPlugin.patch
                             try
                             {
                                 Card3dUIGroup cardGroup = __instance.m_Card3dUIList[timerIndex];
-                                Plugin.Logger.LogInfo($"=== [DIAGNOSTIC REVEAL CARTE {timerIndex}] ===");
-                                Plugin.Logger.LogInfo($"  Position: {cardGroup.transform.position}, ShowAllPos: {__instance.m_ShowAllCardPosList[timerIndex].position}");
+                                Plugin.LogInfo($"=== [DIAGNOSTIC REVEAL CARTE {timerIndex}] ===");
+                                Plugin.LogInfo($"  Position: {cardGroup.transform.position}, ShowAllPos: {__instance.m_ShowAllCardPosList[timerIndex].position}");
                                 
                                 // Lister tous les enfants actifs et leurs composants
                                 foreach (Transform child in cardGroup.GetComponentsInChildren<Transform>(true))
@@ -992,21 +1022,21 @@ namespace WankulCrazyPlugin.patch
                                     if (child != null && child.gameObject.activeSelf)
                                     {
                                         string comps = string.Join(", ", System.Array.ConvertAll(child.GetComponents<Component>(), c => c != null ? c.GetType().Name : "null"));
-                                        Plugin.Logger.LogInfo($"    Enfant Actif: '{child.name}' [Comps: {comps}]");
+                                        Plugin.LogInfo($"    Enfant Actif: '{child.name}' [Comps: {comps}]");
                                         
                                         var img = child.GetComponent<UnityEngine.UI.Image>();
                                         if (img != null)
                                         {
                                             string matName = img.material != null ? img.material.name : "None";
                                             string shaderName = img.material != null && img.material.shader != null ? img.material.shader.name : "None";
-                                            Plugin.Logger.LogInfo($"      -> Image '{child.name}': color={img.color}, mat='{matName}', shader='{shaderName}'");
+                                            Plugin.LogInfo($"      -> Image '{child.name}': color={img.color}, mat='{matName}', shader='{shaderName}'");
                                         }
 
                                         var renderer = child.GetComponent<Renderer>();
                                         if (renderer != null)
                                         {
                                             string matName = renderer.material != null ? renderer.material.name : "None";
-                                            Plugin.Logger.LogInfo($"      -> Renderer '{child.name}': enabled={renderer.enabled}, mat='{matName}'");
+                                            Plugin.LogInfo($"      -> Renderer '{child.name}': enabled={renderer.enabled}, mat='{matName}'");
                                         }
                                     }
                                 }
@@ -1017,7 +1047,7 @@ namespace WankulCrazyPlugin.patch
                                 {
                                     if (pChild != null && pChild != posTransform)
                                     {
-                                        Plugin.Logger.LogInfo($"    ShowAllCardPos Enfant: '{pChild.name}' (active={pChild.gameObject.activeSelf})");
+                                        Plugin.LogInfo($"    ShowAllCardPos Enfant: '{pChild.name}' (active={pChild.gameObject.activeSelf})");
                                     }
                                 }
                             }

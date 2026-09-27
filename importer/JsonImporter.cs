@@ -83,7 +83,7 @@ public class JsonImporter
         {
             CreateCardsData(allCards);
             WankulCardsData wankulCardsData = WankulCardsData.Instance;
-            Plugin.Logger?.LogInfo("Cards data loaded: " + wankulCardsData.cards.Count + " cards");
+            Plugin.LogInfo("Cards data loaded: " + wankulCardsData.cards.Count + " cards");
         }
         else
         {
@@ -196,7 +196,7 @@ public class JsonImporter
         {
             WankulLoadingScreen.ShowAndStartLoading(cardsData.cards, () =>
             {
-                Plugin.Logger?.LogInfo($"[WankulLoadingScreen] Toutes les {cardsData.cards.Count} textures de cartes ont été chargées avec succès !");
+                Plugin.LogInfo($"[WankulLoadingScreen] Toutes les {cardsData.cards.Count} textures de cartes ont été chargées avec succès !");
             });
             return;
         }

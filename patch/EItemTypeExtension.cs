@@ -221,6 +221,34 @@ public static class EnumExtensions
 
         return false;
     }
+
+    /// <summary>
+    /// Résout manuellement EItemType → ECollectionPackType pour les types custom
+    /// que InventoryBase.ItemTypeToCollectionPackType (méthode du jeu vanilla) ne connaît pas.
+    /// Retourne (ECollectionPackType)0 si aucun mapping n'est trouvé.
+    /// </summary>
+    public static ECollectionPackType ItemTypeToCollectionPackTypeSafe(EItemType itemType)
+    {
+        // Mapping statique des boosters custom vers leur ECollectionPackType
+        var boosterStellar     = SafeParseEItemType("BoosterStellar");
+        var boosterStellarTaux = SafeParseEItemType("BoosterStellarTaux");
+        var boosterGoldBattle  = SafeParseEItemType("BoosterGoldBattle");
+        var boosterGoldStellar = SafeParseEItemType("BoosterGoldStellar");
+        var boosterLegacy      = SafeParseEItemType("BoosterLegacy");
+        var testPack32         = SafeParseEItemType("TestCardPack32");
+        var testPack64         = SafeParseEItemType("TestCardPack64");
+
+        if (itemType == boosterStellar)      return SafeParseECollectionPackType("Stellar");
+        if (itemType == boosterStellarTaux)  return SafeParseECollectionPackType("StellarTaux");
+        // Les Gold partagent la saison de leur booster de base
+        if (itemType == boosterGoldBattle)   return ECollectionPackType.EpicCardPack;
+        if (itemType == boosterGoldStellar)  return SafeParseECollectionPackType("Stellar");
+        if (itemType == boosterLegacy)       return SafeParseECollectionPackType("Legacy");
+        if (itemType == testPack32)          return SafeParseECollectionPackType("SeasonTestPack32");
+        if (itemType == testPack64)          return SafeParseECollectionPackType("SeasonTestPack64");
+
+        return (ECollectionPackType)0;
+    }
 }
 
 class Patch_Enum_Transpiler

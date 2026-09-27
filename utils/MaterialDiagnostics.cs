@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 namespace WankulCrazyPlugin.utils
 {
@@ -19,7 +19,7 @@ namespace WankulCrazyPlugin.utils
             }
 
             Renderer[] renderers = root.GetComponentsInChildren<Renderer>(true);
-            Plugin.Logger?.LogInfo($"[MatDiag:{context}] GameObject '{root.name}' — {renderers.Length} Renderer(s) trouvé(s).");
+            Plugin.LogInfo($"[MatDiag:{context}] GameObject '{root.name}' — {renderers.Length} Renderer(s) trouvé(s).");
 
             foreach (Renderer r in renderers)
             {
@@ -39,7 +39,7 @@ namespace WankulCrazyPlugin.utils
                     string hasBaseMap = m.HasProperty("_BaseMap") ? (m.GetTexture("_BaseMap") != null ? "OK" : "vide") : "n/a";
                     string hasMainTex = m.HasProperty("_MainTex") ? (m.GetTexture("_MainTex") != null ? "OK" : "vide") : "n/a";
 
-                    Plugin.Logger?.LogInfo(
+                    Plugin.LogInfo(
                         $"[MatDiag:{context}]   '{r.gameObject.name}' slot {i}: material='{m.name}' shader='{shaderName}' supported={shaderIsSupported} " +
                         $"renderQueue={m.renderQueue} _BaseColorMap={hasBaseColorMap} _BaseMap={hasBaseMap} _MainTex={hasMainTex}"
                     );
@@ -51,7 +51,7 @@ namespace WankulCrazyPlugin.utils
                 }
             }
 
-            Plugin.Logger?.LogInfo($"[MatDiag:{context}] Pipeline actif: {(UnityEngine.Rendering.GraphicsSettings.currentRenderPipeline != null ? UnityEngine.Rendering.GraphicsSettings.currentRenderPipeline.GetType().Name : "Built-in (aucun SRP)")}");
+            Plugin.LogInfo($"[MatDiag:{context}] Pipeline actif: {(UnityEngine.Rendering.GraphicsSettings.currentRenderPipeline != null ? UnityEngine.Rendering.GraphicsSettings.currentRenderPipeline.GetType().Name : "Built-in (aucun SRP)")}");
         }
     }
 }

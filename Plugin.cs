@@ -15,11 +15,30 @@ namespace WankulCrazyPlugin;
 public class Plugin : BaseUnityPlugin
 {
     internal static new ManualLogSource Logger;
+    public static bool IsDebug { get; private set; }
+
+    public static void LogInfo(string message)
+    {
+        if (IsDebug && Logger != null)
+        {
+            Logger.LogInfo(message);
+        }
+    }
+
+    public static void LogDebug(string message)
+    {
+        if (IsDebug && Logger != null)
+        {
+            Logger.LogDebug(message);
+        }
+    }
+
     private void Awake()
     {
         // Plugin startup logic
         Logger = base.Logger;
-        Logger.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is loaded!");
+        IsDebug = Config.Bind("Debug", "EnableVerboseLogs", false, "Activer les logs detailles (Debug/Info)").Value;
+        Logger.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is loaded! (VerboseLogs: {IsDebug})");
 
         // Initialisation de l'écran de debug pour intercepter les crashs et blocages
         WankulDebugScreen.Initialize();
@@ -612,7 +631,7 @@ public class Plugin : BaseUnityPlugin
                     if (ls.x < 0 || ls.y < 0 || ls.z < 0)
                     {
                         obstacle.transform.localScale = new Vector3(Mathf.Abs(ls.x), Mathf.Abs(ls.y), Mathf.Abs(ls.z));
-                        Logger?.LogInfo("[Fix] Échelle négative de 'Door_Obstacle' corrigée avec succès (fin du spam BoxCollider).");
+                        Plugin.LogInfo("[Fix] Échelle négative de 'Door_Obstacle' corrigée avec succès (fin du spam BoxCollider).");
                     }
                     _doorObstacleFixed = true;
                 }
@@ -657,7 +676,7 @@ public class Plugin : BaseUnityPlugin
         }
         catch (Exception ex)
         {
-            Logger?.LogWarning($"[DebugSpawn] Erreur touche: {ex.Message}");
+            Plugin.Logger?.LogWarning($"[DebugSpawn] Erreur touche: {ex.Message}");
         }
     }
 
@@ -666,28 +685,28 @@ public class Plugin : BaseUnityPlugin
         var playerController = CSingleton<InteractionPlayerController>.Instance;
         if (playerController == null)
         {
-            Logger?.LogWarning("[DebugForceOpen] InteractionPlayerController non disponible (es-tu en jeu ?)");
+            Plugin.Logger?.LogWarning("[DebugForceOpen] InteractionPlayerController non disponible (es-tu en jeu ?)");
             return;
         }
 
         ItemMeshData itemMeshData = InventoryBase.GetItemMeshData(boxItemType);
         if (itemMeshData == null)
         {
-            Logger?.LogWarning($"[DebugForceOpen] ItemMeshData introuvable pour {boxItemType}");
+            Plugin.Logger?.LogWarning($"[DebugForceOpen] ItemMeshData introuvable pour {boxItemType}");
             return;
         }
 
         Item item = ItemSpawnManager.GetItem(playerController.m_HoldItemPos);
         if (item == null)
         {
-            Logger?.LogWarning("[DebugForceOpen] ItemSpawnManager.GetItem a renvoyé null.");
+            Plugin.Logger?.LogWarning("[DebugForceOpen] ItemSpawnManager.GetItem a renvoyé null.");
             return;
         }
 
         item.SetMesh(itemMeshData.mesh, itemMeshData.material, boxItemType, itemMeshData.meshSecondary, itemMeshData.materialSecondary);
         playerController.AddHoldItemToFront(item);
 
-        Logger?.LogInfo($"[DebugForceOpen] 📦 {seasonName} ({boxItemType}) — déclenchement direct de EvaluateOpenCardPack...");
+        Plugin.LogInfo($"[DebugForceOpen] 📦 {seasonName} ({boxItemType}) — déclenchement direct de EvaluateOpenCardPack...");
         WankulCrazyPlugin.patch.InteractionPlayerControllerPatch.EvaluateOpenCardPack(playerController);
 
         // AJOUT DIAGNOSTIC
@@ -699,7 +718,7 @@ public class Plugin : BaseUnityPlugin
         }
         else
         {
-            Logger?.LogWarning("[DebugForceOpen] m_OpenCardBoxInnerMesh introuvable ou null — impossible de dumper.");
+            Plugin.Logger?.LogWarning("[DebugForceOpen] m_OpenCardBoxInnerMesh introuvable ou null — impossible de dumper.");
         }
     }
 
@@ -708,14 +727,14 @@ public class Plugin : BaseUnityPlugin
         var playerController = CSingleton<InteractionPlayerController>.Instance;
         if (playerController == null)
         {
-            Logger?.LogWarning($"[DebugSpawn] InteractionPlayerController non disponible (es-tu en jeu ?)");
+            Plugin.Logger?.LogWarning($"[DebugSpawn] InteractionPlayerController non disponible (es-tu en jeu ?)");
             return;
         }
 
         ItemMeshData itemMeshData = InventoryBase.GetItemMeshData(boxItemType);
         if (itemMeshData == null)
         {
-            Logger?.LogWarning($"[DebugSpawn] ItemMeshData introuvable pour {boxItemType}");
+            Plugin.Logger?.LogWarning($"[DebugSpawn] ItemMeshData introuvable pour {boxItemType}");
             return;
         }
 
@@ -724,7 +743,7 @@ public class Plugin : BaseUnityPlugin
         {
             item.SetMesh(itemMeshData.mesh, itemMeshData.material, boxItemType, itemMeshData.meshSecondary, itemMeshData.materialSecondary);
             playerController.AddHoldItemToFront(item);
-            Logger?.LogInfo($"[DebugSpawn] 📦 Boîte de 24/32 boosters {seasonName} ({boxItemType}) spawnée dans tes mains !");
+            Plugin.LogInfo($"[DebugSpawn] 📦 Boîte de 24/32 boosters {seasonName} ({boxItemType}) spawnée dans tes mains !");
         }
     }
 }

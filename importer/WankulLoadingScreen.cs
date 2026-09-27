@@ -125,7 +125,7 @@ namespace WankulCrazyPlugin.importer
                 }
             }
 
-            Plugin.Logger?.LogInfo($"[WankulLoadingScreen] {total} cartes traitees en {totalWatch.ElapsedMilliseconds} ms ({missing} sans fichier texture, {failed} en echec).");
+            Plugin.LogInfo($"[WankulLoadingScreen] {total} cartes traitees en {totalWatch.ElapsedMilliseconds} ms ({missing} sans fichier texture, {failed} en echec).");
             if (missing > 0)
             {
                 Plugin.Logger?.LogWarning($"[WankulLoadingScreen] {missing} carte(s) ont un TexturePath introuvable dans data/.");
@@ -165,7 +165,7 @@ namespace WankulCrazyPlugin.importer
                 else
                 {
                     missing++;
-                    Plugin.Logger?.LogDebug($"Texture introuvable : {Path.Combine(pluginPath, "data", card.TexturePath)}");
+                    Plugin.LogDebug($"Texture introuvable : {Path.Combine(pluginPath, "data", card.TexturePath)}");
                 }
 
                 // Le masque est optionnel : son absence est normale.

@@ -40,13 +40,13 @@ namespace WankulCrazyPlugin.patch
 
         public static void OpenSortAlbumScreen(int sortingMethodIndex, int currentExpansionIndex, CollectionBinderUI __instance)
         {
-            Plugin.Logger?.LogInfo($"[SortUI] OpenSortAlbumScreen appelé. inited={inited}, sortingMethodIndex={sortingMethodIndex}, currentExpansionIndex={currentExpansionIndex}");
+            Plugin.LogInfo($"[SortUI] OpenSortAlbumScreen appelé. inited={inited}, sortingMethodIndex={sortingMethodIndex}, currentExpansionIndex={currentExpansionIndex}");
 
             if (!inited)
             {
                 try
                 {
-                    Plugin.Logger?.LogInfo($"[SortUI] Début initialisation UI. m_ExpansionBtnList count={__instance.m_ExpansionBtnList?.Count}, m_SortAlbumBtnList count={__instance.m_SortAlbumBtnList?.Count}");
+                    Plugin.LogInfo($"[SortUI] Début initialisation UI. m_ExpansionBtnList count={__instance.m_ExpansionBtnList?.Count}, m_SortAlbumBtnList count={__instance.m_SortAlbumBtnList?.Count}");
 
                     Transform Expansion_AnimGrp_Transform = Plugin.GetByPathIn("Canvas", "CollectionBinderUI/ScreenGrp/SortingSelectScreen/Screen_Grp/Expansion_AnimGrp");
                     Transform Expansion_BG_Transform = Plugin.GetByPathIn("Canvas", "CollectionBinderUI/ScreenGrp/SortingSelectScreen/Screen_Grp/Expansion_AnimGrp/BG");
@@ -54,15 +54,15 @@ namespace WankulCrazyPlugin.patch
                     Transform Expansion_Title_Text_Transform = Plugin.GetByPathIn("Canvas", "CollectionBinderUI/ScreenGrp/SortingSelectScreen/Screen_Grp/Expansion_AnimGrp/TitleText");
                     Transform Expansion_Mask_Transform = Plugin.GetByPathIn("Canvas", "CollectionBinderUI/ScreenGrp/SortingSelectScreen/Screen_Grp/Expansion_AnimGrp/Mask");
 
-                    Plugin.Logger?.LogInfo($"[SortUI] Transforms trouvés : AnimGrp={Expansion_AnimGrp_Transform != null}, BG={Expansion_BG_Transform != null}, Mask={Expansion_Mask_Transform != null}");
+                    Plugin.LogInfo($"[SortUI] Transforms trouvés : AnimGrp={Expansion_AnimGrp_Transform != null}, BG={Expansion_BG_Transform != null}, Mask={Expansion_Mask_Transform != null}");
 
                     // Log des propriétés de base pour diagnostic
                     RectTransform maskRect = Expansion_Mask_Transform as RectTransform;
                     RectTransform animGrpRect = Expansion_AnimGrp_Transform as RectTransform;
                     RectTransform btn0Rect = __instance.m_ExpansionBtnList[0].GetComponent<RectTransform>();
 
-                    Plugin.Logger?.LogInfo($"[SortUI] Base: Mask sizeDelta={maskRect?.sizeDelta}, offsetMin={maskRect?.offsetMin}, offsetMax={maskRect?.offsetMax}");
-                    Plugin.Logger?.LogInfo($"[SortUI] Base: Btn0 anchoredPosition={btn0Rect.anchoredPosition}, sizeDelta={btn0Rect.sizeDelta}, anchorMin={btn0Rect.anchorMin}, anchorMax={btn0Rect.anchorMax}");
+                    Plugin.LogInfo($"[SortUI] Base: Mask sizeDelta={maskRect?.sizeDelta}, offsetMin={maskRect?.offsetMin}, offsetMax={maskRect?.offsetMax}");
+                    Plugin.LogInfo($"[SortUI] Base: Btn0 anchoredPosition={btn0Rect.anchoredPosition}, sizeDelta={btn0Rect.sizeDelta}, anchorMin={btn0Rect.anchorMin}, anchorMax={btn0Rect.anchorMax}");
 
                     // On s'assure que le Mask ne masque pas tout le bas du panneau :
                     if (maskRect != null)
@@ -139,7 +139,7 @@ namespace WankulCrazyPlugin.patch
                     float seasonSpacing = vanillaSpacing * 0.72f; // ~82px
                     float startY = sortBtn0.anchoredPosition.y + 40f; // léger décalage vers le haut
 
-                    Plugin.Logger?.LogInfo($"[SortUI] Boutons saisons réduits : scale={seasonBtnScale}, spacing={seasonSpacing}, startY={startY}");
+                    Plugin.LogInfo($"[SortUI] Boutons saisons réduits : scale={seasonBtnScale}, spacing={seasonSpacing}, startY={startY}");
 
                     List<Button> seasonButtons = new List<Button>();
                     seasonHighlights.Clear();
@@ -179,28 +179,28 @@ namespace WankulCrazyPlugin.patch
                             seasonHighlights.Add(allHls);
                         }
 
-                        Plugin.Logger?.LogInfo($"[SortUI] Bouton de saison cloné {i} ({seasonNames[i]}) placé à pos={rt.anchoredPosition}, scale={rt.localScale}");
+                        Plugin.LogInfo($"[SortUI] Bouton de saison cloné {i} ({seasonNames[i]}) placé à pos={rt.anchoredPosition}, scale={rt.localScale}");
                     }
 
                     // Inspection détaillée de toute la hiérarchie pour trouver d'où viennent le bouton bleu et le cadre blanc
                     Transform screenGrp = Plugin.GetByPathIn("Canvas", "CollectionBinderUI/ScreenGrp/SortingSelectScreen/Screen_Grp");
                     if (screenGrp != null)
                     {
-                        Plugin.Logger?.LogInfo($"[SortUI] Enfants de Screen_Grp (count={screenGrp.childCount}):");
+                        Plugin.LogInfo($"[SortUI] Enfants de Screen_Grp (count={screenGrp.childCount}):");
                         for (int i = 0; i < screenGrp.childCount; i++)
                         {
                             var ch = screenGrp.GetChild(i);
-                            Plugin.Logger?.LogInfo($"  Screen_Grp[{i}] = '{ch.name}', active={ch.gameObject.activeSelf}");
+                            Plugin.LogInfo($"  Screen_Grp[{i}] = '{ch.name}', active={ch.gameObject.activeSelf}");
                         }
                     }
 
                     if (Expansion_AnimGrp_Transform != null)
                     {
-                        Plugin.Logger?.LogInfo($"[SortUI] Enfants de Expansion_AnimGrp (count={Expansion_AnimGrp_Transform.childCount}):");
+                        Plugin.LogInfo($"[SortUI] Enfants de Expansion_AnimGrp (count={Expansion_AnimGrp_Transform.childCount}):");
                         for (int i = 0; i < Expansion_AnimGrp_Transform.childCount; i++)
                         {
                             var ch = Expansion_AnimGrp_Transform.GetChild(i);
-                            Plugin.Logger?.LogInfo($"  Expansion_AnimGrp[{i}] = '{ch.name}', active={ch.gameObject.activeSelf}");
+                            Plugin.LogInfo($"  Expansion_AnimGrp[{i}] = '{ch.name}', active={ch.gameObject.activeSelf}");
                             if (ch.name != "BG" && ch.name != "Mask")
                             {
                                 ch.gameObject.SetActive(false);
@@ -210,11 +210,11 @@ namespace WankulCrazyPlugin.patch
 
                     if (expansionParent != null)
                     {
-                        Plugin.Logger?.LogInfo($"[SortUI] Enfants de expansionParent '{expansionParent.name}' (count={expansionParent.childCount}):");
+                        Plugin.LogInfo($"[SortUI] Enfants de expansionParent '{expansionParent.name}' (count={expansionParent.childCount}):");
                         for (int i = 0; i < expansionParent.childCount; i++)
                         {
                             var ch = expansionParent.GetChild(i);
-                            Plugin.Logger?.LogInfo($"  expansionParent[{i}] = '{ch.name}', active={ch.gameObject.activeSelf}");
+                            Plugin.LogInfo($"  expansionParent[{i}] = '{ch.name}', active={ch.gameObject.activeSelf}");
                             if (!ch.name.StartsWith("Wankul_Season_"))
                             {
                                 ch.gameObject.SetActive(false);
@@ -250,7 +250,7 @@ namespace WankulCrazyPlugin.patch
 
                     void OnClickSeasonButton(SortSeasonType season, int expansionIdx)
                     {
-                        Plugin.Logger?.LogInfo($"[SortUI] Clic sur saison : {season} (expansionIdx={expansionIdx})");
+                        Plugin.LogInfo($"[SortUI] Clic sur saison : {season} (expansionIdx={expansionIdx})");
                         currentSeason = season;
                         currentGameExpansionIndex = expansionIdx;
                         UpdateSeasonHighlights(expansionIdx);
@@ -298,28 +298,28 @@ namespace WankulCrazyPlugin.patch
 
                 __instance.m_SortAlbumBtnList[2].GetComponentInChildren<Button>().onClick.AddListener(() =>
                 {
-                    Plugin.Logger?.LogInfo("[SortUI] Clic tri : Prix");
+                    Plugin.LogInfo("[SortUI] Clic tri : Prix");
                     currentSortType = SortType.Price;
                     __instance.OnPressSwitchSortingMethod(2);
                     currentGameSortMethod = 2;
                 });
                 __instance.m_SortAlbumBtnList[1].GetComponentInChildren<Button>().onClick.AddListener(() =>
                 {
-                    Plugin.Logger?.LogInfo("[SortUI] Clic tri : Rareté");
+                    Plugin.LogInfo("[SortUI] Clic tri : Rareté");
                     currentSortType = SortType.Rarity;
                     __instance.OnPressSwitchSortingMethod(1);
                     currentGameSortMethod = 1;
                 });
                 __instance.m_SortAlbumBtnList[0].GetComponentInChildren<Button>().onClick.AddListener(() =>
                 {
-                    Plugin.Logger?.LogInfo("[SortUI] Clic tri : Numéro");
+                    Plugin.LogInfo("[SortUI] Clic tri : Numéro");
                     currentSortType = SortType.Number;
                     __instance.OnPressSwitchSortingMethod(0);
                     currentGameSortMethod = 0;
                 });
                 __instance.m_SortAlbumBtnList[3].GetComponentInChildren<Button>().onClick.AddListener(() =>
                 {
-                    Plugin.Logger?.LogInfo("[SortUI] Clic tri : Quantité");
+                    Plugin.LogInfo("[SortUI] Clic tri : Quantité");
                     currentSortType = SortType.Amount;
                     __instance.OnPressSwitchSortingMethod(3);
                     currentGameSortMethod = 3;
@@ -327,7 +327,7 @@ namespace WankulCrazyPlugin.patch
 
                 __instance.m_SortAlbumBtnList[4].GetComponentInChildren<Button>().onClick.AddListener(() =>
                 {
-                    Plugin.Logger?.LogInfo("[SortUI] Clic tri : Doublon");
+                    Plugin.LogInfo("[SortUI] Clic tri : Doublon");
                     currentSortType = SortType.Double;
                     __instance.OnPressSwitchSortingMethod(4);
                     currentGameSortMethod = 4;
@@ -335,7 +335,7 @@ namespace WankulCrazyPlugin.patch
 
                 // Marquer l'initialisation comme terminée
                 inited = true;
-                Plugin.Logger?.LogInfo("[SortUI] Initialisation UI terminée avec succès !");
+                Plugin.LogInfo("[SortUI] Initialisation UI terminée avec succès !");
             }
             catch (System.Exception ex)
             {

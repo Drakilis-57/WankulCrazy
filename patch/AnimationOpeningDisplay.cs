@@ -7,7 +7,7 @@ namespace WankulCrazyPlugin.patch
     {
         private IEnumerator AnimateChild(Transform child)
         {
-            // Début de l'animation
+            // DÃ©but de l'animation
             Vector3 startPosition = new Vector3(-0.001f, 0.1107f - 0.08f, 0);
             Quaternion startRotation = Quaternion.Euler(90, 180, 0);
 
@@ -15,7 +15,7 @@ namespace WankulCrazyPlugin.patch
             Vector3 endPosition = new Vector3(-0.001f, 0.195f - 0.08f, -0.084f);
             Quaternion endRotation = Quaternion.Euler(180, 180, 0);
 
-            float duration = 1.5f; // Durée de l'animation en secondes
+            float duration = 1.5f; // DurÃ©e de l'animation en secondes
             float elapsedTime = 0;
 
             while (elapsedTime < duration)
