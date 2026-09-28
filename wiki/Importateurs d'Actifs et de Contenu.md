@@ -32,7 +32,7 @@ Sources : `importer/CustomItemsImporter.cs:20-98`, `importer/OBJImporter.cs:109
 
 ## 5.1 Articles personnalisés et inscription à la boutique
 
-Pour plus de détails, voir [Objets Personnalisés et Enregistrement Boutique](Objets%20Personnalisés%20et%20Enregistrement%20Boutique.md).
+Pour plus de détails, voir [Objets Personnalisés et Enregistrement Boutique](Objets-Personnalisés-et-Enregistrement-Boutique).
 
 Le `CustomItemsImporter` gère le chargement des définitions d'éléments personnalisés, les données de réapprovisionnement et les liaisons de maillage à partir des schémas JSON situés dans `data/customitems/`.Il s'interface directement avec `InventoryBase` pour injecter des articles et des options de réapprovisionnement dans la base de données d'articles en stock du jeu (`m_StockItemData_SO`) [importer/CustomItemsImporter.cs L20-L25](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/importer/CustomItemsImporter.cs#L20-L25)
 
@@ -42,7 +42,7 @@ Sources : `importer/CustomItemsImporter.cs:13-98`
 
 ## 5.2 Remplacement du maillage, de la texture et du sprite
 
-Pour plus de détails, voir [Remplacement de Maillage Texture et Sprite](Remplacement%20de%20Maillage%20Texture%20et%20Sprite.md).
+Pour plus de détails, voir [Remplacement de Maillage Texture et Sprite](Remplacement-de-Maillage-Texture-et-Sprite).
 
 L'utilitaire `OBJImporter` analyse `data/meshes/`, `data/sprites/` et `data/names/` pour charger et mettre en cache les maillages et textures 3D `.obj` personnalisés au démarrage [importer/OBJImporter.csL18-L156](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/importer/OBJImporter.cs#L18-L156)
 
@@ -52,7 +52,7 @@ Sources : `importer/OBJImporter.cs:18-156`
 
 ## 5.3 Écran de chargement et interface utilisateur de débogage
 
-Pour plus de détails, voir [Écran de Chargement et UI de Débogage](Écran%20de%20Chargement%20et%20UI%20de%20Débogage.md).
+Pour plus de détails, voir [Écran de Chargement et UI de Débogage](Écran-de-Chargement-et-UI-de-Débogage).
 
 Le `WankulLoadingScreen` fournit un système de chargement de coroutine budgétisé par image (`LoadCardsCoroutine`) qui traite progressivement les textures de carte sans perdre d'images [importer/WankulLoadingScreen.csL11-L140](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/importer/WankulLoadingScreen.cs#L11-L140)
 

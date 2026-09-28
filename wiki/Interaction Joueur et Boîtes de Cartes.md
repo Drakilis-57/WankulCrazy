@@ -1,4 +1,4 @@
-# Player Interaction and Card Boxes
+# Interaction Joueur et Boîtes de Cartes
 
 > **Fichiers sources pertinents**
 > * [patch/EItemTypeExtension.cs](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/patch/EItemTypeExtension.cs)

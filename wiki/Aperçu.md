@@ -69,14 +69,14 @@ SubAssets --> SubPersistence
 
 Pour des explorations détaillées de sous-systèmes spécifiques, reportez-vous aux pages de documentation enfant :
 
-* [Démarrage et Installation](Démarrage%20et%20Installation.md) — Instructions d'installation, disposition du dossier mod sous `BepInEx/plugins`, paramètres de configuration et documents de référence dans `Docs/` et `INSTALL.txt` [INSTALL.txt:1-4, Plugin.cs:40].
-* [Démarrage du Plugin et Registre de Patch Harmony](Démarrage%20du%20Plugin%20et%20Registre%20de%20Patch%20Harmony.md) — Détail détaillé de l'exécution du cycle de vie de `Plugin.cs` dans `Awake()`, de l'assistant d'enregistrement `TryPatch`, des stratégies de mise en cache de réflexion, des utilitaires de chemin GameObject et des correctifs de correction de bugs d'exécution [Plugin.cs:36-92].
+* [Démarrage et Installation](Démarrage-et-Installation) — Instructions d'installation, disposition du dossier mod sous `BepInEx/plugins`, paramètres de configuration et documents de référence dans `Docs/` et `INSTALL.txt` [INSTALL.txt:1-4, Plugin.cs:40].
+* [Démarrage du Plugin et Registre de Patch Harmony](Démarrage-du-Plugin-et-Registre-de-Patch-Harmony) — Détail détaillé de l'exécution du cycle de vie de `Plugin.cs` dans `Awake()`, de l'assistant d'enregistrement `TryPatch`, des stratégies de mise en cache de réflexion, des utilitaires de chemin GameObject et des correctifs de correction de bugs d'exécution [Plugin.cs:36-92].
 
 ---
 
 ## Présentation des autres sous-systèmes
 
-Alors que le démarrage et l'installation de base sont traités dans les pages enfants [Démarrage et Installation](Démarrage%20et%20Installation.md) et [Démarrage du Plugin et Registre de Patch Harmony](Démarrage%20du%20Plugin%20et%20Registre%20de%20Patch%20Harmony.md), le reste de l'architecture du mod est divisé en les domaines majeurs suivants sur le wiki :
+Alors que le démarrage et l'installation de base sont traités dans les pages enfants [Démarrage et Installation](Démarrage-et-Installation) et [Démarrage du Plugin et Registre de Patch Harmony](Démarrage-du-Plugin-et-Registre-de-Patch-Harmony), le reste de l'architecture du mod est divisé en les domaines majeurs suivants sur le wiki :
 
 * **Modèle de données de carte (Section 2)** : gère `WankulCardsData`, les types de cartes (`EffigyCardData`, `TerrainCardData`, `SpecialCardData`), `SeasonsManager` dynamique, `RaritiesManager` et les pipelines d'analyse JSON [Docs/DOCS.md:22-40].
 * **Patches de gameplay (Section 3)** : intercepte les mécanismes de base du jeu, notamment les séquences d'ouverture des boosters (`CardOpening`), les interactions des joueurs (`InteractionPlayerControllerPatch`), les remplacements visuels de l'interface utilisateur (`ReplacingCards`) et la tarification économique (`CardPrice`) [Docs/DOCS.md:71-88].

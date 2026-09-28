@@ -1,4 +1,4 @@
-# Card Rendering and UI Replacement
+# Rendu des Cartes et Remplacement UI
 
 > **Relevant source files**
 > * [cards/SortSeasonType.cs](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/cards/SortSeasonType.cs)

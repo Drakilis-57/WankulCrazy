@@ -24,7 +24,7 @@ Le pipeline de compilation est géré via `WankulCrazyPlugin.csproj` ciblant `ne
 
 Les builds et déploiements locaux sont assistés par des scripts d'assistance et des cibles MSBuild, tandis que l'intégration continue est pilotée par GitHub Actions (`.github/workflows/build.yml`) qui restaure les dépendances, construit sous `ReleaseNoDeps` et exécute les tests [.github/workflows/build.yml:29-33].
 
-Pour tous les détails sur les configurations de projet, les assemblages de référence, les scripts de build locaux, et la configuration CI, voir [Système de Build et Dépendances](Système%20de%20Build%20et%20Dépendances.md).
+Pour tous les détails sur les configurations de projet, les assemblages de référence, les scripts de build locaux, et la configuration CI, voir [Système de Build et Dépendances](Système-de-Build-et-Dépendances).
 
 Sources : [WankulCrazyPlugin.csproj L1-L84](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/WankulCrazyPlugin.csproj#L1-L84)
 
@@ -40,7 +40,7 @@ La vérification automatisée est implémentée via le projet `WankulCrazyPlugin
 
 Structures de données JSON, routines d'analyse sécurisée d'énumération, critères de rareté et invariants de documentation.Les tests avancés utilisent également `Mono.Cecil` pour les routines d'inspection et de référence IL.
 
-Pour plus de détails sur la couverture des tests, les structures de test et les règles de validation, voir [Suite de Tests](Suite%20de%20Tests.md).
+Pour plus de détails sur la couverture des tests, les structures de test et les règles de validation, voir [Suite de Tests](Suite-de-Tests).
 
 Sources : [WankulCrazyPlugin.sln L8-L9](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/WankulCrazyPlugin.sln#L8-L9)
 
@@ -52,7 +52,7 @@ Sources : [WankulCrazyPlugin.sln L8-L9](https://github.com/Drakilis-57/WankulCr
 
 L'organisation du projet comprend des modèles de problèmes pour les rapports de bogues et les demandes de fonctionnalités, les métadonnées de version liées à `PluginInfo`, les conditions de licence via `LICENCE.txt` [WankulCrazyPlugin.csproj:69-71], les instructions d'installation via `INSTALL.txt` [WankulCrazyPlugin.csproj:72-74] et les politiques de contribution du référentiel.Ces éléments garantissent un emballage, une distribution et une conformité open source cohérents.
 
-Pour plus de détails sur les flux de travail de contribution, les schémas de gestion des versions et les modèles de gouvernance, voir [Gouvernance du Projet et Modèles de Problèmes](Gouvernance%20du%20Projet%20et%20Modèles%20de%20Problèmes.md).
+Pour plus de détails sur les flux de travail de contribution, les schémas de gestion des versions et les modèles de gouvernance, voir [Gouvernance du Projet et Modèles de Problèmes](Gouvernance-du-Projet-et-Modèles-de-Problèmes).
 
 Sources : [WankulCrazyPlugin.csproj L69-L75](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/WankulCrazyPlugin.csproj#L69-L75)
 

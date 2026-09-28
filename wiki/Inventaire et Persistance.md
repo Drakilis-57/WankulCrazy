@@ -1,4 +1,4 @@
-# Inventory and Persistence
+# Inventaire et Persistance
 
 > **Fichiers sources pertinents**
 > * [inventaire/WankulInventory.cs](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/inventory/WankulInventory.cs)
@@ -11,8 +11,8 @@ Le module `Inventory and Persistence` régit le suivi de l'état de la collectio
 
 Pour une répartition complète des composants enfants, reportez-vous aux pages enfants :
 
-* [WankulInventory et Mécaniques de Drop](WankulInventory%20et%20Mécaniques%20de%20Drop.md)
-* [Système de Sauvegarde](Système%20de%20Sauvegarde.md)
+* [WankulInventory et Mécaniques de Drop](WankulInventory-et-Mécaniques-de-Drop)
+* [Système de Sauvegarde](Système-de-Sauvegarde)
 
 ---
 
@@ -66,7 +66,7 @@ Sources : [inventaire/WankulInventory.cs L12-L154](https://github.com/Drakilis-
 
  [patch/Inventory.cs L8-L32](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/patch/Inventory.cs#L8-L32)
 
-Pour des détails techniques approfondis, voir [WankulInventory et Mécaniques de Drop](WankulInventory%20et%20Mécaniques%20de%20Drop.md).
+Pour des détails techniques approfondis, voir [WankulInventory et Mécaniques de Drop](WankulInventory-et-Mécaniques-de-Drop).
 
 ---
 
@@ -113,4 +113,4 @@ end
 
 Sources : [utils/SavesManager.cs L63-L169](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/utils/SavesManager.cs#L63-L169)
 
-Pour des détails techniques approfondis, voir [Système de Sauvegarde](Système%20de%20Sauvegarde.md).
+Pour des détails techniques approfondis, voir [Système de Sauvegarde](Système-de-Sauvegarde).
