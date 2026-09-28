@@ -13,7 +13,7 @@
 > * [WankulCrazyPlugin.Tests/WankulCrazyPlugin.Tests.csproj](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/WankulCrazyPlugin.Tests/WankulCrazyPlugin.Tests.csproj)
 > * [cards/EffigyCardData.cs](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/cards/EffigyCardData.cs)
 
-The test suite validates card data models, dynamic seasons and rarities management, JSON token deserialization, custom item parsers, safe enum parsing, IL inspection via Mono.Cecil, and performance benchmarks. The test project is configured as a standalone xUnit test assembly targeting `.NET 8.0` [WankulCrazyPlugin.Tests/WankulCrazyPlugin.Tests.csproj:1-13] and relies on NuGet packages including `xunit`, `Mono.Cecil`, and `UnityEngine.Modules` [WankulCrazyPlugin.Tests/WankulCrazyPlugin.Tests.csproj:15-22].
+La suite de tests valide les modèles de données de cartes, la gestion dynamique des saisons et raretés, la désérialisation de jetons JSON, les analyseurs d'objets personnalisés, le parsing d'énumérations sécurisé, l'inspection IL via Mono.Cecil, et les benchmarks de performances. Le projet de test est configuré comme un assemblage de test xUnit autonome ciblant `.NET 8.0` [WankulCrazyPlugin.Tests/WankulCrazyPlugin.Tests.csproj:1-13] et repose sur les paquets NuGet incluant `xunit`, `Mono.Cecil`, et `UnityEngine.Modules` [WankulCrazyPlugin.Tests/WankulCrazyPlugin.Tests.csproj:15-22].
 
 ---
 

@@ -7,7 +7,7 @@
 
 ## Objectif et portée
 
-This page documents the inventory state-management and card drop/generation pipelines in the WankulCrazy mod. It covers the `WankulInventory` singleton, inventory modification hooks, pack-to-season conversions, and the weighted card drop algorithms (`DropCard`) implemented in `inventory/WankulInventory.cs`, `patch/Inventory.cs`, and `utils/RandomUtils.cs`.
+Cette page documente la gestion de l'état de l'inventaire et les pipelines de génération/drop de cartes dans le mod WankulCrazy. Elle couvre le singleton `WankulInventory`, les hooks de modification d'inventaire, les conversions paquet-saison, et les algorithmes pondérés de drop de carte (`DropCard`) implémentés dans `inventory/WankulInventory.cs`, `patch/Inventory.cs`, et `utils/RandomUtils.cs`.
 
 Sources : SNIPPET 0, SNIPPET _1, SNIPPET _2
 
@@ -15,7 +15,7 @@ Sources : SNIPPET 0, SNIPPET _1, SNIPPET _2
 
 ## Architecture et inventaire Singleton
 
-The inventory system revolves around the `WankulInventory` class, which inherits from the shared `Singleton<T>` pattern. It maintains a primary dictionary (`wankulCards`) mapping card IDs to a tuple containing the custom `WankulCardData`, vanilla `CardData`, and the owned quantity.
+Le système d'inventaire s'articule autour de la classe `WankulInventory`, qui hérite du modèle partagé `Singleton<T>`. Il maintient un dictionnaire principal (`wankulCards`) mappant les ID de cartes à un tuple contenant la `WankulCardData` personnalisée, la `CardData` de base (vanilla), et la quantité possédée.
 
 ```
 

@@ -52,7 +52,7 @@ Pour optimiser le rendu et appliquer une superposition visuelle appropriée lors
 
 ### Z-Index et hiérarchie du canevas
 
-Because Unity UI relies on sibling index order within a `CanvasWorldspace` to determine rendering priority (last child renders on top), `ShowCardStack` forces the background card and active card into correct sibling order using `SetAsLastSibling()` [patch/CardOpening.cs L72-L83](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/patch/CardOpening.cs#L72-L83)
+Parce que l'interface utilisateur de Unity s'appuie sur l'ordre des index de fratrie (sibling index) dans un `CanvasWorldspace` pour déterminer la priorité de rendu (le dernier enfant s'affiche au-dessus), `ShowCardStack` force la carte d'arrière-plan et la carte active dans le bon ordre en utilisant `SetAsLastSibling()` [patch/CardOpening.cs L72-L83](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/patch/CardOpening.cs#L72-L83)
 
 Enfin, il nettoie les attributs de feuille, les shaders scintillants et les statistiques vanille sur les cartes actives et à venir à l'aide de `ReplacingCards.CleanCardVisuals` [patch/CardOpening.cs L85-L100](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/patch/CardOpening.cs#L85-L100).
 
@@ -106,7 +106,7 @@ NaN-NaN](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/patch/Animatio
 
 ### Boucle d'affichage de la coroutine
 
-`AnimationOpeningDisplay` runs an `AnimateChild` coroutine that lerps a card transform from a starting position and rotation (`Quaternion.Euler(90, 180, 0)`) to an end position and rotation (`Quaternion.Euler(180, 180, 0)`) over a duration of `1.5` seconds [patch/AnimationOpeningDisplay.cs L8-L31](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/patch/AnimationOpeningDisplay.cs#L8-L31)
+`AnimationOpeningDisplay` exécute une coroutine `AnimateChild` qui interpole (lerps) la transformation d'une carte d'une position et rotation de départ (`Quaternion.Euler(90, 180, 0)`) vers une position et rotation de fin (`Quaternion.Euler(180, 180, 0)`) sur une durée de `1.5` secondes [patch/AnimationOpeningDisplay.cs L8-L31](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/patch/AnimationOpeningDisplay.cs#L8-L31)
 
 ```mermaid
 flowchart TD

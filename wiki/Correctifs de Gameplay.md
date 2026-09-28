@@ -7,7 +7,7 @@
 
 La couche Gameplay Patches constitue le principal intercepteur d’exécution de `WankulCrazy`.Construite sur Harmony (`HarmonyLib`), cette couche s'intègre aux systèmes natifs de TCG Card Shop Simulator pour rediriger la visualisation des cartes, les flux de travail d'ouverture des boosters, les capacités d'inventaire des joueurs, les contraintes d'interaction et les modèles de tarification économiques.En interceptant les hooks de cycle de vie, des méthodes telles que `CardUI.SetCardUI` [patch/ReplacingCards.cs:18-78] et `InteractionPlayerController.Awake` [patch/InteractionPlayerControllerPatch.cs:23-61] sont réutilisées pour gérer les entités Wankul personnalisées sans altérer de manière permanente l'assemblage de jeu sous-jacent.
 
-This parent page provides a high-level summary of the gameplay subsystems managed via Harmony patches. For granular technical details, implementation specifics, and execution flows, refer to the respective child pages:
+Cette page parente fournit un résumé de haut niveau des sous-systèmes de gameplay gérés via des patchs Harmony. Pour des détails techniques granulaires, des spécificités d'implémentation et des flux d'exécution, consultez les pages enfants respectives :
 
 * Séquence d'ouverture de carte : voir [Séquence d'ouverture de carte](/Drakilis-57/WankulCrazy/3.1-card-opening-sequence)
 * Interaction des joueurs et boîtes de cartes : voir [Interaction des joueurs et boîtes de cartes](/Drakilis-57/WankulCrazy/3.2-player-interaction-and-card-boxes)
@@ -24,7 +24,7 @@ Sources : [patch/CardOpening.cs L1-L48](https://github.com/Drakilis-57/WankulCr
 
 ## Architecture et flux de correctifs
 
-The following diagram illustrates how external game events and native loops are intercepted by WankulCrazy Harmony patches before reaching vanilla engine components.
+Le diagramme suivant illustre comment les événements de jeu externes et les boucles natives sont interceptés par les patchs Harmony WankulCrazy avant d'atteindre les composants du moteur de base (vanilla).
 
 ```mermaid
 flowchart TD
@@ -79,7 +79,7 @@ Sources : [patch/CardOpening.cs L26-L47](https://github.com/Drakilis-57/WankulC
 
 ## 3.1 Séquence d'ouverture de carte
 
-The card opening layer manages the state machine and visual stack during booster unboxing. Handled primarily within `CardOpening`, it supports dynamic booster sizes (such as 4-card Gold boosters versus 10-card standard packs) [patch/CardOpening.cs:103-123], guarantees specific rarity drops, implements auto-fire mechanics, and orchestrates the canvas hierarchy so that active cards render strictly above background stacks [patch/CardOpening.cs:58-100].
+La couche d'ouverture de carte gère la machine à états et la pile visuelle pendant le déballage (unboxing) des boosters. Gérée principalement au sein de `CardOpening`, elle supporte des tailles de boosters dynamiques (telles que des boosters Gold de 4 cartes contre des paquets standards de 10 cartes) [patch/CardOpening.cs:103-123], garantit des drops de rareté spécifiques, implémente des mécaniques de tir automatique (auto-fire), et orchestre la hiérarchie du canevas pour que les cartes actives s'affichent strictement au-dessus des piles en arrière-plan [patch/CardOpening.cs:58-100].
 
 Pour plus de détails sur l'implémentation des transitions d'état, des listes d'animation personnalisées et des utilitaires d'assistance, voir [Séquence d'ouverture de carte](/Drakilis-57/WankulCrazy/3.1-card-opening-sequence).
 
@@ -91,7 +91,7 @@ Sources : [patch/CardOpening.cs L16-L152](https://github.com/Drakilis-57/Wankul
 
 Les interactions des joueurs, telles que la conservation des packs, l'évaluation des mappages boîte à pack et la gestion des contraintes de disposition physique, sont régies par `InteractionPlayerControllerPatch` [patch/InteractionPlayerControllerPatch.cs:16-61].Ce correctif étend le nombre maximal d'emplacements de pack pouvant être conservés (`MaxPacks = 24`) [patch/InteractionPlayerControllerPatch.cs:18] sur deux colonnes, introduit une validation dynamique des types d'objets pour les types de boosters stellaires et hérités [patch/InteractionPlayerControllerPatch.cs:63-101] et mappe les boîtes d'affichage scellées aux variantes de pack de cartes correspondantes [patch/InteractionPlayerControllerPatch.cs:103-120].
 
-For detailed information on mesh swapping, spawn lerp coroutines, and item mapping routines, see [Player Interaction and Card Boxes](/Drakilis-57/WankulCrazy/3.2-player-interaction-and-card-boxes).
+Pour des informations détaillées sur le remplacement de maillage, les coroutines de spawn lerp, et les routines de mappage d'objets, voir [Interaction des joueurs et boîtes de cartes](/Drakilis-57/WankulCrazy/3.2-player-interaction-and-card-boxes).
 
 Sources : [patch/InteractionPlayerControllerPatch.cs L16-L120](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/patch/InteractionPlayerControllerPatch.cs#L16-L120)
 

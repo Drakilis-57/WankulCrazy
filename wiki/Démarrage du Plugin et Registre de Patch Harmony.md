@@ -46,7 +46,7 @@ Pendant `Awake()`, la séquence suivante s'exécute :
 
 ---
 
-## The TryPatch Utility and Safety Pattern
+## L'Utilitaire TryPatch et le Modèle de Sécurité (Safety Pattern)
 
 Pour éviter les exceptions non gérées ou les plantages matériels lorsque les mises à jour du jeu modifient les signatures de méthode ou les symboles de bande, `Plugin.cs` définit une fonction d'assistance interne robuste appelée `TryPatch` [Plugin.cs L49-L71](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/Plugin.cs#L49-L71)
 

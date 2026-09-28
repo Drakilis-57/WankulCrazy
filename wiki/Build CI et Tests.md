@@ -24,7 +24,7 @@ Le pipeline de compilation est géré via `WankulCrazyPlugin.csproj` ciblant `ne
 
 Les builds et déploiements locaux sont assistés par des scripts d'assistance et des cibles MSBuild, tandis que l'intégration continue est pilotée par GitHub Actions (`.github/workflows/build.yml`) qui restaure les dépendances, construit sous `ReleaseNoDeps` et exécute les tests [.github/workflows/build.yml:29-33].
 
-For full details on project configurations, reference assemblies, local build scripts, and CI setup, see [Build System and Dependencies](/Drakilis-57/WankulCrazy/6.1-build-system-and-dependencies).
+Pour tous les détails sur les configurations de projet, les assemblages de référence, les scripts de build locaux, et la configuration CI, voir [Système de Build et Dépendances](/Drakilis-57/WankulCrazy/6.1-build-system-and-dependencies).
 
 Sources : [WankulCrazyPlugin.csproj L1-L84](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/WankulCrazyPlugin.csproj#L1-L84)
 

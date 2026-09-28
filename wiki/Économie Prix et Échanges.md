@@ -13,7 +13,7 @@ Cette page détaille le sous-système économique du mod WankulCrazy, couvrant l
 
 ## 1. Génération des prix du marché et fluctuations quotidiennes
 
-The mod replaces vanilla card valuation with a multi-tiered pricing system anchored to card rarities, drop rates, and seasonal factors (`patch/CardPrice.cs`).
+Le mod remplace l'évaluation des cartes du jeu de base (vanilla) par un système de tarification à plusieurs niveaux ancré sur les raretés des cartes, les taux de drop et les facteurs saisonniers (`patch/CardPrice.cs`).
 
 ### Price Calculation Logic
 
@@ -23,7 +23,7 @@ When a card's market price is requested, `CardPrice.generateMarketPrice(WankulCa
 2. **Segments de taux de chute** : les cartes sont classées en niveaux de taux de chute (des baisses courantes `>= 0.45f` avec une fourchette de prix de `0.01f` à `0.5f` jusqu'aux raretés extrêmes comme le Golden Ticket `>= 0.0001f` allant de `10,000f` à `100,000f`) [patch/CardPrice.csL43-L106](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/patch/CardPrice.cs#L43-L106)
 3. **Variation aléatoire** : une variance aléatoire de base entre `-2%` et `+2%` est appliquée aux limites du segment [patch/CardPrice.cs L18-L111](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/patch/CardPrice.cs#L18-L111)
 
-In `WankulCardData`, the `MarketPrice` property uses lazy initialization to call `CardPrice.generateMarketPrice(this)` once, caching the result in `generatedMarketPrice`, and scales it dynamically by the current daily percentage multiplier (`Percentage / 100`) [cards/WankulCardData.cs L92-L114](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/cards/WankulCardData.cs#L92-L114)
+Dans `WankulCardData`, la propriété `MarketPrice` utilise une initialisation paresseuse pour appeler `CardPrice.generateMarketPrice(this)` une fois, en mettant le résultat en cache dans `generatedMarketPrice`, et l'échelle dynamiquement par le multiplicateur de pourcentage quotidien actuel (`Percentage / 100`) [cards/WankulCardData.cs L92-L114](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/cards/WankulCardData.cs#L92-L114)
 
 ### Daily Price Shifts
 
@@ -75,7 +75,7 @@ La classe `CheckPriceUI` remplace le comportement de l'écran de vérification d
 * Récupère les regroupements saisonniers actuels à l'aide de `CachedSeasons[ExpansionScreen.currentExpensionIndex]` [patch/CheckPriceUI.cs L32](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/patch/CheckPriceUI.cs#L32-L32)
 * Dimensionne dynamiquement les grilles de cartes par page à l'aide de `__instance.m_MaxCardUICountPerPage` et remplit `wankulCardsSet` [patch/CheckPriceUI.cs L44-L81](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/patch/CheckPriceUI.cs#L44-L81)
 
-Individual panels are initialized via `CheckPricePanelInitCard(...)`, binding the target `WankulCardData` to its corresponding UI container and formatting custom effigy titles and rarities [patch/CheckPriceUI.cs L95-L136](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/patch/CheckPriceUI.cs#L95-L136)
+Les panneaux individuels sont initialisés via `CheckPricePanelInitCard(...)`, liant la cible `WankulCardData` à son conteneur d'interface utilisateur correspondant et formatant les titres d'effigie personnalisés et les raretés [patch/CheckPriceUI.cs L95-L136](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/patch/CheckPriceUI.cs#L95-L136)
 
 ```mermaid
 flowchart TD

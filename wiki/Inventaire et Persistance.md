@@ -26,7 +26,7 @@ Drop mechanics evaluate pack types using `ConvertPackTypeToSeason` [inventory/Wa
 
 et exécutez des algorithmes probabilistes pondérés dans `DropCard` [inventory/WankulInventory.cs L53-L154](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/inventory/WankulInventory.cs#L53-L154)
 
- to populate booster contents, factoring in rarities, seasonal constraints, and duplicate filtering.
+ pour remplir le contenu des boosters, en tenant compte des raretés, des contraintes saisonnières, et du filtrage des doublons.
 
 ```mermaid
 flowchart TD
@@ -74,7 +74,7 @@ Pour des détails techniques approfondis, voir [WankulInventory and Drop Mechani
 
 La persistance est gérée par `SavesManager` [utils/SavesManager.cs L63-L404](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/utils/SavesManager.cs#L63-L404)
 
- which reads and writes structured JSON save files tied to active game save slots [utils/SavesManager.cs L73-L77](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/utils/SavesManager.cs#L73-L77)
+ qui lit et écrit des fichiers de sauvegarde JSON structurés liés aux emplacements de sauvegarde de jeu actifs [utils/SavesManager.cs L73-L77](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/utils/SavesManager.cs#L73-L77)
 
 Le schéma de sérialisation est encapsulé par les classes `Save` et `OldSave` [utils/SavesManager.cs L16-L62](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/utils/SavesManager.cs#L16-L62)
 

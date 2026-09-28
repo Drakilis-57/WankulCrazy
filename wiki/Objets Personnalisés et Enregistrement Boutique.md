@@ -22,10 +22,10 @@ Le pipeline d'éléments personnalisés est orchestré par la classe `CustomItem
 
 Lorsqu'il est déclenché, `ImportCustomItems()` [importer/CustomItemsImporter.cs:20] vérifie que l'importation n'a pas déjà eu lieu (indicateur `isImported`) et que la référence ScriptableObject d'inventaire (`InventoryBase.Instance.m_StockItemData_SO`) est disponible [importer/CustomItemsImporter.csL22-L23](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/importer/CustomItemsImporter.cs#L22-L23)
 
-The pipeline executes in three major phases:
+Le pipeline s'exécute en trois phases majeures :
 
 1. **Désérialisation** : charge et analyse `ItemDataList.json`, `restockDataList.json` et `itemMeshDataList.json` à partir du répertoire `data/customitems` à l'aide de JSON.NET [importer/CustomItemsImporter.csL27-L29](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/importer/CustomItemsImporter.cs#L27-L29)
-2. **Deduplication and Injection**: Clears existing items and meshes matching custom names to prevent duplicates, then appends the newly parsed items into `m_ItemDataList` and `m_ItemMeshDataList` [importer/CustomItemsImporter.cs L31-L44](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/importer/CustomItemsImporter.cs#L31-L44)
+2. **Déduplication et Injection** : Efface les objets et maillages existants correspondant aux noms personnalisés pour éviter les doublons, puis ajoute les objets nouvellement analysés dans `m_ItemDataList` et `m_ItemMeshDataList` [importer/CustomItemsImporter.cs L31-L44](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/importer/CustomItemsImporter.cs#L31-L44)
 3. **Chronologie de réapprovisionnement et catégorisation de la boutique** : trie les entrées de réapprovisionnement dans des listes de variantes normales et `Taux`, les insère dans des index chronologiques spécifiques relatifs aux articles du jeu de base et les enregistre dans les catégories d'affichage de la boutique [importer/CustomItemsImporter.csL47-L95](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/importer/CustomItemsImporter.cs#L47-L95)
 
 ### Flux d'exécution de l'importateur
