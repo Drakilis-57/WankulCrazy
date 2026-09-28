@@ -1,6 +1,6 @@
-# Project Governance and Issue Templates
+# Modèles de gouvernance et de problèmes de projet
 
-> **Relevant source files**
+> **Fichiers sources pertinents**
 > * [.github/ISSUE_TEMPLATE/BUG-REPORT.yml](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/.github/ISSUE_TEMPLATE/BUG-REPORT.yml)
 > * [.github/ISSUE_TEMPLATE/FEATURE-REQUEST.yml](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/.github/ISSUE_TEMPLATE/FEATURE-REQUEST.yml)
 > * [.github/ISSUE_TEMPLATE/HELP-WANTED.yml](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/.github/ISSUE_TEMPLATE/HELP-WANTED.yml)
@@ -8,7 +8,7 @@
 > * [PluginInfo.cs](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/PluginInfo.cs)
 > * [libs/Assembly-CSharp.dll](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/libs/Assembly-CSharp.dll)
 
-## Purpose and Scope
+## Objectif et portée
 
 This section details the project governance, versioning schema, licensing constraints, contribution workflows, and issue tracking configurations for the `WankulCrazy` codebase. It establishes how metadata is centralized via `PluginInfo.cs`, how IP and third-party assets are managed under `LICENCE.txt`, and how standardized GitHub issue templates (`.github/ISSUE_TEMPLATE/`) structure user feedback, feature requests, and bug reports.
 
@@ -16,67 +16,67 @@ This section details the project governance, versioning schema, licensing constr
 
 ## 1. Versioning and Assembly Metadata
 
-The mod relies on a centralized metadata container defined in `PluginInfo.cs` to expose its BepInEx plugin identification parameters. This structure ensures consistency across the compiled assembly, dependency injection, and debugging outputs.
+Le mod s'appuie sur un conteneur de métadonnées centralisé défini dans `PluginInfo.cs` pour exposer ses paramètres d'identification du plugin BepInEx.Cette structure garantit la cohérence entre les sorties de l’assembly compilé, de l’injection de dépendances et du débogage.
 
 * `PLUGIN_GUID`: Identifies the plugin namespace globally within the BepInEx runtime loader (`WankulCrazyPlugin`).
-* `PLUGIN_NAME`: Human-readable identifier used in logs and user interfaces (`WankulCrazy`).
-* `PLUGIN_VERSION`: Semantic version string reflecting the current build target (`1.4.1`).
+* `PLUGIN_NAME` : Identifiant lisible par l'homme utilisé dans les journaux et les interfaces utilisateur (`WankulCrazy`).
+* `PLUGIN_VERSION` : Chaîne de version sémantique reflétant la cible de build actuelle (`1.4.1`).
 
 ```javascript
 namespace WankulCrazyPlugin{    public static class PluginInfo    {        public const string PLUGIN_GUID = "WankulCrazyPlugin";        public const string PLUGIN_NAME = "WankulCrazy";        public const string PLUGIN_VERSION = "1.4.1";    }}
 ```
 
-Sources: [PluginInfo.cs L1-L9](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/PluginInfo.cs#L1-L9)
+Sources : [PluginInfo.cs L1-L9](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/PluginInfo.cs#L1-L9)
 
 ---
 
-## 2. Licensing and Intellectual Property
+## 2. Licences et propriété intellectuelle
 
-`WankulCrazy` is governed by the **Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International** (CC BY-NC-ND 4.0) license.
+`WankulCrazy` est régi par la licence **Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International** (CC BY-NC-ND 4.0).
 
 Key governance points outlined in the project license include:
 
-* **Asset Ownership**: All card textures and artistic assets remain the property of `wankul.fr` and `Wankil © 2024`. The mod implementation does not claim ownership of these textures but utilizes them under explicit permission scopes.
-* **Contributor Acknowledgments**: Special credits are formally attributed within the documentation for code contributions and asset retexturing: * `Karilla`: Code contributions and implementation logic. * `Hurtem`: Asset retexturing and graphical pipelines.
+* **Propriété des actifs** : toutes les textures de cartes et actifs artistiques restent la propriété de `wankul.fr` et `Wankil © 2024`.L'implémentation du mod ne revendique pas la propriété de ces textures mais les utilise dans le cadre d'autorisations explicites.
+* **Remerciements des contributeurs** : des crédits spéciaux sont formellement attribués dans la documentation pour les contributions au code et la retexturation des actifs : * `Karilla` : contributions au code et logique de mise en œuvre.* `Hurtem` : Retexturation des actifs et pipelines graphiques.
 
-Sources: [LICENCE.txt L1-L8](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/LICENCE.txt#L1-L8)
+Sources : [LICENCE.txt L1-L8](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/LICENCE.txt#L1-L8)
 
 ---
 
-## 3. GitHub Issue Templates and Contribution Workflows
+## 3. Modèles de problèmes GitHub et flux de travail de contribution
 
-The repository implements structured YAML-based issue templates under `.github/ISSUE_TEMPLATE/` to streamline bug triage, feature proposals, and community support.
+Le référentiel implémente des modèles de problèmes structurés basés sur YAML sous `.github/ISSUE_TEMPLATE/` pour rationaliser le tri des bogues, les propositions de fonctionnalités et le support de la communauté.
 
-### Bug Report Schema (BUG-REPORT.yml)
+### Schéma de rapport de bug (BUG-REPORT.yml)
 
 The bug report template enforces structured telemetry collection from users experiencing runtime anomalies:
 
-* **Description Fields**: Collects user observations regarding expected vs. actual behavior.
-* **Version Dropdown**: Restricts version selection to valid historical and current releases ranging from `1.0.0` up to `1.4.2 (Latest)`, cross-referencing against `PluginInfo. PLUGIN_VERSION`.
-* **Log Extraction**: Mandates pasting BepInEx shell output from `BepInEx/LogOutput.log` to assist in stack trace analysis.
+* **Champs de description** : collecte les observations des utilisateurs concernant le comportement attendu par rapport au comportement réel.
+* **Version Dropdown** : restreint la sélection de versions aux versions historiques et actuelles valides allant de `1.0.0` à `1.4.2 (Latest)`, avec des références croisées avec `PluginInfo. PLUGIN_VERSION`.
+* **Extraction de journaux** : oblige à coller la sortie du shell BepInEx à partir de `BepInEx/LogOutput.log` pour faciliter l'analyse de la trace de la pile.
 
 ```yaml
 name: Bug Reportdescription: Informez nous d'un bug.title: "[Bug]: "labels: ["bug"]projects: ["WankulCrazy"]body:  - type: dropdown    id: version    attributes:      label: Version      description: Quel version du mod était utilisée ?      options:        - 1.4.2 (Latest)        - 1.4.1         - 1.4.0        ...
 ```
 
-Sources: [.github/ISSUE_TEMPLATE/BUG-REPORT.yml L1-L49](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/.github/ISSUE_TEMPLATE/BUG-REPORT.yml#L1-L49)
+Sources : [.github/ISSUE_TEMPLATE/BUG-REPORT.yml L1-L49](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/.github/ISSUE_TEMPLATE/BUG-REPORT.yml#L1-L49)
 
-### Feature Requests and Help Wanted Templates
+### Demandes de fonctionnalités et modèles d'aide recherchée
 
-* **Feature Request (`FEATURE-REQUEST.yml`)**: Captures proposed modifications or additions to the mod, tagged automatically with the `feat` label.
-* **Help Wanted (`HELP-WANTED.yml`)**: Provides a direct communication channel for integration issues or user support, tagged with the `help wanted` label.
+* **Demande de fonctionnalité (`FEATURE-REQUEST.yml`)** : capture les modifications ou ajouts proposés au mod, étiquetés automatiquement avec l'étiquette `feat`.
+* **Aide recherchée (`HELP-WANTED.yml`)** : fournit un canal de communication direct pour les problèmes d'intégration ou l'assistance utilisateur, étiqueté avec l'étiquette `help wanted`.
 
-Sources: [.github/ISSUE_TEMPLATE/FEATURE-REQUEST.yml L1-L18](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/.github/ISSUE_TEMPLATE/FEATURE-REQUEST.yml#L1-L18)
+Sources : [.github/ISSUE_TEMPLATE/FEATURE-REQUEST.yml L1-L18](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/.github/ISSUE_TEMPLATE/FEATURE-REQUEST.yml#L1-L18)
 
  [.github/ISSUE_TEMPLATE/HELP-WANTED.yml L1-L18](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/.github/ISSUE_TEMPLATE/HELP-WANTED.yml#L1-L18)
 
 ---
 
-## 4. Governance and Issue Architecture Diagrams
+## 4. Diagrammes de gouvernance et d'architecture des problèmes
 
-### Diagram: Repository Governance and Metadata Flow
+### Diagramme : Gouvernance du référentiel et flux de métadonnées
 
-This diagram illustrates how repository files govern release tagging, metadata distribution, and issue management.
+Ce diagramme illustre comment les fichiers du référentiel régissent le balisage des versions, la distribution des métadonnées et la gestion des problèmes.
 
 ```mermaid
 flowchart TD
@@ -125,9 +125,9 @@ Sources: [PluginInfo.cs L1-L9](https://github.com/Drakilis-57/WankulCrazy/blob/5
 
  [.github/ISSUE_TEMPLATE/HELP-WANTED.yml L1-L18](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/.github/ISSUE_TEMPLATE/HELP-WANTED.yml#L1-L18)
 
-### Diagram: Bug Report to Code Version Mapping Flow
+### Diagramme : rapport de bug au flux de mappage de version de code
 
-This diagram details the data flow when a user submits a bug report mapping to code definitions.
+Ce diagramme détaille le flux de données lorsqu'un utilisateur soumet un rapport de bogue mappé aux définitions de code.
 
 ```mermaid
 flowchart TD
@@ -146,6 +146,6 @@ CodeMetadata --> RuntimeVersion
 RuntimeVersion --> BepInExLog
 ```
 
-Sources: [PluginInfo.cs L1-L9](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/PluginInfo.cs#L1-L9)
+Sources : [PluginInfo.cs L1-L9](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/PluginInfo.cs#L1-L9)
 
  [.github/ISSUE_TEMPLATE/BUG-REPORT.yml L1-L49](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/.github/ISSUE_TEMPLATE/BUG-REPORT.yml#L1-L49)
