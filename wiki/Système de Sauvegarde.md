@@ -85,9 +85,10 @@ Le système vérifie le `Save.version` désérialisé par rapport à `SavesManag
 
 * Si `save.savedebug` est activé, `HandleDebugSave(save)` est invoqué [utils/SavesManager.cs L137-L140](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/utils/SavesManager.cs#L137-L140)
 * Si la chaîne de version est nulle ou diffère de la version actuelle, les routines de migration et de mise à jour des prix s'exécutent sur toutes les instances `WankulCardsData` enregistrées via `UpdateCardPriceIfNeeded()` [utils/SavesManager.cs L141-L149](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/utils/SavesManager.cs#L141-L149)
+* **Migration corrective des prix Légendaires** : lors du chargement des associations (`LoadAssociations`), si une carte légendaire (`LB`, `LA`, `LO`) possède un `generatedMarketPrice < 1f` (vestige de l'ancien calcul basé sur le champ `Drop`), le prix est réinitialisé à `0` afin de forcer sa régénération dynamique via la nouvelle table de rareté de [`patch/CardPrice.cs`](file:///c:/Users/elias/Downloads/WankulCrazy/patch/CardPrice.cs) [utils/SavesManager.cs L282-L293](file:///c:/Users/elias/Downloads/WankulCrazy/utils/SavesManager.cs#L282-L293).
 * Sinon, les chargeurs d'association standard et d'inventaire de cartes sont exécutés directement [utils/SavesManager.cs L150-L154](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/utils/SavesManager.cs#L150-L154)
 
-Sources : [utils/SavesManager.cs L1-L168](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/utils/SavesManager.cs#L1-L168)
+Sources : [utils/SavesManager.cs L1-L168](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/utils/SavesManager.cs#L1-L168)
 
 ## Enregistrer les crochets de patch
 

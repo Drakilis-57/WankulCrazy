@@ -19,11 +19,39 @@ Le mod remplace l'évaluation des cartes du jeu de base (vanilla) par un systèm
 
 When a card's market price is requested, `CardPrice.generateMarketPrice(WankulCardData)` calculates a baseline price by evaluating:
 
-1. **Multiplicateur de saison** : différentes saisons (`Season.S01` à `Season.HS`) appliquent des facteurs d'échelle de base allant de `1.0f` à `2.0f` [patch/CardPrice.csL21-L41](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/patch/CardPrice.cs#L21-L41)
-2. **Segments de taux de chute** : les cartes sont classées en niveaux de taux de chute (des baisses courantes `>= 0.45f` avec une fourchette de prix de `0.01f` à `0.5f` jusqu'aux raretés extrêmes comme le Golden Ticket `>= 0.0001f` allant de `10,000f` à `100,000f`) [patch/CardPrice.csL43-L106](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/patch/CardPrice.cs#L43-L106)
-3. **Variation aléatoire** : une variance aléatoire de base entre `-2%` et `+2%` est appliquée aux limites du segment [patch/CardPrice.cs L18-L111](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/patch/CardPrice.cs#L18-L111)
+1. **Multiplicateur de saison** : différentes saisons (`Season.S01` à `Season.HS`) appliquent des facteurs d'échelle de base :
+   - `S01` : `x1.0`
+   - `S02` : `x1.25`
+   - `S03` : `x1.5`
+   - `S04` : `x1.75`
+   - `HS` : `x2.0`
+   [patch/CardPrice.cs L20-L41](file:///c:/Users/elias/Downloads/WankulCrazy/patch/CardPrice.cs#L20-L41)
 
-Dans `WankulCardData`, la propriété `MarketPrice` utilise une initialisation paresseuse pour appeler `CardPrice.generateMarketPrice(this)` une fois, en mettant le résultat en cache dans `generatedMarketPrice`, et l'échelle dynamiquement par le multiplicateur de pourcentage quotidien actuel (`Percentage / 100`) [cards/WankulCardData.cs L92-L114](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/cards/WankulCardData.cs#L92-L114)
+2. **Évaluation par type et rareté** : le calcul est principalement basé sur le type de carte et la rareté `Rarity` (plutôt que sur le champ `Drop` qui vaut `15.0` par défaut sur les cartes de jeu) :
+   - **`SpecialCardData`** :
+     - `Specials.TOR` (Ticket d'Or) : `10 000€` à `100 000€`
+     - Autres spéciales : `0.01€` à `0.50€`
+   - **`TerrainCardData`** : `0.50€` à `1.90€`
+   - **`EffigyCardData`** (cartes d'effigies standard) :
+     | Rareté | Description | Fourchette de base |
+     | :--- | :--- | :--- |
+     | **C** | Commune | 0.01€ - 0.50€ |
+     | **UC** | Peu Commune | 0.50€ - 1.00€ |
+     | **R** | Rare | 3.50€ - 10.00€ |
+     | **UR1** | Ultra Rare 1 | 10.00€ - 50.00€ |
+     | **UR2** | Ultra Rare 2 | 50.00€ - 150.00€ |
+     | **LB** | Légendaire Bronze | 150.00€ - 500.00€ |
+     | **LA** | Légendaire Argent | 500.00€ - 1 000.00€ |
+     | **LO** | Légendaire Or | 1 000.00€ - 2 500.00€ |
+     | **TOR** | Gagnant Ticket Or | 2 500.00€ - 4 000.00€ |
+     | *Spéciales / Autres* | PGW, Noël, Starter Packs, etc. | 50.00€ - 1 000.00€ |
+   [patch/CardPrice.cs L46-L110](file:///c:/Users/elias/Downloads/WankulCrazy/patch/CardPrice.cs#L46-L110)
+
+3. **Variation aléatoire** : une variation aléatoire de base entre `-2%` et `+2%` est appliquée aux limites du segment avant tirage.
+
+4. **Migration des sauvegardes** : lors du chargement des sauvegardes (`utils/SavesManager.cs`), les cartes légendaires (LB, LA, LO) qui avaient été sauvegardées avec un prix erroné (< 1€) sont automatiquement réinitialisées (`generatedMarketPrice = 0`) pour forcer leur recalcul avec le bon barème.
+
+Dans `WankulCardData`, la propriété `MarketPrice` utilise une initialisation paresseuse pour appeler `CardPrice.generateMarketPrice(this)` une fois, en mettant le résultat en cache dans `generatedMarketPrice`, et l'échelle dynamiquement par le multiplicateur de pourcentage quotidien actuel (`Percentage / 100`) [cards/WankulCardData.cs L92-L114](file:///c:/Users/elias/Downloads/WankulCrazy/cards/WankulCardData.cs#L92-L114)
 
 ### Daily Price Shifts
 

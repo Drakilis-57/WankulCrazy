@@ -278,6 +278,18 @@ namespace WankulCrazyPlugin.utils
                     if (association.Value.generatedMarketPrice != 0)
                     {
                         card.MarketPrice = association.Value.generatedMarketPrice;
+
+                        // Migration : réinitialise le prix si une Légendaire avait un prix de Commune
+                        // (< 1€) dû au bug du fallback par Drop — force le recalcul par Rarity
+                        if (card is EffigyCardData effigyCardMigration &&
+                            (effigyCardMigration.Rarity == Rarity.LB ||
+                             effigyCardMigration.Rarity == Rarity.LA ||
+                             effigyCardMigration.Rarity == Rarity.LO) &&
+                            card.generatedMarketPrice < 1f)
+                        {
+                            Plugin.Logger.LogInfo($"[Migration] Prix Légendaire bugué détecté ({card.Title} → {card.generatedMarketPrice:F4}€), régénération forcée.");
+                            card.generatedMarketPrice = 0;
+                        }
                     }
 
                     UpdateCardPriceIfNeeded(card);
