@@ -10,15 +10,15 @@
 
 ## Objectif et portée
 
-This section details the project governance, versioning schema, licensing constraints, contribution workflows, and issue tracking configurations for the `WankulCrazy` codebase. It establishes how metadata is centralized via `PluginInfo.cs`, how IP and third-party assets are managed under `LICENCE.txt`, and how standardized GitHub issue templates (`.github/ISSUE_TEMPLATE/`) structure user feedback, feature requests, and bug reports.
+Cette section détaille la gouvernance du projet, le schéma de versionnage, les contraintes de licence, les flux de contribution, et les configurations de suivi des problèmes pour la base de code `WankulCrazy`. Elle établit comment les métadonnées sont centralisées via `PluginInfo.cs`, comment la PI (Propriété Intellectuelle) et les actifs tiers sont gérés sous `LICENCE.txt`, et comment les modèles de problèmes GitHub standardisés (`.github/ISSUE_TEMPLATE/`) structurent les retours utilisateurs, les demandes de fonctionnalités, et les rapports de bugs.
 
 ---
 
-## 1. Versioning and Assembly Metadata
+## 1. Versionnage et Métadonnées d'Assemblage
 
 Le mod s'appuie sur un conteneur de métadonnées centralisé défini dans `PluginInfo.cs` pour exposer ses paramètres d'identification du plugin BepInEx.Cette structure garantit la cohérence entre les sorties de l’assembly compilé, de l’injection de dépendances et du débogage.
 
-* `PLUGIN_GUID`: Identifies the plugin namespace globally within the BepInEx runtime loader (`WankulCrazyPlugin`).
+* `PLUGIN_GUID` : Identifie l'espace de noms du plugin globalement dans le chargeur d'exécution (runtime loader) BepInEx (`WankulCrazyPlugin`).
 * `PLUGIN_NAME` : Identifiant lisible par l'homme utilisé dans les journaux et les interfaces utilisateur (`WankulCrazy`).
 * `PLUGIN_VERSION` : Chaîne de version sémantique reflétant la cible de build actuelle (`1.4.1`).
 
@@ -34,7 +34,7 @@ Sources : [PluginInfo.cs L1-L9](https://github.com/Drakilis-57/WankulCrazy/blob
 
 `WankulCrazy` est régi par la licence **Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International** (CC BY-NC-ND 4.0).
 
-Key governance points outlined in the project license include:
+Les points de gouvernance clés décrits dans la licence du projet incluent :
 
 * **Propriété des actifs** : toutes les textures de cartes et actifs artistiques restent la propriété de `wankul.fr` et `Wankil © 2024`.L'implémentation du mod ne revendique pas la propriété de ces textures mais les utilise dans le cadre d'autorisations explicites.
 * **Remerciements des contributeurs** : des crédits spéciaux sont formellement attribués dans la documentation pour les contributions au code et la retexturation des actifs : * `Karilla` : contributions au code et logique de mise en œuvre.* `Hurtem` : Retexturation des actifs et pipelines graphiques.
@@ -49,7 +49,7 @@ Le référentiel implémente des modèles de problèmes structurés basés sur Y
 
 ### Schéma de rapport de bug (BUG-REPORT.yml)
 
-The bug report template enforces structured telemetry collection from users experiencing runtime anomalies:
+Le modèle de rapport de bug applique une collecte de télémétrie structurée auprès des utilisateurs rencontrant des anomalies d'exécution :
 
 * **Champs de description** : collecte les observations des utilisateurs concernant le comportement attendu par rapport au comportement réel.
 * **Version Dropdown** : restreint la sélection de versions aux versions historiques et actuelles valides allant de `1.0.0` à `1.4.2 (Latest)`, avec des références croisées avec `PluginInfo. PLUGIN_VERSION`.

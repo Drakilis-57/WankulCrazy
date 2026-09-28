@@ -11,7 +11,7 @@
 
 ## Objectif et portée
 
-This document details the implementation of the UI, loading, and debugging subsystems in the `WankulCrazy` codebase. Specifically, it covers the frame-budgeted asynchronous card asset loading managed by `WankulLoadingScreen`, the shared UGUI component factory `WankulUiKit`, the runtime exception/error interception screen `WankulDebugScreen`, and the log noise filter `DebugFilterPatch`.
+Ce document détaille l'implémentation de l'interface utilisateur, du chargement et des sous-systèmes de débogage dans la base de code de `WankulCrazy`. Plus précisément, il couvre le chargement asynchrone des actifs de cartes avec un budget de trames géré par `WankulLoadingScreen`, la fabrique de composants UGUI partagée `WankulUiKit`, l'écran d'interception des exceptions/erreurs d'exécution `WankulDebugScreen`, et le filtre de bruit de log `DebugFilterPatch`.
 
 ---
 
@@ -21,7 +21,7 @@ La classe `WankulLoadingScreen` est un singleton `MonoBehaviour` responsable du 
 
 ### Mécaniques de base et budgétisation du cadre
 
-* **`IsLoading`**: A static public property (`bool`) used across the mod to block booster openings or album interactions while asset loading is active [importer/WankulLoadingScreen.cs L18-L20](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/importer/WankulLoadingScreen.cs#L18-L20)
+* **`IsLoading`** : Une propriété publique statique (`bool`) utilisée à travers le mod pour bloquer les ouvertures de boosters ou les interactions d'album pendant que le chargement des actifs est actif [importer/WankulLoadingScreen.cs L18-L20](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/importer/WankulLoadingScreen.cs#L18-L20)
 * **Budget de trame (`FrameBudgetMs`)** : défini sur `12f` millisecondes, garantissant que les opérations de chargement de texture redonnent le contrôle à Unity une fois le budget de temps de trame épuisé [importer/WankulLoadingScreen.csL22-L23](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/importer/WankulLoadingScreen.cs#L22-L23)
 * **Suivi des performances** : les durées de chargement des cartes individuelles sont mesurées via `System.Diagnostics.Stopwatch`.Les cartes dépassant `SlowCardMs` (250 ms) déclenchent un journal d'avertissement [importer/WankulLoadingScreen.cs L24-L114](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/importer/WankulLoadingScreen.cs#L24-L114)
 

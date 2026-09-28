@@ -35,9 +35,9 @@ Sources : `README.md:16-19`, `INSTALL.txt:3`
 L'installation du mod nécessite la configuration du runtime BepInEx, le placement des binaires compilés et le remplissage des ressources de carte et de texture requises dans le répertoire de données.
 
 1. **Cloner le référentiel** : ``` git clone https://github.com/Drakilis-57/WankulCrazy.git ``` Sources: `README.md:34-37`
-2. **Install BepInEx**: Download and extract BepInEx `5.4.23.2` into the root directory of *TCG Card Shop Simulator*. Sources: `README.md:28-29`, `INSTALL.txt:3`
+2. **Installer BepInEx** : Téléchargez et extrayez BepInEx `5.4.23.2` dans le répertoire racine de *TCG Card Shop Simulator*. Sources : `README.md:28-29`, `INSTALL.txt:3`
 3. **Déployer les données d'actifs** : téléchargez le package d'actifs correspondant (`WankulCrazyData-vX.X.X`) et extrayez le répertoire `data` directement dans la racine du plugin ou dans le répertoire de données de jeu, en vous assurant que les définitions et textures JSON correspondent aux chemins attendus.Sources : `README.md:38-40`
-4. **Build and Deploy Plugin Binaries**: Compile the solution using Visual Studio (`ReleaseNoDeps` preset or via build scripts) and copy the output distribution files into the `BepInEx/plugins` directory. Sources: `README.md:41-45`, `INSTALL.txt:4`
+4. **Compiler et Déployer les Binaires du Plugin** : Compilez la solution en utilisant Visual Studio (préréglage `ReleaseNoDeps` ou via des scripts de build) et copiez les fichiers de distribution de sortie dans le répertoire `BepInEx/plugins`. Sources : `README.md:41-45`, `INSTALL.txt:4`
 
 Sources: `README.md:31-45`, `INSTALL.txt:1-4`
 
@@ -63,7 +63,7 @@ Sources : `Docs/DOCS.md:24-26`, `INSTALL.txt:1-4`
 
 * **`seasons.json` & `rarities.json`** : Déclare les identifiants de saison dynamiques (`SeasonId`) et les poids de rareté (`RaritiesManager`), permettant des extensions personnalisées sans recompilation.
 * **`ItemDataList.json` et `restockDataList.json`** : régit l'intégration de la boutique, en établissant les coûts de base, les marges sur les prix du marché, les exigences de licence et les allocations d'onglets de boutique (`m_ShownItemType`, `m_ShownFigurineItemType`, `m_ShownAccessoryItemType`).
-* **`cards/` Subdirectory**: Houses modular card definitions (`WankulCardData`, `EffigyCardData`, `TerrainCardData`, `SpecialCardData`) linked with custom sprite assets and mask paths.
+* **Sous-répertoire `cards/`** : Héberge les définitions de cartes modulaires (`WankulCardData`, `EffigyCardData`, `TerrainCardData`, `SpecialCardData`) liées à des actifs de sprites personnalisés et des chemins de masques.
 
 Sources : `Docs/DOCS.md:24-38`, `.agents/rules/tcg_shop_modding.md:7-22`
 
@@ -71,7 +71,7 @@ Sources : `Docs/DOCS.md:24-38`, `.agents/rules/tcg_shop_modding.md:7-22`
 
 ## Ressources de documentation (Docs/ & INSTALL.txt)
 
-The repository includes a dedicated documentation set inside the `Docs/` directory alongside the root installation guide:
+Le dépôt comprend un ensemble de documentation dédié dans le répertoire `Docs/` à côté du guide d'installation racine :
 
 * `Docs/DOCS.md` : aperçu complet de l'architecture détaillant le mappage des domaines de la carte, les importateurs JSON, les hooks d'inventaire et le suivi du décompte des stocks.
 * `INSTALL.txt` : instructions d'installation minimalistes destinées aux utilisateurs finaux déployant des versions précompilées.

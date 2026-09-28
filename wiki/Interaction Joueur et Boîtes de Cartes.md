@@ -16,7 +16,7 @@ La portée comprend l'extension des emplacements pour packs de cartes, la valida
 
 ## Emplacements de pack étendus et initialisation
 
-The vanilla game limits the number of card packs a player can hold or manipulate simultaneously. `InteractionPlayerControllerPatch` hooks into the `Awake` method of `InteractionPlayerController` via a Harmony postfix patch to expand the internal `m_HoldCardPackPosList` collection [patch/InteractionPlayerControllerPatch.cs L23-L25](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/patch/InteractionPlayerControllerPatch.cs#L23-L25)
+Le jeu de base (vanilla) limite le nombre de paquets de cartes qu'un joueur peut tenir ou manipuler simultanément. `InteractionPlayerControllerPatch` s'accroche (hooks) à la méthode `Awake` de `InteractionPlayerController` via un patch postfix Harmony pour étendre la collection interne `m_HoldCardPackPosList` [patch/InteractionPlayerControllerPatch.cs L23-L25](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/patch/InteractionPlayerControllerPatch.cs#L23-L25)
 
 Une fois initialisé, le correctif vérifie si `m_HoldCardPackPosList` est renseigné [patch/InteractionPlayerControllerPatch.cs L28-L29](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/patch/InteractionPlayerControllerPatch.cs#L28-L29)
 
@@ -57,14 +57,14 @@ AddList --> Loop
 
 Pour permettre au joueur d'ouvrir des boosters Wankul personnalisés et des boîtes d'affichage, le correctif implémente une logique de remplacement ou d'évaluation de type préfixe pour `CanOpenPack` et `CanOpenCardBox` [patch/InteractionPlayerControllerPatch.csL63-L101](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/patch/InteractionPlayerControllerPatch.cs#L63-L101)
 
-These methods inspect the items currently held in `m_HoldItemList` via reflection [patch/InteractionPlayerControllerPatch.cs L75-L93](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/patch/InteractionPlayerControllerPatch.cs#L75-L93)
+Ces méthodes inspectent les objets actuellement détenus dans `m_HoldItemList` via la réflexion (reflection) [patch/InteractionPlayerControllerPatch.cs L75-L93](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/patch/InteractionPlayerControllerPatch.cs#L75-L93)
 
 À l'aide de `EnumExtensions.SafeParseEItemType`, ils évaluent si le type d'élément correspond aux types Vanilla ou aux types d'éléments personnalisés nouvellement enregistrés (par exemple, `BoosterStellar`, `DisplayStellar`, `TestCardPack32`, etc.) [patch/InteractionPlayerControllerPatch.csL66-L98](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/patch/InteractionPlayerControllerPatch.cs#L66-L98)
 
 ```mermaid
 flowchart TD
 
-A["Player Tries to Open Booster or Box"]
+A["Le Joueur Essaie d'Ouvrir un Booster ou une Boîte"]
 B["InteractionPlayerControllerPatch.CanOpenPack"]
 C["InteractionPlayerControllerPatch.CanOpenCardBox"]
 D["EnumExtensions.SafeParseEItemType"]
