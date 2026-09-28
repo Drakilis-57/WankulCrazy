@@ -1,6 +1,5 @@
 using UnityEngine;
 using BepInEx.Logging;
-using UnityEngine.UIElements;
 using Logger = HarmonyLib.Tools.Logger;
 using System.Threading;
 using WankulCrazyPlugin.cards;
