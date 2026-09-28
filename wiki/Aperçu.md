@@ -86,3 +86,5 @@ Alors que le démarrage et l'installation de base sont traités dans les pages e
 * **Glossaire (Section 7)** : référence technique pour la terminologie de la base de code, les conventions Harmony, l'intégration BepInEx et les hachages d'actifs internes.
 
 *Sources : [Plugin.cs:1-644]*, *[Docs/DOCS.md:1-282]*
+
+Bonjour , je suis le déclencheur d'action
