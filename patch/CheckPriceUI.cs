@@ -5,7 +5,6 @@ using WankulCrazyPlugin.cards;
 using WankulCrazyPlugin.inventory;
 using System.Linq;
 using System.Threading;
-using UnityEngine.UIElements;
 using System.Reflection;
 
 namespace WankulCrazyPlugin.patch
