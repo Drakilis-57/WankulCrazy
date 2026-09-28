@@ -39,69 +39,186 @@ namespace WankulCrazyPlugin.patch
                 priceFactor = 2f;
             }
 
-            // Calculer le prix maximum en fonction du segment du Drop
+            // Calculer le prix maximum en fonction du segment de la carte
             float priceRangeMax;
             float priceRangeMin;
 
-            if (wankulCardData.Drop >= 0.45f) // Commune
+            if (wankulCardData is SpecialCardData specialCardData)
             {
-                priceRangeMin = 0.01f;
-                priceRangeMax = 0.5f;
+                if (specialCardData.Special == Specials.TOR)
+                {
+                    priceRangeMin = 10000f;
+                    priceRangeMax = 100000f;
+                }
+                else
+                {
+                    priceRangeMin = 0.01f;
+                    priceRangeMax = 0.5f;
+                }
             }
-            else if (wankulCardData.Drop >= 0.3f) // Peu Commune
-            {
-                priceRangeMin = 0.5f;
-                priceRangeMax = 1f;
-            }
-            else if (wankulCardData.Drop >= 0.1f && wankulCardData is TerrainCardData) // terrain
+            else if (wankulCardData is TerrainCardData)
             {
                 priceRangeMin = 0.5f;
                 priceRangeMax = 1.9f;
             }
-            else if (wankulCardData.Drop >= 0.1f && wankulCardData is EffigyCardData) // Rare
+            else if (wankulCardData is EffigyCardData effigyCard)
             {
-                priceRangeMin = 3.5f;
-                priceRangeMax = 10f;
-            }
-            else if (wankulCardData.Drop >= 0.0224f) // Ultra rare holo 1
-            {
-                priceRangeMin = 10f;
-                priceRangeMax = 50f;
-            }
-            else if (wankulCardData.Drop >= 0.016f) // Ultra rare holo 2
-            {
-                priceRangeMin = 50f;
-                priceRangeMax = 150f;
-            }
-            else if (wankulCardData.Drop >= 0.008f) // Légendaire Bronze
-            {
-                priceRangeMin = 150;
-                priceRangeMax = 500;
-            }
-            else if (wankulCardData.Drop >= 0.0028f) // Légendaire Argent
-            {
-                priceRangeMin = 500;
-                priceRangeMax = 1000;
-            }
-            else if (wankulCardData.Drop >= 0.0008f) // Légendaire Or
-            {
-                priceRangeMin = 1000;
-                priceRangeMax = 2500f;
-            }
-            else if (wankulCardData.Drop >= 0.0005f) // Gagnant Ticket Or (les abo ayant gagne)
-            {
-                priceRangeMin = 2500f;
-                priceRangeMax = 4000f;
-            }
-            else if (wankulCardData.Drop >= 0.0001f) // LE TICKET D'OR
-            {
-                priceRangeMin = 10000f;
-                priceRangeMax = 100000f;
+                switch (effigyCard.Rarity)
+                {
+                    case Rarity.C:
+                        priceRangeMin = 0.01f;
+                        priceRangeMax = 0.5f;
+                        break;
+                    case Rarity.UC:
+                        priceRangeMin = 0.5f;
+                        priceRangeMax = 1f;
+                        break;
+                    case Rarity.R:
+                        priceRangeMin = 3.5f;
+                        priceRangeMax = 10f;
+                        break;
+                    case Rarity.UR1:
+                        priceRangeMin = 10f;
+                        priceRangeMax = 50f;
+                        break;
+                    case Rarity.UR2:
+                        priceRangeMin = 50f;
+                        priceRangeMax = 150f;
+                        break;
+                    case Rarity.LB:
+                        priceRangeMin = 150;
+                        priceRangeMax = 500;
+                        break;
+                    case Rarity.LA:
+                        priceRangeMin = 500;
+                        priceRangeMax = 1000;
+                        break;
+                    case Rarity.LO:
+                        priceRangeMin = 1000;
+                        priceRangeMax = 2500f;
+                        break;
+                    case Rarity.TOR: // Gagnant Ticket Or
+                        priceRangeMin = 2500f;
+                        priceRangeMax = 4000f;
+                        break;
+                    default:
+                        // Fallback sur le Drop pour les autres raretés (Starter Packs, PGW, Noël, etc.)
+                        if (wankulCardData.Drop >= 0.45f)
+                        {
+                            priceRangeMin = 0.01f;
+                            priceRangeMax = 0.5f;
+                        }
+                        else if (wankulCardData.Drop >= 0.3f)
+                        {
+                            priceRangeMin = 0.5f;
+                            priceRangeMax = 1f;
+                        }
+                        else if (wankulCardData.Drop >= 0.1f)
+                        {
+                            priceRangeMin = 3.5f;
+                            priceRangeMax = 10f;
+                        }
+                        else if (wankulCardData.Drop >= 0.0224f)
+                        {
+                            priceRangeMin = 10f;
+                            priceRangeMax = 50f;
+                        }
+                        else if (wankulCardData.Drop >= 0.016f)
+                        {
+                            priceRangeMin = 50f;
+                            priceRangeMax = 150f;
+                        }
+                        else if (wankulCardData.Drop >= 0.008f)
+                        {
+                            priceRangeMin = 150f;
+                            priceRangeMax = 500f;
+                        }
+                        else if (wankulCardData.Drop >= 0.0028f)
+                        {
+                            priceRangeMin = 500f;
+                            priceRangeMax = 1000f;
+                        }
+                        else if (wankulCardData.Drop >= 0.0008f)
+                        {
+                            priceRangeMin = 1000f;
+                            priceRangeMax = 2500f;
+                        }
+                        else if (wankulCardData.Drop >= 0.0005f)
+                        {
+                            priceRangeMin = 2500f;
+                            priceRangeMax = 4000f;
+                        }
+                        else if (wankulCardData.Drop >= 0.0001f)
+                        {
+                            priceRangeMin = 10000f;
+                            priceRangeMax = 100000f;
+                        }
+                        else
+                        {
+                            priceRangeMin = 0.01f;
+                            priceRangeMax = 0.5f;
+                        }
+                        break;
+                }
             }
             else
             {
-                priceRangeMin = 0.01f;
-                priceRangeMax = 0.5f;
+                // Fallback global
+                if (wankulCardData.Drop >= 0.45f)
+                {
+                    priceRangeMin = 0.01f;
+                    priceRangeMax = 0.5f;
+                }
+                else if (wankulCardData.Drop >= 0.3f)
+                {
+                    priceRangeMin = 0.5f;
+                    priceRangeMax = 1f;
+                }
+                else if (wankulCardData.Drop >= 0.1f)
+                {
+                    priceRangeMin = 3.5f;
+                    priceRangeMax = 10f;
+                }
+                else if (wankulCardData.Drop >= 0.0224f)
+                {
+                    priceRangeMin = 10f;
+                    priceRangeMax = 50f;
+                }
+                else if (wankulCardData.Drop >= 0.016f)
+                {
+                    priceRangeMin = 50f;
+                    priceRangeMax = 150f;
+                }
+                else if (wankulCardData.Drop >= 0.008f)
+                {
+                    priceRangeMin = 150f;
+                    priceRangeMax = 500f;
+                }
+                else if (wankulCardData.Drop >= 0.0028f)
+                {
+                    priceRangeMin = 500f;
+                    priceRangeMax = 1000f;
+                }
+                else if (wankulCardData.Drop >= 0.0008f)
+                {
+                    priceRangeMin = 1000f;
+                    priceRangeMax = 2500f;
+                }
+                else if (wankulCardData.Drop >= 0.0005f)
+                {
+                    priceRangeMin = 2500f;
+                    priceRangeMax = 4000f;
+                }
+                else if (wankulCardData.Drop >= 0.0001f)
+                {
+                    priceRangeMin = 10000f;
+                    priceRangeMax = 100000f;
+                }
+                else
+                {
+                    priceRangeMin = 0.01f;
+                    priceRangeMax = 0.5f;
+                }
             }
 
             // Calculer le prix avec la variation aléatoire (influencée par le prix max du segment)
