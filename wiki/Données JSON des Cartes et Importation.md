@@ -28,8 +28,6 @@ RegisterCards["RegisterCard() & Index Collision Check"]
 ParseFiles["JsonImporter.DeserializeToken() per file"]
 CreateData["CreateCardsData(allCards)"]
 Finalize["Populate WankulCardsData.Instance"]
-sub:JsonImporter.ImportJson["JsonImporter.ImportJson()"]
-JsonImporter.ImportJson["JsonImporter.ImportJson"]
 
 Start --> LoadConfig
 LoadConfig --> LegacyCheck
@@ -79,8 +77,6 @@ InspectProps["Inspect CardType or Unique Fields"]
 TerrainCast["obj.ToObject()"]
 SpecialCast["obj.ToObject()"]
 EffigyCast["obj.ToObject()"]
-sub:JsonImporter.DeserializeToken["JsonImporter Methods"]
-JsonImporter.DeserializeToken["JsonImporter.DeserializeToken"]
 
 Token --> CheckType
 CheckType --> Container
@@ -146,8 +142,6 @@ CombinePath["Path.Combine(pluginPath, TexturePath)"]
 FileCheck["File Exists on Disk?"]
 LoadTexture["Load Texture into Unity Engine"]
 Fallback["Log Warning / Apply Missing Texture Placeholder"]
-sub:PathResolution["Sprite and Texture Resolution"]
-PathResolution["PathResolution"]
 
 PluginPath --> CombinePath
 CombinePath --> FileCheck

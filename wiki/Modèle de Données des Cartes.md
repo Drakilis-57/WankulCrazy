@@ -12,9 +12,9 @@ Le Modèle de Données des Cartes (Card Data Model) régit la manière dont les 
 
 En tant que page parente, ce document fournit un aperçu architectural de haut niveau du sous-système de domaine de cartes. Pour les spécificités d'implémentation, consultez les pages enfants :
 
-* Registre WankulCardsData et types de cartes : [Registre WankulCardsData et types de cartes](/Drakilis-57/WankulCrazy/2.1-wankulcardsdata-registry-and-card-types)
-* Saisons et raretés : [Saisons et raretés](/Drakilis-57/WankulCrazy/2.2-seasons-and-rarities)
-* Données JSON de carte et importation : [Données JSON de carte et importation](/Drakilis-57/WankulCrazy/2.3-card-json-data-and-importing)
+* Registre WankulCardsData et types de cartes : [Registre WankulCardsData et Types de Cartes](Registre%20WankulCardsData%20et%20Types%20de%20Cartes.md)
+* Saisons et raretés : [Saisons et Raretés](Saisons%20et%20Raretés.md)
+* Données JSON des cartes et importation : [Données JSON des Cartes et Importation](Données%20JSON%20des%20Cartes%20et%20Importation.md)
 
 Sources : `cards/WankulCardsData.cs:1-165` [cards/WankulCardsData.cs](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/cards/WankulCardsData.cs)
 
@@ -54,7 +54,7 @@ Le coordinateur central pour la recherche et l'instanciation de cartes est `Wank
 
 Il maintient la liste principale des cartes personnalisées (`cards`), des cartes d'association directe (`association`) et des caches de recherche inversée (`reverseAssociation`) pour traduire entre les références de cartes de jeu Vanilla et les représentations de cartes Wankul.
 
-Pour plus de détails sur les sous-classes de cartes (`EffigyCardData`, `TerrainCardData`, `SpecialCardData`), les définitions de champs et les mécanismes de secours comme `AJETER`, voir [WankulCardsData Registry and Card Types](/Drakilis-57/WankulCrazy/2.1-wankulcardsdata-registry-and-card-types).
+Pour plus de détails sur les sous-classes de cartes (`EffigyCardData`, `TerrainCardData`, `SpecialCardData`), les définitions de champs et les mécanismes de secours comme `AJETER`, voir [Registre WankulCardsData et Types de Cartes](Registre%20WankulCardsData%20et%20Types%20de%20Cartes.md).
 
 Sources: `cards/WankulCardsData.cs:12-165` [cards/WankulCardsData.cs](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/cards/WankulCardsData.cs)
 
@@ -68,7 +68,7 @@ mappé à des étiquettes descriptives via `SeasonsContainer` [cards/Seasons.cs 
 
 De même, l'énumération `Rarity` prend en charge une liste de niveaux étendue allant des standards communs (`C`) et peu communs (`UC`) aux éditions spéciales, packs de démarrage et classifications de mèmes personnalisées [cards/Rarity.csL3-L27](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/cards/Rarity.cs#L3-L27)
 
-Pour des informations détaillées sur les convertisseurs JSON, les gestionnaires de saisons/raretés, et les fichiers de données, voir [Saisons et Raretés](/Drakilis-57/WankulCrazy/2.2-seasons-and-rarities).
+Pour des informations détaillées sur les convertisseurs JSON, les gestionnaires de saisons/raretés, et les fichiers de données, voir [Saisons et Raretés](Saisons%20et%20Raretés.md).
 
 Sources : `cards/Season.cs:3-11]`, `cards/Seasons.cs:5-16]`, `cards/Rarity.cs:3-27` [cards/Season.cs L3-L11](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/cards/Season.cs#L3-L11)
 
@@ -78,6 +78,6 @@ Sources : `cards/Season.cs:3-11]`, `cards/Seasons.cs:5-16]`, `cards/Rarity.cs:3
 
 Les données de carte personnalisée sont chargées dynamiquement à partir du disque via les pipelines d'importation.Le système analyse les attributs de carte, les chemins d'image-objet, les chemins de masque et les schémas hérités du répertoire `data/cards`.
 
-Pour plus d'informations sur la logique d'analyse, la prise en charge du schéma `legacy.json` et la résolution du chemin d'actif, voir [Données JSON de carte et importation](/Drakilis-57/WankulCrazy/2.3-card-json-data-and-importing).
+Pour plus d'informations sur la logique d'analyse, la prise en charge du schéma `legacy.json` et la résolution du chemin d'actif, voir [Données JSON des Cartes et Importation](Données%20JSON%20des%20Cartes%20et%20Importation.md).
 
 Sources : `cards/WankulCardsData.cs:18-25` [cards/WankulCardsData.cs](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/cards/WankulCardsData.cs)

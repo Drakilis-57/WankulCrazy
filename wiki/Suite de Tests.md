@@ -24,18 +24,18 @@ Le projet de test `WankulCrazyPlugin.Tests` fait référence au projet principal
 ```mermaid
 flowchart TD
 
-sub:TestProj["WankulCrazyPlugin.Tests.csproj"]
-sub:MainProj["WankulCrazyPlugin.csproj"]
-sub:xUnit["xunit 2.9.3"]
-sub:Cecil["Mono.Cecil 0.11.5"]
-sub:Unity["UnityEngine.Modules 2021.3.39"]
-sub:GameDll["libs/Assembly-CSharp.dll"]
+sub_TestProj["WankulCrazyPlugin.Tests.csproj"]
+sub_MainProj["WankulCrazyPlugin.csproj"]
+sub_xUnit["xunit 2.9.3"]
+sub_Cecil["Mono.Cecil 0.11.5"]
+sub_Unity["UnityEngine.Modules 2021.3.39"]
+sub_GameDll["libs/Assembly-CSharp.dll"]
 
-sub:TestProj --> sub:MainProj
-sub:TestProj --> sub:xUnit
-sub:TestProj --> sub:Cecil
-sub:TestProj --> sub:Unity
-sub:TestProj --> sub:GameDll
+sub_TestProj --> sub_MainProj
+sub_TestProj --> sub_xUnit
+sub_TestProj --> sub_Cecil
+sub_TestProj --> sub_Unity
+sub_TestProj --> sub_GameDll
 ```
 
 Sources : [WankulCrazyPlugin.Tests/WankulCrazyPlugin.Tests.csprojL1-L35](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/WankulCrazyPlugin.Tests/WankulCrazyPlugin.Tests.csproj#L1-L35)
@@ -49,12 +49,12 @@ Sources : [WankulCrazyPlugin.Tests/WankulCrazyPlugin.Tests.csprojL1-L35](https:
 ```mermaid
 flowchart TD
 
-sub:ColDef["StaticStateTestCollection.cs"]
-sub:StaticCol["StaticStateTests"]
-sub:Tests["Season/Rarity/Initialization Tests"]
+sub_ColDef["StaticStateTestCollection.cs"]
+sub_StaticCol["StaticStateTests"]
+sub_Tests["Season/Rarity/Initialization Tests"]
 
-sub:ColDef --> sub:StaticCol
-sub:StaticCol --> sub:Tests
+sub_ColDef --> sub_StaticCol
+sub_StaticCol --> sub_Tests
 ```
 
 Sources : [WankulCrazyPlugin.Tests/StaticStateTestCollection.cs L1-L9](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/WankulCrazyPlugin.Tests/StaticStateTestCollection.cs#L1-L9)
@@ -78,18 +78,18 @@ La suite de tests vérifie que les jetons de données de carte, les éléments p
 ```mermaid
 flowchart TD
 
-sub:JsonTest["JsonImporter / Deserialization Tests"]
-sub:Token["JToken.Parse()"]
-sub:Cards["List"]
-sub:Effigy["EffigyCardData"]
-sub:Terrain["TerrainCardData"]
-sub:Special["SpecialCardData"]
+sub_JsonTest["JsonImporter / Deserialization Tests"]
+sub_Token["JToken.Parse()"]
+sub_Cards["List"]
+sub_Effigy["EffigyCardData"]
+sub_Terrain["TerrainCardData"]
+sub_Special["SpecialCardData"]
 
-sub:JsonTest --> sub:Token
-sub:Token --> sub:Cards
-sub:Cards --> sub:Effigy
-sub:Cards --> sub:Terrain
-sub:Cards --> sub:Special
+sub_JsonTest --> sub_Token
+sub_Token --> sub_Cards
+sub_Cards --> sub_Effigy
+sub_Cards --> sub_Terrain
+sub_Cards --> sub_Special
 ```
 
 Sources : `[WankulCrazyPlugin.Tests/SeasonTestAndCustomPacksTests.cs:34-95]`, `[WankulCrazyPlugin.Tests/DocsFeaturesVerificationTests.cs:15-128]`, `[WankulCrazyPlugin.Tests/DynamicSeasonsAndRaritiesTests.cs:15-120]`, `[WankulCrazyPlugin.Tests/IndexAndExpansionTests.cs:13-25]`, [WankulCrazyPlugin.Tests/InitializationTests.csL14-L51](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/WankulCrazyPlugin.Tests/InitializationTests.cs#L14-L51)
@@ -103,14 +103,14 @@ Les extensions d'énumération et les correctifs d'énumération Harmony (`Patch
 ```mermaid
 flowchart TD
 
-sub:EnumTest["EnumExtensionsTests.cs"]
-sub:ItemCheck["TestCardPack32 / TestCardPack64"]
-sub:PackCheck["SeasonTestPack32 / SeasonTestPack64"]
-sub:ParseCheck["Case-insensitive Custom Parsing"]
+sub_EnumTest["EnumExtensionsTests.cs"]
+sub_ItemCheck["TestCardPack32 / TestCardPack64"]
+sub_PackCheck["SeasonTestPack32 / SeasonTestPack64"]
+sub_ParseCheck["Case-insensitive Custom Parsing"]
 
-sub:EnumTest --> sub:ItemCheck
-sub:EnumTest --> sub:PackCheck
-sub:EnumTest --> sub:ParseCheck
+sub_EnumTest --> sub_ItemCheck
+sub_EnumTest --> sub_PackCheck
+sub_EnumTest --> sub_ParseCheck
 ```
 
 Sources : `[WankulCrazyPlugin.Tests/SeasonTestAndCustomPacksTests.cs:81-96]`, [WankulCrazyPlugin.Tests/EnumExtensionsTests.cs L1-L77](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/WankulCrazyPlugin.Tests/EnumExtensionsTests.cs#L1-L77)
@@ -124,16 +124,16 @@ Sources : `[WankulCrazyPlugin.Tests/SeasonTestAndCustomPacksTests.cs:81-96]`, [
 ```mermaid
 flowchart TD
 
-sub:CecilTest["InspectBinder.cs"]
-sub:GameAssembly["Assembly-CSharp.dll"]
-sub:RestockScreen["RestockItemScreen"]
-sub:EvalSorting["EvaluateSorting"]
-sub:Output["ITestOutputHelper.WriteLine()"]
+sub_CecilTest["InspectBinder.cs"]
+sub_GameAssembly["Assembly-CSharp.dll"]
+sub_RestockScreen["RestockItemScreen"]
+sub_EvalSorting["EvaluateSorting"]
+sub_Output["ITestOutputHelper.WriteLine()"]
 
-sub:CecilTest --> sub:GameAssembly
-sub:GameAssembly --> sub:RestockScreen
-sub:RestockScreen --> sub:EvalSorting
-sub:EvalSorting --> sub:Output
+sub_CecilTest --> sub_GameAssembly
+sub_GameAssembly --> sub_RestockScreen
+sub_RestockScreen --> sub_EvalSorting
+sub_EvalSorting --> sub_Output
 ```
 
 Sources : [WankulCrazyPlugin.Tests/InspectBinder.cs L1-L38](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/WankulCrazyPlugin.Tests/InspectBinder.cs#L1-L38)
@@ -147,14 +147,14 @@ Sources : [WankulCrazyPlugin.Tests/InspectBinder.cs L1-L38](https://github.com/
 ```mermaid
 flowchart TD
 
-sub:Bench["TryGetComponentBenchmark.cs"]
-sub:GC["Garbage Collection Optimization"]
-sub:TryGet["TryGetComponent()"]
-sub:Get["GetComponent()"]
+sub_Bench["TryGetComponentBenchmark.cs"]
+sub_GC["Garbage Collection Optimization"]
+sub_TryGet["TryGetComponent()"]
+sub_Get["GetComponent()"]
 
-sub:Bench --> sub:GC
-sub:GC --> sub:TryGet
-sub:GC --> sub:Get
+sub_Bench --> sub_GC
+sub_GC --> sub_TryGet
+sub_GC --> sub_Get
 ```
 
 Sources : [WankulCrazyPlugin.Tests/TryGetComponentBenchmark.cs L1-L27](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/WankulCrazyPlugin.Tests/TryGetComponentBenchmark.cs#L1-L27)

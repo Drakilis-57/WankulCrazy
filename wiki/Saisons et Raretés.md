@@ -42,7 +42,7 @@ Pour mapper les énumérations sur des noms d'affichage lisibles par l'homme, le
 ```mermaid
 classDiagram
     class Season {
-        «enumeration»
+        <<enumeration>>
         S01
         S02
         S03
@@ -51,7 +51,7 @@ classDiagram
         HS
     }
     class Rarity {
-        «enumeration»
+        <<enumeration>>
         C
         UC
         R

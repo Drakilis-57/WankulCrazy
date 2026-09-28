@@ -34,31 +34,32 @@ Le mécanisme d'interception fourni par la bibliothèque `HarmonyLib` pour modif
 Un modèle d'optimisation des performances implémenté dans des chargeurs asynchrones et des pipelines de rendu d'interface utilisateur (tels que `WankulLoadingScreen`) pour répartir les tâches lourdes de chargement d'assets sur plusieurs images, évitant ainsi le blocage du jeu et les bogues de thread principal.
 
 > **Diagramme 1 : Exécution du framework et flux de correctifs**
-> ```mermaid
-> graph TD
->     A["Plugin.Awake"]
->     B["Instance Harmony"]
->     C["Méthode de jeu originale"]
->     D["Préfixe Harmony"]
->     E["Postfix Harmony"]
-> 
->     subgraph Host["Hôte BepInEx"]
->         A
->         B
->     end
-> 
->     subgraph PatchRegistry["Patch Registry"]
->         C
->         D
->         E
->     end
-> 
->     A --> B
->     B --> C
->     C --> D
->     C --> E
-> ```
-> Sources : [Plugin.cs L36-L71](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/Plugin.cs#L36-L71)
+
+```mermaid
+graph TD
+    A["Plugin.Awake"]
+    B["Instance Harmony"]
+    C["Méthode de jeu originale"]
+    D["Préfixe Harmony"]
+    E["Postfix Harmony"]
+
+    subgraph Host["Hôte BepInEx"]
+        A
+        B
+    end
+
+    subgraph PatchRegistry["Patch Registry"]
+        C
+        D
+        E
+    end
+
+    A --> B
+    B --> C
+    C --> D
+    C --> E
+```
+Sources : [Plugin.cs L36-L71](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/Plugin.cs#L36-L71)
 
 ---
 
@@ -103,37 +104,38 @@ Une finition visuelle spéciale appliquée aux rendus de cartes, contrôlée via
 Textures et matériaux 3D spécialisés utilisés sur les podiums d'exposition et les comptoirs des magasins pour présenter des articles Wankul de grande valeur et des présentoirs personnalisés.
 
 > **Diagramme 2 : Résolution d'entité de domaine et mappage d'inventaire**
-> ```mermaid
-> graph TD
->     F["Inventory.AddCard"]
->     G["WankulCardsData.GetFromMonster"]
->     H["WankulCardData"]
->     AJ["WankulCardsData.GetAJETER"]
->     J["WankulInventory.wankulCards"]
-> 
->     subgraph Action["Action d'inventaire"]
->         F
->         G
->     end
-> 
->     subgraph Resolution["Pipeline de résolution"]
->         H
->         AJ
->     end
-> 
->     subgraph Storage["Stockage"]
->         J
->     end
-> 
->     F --> G
->     G --> H
->     G --> AJ
->     H --> J
->     AJ --> J
-> ```
-> Sources : [cards/WankulCardsData.cs L79-L147](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/cards/WankulCardsData.cs#L79-L147)
-> [patch/Inventory.cs L8-L19](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/patch/Inventory.cs#L8-L19)
-> [inventory/WankulInventory.cs L12-L15](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/inventory/WankulInventory.cs#L12-L15)
+
+```mermaid
+graph TD
+    F["Inventory.AddCard"]
+    G["WankulCardsData.GetFromMonster"]
+    H["WankulCardData"]
+    AJ["WankulCardsData.GetAJETER"]
+    J["WankulInventory.wankulCards"]
+
+    subgraph Action["Action d'inventaire"]
+        F
+        G
+    end
+
+    subgraph Resolution["Pipeline de résolution"]
+        H
+        AJ
+    end
+
+    subgraph Storage["Stockage"]
+        J
+    end
+
+    F --> G
+    G --> H
+    G --> AJ
+    H --> J
+    AJ --> J
+```
+Sources : [cards/WankulCardsData.cs L79-L147](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/cards/WankulCardsData.cs#L79-L147)
+[patch/Inventory.cs L8-L19](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/patch/Inventory.cs#L8-L19)
+[inventory/WankulInventory.cs L12-L15](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/inventory/WankulInventory.cs#L12-L15)
 
 ---
 
@@ -164,34 +166,35 @@ Une structure de données de jeu interne/suivi de liste conservant les positions
 Une routine de diagnostic ou un indicateur de sauvegarde utilisé pour vider les états d'inventaire internes, les dictionnaires d'association et les arborescences de sérialisation pour le débogage des bogues de synchronisation de sauvegarde/chargement.
 
 > **Diagramme 3 : Extension d'énumération et pipeline d'analyse**
-> ```mermaid
-> graph TD
->     K["Type d'élément chaîne/JSON"]
->     L["EnumExtensions.SafeParseEItemType"]
->     M["Recherche itemTypeAliases"]
->     N["Enum.TryParse"]
->     O["Dictionnaire customEnumValues"]
->     P["Valeur EItemType"]
-> 
->     subgraph Input["Espace d'entrée"]
->         K
->         L
->     end
-> 
->     subgraph Analysis["Logique d'analyse"]
->         M
->         N
->         O
->     end
-> 
->     subgraph Output["Espace de sortie"]
->         P
->     end
-> 
->     K --> L
->     L --> M
->     M --> N
->     N --> O
->     O --> P
-> ```
-> Sources : [patch/EItemTypeExtension.cs L110-L160](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/patch/EItemTypeExtension.cs#L110-L160)
+
+```mermaid
+graph TD
+    K["Type d'élément chaîne/JSON"]
+    L["EnumExtensions.SafeParseEItemType"]
+    M["Recherche itemTypeAliases"]
+    N["Enum.TryParse"]
+    O["Dictionnaire customEnumValues"]
+    P["Valeur EItemType"]
+
+    subgraph Input["Espace d'entrée"]
+        K
+        L
+    end
+
+    subgraph Analysis["Logique d'analyse"]
+        M
+        N
+        O
+    end
+
+    subgraph Output["Espace de sortie"]
+        P
+    end
+
+    K --> L
+    L --> M
+    M --> N
+    N --> O
+    O --> P
+```
+Sources : [patch/EItemTypeExtension.cs L110-L160](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/patch/EItemTypeExtension.cs#L110-L160)

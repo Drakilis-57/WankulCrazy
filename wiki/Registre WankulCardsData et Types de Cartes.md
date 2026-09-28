@@ -31,8 +31,40 @@ Le registre contient une liste principale de cartes (`cards`) et un cache de rec
 
 Si la collection n'est pas initialisée lors de l'accès, `EnsureInitialized()` appelle `JsonImporter.ImportJson()` [cards/WankulCardsData.cs L18-L25](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/cards/WankulCardsData.cs#L18-L25)
 
-```css
-public void EnsureInitialized(){    if (cards == null || cards.Count == 0)    {        Plugin.LogInfo("[WankulCardsData] Initialisation des cartes déclenchée par EnsureInitialized.");        JsonImporter.ImportJson();    }}```[cards/WankulCardsData.cs:18-25]() ### Season IndexingTo avoid $O(N)$ scans during UI rendering or season filtering, `GetCardsBySeasonIndex()` builds a lazy dictionary mapping season strings or enum values to sub-lists of `WankulCardData` <FileRef file-url="https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/cards/WankulCardsData.cs#L38-L60" min=38 max=60 file-path="cards/WankulCardsData.cs">cards/WankulCardsData.cs:38-60</FileRef> Static helpers `GetCardsBySeasonFast(string seasonId)` and `GetCardsBySeasonFast(Season season)` provide direct access <FileRef file-url="https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/cards/WankulCardsData.cs#L62-L76" min=62 max=76 file-path="cards/WankulCardsData.cs">cards/WankulCardsData.cs:62-76</FileRef> ```mermaidgraph TD    A["WankulCardsData.Instance"] --> B["EnsureInitialized()"]    B --> C["JsonImporter.ImportJson()"]    A --> D["GetCardsBySeasonFast(string seasonId)"]    D --> E["GetCardsBySeasonIndex()"]    E --> F["Dictionary<string, List<WankulCardData>> cardsBySeason"]    F --> G["WankulCardData Collection"]     sub-graph "Code Entity Space"    A    B    C    D    E    F    G    end
+```csharp
+public void EnsureInitialized()
+{
+    if (cards == null || cards.Count == 0)
+    {
+        Plugin.LogInfo("[WankulCardsData] Initialisation des cartes déclenchée par EnsureInitialized.");
+        JsonImporter.ImportJson();
+    }
+}
+```
+[cards/WankulCardsData.cs L18-L25](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/cards/WankulCardsData.cs#L18-L25)
+
+### Indexation des saisons
+
+Pour éviter les scans $O(N)$ lors du rendu de l'interface utilisateur ou du filtrage des saisons, `GetCardsBySeasonIndex()` construit un dictionnaire paresseux mappant les chaînes de saison ou les valeurs d'énumération à des sous-listes de `WankulCardData` [cards/WankulCardsData.cs L38-L60](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/cards/WankulCardsData.cs#L38-L60). Les assistants statiques `GetCardsBySeasonFast(string seasonId)` et `GetCardsBySeasonFast(Season season)` fournissent un accès direct [cards/WankulCardsData.cs L62-L76](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/cards/WankulCardsData.cs#L62-L76).
+
+```mermaid
+flowchart TD
+    A["WankulCardsData.Instance"] --> B["EnsureInitialized()"]
+    B --> C["JsonImporter.ImportJson()"]
+    A --> D["GetCardsBySeasonFast(string seasonId)"]
+    D --> E["GetCardsBySeasonIndex()"]
+    E --> F["Dictionary<string, List<WankulCardData>> cardsBySeason"]
+    F --> G["WankulCardData Collection"]
+
+    subgraph CodeSpace ["Code Entity Space"]
+        A
+        B
+        C
+        D
+        E
+        F
+        G
+    end
 ```
 
 *Figure 1 : Cycle de vie de WankulCardsData et cartographie des index saisonniers.*
@@ -56,8 +88,24 @@ Lorsque le jeu demande un mappage de carte pour un `CardData` natif donné (appe
 
 S'il est manquant et autorisé, il évalue la rareté et le type d'expansion pour déterminer le `ECollectionPackType` approprié, tire une carte aléatoire via `WankulInventory.randFromPackType()` et enregistre les liens aller et retour [cards/WankulCardsData.csL107-L146](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/cards/WankulCardsData.cs#L107-L146)
 
-```
+```mermaid
+flowchart TD
 
+A["Requête de CardData natif (monster)"]
+B["WankulCardsData.GetFromMonster()"]
+C{"association.TryGetValue?"}
+D["Retourner WankulCardData associé"]
+E["Déterminer le type de booster (ECollectionPackType)"]
+F["WankulInventory.randFromPackType()"]
+G["Enregistrer association & reverseAssociation"]
+
+A --> B
+B --> C
+C -- "Oui" --> D
+C -- "Non" --> E
+E --> F
+F --> G
+G --> D
 ```
 
 *Figure 2 : Workflow de résolution d'association pour les cartes natives.*
