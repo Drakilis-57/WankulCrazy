@@ -1,0 +1,28 @@
+# Drakilis-57-WankulCrazy-DeepWiki
+
+## Contents
+
+- [Overview](Overview.md)
+- [Getting-Started-&-Installation](Getting-Started-&-Installation.md)
+- [Plugin-Bootstrap-and-Harmony-Patch-Registry](Plugin-Bootstrap-and-Harmony-Patch-Registry.md)
+- [Card-Data-Model](Card-Data-Model.md)
+- [WankulCardsData-Registry-and-Card-Types](WankulCardsData-Registry-and-Card-Types.md)
+- [Seasons-and-Rarities](Seasons-and-Rarities.md)
+- [Card-JSON-Data-and-Importing](Card-JSON-Data-and-Importing.md)
+- [Gameplay-Patches](Gameplay-Patches.md)
+- [Card-Opening-Sequence](Card-Opening-Sequence.md)
+- [Player-Interaction-and-Card-Boxes](Player-Interaction-and-Card-Boxes.md)
+- [Card-Rendering-and-UI-Replacement](Card-Rendering-and-UI-Replacement.md)
+- [Economy-Pricing-and-Trades](Economy-Pricing-and-Trades.md)
+- [Inventory-and-Persistence](Inventory-and-Persistence.md)
+- [WankulInventory-and-Drop-Mechanics](WankulInventory-and-Drop-Mechanics.md)
+- [Save-System](Save-System.md)
+- [Asset-&-Content-Importers](Asset-&-Content-Importers.md)
+- [Custom-Items-and-Shop-Registration](Custom-Items-and-Shop-Registration.md)
+- [Mesh,-Texture-and-Sprite-Replacement](Mesh,-Texture-and-Sprite-Replacement.md)
+- [Loading-Screen-and-Debug-UI](Loading-Screen-and-Debug-UI.md)
+- [Build,-CI-and-Testing](Build,-CI-and-Testing.md)
+- [Build-System-and-Dependencies](Build-System-and-Dependencies.md)
+- [Test-Suite](Test-Suite.md)
+- [Project-Governance-and-Issue-Templates](Project-Governance-and-Issue-Templates.md)
+- [Glossary](Glossary.md)
