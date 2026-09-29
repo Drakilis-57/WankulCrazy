@@ -11,7 +11,7 @@
 
 ## Objectif et portée
 
-`WankulCrazy` est une modification basée sur BepInEx 5.4 et Harmony pour *TCG Card Shop Simulator*, implémentée en C#.Son objectif principal est de remplacer les ressources, cartes et éléments d'interface utilisateur standard du jeu par du contenu personnalisé de l'univers Wankul [Docs/DOCS.md:7-17].Le mod gère un pipeline de données dynamiques complexe, chargeant des définitions de cartes personnalisées, des saisons, des raretés, des maillages 3D et des textures à partir de fichiers JSON et les injectant dans le runtime à l'aide des correctifs de la méthode Harmony [Docs/DOCS.md:7-40].
+`WankulCrazy` est un mod basée sur BepInEx 5.4 et Harmony pour *TCG Card Shop Simulator*, implémentée en C#.Son objectif principal est de remplacer les ressources, cartes et éléments d'interface utilisateur standard du jeu par du contenu personnalisé de l'univers Wankul [Docs/DOCS.md:7-17].Le mod gère un pipeline de données dynamiques complexe, chargeant des définitions de cartes personnalisées, des saisons, des raretés, des maillages 3D et des textures à partir de fichiers JSON et les injectant dans le runtime à l'aide des correctifs de la méthode Harmony [Docs/DOCS.md:7-40].
 
 L'orchestration principale du runtime est ancrée par la classe `Plugin`, qui étend `BaseUnityPlugin` de BepInEx et gère l'initialisation du cycle de vie, la liaison de configuration et l'application de correctifs de méthodes [Plugin.cs:14-46].
 
