@@ -9,7 +9,7 @@ Nous rappelons que le projet n'a pas pour but d'être commercialisé, et que nou
 L'utilisation des textures de cartes Wankuls pour tout autre projet doit avant tout être validé, et autorisé par Wankil.
 
 
-### Généré avec
+### Généré avec :
 
 Le mod a été généré avec :
 
