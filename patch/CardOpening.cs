@@ -404,8 +404,13 @@ namespace WankulCrazyPlugin.patch
                     {
                         EffigyCardData effigyCard = (EffigyCardData)wankulCard;
 
-                        // Si la carte a une rareté de UR1 ou plus, elle devient foil
-                        if (effigyCard.Rarity >= Rarity.UR1)
+                        // On vérifie le IsEligibleForFoil du manager, fallback sur Rarity >= UR1
+                        var rarityData = RaritiesManager.GetRarity(effigyCard.RarityId);
+                        if (rarityData != null && rarityData.IsEligibleForFoil)
+                        {
+                            associatedCard.isFoil = true;
+                        }
+                        else if (effigyCard.Rarity >= Rarity.UR1)
                         {
                             associatedCard.isFoil = true;
                         }
