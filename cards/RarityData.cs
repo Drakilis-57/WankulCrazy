@@ -30,6 +30,7 @@ namespace WankulCrazyPlugin.cards
         public float PriceRangeMax { get; set; } = 0.5f;
         public bool IsEligibleForFoil { get; set; } = false;
         public bool IsEligibleForMinRare { get; set; } = false;
+        public float DropMultiplier { get; set; } = 1.0f;
 
         public RarityData() { }
 
@@ -40,13 +41,26 @@ namespace WankulCrazyPlugin.cards
             ExperienceMultiplier = experienceMultiplier;
             PriceMultiplier = priceMultiplier;
 
-            // Assignation des valeurs par défaut pour une custom rarity ("DUO" = niveau LA)
-            if (id == "DUO")
+            // Assignation des valeurs par défaut pour les raretés
+            if (id == "LB")
+            {
+                DropMultiplier = 0.05f;
+            }
+            else if (id == "LA")
+            {
+                DropMultiplier = 0.02f;
+            }
+            else if (id == "LO")
+            {
+                DropMultiplier = 0.005f;
+            }
+            else if (id == "DUO")
             {
                 PriceRangeMin = 500f;
                 PriceRangeMax = 1000f;
                 IsEligibleForFoil = true;
                 IsEligibleForMinRare = true;
+                DropMultiplier = 0.02f;
             }
         }
     }

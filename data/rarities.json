@@ -33,19 +33,22 @@
     "Id": "LB",
     "Name": "Legendary Bronze",
     "ExperienceMultiplier": 3.0,
-    "PriceMultiplier": 3.0
+    "PriceMultiplier": 3.0,
+    "DropMultiplier": 0.05
   },
   {
     "Id": "LA",
     "Name": "Legendary Argent",
     "ExperienceMultiplier": 4.0,
-    "PriceMultiplier": 4.0
+    "PriceMultiplier": 4.0,
+    "DropMultiplier": 0.02
   },
   {
     "Id": "LO",
     "Name": "Legendary Or",
     "ExperienceMultiplier": 5.0,
-    "PriceMultiplier": 5.0
+    "PriceMultiplier": 5.0,
+    "DropMultiplier": 0.005
   },
   {
     "Id": "DUO",
@@ -55,6 +58,7 @@
     "PriceRangeMin": 500.0,
     "PriceRangeMax": 1000.0,
     "IsEligibleForFoil": true,
-    "IsEligibleForMinRare": true
+    "IsEligibleForMinRare": true,
+    "DropMultiplier": 0.02
   }
 ]

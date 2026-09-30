@@ -127,5 +127,41 @@ namespace WankulCrazyPlugin.Tests
             Assert.Equal(3, closest.Index);
             Assert.Equal(2500f, closest.Price);
         }
+
+        [Fact]
+        public void CollectionBinderFlipAnimCtrl_SelectionModesExistInAssembly()
+        {
+            var dllPath = System.IO.Path.GetFullPath(System.IO.Path.Combine(AppContext.BaseDirectory, @"..\..\..\..\libs\Assembly-CSharp.dll"));
+            var resolver = new Mono.Cecil.DefaultAssemblyResolver();
+            resolver.AddSearchDirectory(System.IO.Path.GetDirectoryName(dllPath));
+            var asm = Mono.Cecil.AssemblyDefinition.ReadAssembly(dllPath, new Mono.Cecil.ReaderParameters { AssemblyResolver = resolver });
+
+            var ipcType = asm.MainModule.Types.First(t => t.Name == "InteractionPlayerController");
+            Assert.Contains(ipcType.Methods, m => m.Name == "IsSelectingCardForGradingScreen");
+            Assert.Contains(ipcType.Methods, m => m.Name == "IsSelectingCardForEditDeckScreen");
+            Assert.Contains(ipcType.Methods, m => m.Name == "IsSelectingCardForBulkDonationBoxScreen");
+            Assert.Contains(ipcType.Methods, m => m.Name == "UpdateSelectedCardData");
+            Assert.Contains(ipcType.Methods, m => m.Name == "ExitViewCardAlbumMode");
+        }
+
+        [Fact]
+        public void DropMultiplier_IsAppliedProperlyAcrossRarities()
+        {
+            var lb = RaritiesManager.GetRarity("LB");
+            var la = RaritiesManager.GetRarity("LA");
+            var lo = RaritiesManager.GetRarity("LO");
+            var duo = RaritiesManager.GetRarity("DUO");
+            var r = RaritiesManager.GetRarity("R");
+
+            Assert.Equal(0.05f, lb.DropMultiplier);
+            Assert.Equal(0.02f, la.DropMultiplier);
+            Assert.Equal(0.005f, lo.DropMultiplier);
+            Assert.Equal(0.02f, duo.DropMultiplier);
+            Assert.Equal(1.0f, r.DropMultiplier);
+
+            var loCard = new EffigyCardData { RarityId = "LO", Rarity = Rarity.LO, Drop = 15f };
+            float effectiveDrop = WeightedCardDropService.GetCardEffectiveDrop(loCard, false, Season.S01);
+            Assert.Equal(15f * 0.005f, effectiveDrop);
+        }
     }
 }

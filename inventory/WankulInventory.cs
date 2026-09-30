@@ -154,8 +154,7 @@ namespace WankulCrazyPlugin.inventory
             float totalDropChance = 0f;
             foreach (var card in seasonalCard)
             {
-                float increaseFactor = RarityIncreaseCalculator.GetIncreaseFactor(card, increaseRarity, season);
-                totalDropChance += card.Drop * increaseFactor;
+                totalDropChance += WeightedCardDropService.GetCardEffectiveDrop(card, increaseRarity, season);
             }
 
             float randomValue = RandomUtils.Range(0f, totalDropChance);

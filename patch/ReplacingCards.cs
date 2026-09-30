@@ -443,6 +443,64 @@ public class ReplacingCards
         {
             return false;
         }
+
+        // 1. Sélection de carte pour l'éditeur de Deck
+        if (CSingleton<InteractionPlayerController>.Instance.IsSelectingCardForEditDeckScreen())
+        {
+            bool isGradedAlbum = (bool)(Plugin.GetPProperty(__instance, "m_IsGradedCardAlbum") ?? false);
+            if (isGradedAlbum)
+            {
+                return false;
+            }
+            CardData selectedCard = __instance.m_CurrentRaycastedInteractableCard3d.m_Card3dUI.m_CardUI.GetCardData();
+            CSingleton<InteractionPlayerController>.Instance.UpdateSelectedCardData(selectedCard);
+            CPlayerData.ReduceCard(selectedCard, 1);
+            CSingleton<InteractionPlayerController>.Instance.ExitViewCardAlbumMode();
+            return false;
+        }
+
+        // 2. Sélection de carte pour la Boîte de dons (Bulk Donation Box)
+        if (CSingleton<InteractionPlayerController>.Instance.IsSelectingCardForBulkDonationBoxScreen())
+        {
+            CardData selectedCard = __instance.m_CurrentRaycastedInteractableCard3d.m_Card3dUI.m_CardUI.GetCardData();
+            bool isGradedAlbum = (bool)(Plugin.GetPProperty(__instance, "m_IsGradedCardAlbum") ?? false);
+            if (isGradedAlbum)
+            {
+                if (!CSingleton<InteractionPlayerController>.Instance.CanSelectGradedCardForBulkDonationBoxScreen())
+                {
+                    return false;
+                }
+                CSingleton<InteractionPlayerController>.Instance.UpdateSelectedCardData(selectedCard);
+                CPlayerData.RemoveGradedCard(selectedCard, false);
+                CSingleton<InteractionPlayerController>.Instance.ExitViewCardAlbumMode();
+                Plugin.SetPProperty(__instance, "m_CanUpdateSort", true);
+                return false;
+            }
+            CSingleton<InteractionPlayerController>.Instance.UpdateSelectedCardData(selectedCard);
+            CPlayerData.ReduceCard(selectedCard, 1);
+            CSingleton<InteractionPlayerController>.Instance.ExitViewCardAlbumMode();
+            return false;
+        }
+
+        // 3. Sélection de carte pour l'application de Gradation (Téléphone)
+        if (CSingleton<InteractionPlayerController>.Instance.IsSelectingCardForGradingScreen())
+        {
+            CardData selectedCard = __instance.m_CurrentRaycastedInteractableCard3d.m_Card3dUI.m_CardUI.GetCardData();
+            CSingleton<InteractionPlayerController>.Instance.UpdateSelectedCardData(selectedCard);
+            bool isGradedAlbum = (bool)(Plugin.GetPProperty(__instance, "m_IsGradedCardAlbum") ?? false);
+            if (isGradedAlbum)
+            {
+                CPlayerData.RemoveGradedCard(selectedCard, false);
+                Plugin.SetPProperty(__instance, "m_CanUpdateSort", true);
+            }
+            else
+            {
+                CPlayerData.ReduceCard(selectedCard, 1);
+            }
+            CSingleton<InteractionPlayerController>.Instance.ExitViewCardAlbumMode();
+            return false;
+        }
+
         if (!InteractionPlayerController.HasEnoughSlotToHoldCard())
         {
             NotEnoughResourceTextPopup.ShowText(ENotEnoughResourceText.HandFull);

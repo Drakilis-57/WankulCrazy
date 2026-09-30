@@ -71,16 +71,15 @@ namespace WankulCrazyPlugin.Tests
 
             var cards = new List<WankulCardData> { cardC, cardLB };
 
-            // Avec increaseRarity = true, cardLB a un facteur de 2f.
-            // Son drop virtuel passe à 100f.
-            // Total = 100(C) + 100(LB) = 200.
+            // Avec increaseRarity = true, cardLB a un facteur de 2f et un DropMultiplier de 0.05f (50 * 0.05 * 2 = 5f).
+            // Total = 100(C) + 5(LB) = 105.
 
             // randomValue = 50f -> Tombe sur cardC (cumul à 100)
             var result1 = WeightedCardDropService.SelectCard(cards, 50f, increaseRarity: true, Season.S01);
             Assert.Equal(1, result1.Index);
 
-            // randomValue = 150f -> Dépasse 100, tombe sur cardLB (cumul à 200)
-            var result2 = WeightedCardDropService.SelectCard(cards, 150f, increaseRarity: true, Season.S01);
+            // randomValue = 102f -> Dépasse 100, tombe sur cardLB (cumul à 105)
+            var result2 = WeightedCardDropService.SelectCard(cards, 102f, increaseRarity: true, Season.S01);
             Assert.Equal(2, result2.Index);
         }
     }

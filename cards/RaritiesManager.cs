@@ -115,6 +115,10 @@ namespace WankulCrazyPlugin.cards
                 {
                     rarityData.PriceMultiplier = existingRarity.PriceMultiplier;
                 }
+                if (rarityData.DropMultiplier == 1.0f && existingRarity.DropMultiplier != 1.0f)
+                {
+                    rarityData.DropMultiplier = existingRarity.DropMultiplier;
+                }
             }
 
             raritiesById[rarityData.Id] = rarityData;
