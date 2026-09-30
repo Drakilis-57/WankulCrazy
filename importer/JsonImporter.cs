@@ -138,7 +138,23 @@ public class JsonImporter
         if (wankulsToken != null)
         {
             List<EffigyCardData> wankuls = wankulsToken.ToObject<List<EffigyCardData>>(serializer);
-            if (wankuls != null) cards.AddRange(wankuls);
+            if (wankuls != null)
+            {
+                // Hook manuel pour conserver RarityId si fourni dans le JSON car Newtonsoft
+                // ignore RarityId via le setter de WankulCardData.Rarity
+                if (wankulsToken.Type == JTokenType.Array)
+                {
+                    JArray array = (JArray)wankulsToken;
+                    for (int i = 0; i < wankuls.Count; i++)
+                    {
+                        if (array[i] is JObject wankulObj && wankulObj["Rarity"] != null)
+                        {
+                            wankuls[i].RarityId = wankulObj["Rarity"].ToString();
+                        }
+                    }
+                }
+                cards.AddRange(wankuls);
+            }
         }
 
         JToken terrainsToken = jsonObject["terrains"];
@@ -160,30 +176,44 @@ public class JsonImporter
 
     private static WankulCardData DeserializeSingleCard(JObject obj, JsonSerializer serializer)
     {
+        WankulCardData result = null;
         if (obj["CardType"] != null)
         {
             string cardType = obj["CardType"].ToString();
             if (cardType.Equals("Terrain", StringComparison.OrdinalIgnoreCase))
-                return obj.ToObject<TerrainCardData>(serializer);
-            if (cardType.Equals("Special", StringComparison.OrdinalIgnoreCase))
-                return obj.ToObject<SpecialCardData>(serializer);
-            if (cardType.Equals("Effigy", StringComparison.OrdinalIgnoreCase))
-                return obj.ToObject<EffigyCardData>(serializer);
+                result = obj.ToObject<TerrainCardData>(serializer);
+            else if (cardType.Equals("Special", StringComparison.OrdinalIgnoreCase))
+                result = obj.ToObject<SpecialCardData>(serializer);
+            else if (cardType.Equals("Effigy", StringComparison.OrdinalIgnoreCase))
+                result = obj.ToObject<EffigyCardData>(serializer);
         }
 
-        if (obj["Terrain"] != null)
+        if (result == null)
         {
-            return obj.ToObject<TerrainCardData>(serializer);
+            if (obj["Terrain"] != null)
+            {
+                result = obj.ToObject<TerrainCardData>(serializer);
+            }
+            else if (obj["Special"] != null)
+            {
+                result = obj.ToObject<SpecialCardData>(serializer);
+            }
+            else if (obj["Effigy"] != null || obj["Rarity"] != null || obj["RarityId"] != null)
+            {
+                result = obj.ToObject<EffigyCardData>(serializer);
+            }
+            else
+            {
+                result = obj.ToObject<WankulCardData>(serializer);
+            }
         }
-        if (obj["Special"] != null)
+
+        if (result is EffigyCardData effigy && obj["Rarity"] != null)
         {
-            return obj.ToObject<SpecialCardData>(serializer);
+            effigy.RarityId = obj["Rarity"].ToString();
         }
-        if (obj["Effigy"] != null || obj["Rarity"] != null || obj["RarityId"] != null)
-        {
-            return obj.ToObject<EffigyCardData>(serializer);
-        }
-        return obj.ToObject<WankulCardData>(serializer);
+
+        return result;
     }
 
     private static void CreateCardsData(List<WankulCardData> cards)

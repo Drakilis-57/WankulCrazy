@@ -106,7 +106,8 @@ namespace WankulCrazyPlugin.inventory
 
                 if (isMinRare)
                 {
-                    seasonalCard = effigyCardsData.FindAll(card => card.Rarity >= Rarity.R)
+                    seasonalCard = effigyCardsData.FindAll(card =>
+                        card.Rarity >= Rarity.R || (RaritiesManager.GetRarity(card.RarityId)?.IsEligibleForMinRare ?? false))
                         .ConvertAll(card => (WankulCardData)card);
                 }
                 else if (isMinUR)
@@ -122,7 +123,8 @@ namespace WankulCrazyPlugin.inventory
 
                 if (isRare)
                 {
-                    seasonalCard = effigyCardsData.FindAll(card => card.Rarity == Rarity.R)
+                    seasonalCard = effigyCardsData.FindAll(card =>
+                        card.Rarity == Rarity.R || (RaritiesManager.GetRarity(card.RarityId)?.IsEligibleForMinRare ?? false))
                         .ConvertAll(card => (WankulCardData)card);
                 }
 
@@ -133,7 +135,7 @@ namespace WankulCrazyPlugin.inventory
             else if (!isTerrain && !isMinRare)
             {
                 seasonalCard = seasonalCard.FindAll(card =>
-                    !(card is EffigyCardData effigyCard && effigyCard.Rarity >= Rarity.R)
+                    !(card is EffigyCardData effigyCard && (effigyCard.Rarity >= Rarity.R || (RaritiesManager.GetRarity(effigyCard.RarityId)?.IsEligibleForMinRare ?? false)))
                 );
             }
 
@@ -152,96 +154,18 @@ namespace WankulCrazyPlugin.inventory
             float totalDropChance = 0f;
             foreach (var card in seasonalCard)
             {
-                float increaseFactor = 1f;
-                if (increaseRarity)
-                {
-                    if (card is EffigyCardData effigyCard)
-                    {
-                        switch (effigyCard.Rarity)
-                        {
-                            case Rarity.R:
-                                increaseFactor = 0.25f;
-                                break;
-                            case Rarity.UR1:
-                            case Rarity.UR2:
-                                increaseFactor = 1f;
-                                break;
-                            case Rarity.LB:
-                            case Rarity.LA:
-                            case Rarity.LO:
-                                increaseFactor = 2f;
-                                break;
-                            default:
-                                increaseFactor = 1f;
-                                break;
-                        }
-                    }
-                }
-                if (season == Season.HS)
-                {
-                    if (card is EffigyCardData effigyCard)
-                    {
-                        if (effigyCard.Rarity >= Rarity.PGW23)
-                        {
-                            increaseFactor = 2;
-                        }
-                    }
-                }
+                float increaseFactor = RarityIncreaseCalculator.GetIncreaseFactor(card, increaseRarity, season);
                 totalDropChance += card.Drop * increaseFactor;
             }
 
             float randomValue = RandomUtils.Range(0f, totalDropChance);
-            float cumulativeDropChance = 0f;
 
-            foreach (var card in seasonalCard)
+            WankulCardData selectedCard = WeightedCardDropService.SelectCard(seasonalCard, randomValue, increaseRarity, season);
+            if (selectedCard != null)
             {
-                float increaseFactor = 1f;
-                if (increaseRarity)
-                {
-                    if (card is EffigyCardData effigyCard)
-                    {
-                        switch (effigyCard.Rarity)
-                        {
-                            case Rarity.R:
-                                increaseFactor = 0.25f;
-                                break;
-                            case Rarity.UR1:
-                            case Rarity.UR2:
-                                increaseFactor = 1f;
-                                break;
-                            case Rarity.LB:
-                            case Rarity.LA:
-                            case Rarity.LO:
-                                increaseFactor = 2f;
-                                break;
-                            default:
-                                increaseFactor = 1f;
-                                break;
-                        }
-                    }
-                }
-                if (season == Season.HS)
-                {
-                    if (card is EffigyCardData effigyCard)
-                    {
-                        if (effigyCard.Rarity >= Rarity.PGW23)
-                        {
-                            increaseFactor = 2;
-                        }
-                    }
-                }
-
-                cumulativeDropChance += card.Drop * increaseFactor;
-                if (randomValue <= cumulativeDropChance)
-                {
-                    alreadySelectedCards.Add(card);
-                    return card;
-                }
+                alreadySelectedCards.Add(selectedCard);
             }
-
-            WankulCardData fallbackCard = seasonalCard[0];
-            alreadySelectedCards.Add(fallbackCard);
-            return fallbackCard;
+            return selectedCard;
         }
 
         public static WankulCardData DropCardGold(ECollectionPackType packType, List<WankulCardData> alreadySelectedCards)
@@ -338,41 +262,7 @@ namespace WankulCrazyPlugin.inventory
             float totalDropChance = 0f;
             foreach (var card in seasonalCard)
             {
-                float increaseFactor = 1f;
-                if (increaseRarity)
-                {
-                    if (card is EffigyCardData effigyCard)
-                    {
-                        switch (effigyCard.Rarity)
-                        {
-                            case Rarity.R:
-                                increaseFactor = 0.25f;
-                                break;
-                            case Rarity.UR1:
-                            case Rarity.UR2:
-                                increaseFactor = 1f;
-                                break;
-                            case Rarity.LB:
-                            case Rarity.LA:
-                            case Rarity.LO:
-                                increaseFactor = 2f;
-                                break;
-                            default:
-                                increaseFactor = 1f;
-                                break;
-                        }
-                    }
-                }
-                if (season == Season.HS)
-                {
-                    if (card is EffigyCardData effigyCard)
-                    {
-                        if (effigyCard.Rarity >= Rarity.PGW23)
-                        {
-                            increaseFactor = 2;
-                        }
-                    }
-                }
+                float increaseFactor = RarityIncreaseCalculator.GetIncreaseFactor(card, increaseRarity, season);
                 totalDropChance += card.Drop * increaseFactor;
             }
 
@@ -381,41 +271,7 @@ namespace WankulCrazyPlugin.inventory
 
             foreach (var card in seasonalCard)
             {
-                float increaseFactor = 1f;
-                if (increaseRarity)
-                {
-                    if (card is EffigyCardData effigyCard)
-                    {
-                        switch (effigyCard.Rarity)
-                        {
-                            case Rarity.R:
-                                increaseFactor = 0.25f;
-                                break;
-                            case Rarity.UR1:
-                            case Rarity.UR2:
-                                increaseFactor = 1f;
-                                break;
-                            case Rarity.LB:
-                            case Rarity.LA:
-                            case Rarity.LO:
-                                increaseFactor = 2f;
-                                break;
-                            default:
-                                increaseFactor = 1f;
-                                break;
-                        }
-                    }
-                }
-                if (season == Season.HS)
-                {
-                    if (card is EffigyCardData effigyCard)
-                    {
-                        if (effigyCard.Rarity >= Rarity.PGW23)
-                        {
-                            increaseFactor = 2;
-                        }
-                    }
-                }
+                float increaseFactor = RarityIncreaseCalculator.GetIncreaseFactor(card, increaseRarity, season);
 
                 cumulativeDropChance += card.Drop * increaseFactor;
                 if (randomValue <= cumulativeDropChance)
