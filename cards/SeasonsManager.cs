@@ -65,7 +65,7 @@ namespace WankulCrazyPlugin.cards
 
             try
             {
-                string json = File.ReadAllText(seasonsPath);
+                string json = File.ReadAllText(seasonsPath, System.Text.Encoding.UTF8);
                 List<SeasonData> loadedSeasons = JsonConvert.DeserializeObject<List<SeasonData>>(json);
                 if (loadedSeasons != null && loadedSeasons.Count > 0)
                 {

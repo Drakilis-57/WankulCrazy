@@ -107,7 +107,7 @@ namespace WankulCrazyPlugin.importer
             {
                 if (File.Exists(path))
                 {
-                    string content = File.ReadAllText(path);
+                    string content = File.ReadAllText(path, System.Text.Encoding.UTF8);
                     JArray array = JArray.Parse(content);
                     foreach (JObject json in array)
                     {
@@ -212,7 +212,7 @@ namespace WankulCrazyPlugin.importer
             {
                 if (File.Exists(path))
                 {
-                    string content = File.ReadAllText(path);
+                    string content = File.ReadAllText(path, System.Text.Encoding.UTF8);
                     JArray array = JArray.Parse(content);
                     foreach (JObject json in array)
                     {
@@ -245,7 +245,7 @@ namespace WankulCrazyPlugin.importer
             {
                 if (File.Exists(path))
                 {
-                    string content = File.ReadAllText(path);
+                    string content = File.ReadAllText(path, System.Text.Encoding.UTF8);
                     JArray array = JArray.Parse(content);
                     foreach (JObject json in array)
                     {
