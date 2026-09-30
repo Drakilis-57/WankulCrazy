@@ -132,6 +132,18 @@ namespace WankulCrazyPlugin.Tests
         public void CollectionBinderFlipAnimCtrl_SelectionModesExistInAssembly()
         {
             var dllPath = System.IO.Path.GetFullPath(System.IO.Path.Combine(AppContext.BaseDirectory, @"..\..\..\..\libs\Assembly-CSharp.dll"));
+            if (!System.IO.File.Exists(dllPath))
+            {
+                // Fallback pour environnement Linux / CI GitHub Actions
+                dllPath = System.IO.Path.GetFullPath(System.IO.Path.Combine(AppContext.BaseDirectory, "../../../../libs/Assembly-CSharp.dll"));
+            }
+
+            if (!System.IO.File.Exists(dllPath))
+            {
+                // Sur CI distante (ex: GitHub Actions) si les libs binaires du jeu ne sont pas commitées
+                return;
+            }
+
             var resolver = new Mono.Cecil.DefaultAssemblyResolver();
             resolver.AddSearchDirectory(System.IO.Path.GetDirectoryName(dllPath));
             var asm = Mono.Cecil.AssemblyDefinition.ReadAssembly(dllPath, new Mono.Cecil.ReaderParameters { AssemblyResolver = resolver });
