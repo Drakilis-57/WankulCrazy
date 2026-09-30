@@ -16,9 +16,9 @@ namespace WankulCrazyPlugin.patch
     public class CardOpening
     {
         public static int totalExpGained = 0;
-        public static List<int> LegendaryBoosters = new List<int>();
-        public static List<int> URBoosters = new List<int>();
-        public static List<int> RareBoosters = new List<int>();
+        public static HashSet<int> LegendaryBoosters = new HashSet<int>();
+        public static HashSet<int> URBoosters = new HashSet<int>();
+        public static HashSet<int> RareBoosters = new HashSet<int>();
         public static int boosterSize = 10;
         private static readonly int randomGoldBoosterSeedBase = 10;
         private static int randomGoldBoosterSeed = 10;
@@ -343,41 +343,26 @@ namespace WankulCrazyPlugin.patch
 
                 if (isMinRare)
                 {
-                    foreach (int boosterHash in LegendaryBoosters)
+                    if (LegendaryBoosters.Remove(hash))
                     {
-                        if (boosterHash == hash)
-                        {
-                            LegendaryBoosters.Remove(boosterHash);
-                            isMinLegendary = true;
-                            isMinUR = false;
-                            isMinRare = false;
-                            break;
-                        }
+                        isMinLegendary = true;
+                        isMinUR = false;
+                        isMinRare = false;
                     }
 
-                    foreach (int boosterHash in URBoosters)
+                    else if (URBoosters.Remove(hash))
                     {
-                        if (boosterHash == hash)
-                        {
-                            URBoosters.Remove(boosterHash);
-                            isMinLegendary = false;
-                            isMinUR = true;
-                            isMinRare = false;
-                            break;
-                        }
+                        isMinLegendary = false;
+                        isMinUR = true;
+                        isMinRare = false;
                     }
 
-                    foreach (int boosterHash in RareBoosters)
+                    else if (RareBoosters.Remove(hash))
                     {
-                        if (boosterHash == hash)
-                        {
-                            RareBoosters.Remove(boosterHash);
-                            isMinLegendary = false;
-                            isMinUR = false;
-                            isMinRare = false;
-                            isRare = true;
-                            break;
-                        }
+                        isMinLegendary = false;
+                        isMinUR = false;
+                        isMinRare = false;
+                        isRare = true;
                     }
                 }
 
