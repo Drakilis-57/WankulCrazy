@@ -1,4 +1,11 @@
 Pour installer :
 
-- Téléchargez et installez BepInEx 5.4.23.2.
-- Copiez ce dossier dans le dossier "BepInEx/plugins" de votre jeu.
+1. Installez BepInEx 5.4.23.2 pour TCG Card Shop Simulator.
+2. Copiez le dossier "WankulCrazy" directement dans le dossier "BepInEx/plugins" de votre jeu.
+   Structure finale attendue :
+   TCG Card Shop Simulator/
+   └── BepInEx/
+       └── plugins/
+           └── WankulCrazy/
+               ├── WankulCrazyPlugin.dll
+               └── data/

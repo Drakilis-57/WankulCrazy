@@ -1,4 +1,4 @@
-﻿<#
+<#
 .SYNOPSIS
     Script de build pour WankulCrazy : mode Dev (rapide et direct en jeux) ou mode Release (package zip complet).
 .PARAMETER Mode
@@ -133,18 +133,21 @@ elseif ($Mode -eq 'release') {
     Get-ChildItem -Path $destData -Recurse -Include "save_*.json", "*.bckp", "*SeasonTest*" -File | Remove-Item -Force
     Get-ChildItem -Path $destData -Recurse -Filter "*SeasonTest*" -Directory | Remove-Item -Recurse -Force
 
-    # 4. Création de l'archive Zip
+    # 4. Création de l'archive Zip (WankulCrazy.zip direct pour les joueurs + backup horodaté)
     $timestamp = Get-Date -Format "yyyyMMdd_HHmmss"
-    $zipPath = Join-Path $zipOutputDir "WankulCrazy_Release_$timestamp.zip"
+    $zipPath = Join-Path $zipOutputDir "WankulCrazy.zip"
+    $datedZipPath = Join-Path $zipOutputDir "WankulCrazy_Release_$timestamp.zip"
 
     Write-Host "[Release] Compression du package zip -> $zipPath" -ForegroundColor Green
     Compress-Archive -Path $pluginReleaseDir -DestinationPath $zipPath -Force
+    Copy-Item -Path $zipPath -Destination $datedZipPath -Force
 
     # Nettoyage dossier temporaire
     Remove-Item -Recurse -Force $releaseRoot
 
     Write-Host "==========================================" -ForegroundColor Green
     Write-Host "   Release prête : $zipPath" -ForegroundColor Green
+    Write-Host "   Archive datée : $datedZipPath" -ForegroundColor DarkGray
     Write-Host "==========================================" -ForegroundColor Green
 }
 

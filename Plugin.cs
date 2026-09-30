@@ -473,6 +473,18 @@ public class Plugin : BaseUnityPlugin
     {
         try
         {
+            // 1. Détection via l'emplacement réel de la DLL (fonctionne même si extrait dans un sous-dossier)
+            string assemblyLocation = typeof(Plugin).Assembly.Location;
+            if (!string.IsNullOrEmpty(assemblyLocation))
+            {
+                string assemblyDir = Path.GetDirectoryName(assemblyLocation);
+                if (!string.IsNullOrEmpty(assemblyDir) && Directory.Exists(Path.Combine(assemblyDir, "data")))
+                {
+                    return assemblyDir;
+                }
+            }
+
+            // 2. Emplacement standard BepInEx/plugins/WankulCrazy
             if (!string.IsNullOrEmpty(Application.dataPath))
             {
                 return Path.Combine(Application.dataPath, "../BepInEx/plugins", PluginInfo.PLUGIN_NAME);
