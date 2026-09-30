@@ -112,7 +112,7 @@ namespace WankulCrazyPlugin.utils
                 return;
             }
 
-            string json = System.IO.File.ReadAllText(path);
+            string json = System.IO.File.ReadAllText(path, System.Text.Encoding.UTF8);
             Save save = DeserializeSave(json);
 
             if (save.associationsWithPercents == null)
