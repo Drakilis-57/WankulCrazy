@@ -24,7 +24,7 @@ namespace WankulCrazyPlugin.Tests
             string path = AppDomain.CurrentDomain.BaseDirectory;
             while (path != null && !Directory.Exists(Path.Combine(path, "data")))
             {
-                path = Directory.GetParent(path)?.FullName;
+                path = Directory.GetParent(path)?.FullName!;
             }
             return path ?? Directory.GetCurrentDirectory();
         }
@@ -40,7 +40,7 @@ namespace WankulCrazyPlugin.Tests
 
             JArray array = JArray.Parse(File.ReadAllText(raritiesPath));
             HashSet<string> ids = new HashSet<string>(
-                array.Select(r => (string)r["Id"]),
+                array.Select(r => (string?)r["Id"]).Where(id => id != null).Select(id => id!),
                 StringComparer.OrdinalIgnoreCase);
 
             Assert.Contains("DUO", ids);
@@ -78,7 +78,7 @@ namespace WankulCrazyPlugin.Tests
 
                 foreach (JToken cardToken in cardTokens)
                 {
-                    string rarityId = (string)cardToken["RarityId"];
+                    string? rarityId = (string?)cardToken["RarityId"];
                     if (string.IsNullOrEmpty(rarityId))
                     {
                         continue; // Terrains/Specials sans rareté propre : hors périmètre de ce test.
