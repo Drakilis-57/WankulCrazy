@@ -1051,16 +1051,14 @@ namespace WankulCrazyPlugin.patch
                                         string comps = string.Join(", ", System.Array.ConvertAll(child.GetComponents<Component>(), c => c != null ? c.GetType().Name : "null"));
                                         Plugin.LogInfo($"    Enfant Actif: '{child.name}' [Comps: {comps}]");
                                         
-                                        var img = child.GetComponent<UnityEngine.UI.Image>();
-                                        if (img != null)
+                                        if (child.TryGetComponent<UnityEngine.UI.Image>(out var img))
                                         {
                                             string matName = img.material != null ? img.material.name : "None";
                                             string shaderName = img.material != null && img.material.shader != null ? img.material.shader.name : "None";
                                             Plugin.LogInfo($"      -> Image '{child.name}': color={img.color}, mat='{matName}', shader='{shaderName}'");
                                         }
 
-                                        var renderer = child.GetComponent<Renderer>();
-                                        if (renderer != null)
+                                        if (child.TryGetComponent<Renderer>(out var renderer))
                                         {
                                             string matName = renderer.material != null ? renderer.material.name : "None";
                                             Plugin.LogInfo($"      -> Renderer '{child.name}': enabled={renderer.enabled}, mat='{matName}'");
