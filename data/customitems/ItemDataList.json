@@ -240,6 +240,26 @@
         "affectedPriceChangeType": []
     },
     {
+        "itemType": "BoosterGoldLegacy",
+        "name": "Booster Gold Legacy",
+        "category": "TCG",
+        "icon": "Icon_BoosterGold.png",
+        "iconScale": 1.0,
+        "baseCost": 120,
+        "marketPriceMinPercent": 100.0,
+        "marketPriceMaxPercent": 250.0,
+        "boxFollowItemPrice": "None",
+        "isNotBoosterPack": false,
+        "isTallItem": false,
+        "isHideItemUntilUnlocked": false,
+        "posYOffsetInBox": 0.0,
+        "scaleOffsetInBox": -0.13,
+        "itemDimension": {"x": 1.0, "y": 1.0, "z": 1.0},
+        "colliderPosOffset": {"x": 0.0, "y": 0.0, "z": 0.0},
+        "colliderScale": {"x": 0.08, "y": 0.14, "z": 0.022},
+        "affectedPriceChangeType": []
+    },
+    {
         "itemType": "BoosterLegacy",
         "name": "Booster Legacy",
         "category": "TCG",

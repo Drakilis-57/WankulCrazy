@@ -31,7 +31,8 @@ public static class EnumExtensions
                 { 139, "BoosterLegacy" },
                 { 140, "DisplayLegacy" },
                 { 141, "BoosterLegacyTaux" },
-                { 142, "DisplayLegacyTaux" }
+                { 142, "DisplayLegacyTaux" },
+                { 143, "BoosterGoldLegacy" }
             }
         },
         {
@@ -118,6 +119,7 @@ public static class EnumExtensions
         { "Tapi Stellar 2", "TapisS42" }, { "Tapis Stellar 1", "TapisS41" },
         { "Tapis Stellar 2", "TapisS42" }, { "Classeur Stellar", "ClasseurS4" },
         { "Booster Gold Battle", "BoosterGoldBattle" }, { "Booster Gold Stellar", "BoosterGoldStellar" },
+        { "Booster Gold Legacy", "BoosterGoldLegacy" },
         { "Test Card Pack 32", "TestCardPack32" }, { "Test Card Pack 64", "TestCardPack64" },
         { "AscensionCardBox", "AscensionCardPack" }, { "Ascension Card Box", "AscensionCardPack" },
         { "Booster Legacy", "BoosterLegacy" }, { "Display Legacy", "DisplayLegacy" },
@@ -239,6 +241,7 @@ public static class EnumExtensions
         var boosterStellarTaux = SafeParseEItemType("BoosterStellarTaux");
         var boosterGoldBattle  = SafeParseEItemType("BoosterGoldBattle");
         var boosterGoldStellar = SafeParseEItemType("BoosterGoldStellar");
+        var boosterGoldLegacy  = SafeParseEItemType("BoosterGoldLegacy");
         var boosterLegacy      = SafeParseEItemType("BoosterLegacy");
         var boosterLegacyTaux  = SafeParseEItemType("BoosterLegacyTaux");
         var testPack32         = SafeParseEItemType("TestCardPack32");
@@ -249,6 +252,7 @@ public static class EnumExtensions
         // Les Gold partagent la saison de leur booster de base
         if (itemType == boosterGoldBattle)   return ECollectionPackType.EpicCardPack;
         if (itemType == boosterGoldStellar)  return SafeParseECollectionPackType("Stellar");
+        if (itemType == boosterGoldLegacy)   return SafeParseECollectionPackType("Legacy");
         if (itemType == boosterLegacy)       return SafeParseECollectionPackType("Legacy");
         if (itemType == boosterLegacyTaux)   return SafeParseECollectionPackType("LegacyTaux");
         if (itemType == testPack32)          return SafeParseECollectionPackType("SeasonTestPack32");

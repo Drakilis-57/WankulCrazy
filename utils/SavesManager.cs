@@ -257,7 +257,7 @@ namespace WankulCrazyPlugin.utils
 
             foreach (var association in save.associationsWithPercents)
             {
-                if (save.version == "1.0.0" && association.Value.WankulCardIndex == 546 || association.Value.WankulCardIndex == 547)
+                if (save.version == "1.0.0" && (association.Value.WankulCardIndex == 546 || association.Value.WankulCardIndex == 547))
                 {
                     continue;
                 }

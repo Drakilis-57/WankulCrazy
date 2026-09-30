@@ -195,25 +195,13 @@ namespace WankulCrazyPlugin.inventory
             List<WankulCardData> seasonalCard;
 
             List<int> BattleGoldCards = [
-                357,
-                358,
-                359,
-                360,
-                361,
-                362,
-                363,
-                364,
+                300175, 300176, 300177, 300178, 300179, 300180, // Nouveaux index S03 (LA, LO)
+                357, 358, 359, 360, 361, 362, 363, 364 // Rétrocompatibilité anciens index
             ];
 
             List<int> StellardGoldCards = [
-                734,
-                735,
-                736,
-                737,
-                738,
-                739,
-                740,
-                741,
+                400175, 400176, 400177, 400178, 400179, 400180, // Nouveaux index S04 (LA, LO)
+                734, 735, 736, 737, 738, 739, 740, 741 // Rétrocompatibilité anciens index
             ];
 
             List<int> LegacyGoldCards = [
@@ -239,24 +227,34 @@ namespace WankulCrazyPlugin.inventory
             }
             else
             {
-                LogError("No available cards to drop");
-                return null;
+                LogError($"DropCardGold: Season {season} not supported for gold cards, fallback to high rarity");
+                seasonalCard = allCards.FindAll(card => card.Season == season && card is EffigyCardData effigy && (effigy.RarityId == "LO" || effigy.RarityId == "LA"));
             }
 
+            // Fallback si la liste par index est vide : chercher les cartes LO/LA de la saison
+            if (seasonalCard.Count == 0)
+            {
+                seasonalCard = allCards.FindAll(card => card.Season == season && card is EffigyCardData effigy && (effigy.RarityId == "LO" || effigy.RarityId == "LA"));
+            }
+
+            // Si toujours vide, fallback vers n'importe quelle carte de la saison
+            if (seasonalCard.Count == 0)
+            {
+                LogError("No available gold cards to drop, falling back to seasonal cards");
+                seasonalCard = allCards.FindAll(card => card.Season == season);
+            }
 
             if (seasonalCard.Count == 0)
             {
-                LogError("No available cards to drop");
-                return null;
+                LogError("No cards found at all, falling back to AJETER");
+                return WankulCardsData.GetAJETER();
             }
 
-            // Filtrer les cartes déjà sélectionnées pour éviter les doublons
-            seasonalCard = seasonalCard.Where(card => !alreadySelectedCards.Contains(card)).ToList();
-
-            if (seasonalCard.Count == 0)
+            // Filtrer les cartes déjà sélectionnées pour éviter les doublons si possible
+            var uniqueSeasonalCard = seasonalCard.Where(card => !alreadySelectedCards.Contains(card)).ToList();
+            if (uniqueSeasonalCard.Count > 0)
             {
-                LogError("No available unique cards to drop");
-                return null;
+                seasonalCard = uniqueSeasonalCard;
             }
 
             float totalDropChance = 0f;
@@ -289,8 +287,8 @@ namespace WankulCrazyPlugin.inventory
                 return fallbackCard;
             }
 
-            LogError("Failed to drop a card");
-            return null;
+            LogError("Failed to drop a card, falling back to AJETER");
+            return WankulCardsData.GetAJETER();
         }
 
 
@@ -415,6 +413,10 @@ namespace WankulCrazyPlugin.inventory
 
         public static bool isNewWankulCard(WankulCardData wankulCardData)
         {
+            if (wankulCardData == null)
+            {
+                return false;
+            }
             Instance.wankulCards.TryGetValue(wankulCardData.Index, out var card);
             if (card.wankulcard == null)
             {
@@ -446,7 +448,7 @@ namespace WankulCrazyPlugin.inventory
             }
             if (CPlayerData.m_ShopLevel >= InventoryBase.GetUnlockItemLevelRequired(EItemType.EpicCardPack))
             {
-                dropableExpansion.Add(ECollectionPackType.RareCardPack);
+                dropableExpansion.Add(ECollectionPackType.EpicCardPack);
             }
             if (CPlayerData.m_ShopLevel >= InventoryBase.GetUnlockItemLevelRequired(stellarCardPack))
             {
@@ -523,8 +525,25 @@ namespace WankulCrazyPlugin.inventory
 
             List<WankulCardData> inPriceBoundCards = WankulCardsData.Instance.cards.FindAll(card => card.MarketPrice >= minPrice && card.MarketPrice <= maxPrice && card.Index != fromWankulCardData.Index);
 
-            int randomValue = RandomUtils.Range(0, inPriceBoundCards.Count);
-            WankulCardData wankulCardData = inPriceBoundCards[randomValue];
+            WankulCardData wankulCardData;
+            if (inPriceBoundCards.Count > 0)
+            {
+                int randomValue = RandomUtils.Range(0, inPriceBoundCards.Count);
+                wankulCardData = inPriceBoundCards[randomValue];
+            }
+            else
+            {
+                // Fallback si aucune carte dans la fourchette +/- 25% (ex: carte très chère LO / TOR)
+                var otherCards = WankulCardsData.Instance.cards.FindAll(card => card.Index != fromWankulCardData.Index);
+                if (otherCards.Count > 0)
+                {
+                    wankulCardData = otherCards.OrderBy(c => Math.Abs(c.MarketPrice - fromWankulCardData.MarketPrice)).First();
+                }
+                else
+                {
+                    return GetWankulCardDataForTradeOffer();
+                }
+            }
 
             int amount = Instance.wankulCards.ContainsKey(wankulCardData.Index) ? Instance.wankulCards[wankulCardData.Index].amount : 0;
 

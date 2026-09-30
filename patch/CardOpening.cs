@@ -110,7 +110,9 @@ namespace WankulCrazyPlugin.patch
                 return false;
             }
 
-            if (currentItem.GetItemType() == EnumExtensions.SafeParseEItemType("BoosterGoldBattle") || currentItem.GetItemType() == EnumExtensions.SafeParseEItemType("BoosterGoldStellar"))
+            if (currentItem.GetItemType() == EnumExtensions.SafeParseEItemType("BoosterGoldBattle") ||
+                currentItem.GetItemType() == EnumExtensions.SafeParseEItemType("BoosterGoldStellar") ||
+                currentItem.GetItemType() == EnumExtensions.SafeParseEItemType("BoosterGoldLegacy"))
             {
                 boosterSize = 4;
             }
@@ -381,7 +383,9 @@ namespace WankulCrazyPlugin.patch
 
                 Item currentItem = (Item)Plugin.GetPProperty(__instance, "m_CurrentItem");
                 WankulCardData wankulCard;
-                if ((currentItem.GetItemType() == EnumExtensions.SafeParseEItemType("BoosterGoldBattle") || currentItem.GetItemType() == EnumExtensions.SafeParseEItemType("BoosterGoldStellar")) && boosterSize == 4)
+                if ((currentItem.GetItemType() == EnumExtensions.SafeParseEItemType("BoosterGoldBattle") ||
+                     currentItem.GetItemType() == EnumExtensions.SafeParseEItemType("BoosterGoldStellar") ||
+                     currentItem.GetItemType() == EnumExtensions.SafeParseEItemType("BoosterGoldLegacy")) && boosterSize == 4)
                 {
                     wankulCard = WankulInventory.DropCardGold(___m_CollectionPackType, alreadySelectedCards);
                 }
@@ -389,6 +393,13 @@ namespace WankulCrazyPlugin.patch
                 {
                     wankulCard = WankulInventory.DropCard(___m_CollectionPackType, alreadySelectedCards, isTerrain, isMinRare, isMinUR, isMinLegendary, isRare);
                 }
+
+                if (wankulCard == null)
+                {
+                    Plugin.Logger.LogError("[CardOpening] wankulCard was null after drop, falling back to GetAJETER()");
+                    wankulCard = WankulCardsData.GetAJETER();
+                }
+
                 CardData associatedCard = wankulCardsData.GetCardDataFromWankulCardData(wankulCard);
 
                 if (associatedCard == null)
@@ -511,29 +522,30 @@ namespace WankulCrazyPlugin.patch
                 List<int> availableHash = new List<int>();
 
                 ECollectionPackType collectionPackType = InventoryBase.ItemTypeToCollectionPackType(m_HoldItemList[0].GetItemType());
-                if (
+                bool isEligibleForGold =
                     collectionPackType == ECollectionPackType.EpicCardPack ||
                     collectionPackType == ECollectionPackType.DestinyEpicCardPack ||
                     collectionPackType == EnumExtensions.SafeParseECollectionPackType("Stellar") ||
                     collectionPackType == EnumExtensions.SafeParseECollectionPackType("StellarTaux") ||
                     collectionPackType == EnumExtensions.SafeParseECollectionPackType("Legacy") ||
-                    collectionPackType == EnumExtensions.SafeParseECollectionPackType("LegacyTaux")
-                )
+                    collectionPackType == EnumExtensions.SafeParseECollectionPackType("LegacyTaux");
+
+                if (isEligibleForGold)
                 {
                     int random = UnityEngine.Random.Range(0, randomGoldBoosterSeed);
                     //Plugin.LogInfo($"Random Gold booster: {random}");
                     //Plugin.LogInfo($"Random Gold booster seed: {randomGoldBoosterSeed}");
                     shouldGenGoldBooster = random == 0;
-                }
 
-                if (shouldGenGoldBooster)
-                {
-                    boosterGoldIndex = UnityEngine.Random.RandomRangeInt(0, m_HoldItemList.Count);
-                    randomGoldBoosterSeed = randomGoldBoosterSeedBase;
-                }
-                else
-                {
-                    randomGoldBoosterSeed--;
+                    if (shouldGenGoldBooster)
+                    {
+                        boosterGoldIndex = UnityEngine.Random.RandomRangeInt(0, m_HoldItemList.Count);
+                        randomGoldBoosterSeed = randomGoldBoosterSeedBase;
+                    }
+                    else
+                    {
+                        randomGoldBoosterSeed = System.Math.Max(1, randomGoldBoosterSeed - 1);
+                    }
                 }
 
                 for (int i = 0; i < m_HoldItemList.Count; i++)
@@ -557,11 +569,11 @@ namespace WankulCrazyPlugin.patch
                         }
                         else if (collectionPackType == EnumExtensions.SafeParseECollectionPackType("Legacy") || collectionPackType == EnumExtensions.SafeParseECollectionPackType("LegacyTaux"))
                         {
-                            // Pas encore d'asset Gold Legacy dédié : on réutilise le mesh Gold Stellar
-                            Plugin.SetPProperty(item, "m_ItemType", EnumExtensions.SafeParseEItemType("BoosterGoldStellar"));
+                            EItemType boosterGoldLegacy = EnumExtensions.SafeParseEItemType("BoosterGoldLegacy");
+                            Plugin.SetPProperty(item, "m_ItemType", boosterGoldLegacy);
 
                             ItemMeshData itemMeshData = InventoryBase.GetItemMeshData(item.GetItemType());
-                            item.SetMesh(itemMeshData.mesh, itemMeshData.material, EnumExtensions.SafeParseEItemType("BoosterGoldStellar"));
+                            item.SetMesh(itemMeshData.mesh, itemMeshData.material, boosterGoldLegacy);
                         }
                     }
                     else

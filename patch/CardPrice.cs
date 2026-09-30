@@ -63,12 +63,25 @@ namespace WankulCrazyPlugin.patch
             }
             else if (wankulCardData is EffigyCardData effigyCard)
             {
-                switch (effigyCard.Rarity)
+                var rarityData = RaritiesManager.GetRarity(effigyCard.RarityId);
+                if (string.Equals(effigyCard.RarityId, "DUO", System.StringComparison.OrdinalIgnoreCase))
                 {
-                    case Rarity.C:
-                        priceRangeMin = 0.01f;
-                        priceRangeMax = 0.5f;
-                        break;
+                    priceRangeMin = rarityData != null ? rarityData.PriceRangeMin : 500f;
+                    priceRangeMax = rarityData != null ? rarityData.PriceRangeMax : 1000f;
+                }
+                else if (rarityData != null && rarityData.PriceRangeMax > 0.5f && effigyCard.Rarity == Rarity.C)
+                {
+                    priceRangeMin = rarityData.PriceRangeMin;
+                    priceRangeMax = rarityData.PriceRangeMax;
+                }
+                else
+                {
+                    switch (effigyCard.Rarity)
+                    {
+                        case Rarity.C:
+                            priceRangeMin = 0.01f;
+                            priceRangeMax = 0.5f;
+                            break;
                     case Rarity.UC:
                         priceRangeMin = 0.5f;
                         priceRangeMax = 1f;
@@ -106,6 +119,7 @@ namespace WankulCrazyPlugin.patch
                         priceRangeMin = 50f;
                         priceRangeMax = 1000f;
                         break;
+                    }
                 }
             }
             else

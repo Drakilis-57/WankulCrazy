@@ -51,6 +51,10 @@
     "Id": "DUO",
     "Name": "Duo",
     "ExperienceMultiplier": 4.0,
-    "PriceMultiplier": 4.0
+    "PriceMultiplier": 4.0,
+    "PriceRangeMin": 500.0,
+    "PriceRangeMax": 1000.0,
+    "IsEligibleForFoil": true,
+    "IsEligibleForMinRare": true
   }
 ]

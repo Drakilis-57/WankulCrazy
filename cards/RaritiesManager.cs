@@ -50,6 +50,7 @@ namespace WankulCrazyPlugin.cards
                 RegisterRarityInternal(new RarityData("EG", "Edition Gold", 50.0f, 1.0f));
                 RegisterRarityInternal(new RarityData("SPCAR", "Starter Pack Carrières", 50.0f, 1.0f));
                 RegisterRarityInternal(new RarityData("TOR", "The One Ring", 50.0f, 1.0f));
+                RegisterRarityInternal(new RarityData("DUO", "Duo", 20.0f, 4.0f));
             }
         }
 

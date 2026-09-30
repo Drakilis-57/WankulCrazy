@@ -127,5 +127,13 @@
         "copyItemType": "BasicCardPack",
         "texture": "Texture_BoosterGold.png",
         "hasCustomTexture": true
+    },
+    {
+        "importType": "CopyItem",
+        "name": "BoosterGoldLegacy_Mesh",
+        "itemType": "BoosterGoldLegacy",
+        "copyItemType": "BasicCardPack",
+        "texture": "Texture_BoosterGold.png",
+        "hasCustomTexture": true
     }
 ]

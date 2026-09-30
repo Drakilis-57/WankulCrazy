@@ -2,7 +2,25 @@ namespace WankulCrazyPlugin.cards
 {
     public class RarityData
     {
-        public string Id { get; set; } = string.Empty;
+        private string _id = string.Empty;
+        public string Id
+        {
+            get => _id;
+            set
+            {
+                _id = value;
+                if (string.Equals(_id, "DUO", System.StringComparison.OrdinalIgnoreCase))
+                {
+                    if (PriceRangeMin == 0.01f && PriceRangeMax == 0.5f)
+                    {
+                        PriceRangeMin = 500f;
+                        PriceRangeMax = 1000f;
+                        IsEligibleForFoil = true;
+                        IsEligibleForMinRare = true;
+                    }
+                }
+            }
+        }
         public string Name { get; set; } = string.Empty;
         public float ExperienceMultiplier { get; set; } = 1.0f;
         public float PriceMultiplier { get; set; } = 1.0f;

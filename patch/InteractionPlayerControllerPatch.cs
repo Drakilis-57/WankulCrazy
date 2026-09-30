@@ -69,6 +69,7 @@ namespace WankulCrazyPlugin.patch
             EItemType boosterLegacyTaux = EnumExtensions.SafeParseEItemType("BoosterLegacyTaux");
             EItemType BoosterGoldBattle = EnumExtensions.SafeParseEItemType("BoosterGoldBattle");
             EItemType BoosterGoldStellar = EnumExtensions.SafeParseEItemType("BoosterGoldStellar");
+            EItemType BoosterGoldLegacy = EnumExtensions.SafeParseEItemType("BoosterGoldLegacy");
             EItemType test32 = EnumExtensions.SafeParseEItemType("TestCardPack32");
             EItemType test64 = EnumExtensions.SafeParseEItemType("TestCardPack64");
 
@@ -76,7 +77,7 @@ namespace WankulCrazyPlugin.patch
             if (m_HoldItemList.Count > 0)
             {
                 Item item = m_HoldItemList[0];
-                result = item.GetItemType() == EItemType.BasicCardPack || item.GetItemType() == EItemType.RareCardPack || item.GetItemType() == EItemType.EpicCardPack || item.GetItemType() == EItemType.LegendaryCardPack || item.GetItemType() == EItemType.DestinyBasicCardPack || item.GetItemType() == EItemType.DestinyRareCardPack || item.GetItemType() == EItemType.DestinyEpicCardPack || item.GetItemType() == EItemType.DestinyLegendaryCardPack || item.GetItemType() == EItemType.GhostPack || item.GetItemType() == EItemType.MegabotPack || item.GetItemType() == EItemType.FantasyRPGPack || item.GetItemType() == EItemType.CatJobPack || item.GetItemType() == boosterStellar || item.GetItemType() == boosterStellarTaux || item.GetItemType() == boosterLegacy || item.GetItemType() == boosterLegacyTaux || item.GetItemType() == BoosterGoldBattle || item.GetItemType() == BoosterGoldStellar || item.GetItemType() == test32 || item.GetItemType() == test64;
+                result = item.GetItemType() == EItemType.BasicCardPack || item.GetItemType() == EItemType.RareCardPack || item.GetItemType() == EItemType.EpicCardPack || item.GetItemType() == EItemType.LegendaryCardPack || item.GetItemType() == EItemType.DestinyBasicCardPack || item.GetItemType() == EItemType.DestinyRareCardPack || item.GetItemType() == EItemType.DestinyEpicCardPack || item.GetItemType() == EItemType.DestinyLegendaryCardPack || item.GetItemType() == EItemType.GhostPack || item.GetItemType() == EItemType.MegabotPack || item.GetItemType() == EItemType.FantasyRPGPack || item.GetItemType() == EItemType.CatJobPack || item.GetItemType() == boosterStellar || item.GetItemType() == boosterStellarTaux || item.GetItemType() == boosterLegacy || item.GetItemType() == boosterLegacyTaux || item.GetItemType() == BoosterGoldBattle || item.GetItemType() == BoosterGoldStellar || item.GetItemType() == BoosterGoldLegacy || item.GetItemType() == test32 || item.GetItemType() == test64;
             }
             __result = result;
             return false;

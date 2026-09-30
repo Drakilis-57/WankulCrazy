@@ -374,6 +374,7 @@ namespace WankulCrazyPlugin.importer
             EItemType displayStellarTaux = EnumExtensions.SafeParseEItemType("DisplayStellarTaux");
             EItemType boosterGoldBattle = EnumExtensions.SafeParseEItemType("BoosterGoldBattle");
             EItemType boosterGoldStellar = EnumExtensions.SafeParseEItemType("BoosterGoldStellar");
+            EItemType boosterGoldLegacy = EnumExtensions.SafeParseEItemType("BoosterGoldLegacy");
             ECollectionPackType stellarPack = EnumExtensions.SafeParseECollectionPackType("Stellar");
             ECollectionPackType stellarPackTaux = EnumExtensions.SafeParseECollectionPackType("StellarTaux");
 
@@ -401,7 +402,7 @@ namespace WankulCrazyPlugin.importer
             else if (itemType == EItemType.CatJobPack) return; // Keep original __result
             else if (itemType == boosterStellar || itemType == displayStellar || itemType == boosterGoldStellar) __result = stellarPack;
             else if (itemType == boosterStellarTaux || itemType == displayStellarTaux) __result = stellarPackTaux;
-            else if (itemType == boosterLegacy || itemType == displayLegacy) __result = legacyPack;
+            else if (itemType == boosterLegacy || itemType == displayLegacy || itemType == boosterGoldLegacy) __result = legacyPack;
             else if (itemType == boosterLegacyTaux || itemType == displayLegacyTaux) __result = legacyPackTaux;
             else if (ascensionPack != (EItemType)0 && (itemType == ascensionPack || (ascensionBox != (EItemType)0 && itemType == ascensionBox)))
                 __result = legacyPack;
@@ -680,9 +681,10 @@ namespace WankulCrazyPlugin.importer
                     EItemType bsLegacyTaux = EnumExtensions.SafeParseEItemType("BoosterLegacyTaux");
                     EItemType bsGoldBattle = EnumExtensions.SafeParseEItemType("BoosterGoldBattle");
                     EItemType bsGoldStellar = EnumExtensions.SafeParseEItemType("BoosterGoldStellar");
+                    EItemType bsGoldLegacy = EnumExtensions.SafeParseEItemType("BoosterGoldLegacy");
                     EItemType ascPack = EnumExtensions.SafeParseEItemType("AscensionCardPack");
 
-                    if (itemType == bsStellar || itemType == bsStellarTaux || itemType == bsLegacy || itemType == bsLegacyTaux || itemType == bsGoldBattle || itemType == bsGoldStellar || (ascPack != (EItemType)0 && itemType == ascPack))
+                    if (itemType == bsStellar || itemType == bsStellarTaux || itemType == bsLegacy || itemType == bsLegacyTaux || itemType == bsGoldBattle || itemType == bsGoldStellar || itemType == bsGoldLegacy || (ascPack != (EItemType)0 && itemType == ascPack))
                     {
                         ItemData basePackData = InventoryBase.GetItemData(EItemType.BasicCardPack);
                         if (basePackData != null)

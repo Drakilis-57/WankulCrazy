@@ -52,11 +52,10 @@ public class ReplacingCards
         gameCardData.isFoil = false;
         gameCardData.isChampionCard = false;
 
-        if (wankulCardData is EffigyCardData)
+        if (wankulCardData is EffigyCardData effigyCard)
         {
-            EffigyCardData effigyCard = (EffigyCardData)wankulCardData;
-
-            if (effigyCard.Rarity >= Rarity.UR1)
+            var rarityData = RaritiesManager.GetRarity(effigyCard.RarityId);
+            if ((rarityData != null && rarityData.IsEligibleForFoil) || effigyCard.Rarity >= Rarity.UR1)
             {
                 gameCardData.isFoil = true;
             }
