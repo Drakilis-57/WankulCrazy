@@ -6,7 +6,7 @@
         "ignoreDoubleImage": false,
         "amount": 32,
         "licenseShopLevelRequired": 20,
-        "licensePrice": 10000,
+        "licensePrice": 1800,
         "itemType": "BoosterStellar",
         "prologueShow": false,
         "isHideItemUntilUnlocked": false
@@ -18,7 +18,7 @@
         "ignoreDoubleImage": false,
         "amount": 64,
         "licenseShopLevelRequired": 22,
-        "licensePrice": 12000,
+        "licensePrice": 2100,
         "itemType": "BoosterStellar",
         "prologueShow": false,
         "isHideItemUntilUnlocked": false
@@ -30,7 +30,7 @@
         "ignoreDoubleImage": false,
         "amount": 4,
         "licenseShopLevelRequired": 23,
-        "licensePrice": 14000,
+        "licensePrice": 2500,
         "itemType": "DisplayStellar",
         "prologueShow": false,
         "isHideItemUntilUnlocked": false
@@ -42,7 +42,7 @@
         "ignoreDoubleImage": false,
         "amount": 8,
         "licenseShopLevelRequired": 25,
-        "licensePrice": 16000,
+        "licensePrice": 3000,
         "itemType": "DisplayStellar",
         "prologueShow": false,
         "isHideItemUntilUnlocked": false
@@ -54,7 +54,7 @@
         "ignoreDoubleImage": false,
         "amount": 32,
         "licenseShopLevelRequired": 26,
-        "licensePrice": 18000,
+        "licensePrice": 3500,
         "itemType": "BoosterLegacy",
         "prologueShow": false,
         "isHideItemUntilUnlocked": false
@@ -66,7 +66,7 @@
         "ignoreDoubleImage": false,
         "amount": 64,
         "licenseShopLevelRequired": 28,
-        "licensePrice": 20000,
+        "licensePrice": 4000,
         "itemType": "BoosterLegacy",
         "prologueShow": false,
         "isHideItemUntilUnlocked": false
@@ -78,7 +78,7 @@
         "ignoreDoubleImage": false,
         "amount": 4,
         "licenseShopLevelRequired": 29,
-        "licensePrice": 22000,
+        "licensePrice": 4600,
         "itemType": "DisplayLegacy",
         "prologueShow": false,
         "isHideItemUntilUnlocked": false
@@ -90,7 +90,7 @@
         "ignoreDoubleImage": false,
         "amount": 8,
         "licenseShopLevelRequired": 30,
-        "licensePrice": 25000,
+        "licensePrice": 5200,
         "itemType": "DisplayLegacy",
         "prologueShow": false,
         "isHideItemUntilUnlocked": false
@@ -102,7 +102,7 @@
         "ignoreDoubleImage": false,
         "amount": 32,
         "licenseShopLevelRequired": 55,
-        "licensePrice": 20000,
+        "licensePrice": 8000,
         "itemType": "BoosterStellarTaux",
         "prologueShow": false,
         "isHideItemUntilUnlocked": false
@@ -114,7 +114,7 @@
         "ignoreDoubleImage": false,
         "amount": 64,
         "licenseShopLevelRequired": 58,
-        "licensePrice": 24000,
+        "licensePrice": 9500,
         "itemType": "BoosterStellarTaux",
         "prologueShow": false,
         "isHideItemUntilUnlocked": false
@@ -126,7 +126,7 @@
         "ignoreDoubleImage": false,
         "amount": 4,
         "licenseShopLevelRequired": 60,
-        "licensePrice": 28000,
+        "licensePrice": 11000,
         "itemType": "DisplayStellarTaux",
         "prologueShow": false,
         "isHideItemUntilUnlocked": false
@@ -138,7 +138,7 @@
         "ignoreDoubleImage": false,
         "amount": 8,
         "licenseShopLevelRequired": 63,
-        "licensePrice": 32000,
+        "licensePrice": 13000,
         "itemType": "DisplayStellarTaux",
         "prologueShow": false,
         "isHideItemUntilUnlocked": false
@@ -150,7 +150,7 @@
         "ignoreDoubleImage": false,
         "amount": 32,
         "licenseShopLevelRequired": 65,
-        "licensePrice": 35000,
+        "licensePrice": 14500,
         "itemType": "BoosterLegacyTaux",
         "prologueShow": false,
         "isHideItemUntilUnlocked": false
@@ -162,7 +162,7 @@
         "ignoreDoubleImage": false,
         "amount": 64,
         "licenseShopLevelRequired": 67,
-        "licensePrice": 40000,
+        "licensePrice": 16000,
         "itemType": "BoosterLegacyTaux",
         "prologueShow": false,
         "isHideItemUntilUnlocked": false
@@ -174,7 +174,7 @@
         "ignoreDoubleImage": false,
         "amount": 4,
         "licenseShopLevelRequired": 69,
-        "licensePrice": 45000,
+        "licensePrice": 18000,
         "itemType": "DisplayLegacyTaux",
         "prologueShow": false,
         "isHideItemUntilUnlocked": false
@@ -186,7 +186,7 @@
         "ignoreDoubleImage": false,
         "amount": 8,
         "licenseShopLevelRequired": 70,
-        "licensePrice": 50000,
+        "licensePrice": 20000,
         "itemType": "DisplayLegacyTaux",
         "prologueShow": false,
         "isHideItemUntilUnlocked": false
@@ -198,7 +198,7 @@
         "ignoreDoubleImage": true,
         "amount": 4,
         "licenseShopLevelRequired": 21,
-        "licensePrice": 2000,
+        "licensePrice": 1000,
         "itemType": "CaleconStellar",
         "prologueShow": false,
         "isHideItemUntilUnlocked": false
@@ -210,7 +210,7 @@
         "ignoreDoubleImage": true,
         "amount": 18,
         "licenseShopLevelRequired": 23,
-        "licensePrice": 4000,
+        "licensePrice": 2200,
         "itemType": "StarterApocalypse",
         "prologueShow": false,
         "isHideItemUntilUnlocked": false
@@ -222,7 +222,7 @@
         "ignoreDoubleImage": true,
         "amount": 18,
         "licenseShopLevelRequired": 24,
-        "licensePrice": 5000,
+        "licensePrice": 2400,
         "itemType": "StarterShowtime",
         "prologueShow": false,
         "isHideItemUntilUnlocked": false
@@ -234,7 +234,7 @@
         "ignoreDoubleImage": true,
         "amount": 16,
         "licenseShopLevelRequired": 26,
-        "licensePrice": 6000,
+        "licensePrice": 2000,
         "itemType": "TapisS41",
         "prologueShow": false,
         "isHideItemUntilUnlocked": false
@@ -246,7 +246,7 @@
         "ignoreDoubleImage": true,
         "amount": 16,
         "licenseShopLevelRequired": 28,
-        "licensePrice": 8000,
+        "licensePrice": 2500,
         "itemType": "TapisS42",
         "prologueShow": false,
         "isHideItemUntilUnlocked": false
@@ -258,7 +258,7 @@
         "ignoreDoubleImage": true,
         "amount": 4,
         "licenseShopLevelRequired": 29,
-        "licensePrice": 9000,
+        "licensePrice": 3000,
         "itemType": "ClasseurS4",
         "prologueShow": false,
         "isHideItemUntilUnlocked": false
