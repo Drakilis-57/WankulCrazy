@@ -234,6 +234,7 @@ namespace WankulCrazyPlugin.patch
             {
                 UpdateCardPricePercent(wankulCardData);
             }
+            WankulInventory.MarkTotalPriceDirty();
         }
 
         public static void OnDayStarted()

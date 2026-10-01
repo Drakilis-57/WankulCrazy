@@ -222,6 +222,7 @@ namespace WankulCrazyPlugin.utils
                 if (cardData != null)
                 {
                     WankulInventory.Instance.wankulCards[item.Key] = (wankulCardData, cardData, item.Value.amount);
+                    WankulInventory.MarkTotalPriceDirty();
                 }
                 else
                 {
@@ -337,12 +338,14 @@ namespace WankulCrazyPlugin.utils
                     {
                         var cardData = WankulCardsData.Instance.GetCardDataFromKey(item.Value.cardkey);
                         WankulInventory.Instance.wankulCards[item.Key] = (wankulCardData, cardData, item.Value.amount);
+                        WankulInventory.MarkTotalPriceDirty();
                     }
                     else
                     {
                         if (WankulInventory.Instance.wankulCards.TryGetValue(item.Key, out var existingCard))
                         {
                             existingCard.amount += item.Value.amount;
+                            WankulInventory.MarkTotalPriceDirty();
                         }
                         else
                         {
@@ -350,6 +353,7 @@ namespace WankulCrazyPlugin.utils
                             if (cardData != null)
                             {
                                 WankulInventory.Instance.wankulCards[item.Key] = (wankulCardData, cardData, item.Value.amount);
+                                WankulInventory.MarkTotalPriceDirty();
                             }
                             else
                             {

@@ -316,6 +316,14 @@ namespace WankulCrazyPlugin.inventory
         }
 
 
+        private static float cachedTotalPrice = 0f;
+        private static bool isTotalPriceDirty = true;
+
+        public static void MarkTotalPriceDirty()
+        {
+            isTotalPriceDirty = true;
+        }
+
         public static void AddCard(WankulCardData wankulCardData, CardData cardData, int amount)
         {
             if (wankulCardData == null)
@@ -334,6 +342,11 @@ namespace WankulCrazyPlugin.inventory
                 inventoryWankulCard.Item3 = inventoryWankulCard.Item3 + amount;
                 Instance.wankulCards[wankulCardData.Index] = inventoryWankulCard;
             }
+
+            if (!isTotalPriceDirty)
+            {
+                cachedTotalPrice += wankulCardData.MarketPrice * amount;
+            }
         }
 
         public static void RemoveCard(WankulCardData wankulCardData, int amount)
@@ -349,6 +362,11 @@ namespace WankulCrazyPlugin.inventory
                 else
                 {
                     Instance.wankulCards[wankulCardData.Index] = inventoryWankulCard;
+                }
+
+                if (!isTotalPriceDirty)
+                {
+                    cachedTotalPrice -= wankulCardData.MarketPrice * amount;
                 }
             }
         }
@@ -383,12 +401,16 @@ namespace WankulCrazyPlugin.inventory
 
         public static float GetTotalPrice()
         {
-            float totalPrice = 0f;
-            foreach (var card in Instance.wankulCards)
+            if (isTotalPriceDirty)
             {
-                totalPrice += card.Value.Item1.MarketPrice * card.Value.Item3;
+                cachedTotalPrice = 0f;
+                foreach (var card in Instance.wankulCards)
+                {
+                    cachedTotalPrice += card.Value.Item1.MarketPrice * card.Value.Item3;
+                }
+                isTotalPriceDirty = false;
             }
-            return totalPrice;
+            return cachedTotalPrice;
         }
 
         public static float GetTotalPriceBySeason(Season season)
