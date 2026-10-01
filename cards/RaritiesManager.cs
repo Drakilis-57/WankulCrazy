@@ -9,7 +9,15 @@ namespace WankulCrazyPlugin.cards
     {
         private static void SafeLogError(string msg)
         {
-            try { Plugin.Logger?.LogError(msg); } catch { }
+            try
+            {
+                if (Plugin.Logger != null) Plugin.Logger.LogError(msg);
+                else Console.WriteLine("[Error] " + msg);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("[Error] " + msg + " : " + ex.Message);
+            }
         }
 
 
