@@ -29,7 +29,7 @@ namespace WankulCrazyPlugin.cards
 
         private static void SafeLogError(string msg)
         {
-            try { Plugin.Logger?.LogError(msg); } catch { }
+            try { Plugin.Logger?.LogError(msg); } catch { Console.WriteLine("[Error] " + msg); }
         }
 
         static SeasonsManager()
