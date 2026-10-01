@@ -11,7 +11,6 @@ namespace WankulCrazyPlugin.patch
 {
     public class CheckPriceUI
     {
-        //public static Dictionary<int, int> indexesAssociation = new();
         public static List<WankulCardData> wankulCardsSet = new List<WankulCardData>();
         public static bool isFromCheckPriceList = false;
 
