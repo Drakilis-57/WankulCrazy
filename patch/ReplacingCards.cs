@@ -521,10 +521,27 @@ public class ReplacingCards
         __instance.m_CurrentSpawnedInteractableCard3d.SetCardUIFollow(cardUI);
         __instance.m_CurrentSpawnedInteractableCard3d.SetEnableCollision(isEnable: false);
         CardData cardData = __instance.m_CurrentRaycastedInteractableCard3d.m_Card3dUI.m_CardUI.GetCardData();
-        CPlayerData.ReduceCard(cardData, 1);
 
-        (WankulCardData wankulCardData, CardData cardData, int amount) inventoryCard = WankulInventory.GetWankulCardFormGameCard(cardData);
-        int count = inventoryCard.amount;
+        // Même logique que la méthode vanilla : RemoveGradedCard pour les albums gradés, ReduceCard sinon
+        bool isGradedAlbumPickup = (bool)(Plugin.GetPProperty(__instance, "m_IsGradedCardAlbum") ?? false);
+        if (isGradedAlbumPickup)
+        {
+            CPlayerData.RemoveGradedCard(cardData, false);
+            Plugin.SetPProperty(__instance, "m_CanUpdateSort", true);
+        }
+        else
+        {
+            CPlayerData.ReduceCard(cardData, 1);
+        }
+
+        // Utiliser CPlayerData.GetCardAmount (source de vérité vanilla) pour le count affiché dans le slot
+        int count = CPlayerData.GetCardAmount(cardData);
+        // Pour les albums gradés, la carte est retirée définitivement : forcer count=0 comme le fait vanilla
+        if (isGradedAlbumPickup)
+        {
+            count = 0;
+        }
+
         int m_CurrentRaycastedCardIndex = (int)Plugin.GetPProperty(__instance, "m_CurrentRaycastedCardIndex");
         __instance.m_BinderPageGrpList[0].SetSingleCard(m_CurrentRaycastedCardIndex, cardData, count, m_SortingType);
         if (count <= 0)
