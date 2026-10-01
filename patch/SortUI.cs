@@ -102,7 +102,8 @@ namespace WankulCrazyPlugin.patch
 
                     // Nettoyer d'anciens clones Wankul si déjà créés
                     List<Transform> existingWankulBtns = new List<Transform>();
-                    for (int c = 0; c < expansionParent.childCount; c++)
+                    int expansionChildCount = expansionParent.childCount;
+                    for (int c = 0; c < expansionChildCount; c++)
                     {
                         var child = expansionParent.GetChild(c);
                         if (child.name.StartsWith("Wankul_Season_"))
@@ -186,8 +187,9 @@ namespace WankulCrazyPlugin.patch
                     Transform screenGrp = Plugin.GetByPathIn("Canvas", "CollectionBinderUI/ScreenGrp/SortingSelectScreen/Screen_Grp");
                     if (screenGrp != null)
                     {
-                        Plugin.LogInfo($"[SortUI] Enfants de Screen_Grp (count={screenGrp.childCount}):");
-                        for (int i = 0; i < screenGrp.childCount; i++)
+                        int screenGrpChildCount = screenGrp.childCount;
+                        Plugin.LogInfo($"[SortUI] Enfants de Screen_Grp (count={screenGrpChildCount}):");
+                        for (int i = 0; i < screenGrpChildCount; i++)
                         {
                             var ch = screenGrp.GetChild(i);
                             Plugin.LogInfo($"  Screen_Grp[{i}] = '{ch.name}', active={ch.gameObject.activeSelf}");
@@ -196,8 +198,9 @@ namespace WankulCrazyPlugin.patch
 
                     if (Expansion_AnimGrp_Transform != null)
                     {
-                        Plugin.LogInfo($"[SortUI] Enfants de Expansion_AnimGrp (count={Expansion_AnimGrp_Transform.childCount}):");
-                        for (int i = 0; i < Expansion_AnimGrp_Transform.childCount; i++)
+                        int animGrpChildCount = Expansion_AnimGrp_Transform.childCount;
+                        Plugin.LogInfo($"[SortUI] Enfants de Expansion_AnimGrp (count={animGrpChildCount}):");
+                        for (int i = 0; i < animGrpChildCount; i++)
                         {
                             var ch = Expansion_AnimGrp_Transform.GetChild(i);
                             Plugin.LogInfo($"  Expansion_AnimGrp[{i}] = '{ch.name}', active={ch.gameObject.activeSelf}");
@@ -210,8 +213,9 @@ namespace WankulCrazyPlugin.patch
 
                     if (expansionParent != null)
                     {
-                        Plugin.LogInfo($"[SortUI] Enfants de expansionParent '{expansionParent.name}' (count={expansionParent.childCount}):");
-                        for (int i = 0; i < expansionParent.childCount; i++)
+                        int expParentChildCount = expansionParent.childCount;
+                        Plugin.LogInfo($"[SortUI] Enfants de expansionParent '{expansionParent.name}' (count={expParentChildCount}):");
+                        for (int i = 0; i < expParentChildCount; i++)
                         {
                             var ch = expansionParent.GetChild(i);
                             Plugin.LogInfo($"  expansionParent[{i}] = '{ch.name}', active={ch.gameObject.activeSelf}");
