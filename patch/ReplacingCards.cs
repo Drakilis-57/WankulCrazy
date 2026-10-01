@@ -74,7 +74,7 @@ public class ReplacingCards
 
         return true;
     }
-    
+
     private const float CardImageScale = 0.88f; // Sert a grandir ou réduire la taille des images des cartes
 
     public static void ApplyWankulCardVisuals(CardUI __instance, CardData gameCardData, WankulCardData wankulCardData)
@@ -542,14 +542,14 @@ public class ReplacingCards
 
     public static bool GetIcon(ECardExpansionType cardExpansionType, MonsterData __instance, ref Sprite __result)
     {
-        
+
         WankulCardData aJETER = WankulCardsData.GetAJETER();
         if (aJETER?.Sprite != null)
         {
             __result = (Sprite)aJETER.Sprite;
             return false;
         }
-        
+
         // Si aucun sprite custom n'est disponible, laisser la méthode vanilla s'exécuter
         return true;
     }

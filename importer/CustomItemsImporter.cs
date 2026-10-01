@@ -61,7 +61,7 @@ namespace WankulCrazyPlugin.importer
                 var tauxRestockItems = RestockDataList.Where(r => tauxRestockTypes.Contains(r.itemType)).ToList();
 
                 // 2.a Inserer les normaux apres Battle normal (EpicCardBox)
-                int battleNormalIdx = so.m_RestockDataList.FindLastIndex(r => 
+                int battleNormalIdx = so.m_RestockDataList.FindLastIndex(r =>
                     r.itemType == EItemType.EpicCardBox || r.itemType == EItemType.EpicCardPack ||
                     (r.name != null && r.name.IndexOf("Epic", StringComparison.OrdinalIgnoreCase) >= 0 && r.name.IndexOf("Destiny", StringComparison.OrdinalIgnoreCase) < 0));
 
@@ -76,7 +76,7 @@ namespace WankulCrazyPlugin.importer
                 }
 
                 // 2.b Inserer les Taux apres Battle Taux (DestinyEpicCardBox)
-                int battleTauxIdx = so.m_RestockDataList.FindLastIndex(r => 
+                int battleTauxIdx = so.m_RestockDataList.FindLastIndex(r =>
                     r.itemType == EItemType.DestinyEpicCardBox || r.itemType == EItemType.DestinyEpicCardPack ||
                     (r.name != null && (r.name.IndexOf("Destiny Epic", StringComparison.OrdinalIgnoreCase) >= 0 || (r.name.IndexOf("Battle", StringComparison.OrdinalIgnoreCase) >= 0 && r.name.IndexOf("Taux", StringComparison.OrdinalIgnoreCase) >= 0))));
 
@@ -252,7 +252,7 @@ namespace WankulCrazyPlugin.importer
                         string itemTypeStr = (string)json["itemType"];
                         string nameStr = (string)json["name"];
                         ItemMeshData mesh = new ItemMeshData { name = !string.IsNullOrEmpty(itemTypeStr) ? itemTypeStr : nameStr };
-                        
+
                         string importType = (string)json["importType"] ?? "CopyItem";
                         string objProp = (string)json["obj"];
 
@@ -318,7 +318,7 @@ namespace WankulCrazyPlugin.importer
                             {
                                 copyType = "BasicCardPack";
                             }
-                            
+
                             ItemMeshData source = InventoryBase.GetItemMeshData(EnumExtensions.SafeParseEItemType(copyType));
                             if (source != null)
                             {

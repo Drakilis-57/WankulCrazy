@@ -82,43 +82,43 @@ namespace WankulCrazyPlugin.patch
                             priceRangeMin = 0.01f;
                             priceRangeMax = 0.5f;
                             break;
-                    case Rarity.UC:
-                        priceRangeMin = 0.5f;
-                        priceRangeMax = 1f;
-                        break;
-                    case Rarity.R:
-                        priceRangeMin = 3.5f;
-                        priceRangeMax = 10f;
-                        break;
-                    case Rarity.UR1:
-                        priceRangeMin = 10f;
-                        priceRangeMax = 50f;
-                        break;
-                    case Rarity.UR2:
-                        priceRangeMin = 50f;
-                        priceRangeMax = 150f;
-                        break;
-                    case Rarity.LB:
-                        priceRangeMin = 150;
-                        priceRangeMax = 500;
-                        break;
-                    case Rarity.LA:
-                        priceRangeMin = 500;
-                        priceRangeMax = 1000;
-                        break;
-                    case Rarity.LO:
-                        priceRangeMin = 1000;
-                        priceRangeMax = 2500f;
-                        break;
-                    case Rarity.TOR: // Gagnant Ticket Or
-                        priceRangeMin = 2500f;
-                        priceRangeMax = 4000f;
-                        break;
-                    default:
-                        // Raretés spéciales (PGW, Noël, Starter Packs, etc.) : toutes très rares, Drop inutilisable
-                        priceRangeMin = 50f;
-                        priceRangeMax = 1000f;
-                        break;
+                        case Rarity.UC:
+                            priceRangeMin = 0.5f;
+                            priceRangeMax = 1f;
+                            break;
+                        case Rarity.R:
+                            priceRangeMin = 3.5f;
+                            priceRangeMax = 10f;
+                            break;
+                        case Rarity.UR1:
+                            priceRangeMin = 10f;
+                            priceRangeMax = 50f;
+                            break;
+                        case Rarity.UR2:
+                            priceRangeMin = 50f;
+                            priceRangeMax = 150f;
+                            break;
+                        case Rarity.LB:
+                            priceRangeMin = 150;
+                            priceRangeMax = 500;
+                            break;
+                        case Rarity.LA:
+                            priceRangeMin = 500;
+                            priceRangeMax = 1000;
+                            break;
+                        case Rarity.LO:
+                            priceRangeMin = 1000;
+                            priceRangeMax = 2500f;
+                            break;
+                        case Rarity.TOR: // Gagnant Ticket Or
+                            priceRangeMin = 2500f;
+                            priceRangeMax = 4000f;
+                            break;
+                        default:
+                            // Raretés spéciales (PGW, Noël, Starter Packs, etc.) : toutes très rares, Drop inutilisable
+                            priceRangeMin = 50f;
+                            priceRangeMax = 1000f;
+                            break;
                     }
                 }
             }

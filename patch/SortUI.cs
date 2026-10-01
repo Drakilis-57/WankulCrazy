@@ -102,7 +102,8 @@ namespace WankulCrazyPlugin.patch
 
                     // Nettoyer d'anciens clones Wankul si déjà créés
                     List<Transform> existingWankulBtns = new List<Transform>();
-                    for (int c = 0; c < expansionParent.childCount; c++)
+                    int expansionChildCount = expansionParent.childCount;
+                    for (int c = 0; c < expansionChildCount; c++)
                     {
                         var child = expansionParent.GetChild(c);
                         if (child.name.StartsWith("Wankul_Season_"))
@@ -187,7 +188,8 @@ namespace WankulCrazyPlugin.patch
                     if (screenGrp != null)
                     {
                         Plugin.LogInfo($"[SortUI] Enfants de Screen_Grp (count={screenGrp.childCount}):");
-                        for (int i = 0; i < screenGrp.childCount; i++)
+                        int screenGrpChildCount = screenGrp.childCount;
+                        for (int i = 0; i < screenGrpChildCount; i++)
                         {
                             var ch = screenGrp.GetChild(i);
                             Plugin.LogInfo($"  Screen_Grp[{i}] = '{ch.name}', active={ch.gameObject.activeSelf}");
@@ -197,7 +199,8 @@ namespace WankulCrazyPlugin.patch
                     if (Expansion_AnimGrp_Transform != null)
                     {
                         Plugin.LogInfo($"[SortUI] Enfants de Expansion_AnimGrp (count={Expansion_AnimGrp_Transform.childCount}):");
-                        for (int i = 0; i < Expansion_AnimGrp_Transform.childCount; i++)
+                        int animGrpChildCount = Expansion_AnimGrp_Transform.childCount;
+                        for (int i = 0; i < animGrpChildCount; i++)
                         {
                             var ch = Expansion_AnimGrp_Transform.GetChild(i);
                             Plugin.LogInfo($"  Expansion_AnimGrp[{i}] = '{ch.name}', active={ch.gameObject.activeSelf}");
@@ -211,7 +214,8 @@ namespace WankulCrazyPlugin.patch
                     if (expansionParent != null)
                     {
                         Plugin.LogInfo($"[SortUI] Enfants de expansionParent '{expansionParent.name}' (count={expansionParent.childCount}):");
-                        for (int i = 0; i < expansionParent.childCount; i++)
+                        int expansionChildCount2 = expansionParent.childCount;
+                        for (int i = 0; i < expansionChildCount2; i++)
                         {
                             var ch = expansionParent.GetChild(i);
                             Plugin.LogInfo($"  expansionParent[{i}] = '{ch.name}', active={ch.gameObject.activeSelf}");
@@ -267,85 +271,85 @@ namespace WankulCrazyPlugin.patch
                         }
                     }
 
-                seasonButtons[0].onClick.AddListener(() =>
-                {
-                    OnClickSeasonButton(SortSeasonType.ALL, 0);
-                });
-                seasonButtons[1].onClick.AddListener(() =>
-                {
-                    OnClickSeasonButton(SortSeasonType.S01, 1);
-                });
-                seasonButtons[2].onClick.AddListener(() =>
-                {
-                    OnClickSeasonButton(SortSeasonType.S02, 2);
-                });
-                seasonButtons[3].onClick.AddListener(() =>
-                {
-                    OnClickSeasonButton(SortSeasonType.S03, 3);
-                });
-                seasonButtons[4].onClick.AddListener(() =>
-                {
-                    OnClickSeasonButton(SortSeasonType.S04, 4);
-                });
-                seasonButtons[5].onClick.AddListener(() =>
-                {
-                    OnClickSeasonButton(SortSeasonType.S05, 5);
-                });
-                seasonButtons[6].onClick.AddListener(() =>
-                {
-                    OnClickSeasonButton(SortSeasonType.HS, 6);
-                });
+                    seasonButtons[0].onClick.AddListener(() =>
+                    {
+                        OnClickSeasonButton(SortSeasonType.ALL, 0);
+                    });
+                    seasonButtons[1].onClick.AddListener(() =>
+                    {
+                        OnClickSeasonButton(SortSeasonType.S01, 1);
+                    });
+                    seasonButtons[2].onClick.AddListener(() =>
+                    {
+                        OnClickSeasonButton(SortSeasonType.S02, 2);
+                    });
+                    seasonButtons[3].onClick.AddListener(() =>
+                    {
+                        OnClickSeasonButton(SortSeasonType.S03, 3);
+                    });
+                    seasonButtons[4].onClick.AddListener(() =>
+                    {
+                        OnClickSeasonButton(SortSeasonType.S04, 4);
+                    });
+                    seasonButtons[5].onClick.AddListener(() =>
+                    {
+                        OnClickSeasonButton(SortSeasonType.S05, 5);
+                    });
+                    seasonButtons[6].onClick.AddListener(() =>
+                    {
+                        OnClickSeasonButton(SortSeasonType.HS, 6);
+                    });
 
-                __instance.m_SortAlbumBtnList[2].GetComponentInChildren<Button>().onClick.AddListener(() =>
-                {
-                    Plugin.LogInfo("[SortUI] Clic tri : Prix");
-                    currentSortType = SortType.Price;
-                    __instance.OnPressSwitchSortingMethod(2);
-                    currentGameSortMethod = 2;
-                });
-                __instance.m_SortAlbumBtnList[1].GetComponentInChildren<Button>().onClick.AddListener(() =>
-                {
-                    Plugin.LogInfo("[SortUI] Clic tri : Rareté");
-                    currentSortType = SortType.Rarity;
-                    __instance.OnPressSwitchSortingMethod(1);
-                    currentGameSortMethod = 1;
-                });
-                __instance.m_SortAlbumBtnList[0].GetComponentInChildren<Button>().onClick.AddListener(() =>
-                {
-                    Plugin.LogInfo("[SortUI] Clic tri : Numéro");
-                    currentSortType = SortType.Number;
-                    __instance.OnPressSwitchSortingMethod(0);
-                    currentGameSortMethod = 0;
-                });
-                __instance.m_SortAlbumBtnList[3].GetComponentInChildren<Button>().onClick.AddListener(() =>
-                {
-                    Plugin.LogInfo("[SortUI] Clic tri : Quantité");
-                    currentSortType = SortType.Amount;
-                    __instance.OnPressSwitchSortingMethod(3);
-                    currentGameSortMethod = 3;
-                });
+                    __instance.m_SortAlbumBtnList[2].GetComponentInChildren<Button>().onClick.AddListener(() =>
+                    {
+                        Plugin.LogInfo("[SortUI] Clic tri : Prix");
+                        currentSortType = SortType.Price;
+                        __instance.OnPressSwitchSortingMethod(2);
+                        currentGameSortMethod = 2;
+                    });
+                    __instance.m_SortAlbumBtnList[1].GetComponentInChildren<Button>().onClick.AddListener(() =>
+                    {
+                        Plugin.LogInfo("[SortUI] Clic tri : Rareté");
+                        currentSortType = SortType.Rarity;
+                        __instance.OnPressSwitchSortingMethod(1);
+                        currentGameSortMethod = 1;
+                    });
+                    __instance.m_SortAlbumBtnList[0].GetComponentInChildren<Button>().onClick.AddListener(() =>
+                    {
+                        Plugin.LogInfo("[SortUI] Clic tri : Numéro");
+                        currentSortType = SortType.Number;
+                        __instance.OnPressSwitchSortingMethod(0);
+                        currentGameSortMethod = 0;
+                    });
+                    __instance.m_SortAlbumBtnList[3].GetComponentInChildren<Button>().onClick.AddListener(() =>
+                    {
+                        Plugin.LogInfo("[SortUI] Clic tri : Quantité");
+                        currentSortType = SortType.Amount;
+                        __instance.OnPressSwitchSortingMethod(3);
+                        currentGameSortMethod = 3;
+                    });
 
-                __instance.m_SortAlbumBtnList[4].GetComponentInChildren<Button>().onClick.AddListener(() =>
-                {
-                    Plugin.LogInfo("[SortUI] Clic tri : Doublon");
-                    currentSortType = SortType.Double;
-                    __instance.OnPressSwitchSortingMethod(4);
-                    currentGameSortMethod = 4;
-                });
+                    __instance.m_SortAlbumBtnList[4].GetComponentInChildren<Button>().onClick.AddListener(() =>
+                    {
+                        Plugin.LogInfo("[SortUI] Clic tri : Doublon");
+                        currentSortType = SortType.Double;
+                        __instance.OnPressSwitchSortingMethod(4);
+                        currentGameSortMethod = 4;
+                    });
 
-                // Marquer l'initialisation comme terminée
-                inited = true;
-                Plugin.LogInfo("[SortUI] Initialisation UI terminée avec succès !");
+                    // Marquer l'initialisation comme terminée
+                    inited = true;
+                    Plugin.LogInfo("[SortUI] Initialisation UI terminée avec succès !");
+                }
+                catch (System.Exception ex)
+                {
+                    Plugin.Logger?.LogError($"[SortUI] Exception lors de OpenSortAlbumScreen : {ex}");
+                }
             }
-            catch (System.Exception ex)
-            {
-                Plugin.Logger?.LogError($"[SortUI] Exception lors de OpenSortAlbumScreen : {ex}");
-            }
+
+            // Mettre à jour le surlignage/lueur de la saison active à chaque ouverture
+            UpdateSeasonHighlights(currentGameExpansionIndex);
         }
-
-        // Mettre à jour le surlignage/lueur de la saison active à chaque ouverture
-        UpdateSeasonHighlights(currentGameExpansionIndex);
-    }
 
         public static Dictionary<int, (WankulCardData wankulcard, CardData card, int amount)> GetWankulCardsBySeason(SortSeasonType season)
         {

@@ -1027,7 +1027,7 @@ namespace WankulCrazyPlugin.patch
                                 Card3dUIGroup cardGroup = __instance.m_Card3dUIList[timerIndex];
                                 Plugin.LogInfo($"=== [DIAGNOSTIC REVEAL CARTE {timerIndex}] ===");
                                 Plugin.LogInfo($"  Position: {cardGroup.transform.position}, ShowAllPos: {__instance.m_ShowAllCardPosList[timerIndex].position}");
-                                
+
                                 // Lister tous les enfants actifs et leurs composants
                                 foreach (Transform child in cardGroup.GetComponentsInChildren<Transform>(true))
                                 {
@@ -1035,7 +1035,7 @@ namespace WankulCrazyPlugin.patch
                                     {
                                         string comps = string.Join(", ", System.Array.ConvertAll(child.GetComponents<Component>(), c => c != null ? c.GetType().Name : "null"));
                                         Plugin.LogInfo($"    Enfant Actif: '{child.name}' [Comps: {comps}]");
-                                        
+
                                         if (child.TryGetComponent<UnityEngine.UI.Image>(out var img))
                                         {
                                             string matName = img.material != null ? img.material.name : "None";

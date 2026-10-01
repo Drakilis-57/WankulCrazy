@@ -237,26 +237,26 @@ public static class EnumExtensions
     public static ECollectionPackType ItemTypeToCollectionPackTypeSafe(EItemType itemType)
     {
         // Mapping statique des boosters custom vers leur ECollectionPackType
-        var boosterStellar     = SafeParseEItemType("BoosterStellar");
+        var boosterStellar = SafeParseEItemType("BoosterStellar");
         var boosterStellarTaux = SafeParseEItemType("BoosterStellarTaux");
-        var boosterGoldBattle  = SafeParseEItemType("BoosterGoldBattle");
+        var boosterGoldBattle = SafeParseEItemType("BoosterGoldBattle");
         var boosterGoldStellar = SafeParseEItemType("BoosterGoldStellar");
-        var boosterGoldLegacy  = SafeParseEItemType("BoosterGoldLegacy");
-        var boosterLegacy      = SafeParseEItemType("BoosterLegacy");
-        var boosterLegacyTaux  = SafeParseEItemType("BoosterLegacyTaux");
-        var testPack32         = SafeParseEItemType("TestCardPack32");
-        var testPack64         = SafeParseEItemType("TestCardPack64");
+        var boosterGoldLegacy = SafeParseEItemType("BoosterGoldLegacy");
+        var boosterLegacy = SafeParseEItemType("BoosterLegacy");
+        var boosterLegacyTaux = SafeParseEItemType("BoosterLegacyTaux");
+        var testPack32 = SafeParseEItemType("TestCardPack32");
+        var testPack64 = SafeParseEItemType("TestCardPack64");
 
-        if (itemType == boosterStellar)      return SafeParseECollectionPackType("Stellar");
-        if (itemType == boosterStellarTaux)  return SafeParseECollectionPackType("StellarTaux");
+        if (itemType == boosterStellar) return SafeParseECollectionPackType("Stellar");
+        if (itemType == boosterStellarTaux) return SafeParseECollectionPackType("StellarTaux");
         // Les Gold partagent la saison de leur booster de base
-        if (itemType == boosterGoldBattle)   return ECollectionPackType.EpicCardPack;
-        if (itemType == boosterGoldStellar)  return SafeParseECollectionPackType("Stellar");
-        if (itemType == boosterGoldLegacy)   return SafeParseECollectionPackType("Legacy");
-        if (itemType == boosterLegacy)       return SafeParseECollectionPackType("Legacy");
-        if (itemType == boosterLegacyTaux)   return SafeParseECollectionPackType("LegacyTaux");
-        if (itemType == testPack32)          return SafeParseECollectionPackType("SeasonTestPack32");
-        if (itemType == testPack64)          return SafeParseECollectionPackType("SeasonTestPack64");
+        if (itemType == boosterGoldBattle) return ECollectionPackType.EpicCardPack;
+        if (itemType == boosterGoldStellar) return SafeParseECollectionPackType("Stellar");
+        if (itemType == boosterGoldLegacy) return SafeParseECollectionPackType("Legacy");
+        if (itemType == boosterLegacy) return SafeParseECollectionPackType("Legacy");
+        if (itemType == boosterLegacyTaux) return SafeParseECollectionPackType("LegacyTaux");
+        if (itemType == testPack32) return SafeParseECollectionPackType("SeasonTestPack32");
+        if (itemType == testPack64) return SafeParseECollectionPackType("SeasonTestPack64");
 
         return (ECollectionPackType)0;
     }
