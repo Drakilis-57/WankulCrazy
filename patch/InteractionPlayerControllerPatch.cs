@@ -479,14 +479,17 @@ namespace WankulCrazyPlugin.patch
                         int pixelXMax = Mathf.FloorToInt(uvBottomRight.x * readableTexture.width);
                         int pixelYMax = Mathf.FloorToInt(uvTopLeft.y * readableTexture.height);
 
-                        // Boucle sur les pixels compris dans le rectangle
-                        for (int y = pixelYMin; y <= pixelYMax; y++)
+                        // Optimisation : utiliser SetPixels plutôt que SetPixel en boucle
+                        int blockWidth = pixelXMax - pixelXMin + 1;
+                        int blockHeight = pixelYMax - pixelYMin + 1;
+                        if (blockWidth > 0 && blockHeight > 0)
                         {
-                            for (int x = pixelXMin; x <= pixelXMax; x++)
+                            Color[] colors = new Color[blockWidth * blockHeight];
+                            for (int i = 0; i < colors.Length; i++)
                             {
-                                // Modifier la couleur de chaque pixel dans la zone
-                                readableTexture.SetPixel(x, y, newColor);
+                                colors[i] = newColor;
                             }
+                            readableTexture.SetPixels(pixelXMin, pixelYMin, blockWidth, blockHeight, colors);
                         }
 
                         // Appliquer les changements à la texture

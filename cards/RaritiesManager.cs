@@ -66,7 +66,7 @@ namespace WankulCrazyPlugin.cards
 
             try
             {
-                string json = File.ReadAllText(raritiesPath);
+                string json = File.ReadAllText(raritiesPath, System.Text.Encoding.UTF8);
                 List<RarityData> loadedRarities = JsonConvert.DeserializeObject<List<RarityData>>(json);
                 if (loadedRarities != null && loadedRarities.Count > 0)
                 {

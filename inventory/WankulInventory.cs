@@ -522,9 +522,16 @@ namespace WankulCrazyPlugin.inventory
             float minPrice = fromWankulCardData.MarketPrice * minFactor;
             float maxPrice = fromWankulCardData.MarketPrice * maxFactor;
 
-            List<WankulCardData> inPriceBoundCards = WankulCardsData.Instance.cards.FindAll(card => card.MarketPrice >= minPrice && card.MarketPrice <= maxPrice && card.Index != fromWankulCardData.Index);
+            List<WankulCardData> inPriceBoundCards = new List<WankulCardData>();
+            foreach (var card in WankulCardsData.Instance.cards)
+            {
+                if (card.Index != fromWankulCardData.Index && card.MarketPrice >= minPrice && card.MarketPrice <= maxPrice)
+                {
+                    inPriceBoundCards.Add(card);
+                }
+            }
 
-            WankulCardData wankulCardData;
+            WankulCardData wankulCardData = null;
             if (inPriceBoundCards.Count > 0)
             {
                 int randomValue = RandomUtils.Range(0, inPriceBoundCards.Count);
@@ -533,10 +540,25 @@ namespace WankulCrazyPlugin.inventory
             else
             {
                 // Fallback si aucune carte dans la fourchette +/- 25% (ex: carte très chère LO / TOR)
-                var otherCards = WankulCardsData.Instance.cards.FindAll(card => card.Index != fromWankulCardData.Index);
-                if (otherCards.Count > 0)
+                WankulCardData closestCard = null;
+                float minDiff = float.MaxValue;
+
+                foreach (var card in WankulCardsData.Instance.cards)
                 {
-                    wankulCardData = otherCards.OrderBy(c => Math.Abs(c.MarketPrice - fromWankulCardData.MarketPrice)).First();
+                    if (card.Index != fromWankulCardData.Index)
+                    {
+                        float diff = Math.Abs(card.MarketPrice - fromWankulCardData.MarketPrice);
+                        if (diff < minDiff)
+                        {
+                            minDiff = diff;
+                            closestCard = card;
+                        }
+                    }
+                }
+
+                if (closestCard != null)
+                {
+                    wankulCardData = closestCard;
                 }
                 else
                 {

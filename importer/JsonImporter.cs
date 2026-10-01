@@ -38,7 +38,7 @@ public class JsonImporter
         {
             try
             {
-                string jsonContent = File.ReadAllText(legacyPath);
+                string jsonContent = File.ReadAllText(legacyPath, System.Text.Encoding.UTF8);
                 JToken token = JToken.Parse(jsonContent);
                 List<WankulCardData> cards = DeserializeToken(token);
                 foreach (var card in cards)
@@ -62,7 +62,7 @@ public class JsonImporter
             {
                 try
                 {
-                    string jsonContent = File.ReadAllText(filePath);
+                    string jsonContent = File.ReadAllText(filePath, System.Text.Encoding.UTF8);
                     JToken token = JToken.Parse(jsonContent);
                     List<WankulCardData> cards = DeserializeToken(token);
                     foreach (var card in cards)

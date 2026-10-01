@@ -16,9 +16,9 @@ namespace WankulCrazyPlugin.patch
     public class CardOpening
     {
         public static int totalExpGained = 0;
-        public static List<int> LegendaryBoosters = new List<int>();
-        public static List<int> URBoosters = new List<int>();
-        public static List<int> RareBoosters = new List<int>();
+        public static HashSet<int> LegendaryBoosters = new HashSet<int>();
+        public static HashSet<int> URBoosters = new HashSet<int>();
+        public static HashSet<int> RareBoosters = new HashSet<int>();
         public static int boosterSize = 10;
         private static readonly int randomGoldBoosterSeedBase = 10;
         private static int randomGoldBoosterSeed = 10;
@@ -343,41 +343,26 @@ namespace WankulCrazyPlugin.patch
 
                 if (isMinRare)
                 {
-                    foreach (int boosterHash in LegendaryBoosters)
+                    if (LegendaryBoosters.Remove(hash))
                     {
-                        if (boosterHash == hash)
-                        {
-                            LegendaryBoosters.Remove(boosterHash);
-                            isMinLegendary = true;
-                            isMinUR = false;
-                            isMinRare = false;
-                            break;
-                        }
+                        isMinLegendary = true;
+                        isMinUR = false;
+                        isMinRare = false;
                     }
 
-                    foreach (int boosterHash in URBoosters)
+                    else if (URBoosters.Remove(hash))
                     {
-                        if (boosterHash == hash)
-                        {
-                            URBoosters.Remove(boosterHash);
-                            isMinLegendary = false;
-                            isMinUR = true;
-                            isMinRare = false;
-                            break;
-                        }
+                        isMinLegendary = false;
+                        isMinUR = true;
+                        isMinRare = false;
                     }
 
-                    foreach (int boosterHash in RareBoosters)
+                    else if (RareBoosters.Remove(hash))
                     {
-                        if (boosterHash == hash)
-                        {
-                            RareBoosters.Remove(boosterHash);
-                            isMinLegendary = false;
-                            isMinUR = false;
-                            isMinRare = false;
-                            isRare = true;
-                            break;
-                        }
+                        isMinLegendary = false;
+                        isMinUR = false;
+                        isMinRare = false;
+                        isRare = true;
                     }
                 }
 
@@ -1051,16 +1036,14 @@ namespace WankulCrazyPlugin.patch
                                         string comps = string.Join(", ", System.Array.ConvertAll(child.GetComponents<Component>(), c => c != null ? c.GetType().Name : "null"));
                                         Plugin.LogInfo($"    Enfant Actif: '{child.name}' [Comps: {comps}]");
                                         
-                                        var img = child.GetComponent<UnityEngine.UI.Image>();
-                                        if (img != null)
+                                        if (child.TryGetComponent<UnityEngine.UI.Image>(out var img))
                                         {
                                             string matName = img.material != null ? img.material.name : "None";
                                             string shaderName = img.material != null && img.material.shader != null ? img.material.shader.name : "None";
                                             Plugin.LogInfo($"      -> Image '{child.name}': color={img.color}, mat='{matName}', shader='{shaderName}'");
                                         }
 
-                                        var renderer = child.GetComponent<Renderer>();
-                                        if (renderer != null)
+                                        if (child.TryGetComponent<Renderer>(out var renderer))
                                         {
                                             string matName = renderer.material != null ? renderer.material.name : "None";
                                             Plugin.LogInfo($"      -> Renderer '{child.name}': enabled={renderer.enabled}, mat='{matName}'");
