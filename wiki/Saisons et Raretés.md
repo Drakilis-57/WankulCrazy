@@ -90,7 +90,7 @@ Au moment de l'exécution, `SeasonsManager` et `RaritiesManager` gèrent des reg
 
 `SeasonsManager` s'initialise avec les valeurs par défaut via `ResetToDefaults()` [cards/SeasonsManager.cs L40-L54](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/cards/SeasonsManager.cs#L40-L54)
 
-et charge les remplacements de `data/seasons.json` à l'aide de `JsonConvert.DeserializeObject` [cards/Seasons Manager.vs L56-L88](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/cards/SeasonsManager.cs#L56-L88)
+et charge les remplacements de `data/seasons.json` à l'aide de `JsonConvert.DeserializeObject` [cards/SeasonsManager.cs L56-L88](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/cards/SeasonsManager.cs#L56-L88)
 
 Lors de l'enregistrement interne (`RegisterSeasonInternal`), il synchronise les données chargées dans `SeasonsContainer.Seasons` si l'ID de saison est analysé avec succès par rapport à l'énumération `Season` [cards/SeasonsManager.cs L99-L130](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/cards/SeasonsManager.cs#L99-L130)
 
@@ -98,7 +98,7 @@ Lors de l'enregistrement interne (`RegisterSeasonInternal`), il synchronise les 
 
 `RaritiesManager` contrôle les définitions de rareté, y compris les multiplicateurs d'équilibrage économique (`ExperienceMultiplier` et `PriceMultiplier`).Il est réinitialisé aux valeurs par défaut [cards/RaritiesManager.cs L25-L54](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/cards/RaritiesManager.cs#L25-L54)
 
-et charge les entrées personnalisées de `data/rarities.json` [cards/Rarities Manager.vs L56-L88](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/cards/RaritiesManager.cs#L56-L88)
+et charge les entrées personnalisées de `data/rarities.json` [cards/RaritiesManager.cs L56-L88](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/cards/RaritiesManager.cs#L56-L88)
 
 Lors de l'enregistrement d'une rareté (`RegisterRarityInternal`), il préserve les multiplicateurs existants non par défaut si un enregistrement partiel est chargé [cards/RaritiesManager.cs L99-L129](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/cards/RaritiesManager.cs#L99-L129)
 

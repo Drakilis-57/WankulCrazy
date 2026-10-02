@@ -3,7 +3,7 @@
 > **Fichiers sources pertinents**
 > * [.github/workflows/build.yml](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/.github/workflows/build.yml)
 > * [.gitignore](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/.gitignore)
-> * [BUILD_GUIDE.md](BUILD_GUIDE.md)
+> * [Docs/BUILD_GUIDE.md](../Docs/BUILD_GUIDE.md)
 > * [inventaire.md](inventaire.md)
 > * [WankulCrazyPlugin.Tests/StringExtensionsTests.cs](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/WankulCrazyPlugin.Tests/StringExtensionsTests.cs)
 > * [WankulCrazyPlugin.csproj](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/WankulCrazyPlugin.csproj)
@@ -66,13 +66,34 @@ Le projet active les blocs non sécurisés, cible la dernière version du langag
 |**Libération locale** |`Unity.TextMeshPro.dll` |`libs\Unity.TextMeshPro.dll` [WankulCrazyPlugin.csproj L52-L55](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/WankulCrazyPlugin.csproj#L52-L55) |Composants de rendu de texte de l'interface utilisateur |
 |**Libération locale** |`UnityEngine.UI.dll` |`libs\UnityEngine.UI.dll` [WankulCrazyPlugin.csproj L56-L59](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/WankulCrazyPlugin.csproj#L56-L59) |Canevas et éléments de mise en page de l'interface utilisateur Unity |
 
-### Diagramme : Construire le mappage des composants du système
+### Diagramme : Construire le mappage des composants du système
 
+```mermaid
+graph TD
+    subgraph Framework["Moteur & Framework"]
+        Unity["UnityEngine.Modules 2021.3.39"]
+        BepInEx["BepInEx.Core 5.x"]
+        Harmony["0Harmony 2.7.0"]
+    end
+    subgraph LocalLibs["Références Locales (libs/)"]
+        Game["Assembly-CSharp.dll"]
+        JSON["Newtonsoft.Json.dll"]
+        TMP["Unity.TextMeshPro.dll"]
+        UI["UnityEngine.UI.dll"]
+    end
+    subgraph ModPlugin["Plugin Mod"]
+        WCP["WankulCrazyPlugin.dll"]
+    end
+    Unity --> WCP
+    BepInEx --> WCP
+    Harmony --> WCP
+    Game --> WCP
+    JSON --> WCP
+    TMP --> WCP
+    UI --> WCP
 ```
 
-```
-
-*Sources : [WankulCrazyPlugin.csproj L26-L66](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/WankulCrazyPlugin.csproj#L26-L66)
+*Sources : [WankulCrazyPlugin.csproj L26-L66](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/WankulCrazyPlugin.csproj#L26-L66)
 
 [WankulCrazyPlugin.sln L1-L66](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/WankulCrazyPlugin.sln#L1-L66)*
 
@@ -80,13 +101,13 @@ Le projet active les blocs non sécurisés, cible la dernière version du langag
 
 ## 3. Construire l'automatisation et les scripts
 
-Les opérations de construction sont pilotées par `build.ps1`, qui prend en charge deux modes d'exécution principaux : `dev` et `release` [build.ps1 L8-L12](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/build.ps1#L8-L12)
+Les opérations de construction sont pilotées par `build.ps1`, qui prend en charge deux modes d'exécution principaux : `dev` et `release` [build.ps1 L8-L12](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/build.ps1#L8-L12)
 
 ### Mode développement (dév.)
 
 Invoqué via `dev.cmd` [dev.cmd L1-L3](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/dev.cmd#L1-L3)
 
-ou `.\dev` [BUILD_GUIDE.md L3](BUILD_GUIDE.md)
+ou `.\dev` [Docs/BUILD_GUIDE.md L3](../Docs/BUILD_GUIDE.md)
 
 ce mode :
 
@@ -99,7 +120,7 @@ ce mode :
 
 Invoqué via `release.cmd` [release.cmd L1-L3](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/release.cmd#L1-L3)
 
-ou `.\release` [BUILD_GUIDE.md L3](BUILD_GUIDE.md)
+ou `.\release` [Docs/BUILD_GUIDE.md L3](../Docs/BUILD_GUIDE.md)
 
 ce mode :
 
@@ -165,14 +186,28 @@ Le pipeline se déclenche sur les requêtes push et pull vers `main` ou `master`
 
 ## 5. Guide de construction et disposition des artefacts
 
-Comme indiqué dans `Docs/BUILD_GUIDE.md`, les développeurs peuvent exécuter des builds à l'aide de PowerShell, de l'invite de commande ou de raccourcis de fichiers directs [BUILD_GUIDE.md L1-L5](BUILD_GUIDE.md)
+Comme indiqué dans `Docs/BUILD_GUIDE.md`, les développeurs peuvent exécuter des builds à l'aide de PowerShell, de l'invite de commande ou de raccourcis de fichiers directs [Docs/BUILD_GUIDE.md L1-L5](../Docs/BUILD_GUIDE.md)
 
 ### Structure du package de distribution des joueurs
 
-Le fichier `.zip` packagé généré par les versions de version fournit la présentation suivante attendue par BepInEx :
+Le fichier `.zip` packagé généré par les versions de version fournit la présentation suivante attendue par BepInEx :
 
-```
-TCG Card Shop Simulator/└── BepInEx/    └── plugins/        └── WankulCrazy/            ├── WankulCrazyPlugin.dll            ├── INSTALL.txt            ├── LICENCE.txt            └── data/                ├── seasons.json                ├── rarities.json                ├── cards/                ├── sprites/                ├── masks/                ├── patchtextures/                └── names/
+```text
+TCG Card Shop Simulator/
+└── BepInEx/
+    └── plugins/
+        └── WankulCrazy/
+            ├── WankulCrazyPlugin.dll
+            ├── INSTALL.txt
+            ├── LICENCE.txt
+            └── data/
+                ├── seasons.json
+                ├── rarities.json
+                ├── cards/
+                ├── sprites/
+                ├── masks/
+                ├── patchtextures/
+                └── names/
 ```
 
 *Sources : [Docs/BUILD_GUIDE.md:43-62]*

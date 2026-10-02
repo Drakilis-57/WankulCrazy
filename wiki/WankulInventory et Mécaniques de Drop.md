@@ -35,35 +35,35 @@ Lorsque le code du jeu Vanilla appelle un ajout ou une suppression, le correctif
 
 ```csharp
 public static void AddCard(CardData cardData, int addAmount)
-        {
-            WankulCardData wankulCardData = WankulCardsData.Instance.GetFromMonster(cardData, true);
+{
+    WankulCardData wankulCardData = WankulCardsData.Instance.GetFromMonster(cardData, true);
 
-            if (wankulCardData == null)
-            {
-                wankulCardData = WankulCardsData.GetAJETER();
-                Plugin.Logger.LogWarning("wankulCardData is null, using AJETER");
-            }
+    if (wankulCardData == null)
+    {
+        wankulCardData = WankulCardsData.GetAJETER();
+        Plugin.Logger.LogWarning("wankulCardData is null, using AJETER");
+    }
 
-            WankulInventory.AddCard(wankulCardData, cardData, addAmount);
-        }
+    WankulInventory.AddCard(wankulCardData, cardData, addAmount);
+}
 ```
 
-Sources : `patch/Inventory.cs:1-34()`
+Sources : `patch/Inventory.cs:1-34()`
 
 ---
 
 ## Type de pack et mappage de saison
 
-La logique de dépôt de la carte dépend du type de pack de collecte spécifique ouvert.`WankulInventory.ConvertPackTypeToSeason()` analyse les types de packs vanille et dynamiques (`ECollectionPackType`), en les convertissant en valeurs d'énumération `Season` personnalisées (`S01` à `S05`, ou `HS` pour la haute saison/de repli).
+La logique de dépôt de la carte dépend du type de pack de collecte spécifique ouvert. `WankulInventory.ConvertPackTypeToSeason()` analyse les types de packs vanille et dynamiques (`ECollectionPackType`), en les convertissant en valeurs d'énumération `Season` personnalisées (`S01` à `S05`, ou `HS` pour la haute saison/de repli).
 
-* `BasicCardPack`, `DestinyBasicCardPack` $\rightarrow$ `Season.S01`
-* `RareCardPack`, `DestinyRareCardPack` $\rightarrow$ `Season.S02`
-* `EpicCardPack`, `DestinyEpicCardPack` $\rightarrow$ `Season.S03`
-* `LegendaryCardPack` / `DestinyLegendaryCardPack` / `Stellar` / `StellarTaux` $\rightarrow$ `Season.S04`
-* `Legacy` / `LegacyTaux` / `AscensionCardPack` $\rightarrow$ `Season.S05`
-* All other pack types $\rightarrow$ `Season.HS`
+* `BasicCardPack`, `DestinyBasicCardPack` → `Season.S01`
+* `RareCardPack`, `DestinyRareCardPack` → `Season.S02`
+* `EpicCardPack`, `DestinyEpicCardPack` → `Season.S03`
+* `Stellar`, `StellarTaux` → `Season.S04`
+* `Legacy`, `LegacyTaux`, `AscensionCardPack` → `Season.S05`
+* Tous les autres types de packs (dont `LegendaryCardPack`, `DestinyLegendaryCardPack`) → `Season.HS`
 
-Sources : `inventory/WankulInventory.cs:30-51()`
+Sources : `inventory/WankulInventory.cs:30-51()`
 
 ---
 
