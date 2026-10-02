@@ -59,7 +59,7 @@ Pour permettre au joueur d'ouvrir des boosters Wankul personnalisés et des boî
 
 Ces méthodes inspectent les objets actuellement détenus dans `m_HoldItemList` via la réflexion (reflection) [patch/InteractionPlayerControllerPatch.cs L75-L93](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/patch/InteractionPlayerControllerPatch.cs#L75-L93)
 
-À l'aide de `EnumExtensions.SafeParseEItemType`, ils évaluent si le type d'élément correspond aux types Vanilla ou aux types d'éléments personnalisés nouvellement enregistrés (par exemple, `BoosterStellar`, `DisplayStellar`, `TestCardPack32`, etc.) [patch/InteractionPlayerControllerPatch.csL66-L98](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/patch/InteractionPlayerControllerPatch.cs#L66-L98)
+À l'aide de `EnumExtensions.SafeParseEItemType`, ils évaluent si le type d'élément correspond aux types Vanilla ou aux types d'éléments personnalisés nouvellement enregistrés (par exemple, `BoosterStellar`, `DisplayStellar`, `BoosterLegacy`, etc.) [patch/InteractionPlayerControllerPatch.csL66-L98](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/patch/InteractionPlayerControllerPatch.cs#L66-L98)
 
 ```mermaid
 flowchart TD

@@ -363,11 +363,6 @@ namespace WankulCrazyPlugin.importer
 
         public static void ItemTypeToCollectionPackType(EItemType itemType, ref ECollectionPackType __result)
         {
-            EItemType test32 = EnumExtensions.SafeParseEItemType("TestCardPack32");
-            EItemType test64 = EnumExtensions.SafeParseEItemType("TestCardPack64");
-            if (itemType == test32) { __result = EnumExtensions.SafeParseECollectionPackType("SeasonTestPack32"); return; }
-            if (itemType == test64) { __result = EnumExtensions.SafeParseECollectionPackType("SeasonTestPack64"); return; }
-
             EItemType boosterStellar = EnumExtensions.SafeParseEItemType("BoosterStellar");
             EItemType displayStellar = EnumExtensions.SafeParseEItemType("DisplayStellar");
             EItemType boosterStellarTaux = EnumExtensions.SafeParseEItemType("BoosterStellarTaux");
@@ -410,7 +405,6 @@ namespace WankulCrazyPlugin.importer
 
         public static void GetCardExpansionType(ECollectionPackType collectionPackType, ref ECardExpansionType __result)
         {
-            if (collectionPackType == EnumExtensions.SafeParseECollectionPackType("SeasonTestPack32") || collectionPackType == EnumExtensions.SafeParseECollectionPackType("SeasonTestPack64")) { __result = ECardExpansionType.Tetramon; }
         }
 
         private static void RegisterCustomItemsToShopCategories(List<ItemData> items)

@@ -26,8 +26,6 @@ public static class EnumExtensions
                 { 134, "ClasseurS4" },
                 { 135, "BoosterGoldBattle" },
                 { 136, "BoosterGoldStellar" },
-                { 137, "TestCardPack32" },
-                { 138, "TestCardPack64" },
                 { 139, "BoosterLegacy" },
                 { 140, "DisplayLegacy" },
                 { 141, "BoosterLegacyTaux" },
@@ -40,8 +38,6 @@ public static class EnumExtensions
             {
                 { 15, "Stellar" },
                 { 16, "StellarTaux" },
-                { 17, "SeasonTestPack32" },
-                { 18, "SeasonTestPack64" },
                 { 19, "Legacy" },
                 { 20, "LegacyTaux" }
             }
@@ -120,7 +116,6 @@ public static class EnumExtensions
         { "Tapis Stellar 2", "TapisS42" }, { "Classeur Stellar", "ClasseurS4" },
         { "Booster Gold Battle", "BoosterGoldBattle" }, { "Booster Gold Stellar", "BoosterGoldStellar" },
         { "Booster Gold Legacy", "BoosterGoldLegacy" },
-        { "Test Card Pack 32", "TestCardPack32" }, { "Test Card Pack 64", "TestCardPack64" },
         { "AscensionCardBox", "AscensionCardPack" }, { "Ascension Card Box", "AscensionCardPack" },
         { "Booster Legacy", "BoosterLegacy" }, { "Display Legacy", "DisplayLegacy" },
         { "Booster Legacy Taux +", "BoosterLegacyTaux" }, { "Booster Legacy Taux+", "BoosterLegacyTaux" },
@@ -244,8 +239,6 @@ public static class EnumExtensions
         var boosterGoldLegacy  = SafeParseEItemType("BoosterGoldLegacy");
         var boosterLegacy      = SafeParseEItemType("BoosterLegacy");
         var boosterLegacyTaux  = SafeParseEItemType("BoosterLegacyTaux");
-        var testPack32         = SafeParseEItemType("TestCardPack32");
-        var testPack64         = SafeParseEItemType("TestCardPack64");
 
         if (itemType == boosterStellar)      return SafeParseECollectionPackType("Stellar");
         if (itemType == boosterStellarTaux)  return SafeParseECollectionPackType("StellarTaux");
@@ -255,8 +248,6 @@ public static class EnumExtensions
         if (itemType == boosterGoldLegacy)   return SafeParseECollectionPackType("Legacy");
         if (itemType == boosterLegacy)       return SafeParseECollectionPackType("Legacy");
         if (itemType == boosterLegacyTaux)   return SafeParseECollectionPackType("LegacyTaux");
-        if (itemType == testPack32)          return SafeParseECollectionPackType("SeasonTestPack32");
-        if (itemType == testPack64)          return SafeParseECollectionPackType("SeasonTestPack64");
 
         return (ECollectionPackType)0;
     }

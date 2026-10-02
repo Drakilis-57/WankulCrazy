@@ -79,19 +79,19 @@ public void LegacyCards_JsonLoading_RegistersSeasonAndRarities()
         }
 
         [Fact]
-        public void EnumExtensions_SafeParse_SupportsSeasonTestPacks()
+        public void EnumExtensions_SafeParse_SupportsCustomPacks()
         {
-            EItemType item32 = EnumExtensions.SafeParseEItemType("TestCardPack32");
-            EItemType item64 = EnumExtensions.SafeParseEItemType("TestCardPack64");
+            EItemType itemStellar = EnumExtensions.SafeParseEItemType("BoosterStellar");
+            EItemType itemLegacy = EnumExtensions.SafeParseEItemType("BoosterLegacy");
 
-            Assert.NotEqual((EItemType)0, item32);
-            Assert.NotEqual((EItemType)0, item64);
+            Assert.NotEqual((EItemType)0, itemStellar);
+            Assert.NotEqual((EItemType)0, itemLegacy);
 
-            ECollectionPackType pack32 = EnumExtensions.SafeParseECollectionPackType("SeasonTestPack32");
-            ECollectionPackType pack64 = EnumExtensions.SafeParseECollectionPackType("SeasonTestPack64");
+            ECollectionPackType packStellar = EnumExtensions.SafeParseECollectionPackType("Stellar");
+            ECollectionPackType packLegacy = EnumExtensions.SafeParseECollectionPackType("Legacy");
 
-            Assert.NotEqual((ECollectionPackType)0, pack32);
-            Assert.NotEqual((ECollectionPackType)0, pack64);
+            Assert.NotEqual((ECollectionPackType)0, packStellar);
+            Assert.NotEqual((ECollectionPackType)0, packLegacy);
         }
     }
 }

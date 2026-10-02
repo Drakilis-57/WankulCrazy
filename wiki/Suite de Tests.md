@@ -104,8 +104,8 @@ Les extensions d'énumération et les correctifs d'énumération Harmony (`Patch
 flowchart TD
 
 sub_EnumTest["EnumExtensionsTests.cs"]
-sub_ItemCheck["TestCardPack32 / TestCardPack64"]
-sub_PackCheck["SeasonTestPack32 / SeasonTestPack64"]
+sub_ItemCheck["BoosterStellar / BoosterLegacy"]
+sub_PackCheck["Stellar / Legacy"]
 sub_ParseCheck["Case-insensitive Custom Parsing"]
 
 sub_EnumTest --> sub_ItemCheck
