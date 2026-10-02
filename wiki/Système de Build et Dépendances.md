@@ -3,8 +3,8 @@
 > **Fichiers sources pertinents**
 > * [.github/workflows/build.yml](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/.github/workflows/build.yml)
 > * [.gitignore](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/.gitignore)
-> * [Docs/BUILD_GUIDE.md](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/Docs/BUILD_GUIDE.md?plain=1)
-> * [Docs/inventaire.md](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/Docs/inventaire.md?plain=1)
+> * [BUILD_GUIDE.md](BUILD_GUIDE.md)
+> * [inventaire.md](inventaire.md)
 > * [WankulCrazyPlugin.Tests/StringExtensionsTests.cs](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/WankulCrazyPlugin.Tests/StringExtensionsTests.cs)
 > * [WankulCrazyPlugin.csproj](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/WankulCrazyPlugin.csproj)
 > * [WankulCrazyPlugin.sln](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/WankulCrazyPlugin.sln)
@@ -86,7 +86,7 @@ Les opérations de construction sont pilotées par `build.ps1`, qui prend en cha
 
 Invoqué via `dev.cmd` [dev.cmd L1-L3](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/dev.cmd#L1-L3)
 
-ou `.\dev` [Docs/BUILD_GUIDE.md L3](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/Docs/BUILD_GUIDE.md?plain=1#L3-L3)
+ou `.\dev` [BUILD_GUIDE.md L3](BUILD_GUIDE.md)
 
 ce mode :
 
@@ -99,7 +99,7 @@ ce mode :
 
 Invoqué via `release.cmd` [release.cmd L1-L3](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/release.cmd#L1-L3)
 
-ou `.\release` [Docs/BUILD_GUIDE.md L3](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/Docs/BUILD_GUIDE.md?plain=1#L3-L3)
+ou `.\release` [BUILD_GUIDE.md L3](BUILD_GUIDE.md)
 
 ce mode :
 
@@ -165,7 +165,7 @@ Le pipeline se déclenche sur les requêtes push et pull vers `main` ou `master`
 
 ## 5. Guide de construction et disposition des artefacts
 
-Comme indiqué dans `Docs/BUILD_GUIDE.md`, les développeurs peuvent exécuter des builds à l'aide de PowerShell, de l'invite de commande ou de raccourcis de fichiers directs [Docs/BUILD_GUIDE.md L1-L5](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/Docs/BUILD_GUIDE.md?plain=1#L1-L5)
+Comme indiqué dans `Docs/BUILD_GUIDE.md`, les développeurs peuvent exécuter des builds à l'aide de PowerShell, de l'invite de commande ou de raccourcis de fichiers directs [BUILD_GUIDE.md L1-L5](BUILD_GUIDE.md)
 
 ### Structure du package de distribution des joueurs
 

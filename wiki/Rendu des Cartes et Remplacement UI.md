@@ -65,7 +65,7 @@ K --> L
 
 ## 2. Tri des albums, écrans d'extension et filtrage
 
-WankulCrazy remplace les écrans d'expansion et de tri Vanilla pour prendre en charge les saisons Wankul (SNIPPET 0, SNIPPET _1, SNIPPET _2, `S04`, `S05`, `HS`) au lieu des identifiants Vanilla.
+WankulCrazy remplace les écrans d'expansion et de tri Vanilla pour prendre en charge les saisons Wankul (`S01`, `S02`, `S03`, `S04`, `S05`, `HS`) au lieu des identifiants Vanilla.
 
 ### Tri des albums (SortUI)
 

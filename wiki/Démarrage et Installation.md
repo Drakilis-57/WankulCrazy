@@ -11,7 +11,7 @@
 
 Cette section détaille le pipeline d'installation, les conditions préalables, la disposition du dossier mod, les options de configuration d'exécution et la structure de la documentation pour `WankulCrazy`.Il relie les étapes de déploiement avec les mécanismes d'initialisation du plugin sous-jacents, guidant les développeurs et les utilisateurs avancés dans la configuration de l'environnement d'exécution BepInEx/Harmony et dans la gestion des actifs de données.
 
-Sources : SNIPPET 0, SNIPPET _1, SNIPPET _2
+Sources : .agents/rules/tcg_shop_modding.md, Docs/DOCS.md, INSTALL.txt, LICENCE.txt, README.md
 
 ---
 
