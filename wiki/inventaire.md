@@ -14,7 +14,6 @@ Ce document récapitule l'ensemble des cartes recensées dans le projet, classé
 | **S04** | **Stellar** | 150 | 30 | 0 | **180** | Prévue (Boosters & Énums câblés) |
 | **S05** | **Legacy** | 155 | 30 | 0 | **185** | Nouvelle Saison |
 | **HS** | **Hors-Série** | 76 | 0 | 2 | **78** | Packs spéciaux / promos |
-| **SeasonTest** | **Season Test (Dev)** | 15 | 1 | 0 | **16** | Actif dans le repo |
 | **TOTAL** | | **926** | **146** | **2** | **1074** | |
 
 ---
@@ -97,14 +96,6 @@ Série promotionnelle et événementielle :
 ---
 
 ### 7. Saison Test (`SeasonTest` - Devs / Mock) — 16 Cartes
-Saison actuellement présente dans `data/cards/SeasonTest/season_test.json` :
-* **Terrains** : 1 (`TEST-016` / *Test Terrain 001*)
-* **Personnages / Effigies** : 15 cartes
-  * **Commune (`C`)** : 2 (`TEST-001`, `TEST-008`)
-  * **Peu Commune (`UC`)** : 1 (`TEST-002`)
-  * **Rare (`R`)** : 2 (`TEST-003`, `TEST-009`)
-  * **Ultra Rare 1 (`UR1`)** : 2 (`TEST-004`, `TEST-010`)
-  * **Ultra Rare 2 (`UR2`)** : 2 (`TEST-005`, `TEST-011`)
   * **Légendaire Bronze (`LB`)** : 2 (`TEST-006`, `TEST-012`)
   * **Légendaire Argent (`LA`)** : 2 (`TEST-007`, `TEST-013`)
   * **Légendaire Or (`LO`)** : 3 (`TEST-014`, `TEST-015`, etc.)
