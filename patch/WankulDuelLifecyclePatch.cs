@@ -38,20 +38,11 @@ namespace WankulCrazyPlugin.patch
         {
             try
             {
-                // Si le contrôleur Wankul est actif, nous prenons le contrôle de l'IA
+                // Si le duel Wankul est actif, nous coupons totalement l'IA Tetramon.
+                // Le tour de l'IA Wankul est orchestré de manière déterministe par WankulDuelController.HandleTurnStart.
                 if (WankulDuelController.Instance != null && WankulDuelController.Instance.IsWankulDuelActive)
                 {
-                    // Ne rien faire tant que le tour de l'IA n'est pas actif ou que l'animation de setup n'est pas terminée
-                    if (!WankulDuelController.Instance.IsGameSetupCompleted || !___m_IsTurnActive || ___m_IsWaitingActionResolve)
-                    {
-                        return false;
-                    }
-
-                    if (___m_IsAIControlled)
-                    {
-                        WankulEnemyAI.RunTurn(WankulDuelController.Instance, __instance);
-                    }
-                    return false; // Court-circuite complètement les 800 lignes de Tetramon vanilla !
+                    return false; // Court-circuite complètement les 800 lignes de Tetramon vanilla
                 }
             }
             catch (System.Exception ex)
@@ -64,19 +55,46 @@ namespace WankulCrazyPlugin.patch
 
         [HarmonyPatch(typeof(PlayTableGame), "OnFinishMulligan")]
         [HarmonyPostfix]
-        public static void OnFinishMulliganPostfix(PlayTableGame __instance, bool ___m_HasFinishMulligan)
+        public static void OnFinishMulliganPostfix(PlayTableGame __instance, bool ___m_HasFinishMulligan, bool ___m_IsPlayerTurn)
         {
             try
             {
-                if (___m_HasFinishMulligan && WankulDuelController.Instance != null)
+                if (___m_HasFinishMulligan && WankulDuelController.Instance != null && WankulDuelController.Instance.IsWankulDuelActive)
                 {
                     WankulDuelController.Instance.IsGameSetupCompleted = true;
-                    Plugin.Logger.LogInfo("[WankulDuelLifecyclePatch] Setup et Mulligan terminés. Le match Wankul commence réellement !");
+                    bool isPlayerFirst = ___m_IsPlayerTurn;
+                    Plugin.Logger.LogInfo($"[WankulDuelLifecyclePatch] Setup et Mulligan terminés. Premier tour : {(isPlayerFirst ? "JOUEUR" : "ADVERSAIRE (IA)")}");
+
+                    // Déclenchement garanti du Tour 1 pour le premier joueur
+                    WankulDuelController.Instance.HandleTurnStart(isPlayerFirst);
                 }
             }
             catch (System.Exception ex)
             {
                 Plugin.Logger.LogError($"[WankulDuelLifecyclePatch] Erreur dans OnFinishMulliganPostfix: {ex}");
+            }
+        }
+
+        [HarmonyPatch(typeof(PlayCardSet), "SetIsTurnActive")]
+        [HarmonyPostfix]
+        public static void SetIsTurnActivePostfix(PlayCardSet __instance, bool isTurnActive, bool ___m_IsPlayer)
+        {
+            try
+            {
+                var ctrl = WankulDuelController.Instance;
+                if (ctrl != null && ctrl.IsWankulDuelActive && isTurnActive)
+                {
+                    if (!ctrl.IsGameSetupCompleted)
+                    {
+                        ctrl.IsGameSetupCompleted = true;
+                        Plugin.Logger.LogInfo($"[WankulDuelLifecyclePatch] SetIsTurnActive validé ! Premier joueur actif : {(___m_IsPlayer ? "JOUEUR" : "ADVERSAIRE (IA)")}");
+                        ctrl.HandleTurnStart(___m_IsPlayer);
+                    }
+                }
+            }
+            catch (System.Exception ex)
+            {
+                Plugin.Logger.LogError($"[WankulDuelLifecyclePatch] Erreur dans SetIsTurnActivePostfix: {ex}");
             }
         }
 

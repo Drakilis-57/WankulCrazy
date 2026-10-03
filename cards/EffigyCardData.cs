@@ -39,5 +39,14 @@ namespace WankulCrazyPlugin.cards
                 }
             }
         }
+
+        /// <summary>
+        /// Règle officielle Wankul : un personnage Scoreur peut déclencher le scoring d'un terrain
+        /// s'il est posé sur un terrain actif (non incliné).
+        /// Détection via le texte des champs Rules ou Combo.
+        /// </summary>
+        public bool IsScoreur =>
+            (Rules != null && Rules.Contains("Scoreur")) ||
+            (Combo != null && Combo.Contains("Scorez un Terrain"));
     }
 }

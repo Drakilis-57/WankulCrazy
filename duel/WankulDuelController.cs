@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -30,7 +31,51 @@ namespace WankulCrazyPlugin.duel
             BoardState.Reset();
             IsWankulDuelActive = true;
             IsGameSetupCompleted = false;
+
+            // Création de l'interface dédiée Wankul TCG
+            WankulDuelUI.Create(this);
+
+            // Nettoyage visuel 3D de la table de jeu (masque les symboles Tetramon au sol)
+            CleanVanillaBoardVisuals(playTable.m_PlayCardSetPlayer);
+            CleanVanillaBoardVisuals(playTable.m_PlayCardSetEnemy);
+
             Plugin.Logger.LogInfo("[WankulDuelController] Initialisé pour un duel Wankul TCG !");
+        }
+
+        /// <summary>
+        /// Masque les 4 symboles élémentaires vanilla projetés au sol sur le tapis,
+        /// et ajuste les slots 0, 1, 2 pour les aligner sur les 3 Terrains Wankul.
+        /// </summary>
+        private void CleanVanillaBoardVisuals(PlayCardSet cardSet)
+        {
+            if (cardSet == null) return;
+            try
+            {
+                // Masque les animations et visuels des symboles Feu, Terre, Eau, Air
+                if (cardSet.m_PlayCardElemAtkAnimList != null)
+                {
+                    foreach (var anim in cardSet.m_PlayCardElemAtkAnimList)
+                    {
+                        if (anim != null && anim.gameObject != null)
+                        {
+                            anim.gameObject.SetActive(false);
+                        }
+                    }
+                }
+
+                // Masque les effets d'évolution Tetramon
+                if (cardSet.m_EvoVFXList != null)
+                {
+                    foreach (var fx in cardSet.m_EvoVFXList)
+                    {
+                        if (fx != null) fx.SetActive(false);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Plugin.Logger.LogError($"[WankulDuelController] Erreur CleanVanillaBoardVisuals: {ex.Message}");
+            }
         }
 
         public void StopDuel()
@@ -38,6 +83,12 @@ namespace WankulCrazyPlugin.duel
             IsWankulDuelActive = false;
             IsGameSetupCompleted = false;
             BoardState.Reset();
+
+            if (WankulDuelUI.Instance != null)
+            {
+                WankulDuelUI.Instance.DestroyUI();
+            }
+
             Plugin.Logger.LogInfo("[WankulDuelController] Duel Wankul terminé.");
         }
 
@@ -65,32 +116,89 @@ namespace WankulCrazyPlugin.duel
             if (isPlayerTurn)
             {
                 activeCardSet.QueueCardDrawFromDeck(ECardDrawQueueType.ToHand, 2, 0.2f, showCenter: true, 0.4f);
+                // Vérification terrain côté Joueur : si <= 1 terrain, pose obligatoire
+                EnsurePlayerTerrainRequirement(activeCardSet);
             }
             else
             {
                 activeCardSet.QueueCardDrawFromDeck(ECardDrawQueueType.ToHand, 2, 0.2f);
+                // Lancement garanti et unique du tour de l'IA après réception des cartes
+                StartCoroutine(EnemyAITurnRoutine(activeCardSet));
             }
+        }
 
-            // Exécution de la vérification des terrains
-            StartCoroutine(CheckTerrainsRoutine(isPlayerTurn, activeCardSet));
+        private IEnumerator EnemyAITurnRoutine(PlayCardSet enemyCardSet)
+        {
+            // Attente de l'animation de pioche des cartes dans la main
+            yield return new WaitForSeconds(0.8f);
+
+            Plugin.Logger.LogInfo("[WankulDuelController] Lancement du tour de l'Adversaire Wankul !");
+            WankulEnemyAI.RunTurn(this, enemyCardSet);
         }
 
         /// <summary>
-        /// Phase 2 : Vérification des Terrains.
-        /// S'il y a 0 ou 1 terrain en jeu, le joueur actif DOIT obligatoirement en poser un.
-        /// S'il n'en a pas en main, dépilage du deck jusqu'au premier terrain.
+        /// Règle officielle Wankul TCG : Si <= 1 terrain sur la table, le joueur DOIT en poser un.
+        /// Si le joueur n'en a pas en main, dépilage automatique du deck jusqu'au premier terrain.
         /// </summary>
-        private IEnumerator CheckTerrainsRoutine(bool isPlayerTurn, PlayCardSet cardSet)
+        private void EnsurePlayerTerrainRequirement(PlayCardSet playerCardSet)
         {
-            yield return new WaitForSeconds(0.6f);
+            if (BoardState.ActiveTerrainCount > 1) return;
 
-            if (BoardState.ActiveTerrainCount <= 1)
+            // Trouve le premier slot libre
+            int freeSlot = -1;
+            for (int i = 0; i < WankulBoardState.MAX_TERRAIN_SLOTS; i++)
             {
-                Plugin.Logger.LogInfo($"[WankulDuelController] Terrains en jeu: {BoardState.ActiveTerrainCount} <= 1. Pose obligatoire requise.");
-                // Si l'IA joue, elle sélectionne ou dépile automatiquement
-                if (!isPlayerTurn)
+                if (!BoardState.Terrains[i].HasTerrain)
                 {
-                    WankulEnemyAI.ExecuteTerrainRequirement(this, cardSet);
+                    freeSlot = i;
+                    break;
+                }
+            }
+            if (freeSlot == -1) return;
+
+            // Vérifie si le joueur a un terrain en main
+            var hand = playerCardSet.GetHoldCard3dList();
+            bool hasTerrainInHand = false;
+            if (hand != null)
+            {
+                foreach (var card3d in hand)
+                {
+                    var cd = card3d?.m_Card3dUI?.m_CardUI?.GetCardData();
+                    if (cd != null)
+                    {
+                        var wCard = WankulCardsData.Instance?.GetFromMonster(cd, true);
+                        if (wCard is TerrainCardData)
+                        {
+                            hasTerrainInHand = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (hasTerrainInHand)
+            {
+                Plugin.Logger.LogInfo($"[WankulDuelController] Terrains en jeu: {BoardState.ActiveTerrainCount} <= 1. Vous devez poser un Terrain sur un slot libre !");
+            }
+            else
+            {
+                // Pas de terrain en main -> Dépilage automatique du deck
+                Plugin.Logger.LogInfo("[WankulDuelController] Aucun terrain en main -> Dépilage automatique de la pioche du joueur...");
+                var deckCards = playerCardSet.GetDeckCardDataList();
+                if (deckCards != null)
+                {
+                    for (int i = 0; i < deckCards.Count; i++)
+                    {
+                        var candidate = WankulCardsData.Instance?.GetFromMonster(deckCards[i], true);
+                        if (candidate is TerrainCardData tdFound)
+                        {
+                            var foundCardData = deckCards[i];
+                            deckCards.RemoveAt(i);
+                            PlaceTerrain(freeSlot, foundCardData, tdFound);
+                            Plugin.Logger.LogInfo($"[WankulDuelController] Terrain trouvé par dépilage pour le joueur : {tdFound.Title} sur slot {freeSlot} !");
+                            break;
+                        }
+                    }
                 }
             }
         }
@@ -124,8 +232,10 @@ namespace WankulCrazyPlugin.duel
 
         /// <summary>
         /// Enregistre la pose d'un personnage sur un terrain.
+        /// Retire optionnellement la carte de la main physiquement (card3d).
+        /// Déclenche ResolveDuel si la carte est un Scoreur posé sur un terrain actif.
         /// </summary>
-        public bool PlaceCharacter(int slotIndex, WankulCardData characterData, bool isPlayer)
+        public bool PlaceCharacter(int slotIndex, WankulCardData characterData, bool isPlayer, PlayCardSet cardSet = null, InteractableCard3d card3d = null)
         {
             if (!CanPlayCharacter(isPlayer))
             {
@@ -149,8 +259,67 @@ namespace WankulCrazyPlugin.duel
             }
 
             Plugin.Logger.LogInfo($"[WankulDuelController] Personnage {characterData.Title} posé sur le Terrain {slotIndex} par {(isPlayer ? "Joueur" : "Adversaire")}.");
+
+            // Retrait physique de la main
+            if (cardSet != null && card3d != null)
+            {
+                RemoveCard3dFromHand(cardSet, card3d);
+            }
+
+            // Règle Scoreur : si la carte est un Scoreur et le terrain est actif → scoring immédiat
+            if (characterData is WankulCrazyPlugin.cards.EffigyCardData effigy && effigy.IsScoreur && slot.IsActive)
+            {
+                Plugin.Logger.LogInfo($"[WankulDuelController] Scoreur {effigy.Title} posé sur terrain actif {slotIndex} -> Score automatique !");
+                ResolveDuel(slotIndex);
+            }
+
             return true;
         }
+
+        /// <summary>
+        /// Retire physiquement une carte3d de la main (m_HoldCard3dList) et la déplace vers la défausse.
+        /// Utilise RemoveFromHoldCard vanilla pour synchroniser m_PlayCardBtnGrpList, animations et EvaluateHoldCardPos.
+        /// </summary>
+        public void RemoveCard3dFromHandPublic(PlayCardSet cardSet, InteractableCard3d card3d)
+        {
+            RemoveCard3dFromHand(cardSet, card3d);
+        }
+
+        private static readonly System.Reflection.MethodInfo RemoveFromHoldCardMethod =
+            Plugin.GetCachedMethod(typeof(PlayCardSet), "RemoveFromHoldCard");
+
+        private void RemoveCard3dFromHand(PlayCardSet cardSet, InteractableCard3d card3d)
+        {
+            try
+            {
+                if (cardSet == null || card3d == null) return;
+
+                var hand = cardSet.m_HoldCard3dList;
+                int idx = hand.IndexOf(card3d);
+                if (idx >= 0)
+                {
+                    InteractableCard3d removed = null;
+                    if (RemoveFromHoldCardMethod != null)
+                    {
+                        removed = RemoveFromHoldCardMethod.Invoke(cardSet, new object[] { idx }) as InteractableCard3d;
+                    }
+                    else
+                    {
+                        // Fallback au cas où
+                        hand.RemoveAt(idx);
+                        removed = card3d;
+                    }
+
+                    Plugin.Logger.LogInfo($"[WankulDuelController] Carte retirée de la main via RemoveFromHoldCard (index={idx}).");
+                }
+            }
+            catch (Exception ex)
+            {
+                Plugin.Logger.LogError($"[WankulDuelController] Erreur RemoveCard3dFromHand: {ex.Message}");
+            }
+        }
+
+
 
         /// <summary>
         /// Résout le duel sur un terrain actif :

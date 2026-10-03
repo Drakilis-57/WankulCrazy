@@ -126,6 +126,7 @@ namespace WankulCrazyPlugin.duel
             if (isPlayerTurn)
             {
                 PlayerCharactersPlayedThisTurn = 0;
+                TurnCount++;
             }
             else
             {

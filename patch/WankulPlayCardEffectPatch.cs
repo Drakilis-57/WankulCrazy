@@ -5,6 +5,7 @@ using HarmonyLib;
 using Newtonsoft.Json;
 using UnityEngine;
 using WankulCrazyPlugin.cards;
+using WankulCrazyPlugin.duel;
 
 namespace WankulCrazyPlugin.patch
 {
@@ -94,6 +95,20 @@ namespace WankulCrazyPlugin.patch
                 if (effectDataCache.TryGetValue(monsterType, out var cachedData))
                 {
                     __result = cachedData;
+                    return;
+                }
+
+                // Si un duel Wankul est actif, nous désactivons le moteur d'effets Tetramon
+                // pour éviter que des effets comme DiscardHandCard ouvrent l'UI vanilla et bloquent le tour.
+                if (WankulDuelController.Instance != null && WankulDuelController.Instance.IsWankulDuelActive)
+                {
+                    __result = new PlayEffectData
+                    {
+                        name = "WankulEmptyEffect",
+                        monsterType = monsterType,
+                        playEffectQueueDataList = new List<PlayEffectQueueData>(),
+                        effectMonsterTypeList = new List<EMonsterType>()
+                    };
                     return;
                 }
 

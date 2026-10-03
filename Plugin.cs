@@ -489,11 +489,24 @@ public class Plugin : BaseUnityPlugin
             postfix: AccessTools.Method(typeof(DuelOpponentDeckPatch), nameof(DuelOpponentDeckPatch.ResetBoardPostfix))
         );
 
-        // 🎮 Cycle de vie et contrôleur de match dédié Wankul TCG (Option 2)
+        /* 
+        // 🎮 Cycle de vie et contrôleur de match dédié Wankul TCG (Option 2 - Expérimental / Mis en pause)
         TryPatch(
             "PlayTableGame.SetPlayTable (WankulDuelLifecycle)",
             AccessTools.Method(typeof(PlayTableGame), "SetPlayTable"),
             postfix: AccessTools.Method(typeof(WankulDuelLifecyclePatch), nameof(WankulDuelLifecyclePatch.SetPlayTablePostfix))
+        );
+
+        TryPatch(
+            "PlayCardSet.QueueCardDrawFromDeck (BlockGuardians)",
+            AccessTools.Method(typeof(PlayCardSet), "QueueCardDrawFromDeck", new[] { typeof(ECardDrawQueueType), typeof(int), typeof(float), typeof(bool), typeof(float) }),
+            prefix: AccessTools.Method(typeof(WankulRootDuelPatch), nameof(WankulRootDuelPatch.QueueCardDrawFromDeckPrefix))
+        );
+
+        TryPatch(
+            "PlayTableGame.TriggerPlayEffect (BlockTetramonEffects)",
+            AccessTools.Method(typeof(PlayTableGame), "TriggerPlayEffect"),
+            prefix: AccessTools.Method(typeof(WankulRootDuelPatch), nameof(WankulRootDuelPatch.TriggerPlayEffectPrefix))
         );
 
         TryPatch(
@@ -515,9 +528,40 @@ public class Plugin : BaseUnityPlugin
         );
 
         TryPatch(
+            "PlayCardSet.SetIsTurnActive (WankulTurnActivation)",
+            AccessTools.Method(typeof(PlayCardSet), "SetIsTurnActive", new[] { typeof(bool) }),
+            postfix: AccessTools.Method(typeof(WankulDuelLifecyclePatch), nameof(WankulDuelLifecyclePatch.SetIsTurnActivePostfix))
+        );
+
+        TryPatch(
             "PlayTableGame.ReportWinner (WankulDuelCleanup)",
             AccessTools.Method(typeof(PlayTableGame), "ReportWinner", new[] { typeof(bool), typeof(bool) }),
             postfix: AccessTools.Method(typeof(WankulDuelLifecyclePatch), nameof(WankulDuelLifecyclePatch.ReportWinnerPostfix))
+        );
+
+        // 🎮 Actions du joueur humain Wankul TCG (Pose de cartes & Terrains)
+        TryPatch(
+            "PlayCardSet.OnClickElementButtonArea (WankulPlayerAction)",
+            AccessTools.Method(typeof(PlayCardSet), "OnClickElementButtonArea", new[] { typeof(int) }),
+            prefix: AccessTools.Method(typeof(WankulPlayerActionPatch), nameof(WankulPlayerActionPatch.OnClickElementButtonAreaPrefix))
+        );
+
+        TryPatch(
+            "PlayCardSet.OnPressEndTurn (WankulPlayerTurnEnd)",
+            AccessTools.Method(typeof(PlayCardSet), "OnPressEndTurn"),
+            prefix: AccessTools.Method(typeof(WankulPlayerActionPatch), nameof(WankulPlayerActionPatch.OnPressEndTurnPrefix))
+        );
+
+        TryPatch(
+            "PlayCardSet.SelectCardOnHand (HandBoundsGuard)",
+            AccessTools.Method(typeof(PlayCardSet), "SelectCardOnHand", new[] { typeof(int) }),
+            prefix: AccessTools.Method(typeof(WankulPlayerActionPatch), nameof(WankulPlayerActionPatch.SelectCardOnHandPrefix))
+        );
+
+        TryPatch(
+            "PlayCardSet.StartDragCardOnHand (HandBoundsGuard)",
+            AccessTools.Method(typeof(PlayCardSet), "StartDragCardOnHand", new[] { typeof(int) }),
+            prefix: AccessTools.Method(typeof(WankulPlayerActionPatch), nameof(WankulPlayerActionPatch.StartDragCardOnHandPrefix))
         );
 
         // 🃏 Effets de cartes Wankul : injection dans le moteur de duel PlayTableGame
@@ -538,6 +582,7 @@ public class Plugin : BaseUnityPlugin
             AccessTools.Method(typeof(PlayTableGame), "SwitchTurn"),
             postfix: AccessTools.Method(typeof(WankulMillWinConditionPatch), nameof(WankulMillWinConditionPatch.CheckDeckOutOnTurnEnded))
         );
+        */
     }
 
     public static string GetPluginPath()

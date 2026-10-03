@@ -98,22 +98,29 @@ namespace WankulCrazyPlugin.duel
 
             Plugin.Logger.LogInfo("[WankulEnemyAI] Début du tour de jeu de l'IA Wankul.");
 
-            // 1. Pose de Personnages (jusqu'à 4 max)
-            var hand = enemyCardSet.GetHoldCard3dList();
-            int charactersPlayed = 0;
+            // 0. PRIORITÉ TERRAIN : doit être exécuté SYNCHRONIQUEMENT avant tout, avant la boucle personnages.
+            //    (Supprime la race condition avec CheckTerrainsRoutine)
+            ExecuteTerrainRequirement(controller, enemyCardSet);
 
-            for (int i = 0; i < hand.Count && controller.CanPlayCharacter(false); i++)
+            // 1. Pose de Personnages (jusqu'à 4 max) — itération en reverse pour éviter IndexOutOfRange après suppression
+            int charactersPlayed = 0;
+            var hand = enemyCardSet.GetHoldCard3dList();
+
+            for (int i = hand.Count - 1; i >= 0 && controller.CanPlayCharacter(false); i--)
             {
                 var card3d = hand[i];
                 var wCard = ResolveCard(card3d);
                 if (wCard is EffigyCardData effigy)
                 {
-                    // Choix du meilleur terrain pour ce personnage
                     int targetSlot = ChooseBestSlotForCharacter(board);
                     if (targetSlot >= 0)
                     {
-                        controller.PlaceCharacter(targetSlot, effigy, false);
+                        // Passer card3d pour retrait physique de la main
+                        controller.PlaceCharacter(targetSlot, effigy, false, enemyCardSet, card3d);
                         charactersPlayed++;
+                        // Réactualiser la référence à hand après la suppression
+                        hand = enemyCardSet.GetHoldCard3dList();
+                        i = Mathf.Min(i, hand.Count); // borne haute sécurisée
                     }
                 }
             }
@@ -146,6 +153,7 @@ namespace WankulCrazyPlugin.duel
                 controller.GameTable.SwitchTurn();
             }
         }
+
 
         private static int ChooseBestSlotForCharacter(WankulBoardState board)
         {
