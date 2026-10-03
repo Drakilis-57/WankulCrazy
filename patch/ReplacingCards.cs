@@ -69,6 +69,19 @@ public class ReplacingCards
         {
             Plugin.SetPProperty(__instance, "m_CardData", gameCardData);
             ApplyWankulCardVisuals(__instance, gameCardData, wankulCardData);
+            if (gameCardData.cardGrade > 0)
+            {
+                Card3dUIGroup card3dUIGroup = Plugin.GetPProperty(__instance, "m_Card3dUIGroup") as Card3dUIGroup;
+                if (card3dUIGroup != null)
+                {
+                    card3dUIGroup.EvaluateCardGrade(gameCardData);
+                }
+                if (CSingleton<InventoryBase>.Instance?.m_MonsterData_SO != null && __instance.m_GradedCardTextureImage != null)
+                {
+                    __instance.m_GradedCardTextureImage.sprite = CSingleton<InventoryBase>.Instance.m_MonsterData_SO.GetGradedCardScratchTexture(gameCardData.cardGrade);
+                }
+                __instance.ShowGradedCardCase(__instance.m_Show2DGradedCase);
+            }
             return false;
         }
 
@@ -179,6 +192,33 @@ public class ReplacingCards
         }
 
         ApplyWankulCardVisuals(__instance, gameCardData, wankulCardData);
+
+        if (gameCardData.cardGrade > 0)
+        {
+            string cardTitle = wankulCardData.Title ?? "";
+            string cardSub = (wankulCardData is EffigyCardData eff) ? $"{eff.SeasonId} - {eff.RarityId}" : $"{wankulCardData.SeasonId}";
+
+            if (__instance.m_GradeNameText != null)
+            {
+                __instance.m_GradeNameText.text = cardTitle;
+            }
+            if (__instance.m_GradeExpansionRarityText != null)
+            {
+                __instance.m_GradeExpansionRarityText.text = cardSub;
+            }
+            Card3dUIGroup card3dUIGroup = Plugin.GetPProperty(__instance, "m_Card3dUIGroup") as Card3dUIGroup;
+            if (card3dUIGroup != null)
+            {
+                if (card3dUIGroup.m_GradeNameText != null)
+                {
+                    card3dUIGroup.m_GradeNameText.text = cardTitle;
+                }
+                if (card3dUIGroup.m_GradeExpansionRarityText != null)
+                {
+                    card3dUIGroup.m_GradeExpansionRarityText.text = cardSub;
+                }
+            }
+        }
     }
 
     /// <summary>
@@ -415,6 +455,29 @@ public class ReplacingCards
             __instance.m_CardList[cardIndex].SetVisibility(isVisible: false);
             return false;
         }
+
+        bool isGradedMode = (bool)(Plugin.GetPProperty(__instance, "m_IsGradedCardMode") ?? false);
+        bool isGraded = cardData.cardGrade > 0 || isGradedMode;
+        if (isGraded)
+        {
+            if (sortingType == ECollectionSortingType.DuplicatePrice && !isGradedMode)
+            {
+                cardCount--;
+            }
+            if (cardCount <= 0)
+            {
+                __instance.m_CardList[cardIndex].SetVisibility(isVisible: false);
+                return false;
+            }
+            __instance.m_CardList[cardIndex].m_CardUI.SetCardUI(cardData);
+            __instance.m_CardList[cardIndex].m_CardUI.SetFoilMaterialListFromSettingData(isWorldView: false);
+            __instance.m_CardList[cardIndex].m_CardUI.SetFoilBlendedMaterialListFromSettingData(isWorldView: false);
+            __instance.m_CardList[cardIndex].SetVisibility(isVisible: true);
+            __instance.m_CardList[cardIndex].SetCardCountText(cardCount, sortingType == ECollectionSortingType.DuplicatePrice);
+            __instance.m_CardList[cardIndex].SetCardCountTextVisibility(isVisible: false);
+            return false;
+        }
+
         cardCount = WankulInventory.GetWankulCardFormGameCard(cardData).amount;
         if (sortingType == ECollectionSortingType.DuplicatePrice)
         {
@@ -426,6 +489,8 @@ public class ReplacingCards
             return false;
         }
         __instance.m_CardList[cardIndex].m_CardUI.SetCardUI(cardData);
+        __instance.m_CardList[cardIndex].m_CardUI.SetFoilMaterialListFromSettingData(isWorldView: false);
+        __instance.m_CardList[cardIndex].m_CardUI.SetFoilBlendedMaterialListFromSettingData(isWorldView: false);
         __instance.m_CardList[cardIndex].SetVisibility(isVisible: true);
         __instance.m_CardList[cardIndex].SetCardCountText(cardCount, sortingType == ECollectionSortingType.DuplicatePrice);
         __instance.m_CardList[cardIndex].SetCardCountTextVisibility(isVisible: true);

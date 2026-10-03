@@ -28,6 +28,7 @@ namespace WankulCrazyPlugin.patch
         public static bool EvaluateEndGameGiftPrefix(
             PlayTableGame __instance,
             ref List<EItemType> ___m_EndGameGiftItemTypeList,
+            ref List<Item> ___m_SpawnedItemList,
             int ___m_PlayerWinCount,
             int ___m_EnemyWinCount)
         {
@@ -43,8 +44,7 @@ namespace WankulCrazyPlugin.patch
                 {
                     ___m_EndGameGiftItemTypeList.Clear();
                     Plugin.LogInfo("[DuelRewardsPatch] Aucun round joué, aucune récompense.");
-                    // On laisse le reste du code original s'exécuter pour le spawn physique
-                    return true;
+                    return false;
                 }
 
                 // Construire la pool de boosters Wankul selon le niveau
@@ -89,13 +89,51 @@ namespace WankulCrazyPlugin.patch
 
                 Plugin.Logger.LogInfo($"[DuelRewardsPatch] {___m_EndGameGiftItemTypeList.Count} booster(s) Wankul attribué(s) (ShopLevel={shopLevel}, PlayerWins={___m_PlayerWinCount}).");
 
-                // Retourner true : le spawn physique 3D de l'original s'exécute normalement
-                return true;
+                // Spawn physique 3D sur la table
+                if (__instance.m_ItemSpawnPhysicsBlocker != null)
+                {
+                    __instance.m_ItemSpawnPhysicsBlocker.SetActive(true);
+                }
+                if (__instance.m_ItemSpawnParentGrp != null)
+                {
+                    __instance.m_ItemSpawnParentGrp.gameObject.SetActive(true);
+                    if (__instance.m_PlayCardSetEnemy != null && __instance.m_PlayCardSetEnemy.m_ItemSpawnPos != null)
+                    {
+                        __instance.m_ItemSpawnParentGrp.position = __instance.m_PlayCardSetEnemy.m_ItemSpawnPos.position;
+                        __instance.m_ItemSpawnParentGrp.rotation = __instance.m_PlayCardSetEnemy.m_ItemSpawnPos.rotation;
+                    }
+                }
+
+                for (int l = 0; l < ___m_EndGameGiftItemTypeList.Count; l++)
+                {
+                    EItemType giftType = ___m_EndGameGiftItemTypeList[l];
+                    ItemMeshData itemMeshData = InventoryBase.GetItemMeshData(giftType);
+                    Item item = ItemSpawnManager.GetItem(__instance.m_ItemSpawnParentGrp);
+                    if (item != null && itemMeshData != null)
+                    {
+                        item.SetMesh(itemMeshData.mesh, itemMeshData.material, giftType, itemMeshData.meshSecondary, itemMeshData.materialSecondary, itemMeshData.materialList);
+                        item.transform.localPosition = Vector3.up * 0.025f * (float)(l + 1) + Vector3.right * 0.005f * (float)(l + 1) + Vector3.back * -0.005f * (float)(l + 1);
+                        item.transform.localRotation = Quaternion.identity;
+                        if (item.m_Collider != null)
+                        {
+                            item.m_Collider.enabled = true;
+                        }
+                        if (item.m_Rigidbody != null)
+                        {
+                            item.m_Rigidbody.isKinematic = false;
+                        }
+                        item.gameObject.SetActive(true);
+                        ___m_SpawnedItemList?.Add(item);
+                    }
+                }
+
+                // Retourne false pour court-circuiter la méthode vanilla qui écraserait nos récompenses
+                return false;
             }
             catch (System.Exception ex)
             {
                 Plugin.Logger.LogError($"[DuelRewardsPatch] Exception dans EvaluateEndGameGiftPrefix : {ex}");
-                // En cas d'erreur, laisser l'original s'exécuter
+                // En cas d'erreur, laisser l'original s'exécuter en fallback
                 return true;
             }
         }

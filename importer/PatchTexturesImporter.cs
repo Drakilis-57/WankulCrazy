@@ -274,14 +274,10 @@ namespace WankulCrazyPlugin.importer
                     { EnumExtensions.SafeParseEItemType("TapisS41"), Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Tapis_S4_1.png") },
                     { EnumExtensions.SafeParseEItemType("TapisS42"), Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Tapis_S4_2.png") },
                     { EnumExtensions.SafeParseEItemType("ClasseurS4"), Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "T_BinderBook.png") },
-                    { EnumExtensions.SafeParseEItemType("CaleconStellar"), Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "T_PiggyA.png") },
+                    { EnumExtensions.SafeParseEItemType("CaleconStellar"), File.Exists(Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Calecon.png"))
+                        ? Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Calecon.png")
+                        : Path.Combine(Plugin.GetPluginPath(), "data", "customitems", "textures", "Texture_Calecon.png") },
                 };
-
-                EItemType ascensionPack = EnumExtensions.SafeParseEItemType("AscensionCardPack");
-                if (ascensionPack != (EItemType)0)
-                {
-                    boxTexturePaths[ascensionPack] = Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Booster_S5.png");
-                }
             }
             return boxTexturePaths;
         }

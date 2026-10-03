@@ -241,26 +241,77 @@ namespace WankulCrazyPlugin.patch
             UpdateAllCardsMarketPrice();
         }
 
+        public static float CalculateGradedMarketPrice(float baseMarketPrice, int cardSaveIndex, int cardGrade)
+        {
+            return GradedCardService.CalculateGradedMarketPrice(baseMarketPrice, cardSaveIndex, cardGrade, CPlayerData.m_GenGradedCardPriceMultiplierList);
+        }
+
         public static void Postfix_GetCardMarketPrice_CardData(CardData cardData, ref float __result)
         {
+            if (cardData == null)
+            {
+                __result = 0f;
+                return;
+            }
+
             WankulCardsData wankulCardsData = WankulCardsData.Instance;
             WankulCardData wankulCardData = wankulCardsData.GetFromMonster(cardData, true);
 
             if (wankulCardData != null)
             {
-                __result = wankulCardData.MarketPrice; // Utilise le prix du marché de ta carte
+                float basePrice = wankulCardData.MarketPrice;
+                if (cardData.cardGrade > 0)
+                {
+                    int cardSaveIndex = CPlayerData.GetCardSaveIndex(cardData);
+                    __result = CalculateGradedMarketPrice(basePrice, cardSaveIndex, cardData.cardGrade);
+                }
+                else
+                {
+                    __result = basePrice;
+                }
             }
             else
             {
-                //Plugin.LogInfo("Postfix_GetCardMarketPrice_CardData Carte non trouvée : " + cardData.monsterType + " " + cardData.borderType + " " + cardData.expansionType);
-                __result = 0; // Valeur par défaut si la carte n'est pas trouvée
+                __result = 0f;
             }
         }
 
         public static void Postfix_GetCardMarketPrice_Params(int index, ECardExpansionType expansionType, bool isDestiny, int cardGrade, ref float __result)
         {
+            try
+            {
+                CardData tempCard = new CardData();
+                tempCard.monsterType = CPlayerData.GetMonsterTypeFromCardSaveIndex(index, expansionType);
+                int cardAmountPerMonster = CPlayerData.GetCardAmountPerMonsterType(expansionType);
+                int cardAmountNoFoil = CPlayerData.GetCardAmountPerMonsterType(expansionType, includeFoilCount: false);
+                tempCard.isFoil = (cardAmountPerMonster > 0 && (index % cardAmountPerMonster >= cardAmountNoFoil));
+                tempCard.borderType = (ECardBorderType)(cardAmountNoFoil > 0 ? (index % cardAmountNoFoil) : 0);
+                tempCard.expansionType = expansionType;
+                tempCard.isDestiny = isDestiny;
+                tempCard.cardGrade = cardGrade;
+
+                WankulCardData wankulCard = WankulCardsData.Instance.GetFromMonster(tempCard, true);
+                if (wankulCard != null)
+                {
+                    float basePrice = wankulCard.MarketPrice;
+                    if (cardGrade > 0)
+                    {
+                        __result = CalculateGradedMarketPrice(basePrice, index, cardGrade);
+                    }
+                    else
+                    {
+                        __result = basePrice;
+                    }
+                    return;
+                }
+            }
+            catch
+            {
+                // Fallback
+            }
+
             float variation = UnityEngine.Random.Range(-0.3f, 0.3f);
-            float marketPrice = 20f; // Valeur par défaut
+            float marketPrice = 20f;
 
             switch (expansionType)
             {
@@ -278,7 +329,12 @@ namespace WankulCrazyPlugin.patch
                     break;
             }
 
-            __result = marketPrice; // Affecte le prix calculé à __result
+            if (cardGrade > 0)
+            {
+                marketPrice = CalculateGradedMarketPrice(marketPrice, index, cardGrade);
+            }
+
+            __result = marketPrice;
         }
 
         public static IEnumerator DelayRemoveCustomerFromQueue(float waitTime, Customer instance)

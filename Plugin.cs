@@ -482,11 +482,11 @@ public class Plugin : BaseUnityPlugin
             prefix: AccessTools.Method(typeof(DuelOpponentDeckPatch), nameof(DuelOpponentDeckPatch.SetPlayTablePrefix))
         );
 
-        // 🎮 Deck adversaire Wankul : remplace le deck Tetramon vanilla de l'IA par un deck Wankul (et deck de prêt joueur)
+        // 🎮 Duel Wankul TCG (moteur indépendant) : lance DuelView2D au lieu du mini-jeu vanilla
         TryPatch(
-            "PlayCardSet.ResetBoard (DuelOpponentDeck)",
-            AccessTools.Method(typeof(PlayCardSet), "ResetBoard", new[] { typeof(bool) }),
-            postfix: AccessTools.Method(typeof(DuelOpponentDeckPatch), nameof(DuelOpponentDeckPatch.ResetBoardPostfix))
+            "PlayTableGame.SetPlayTable (WankulDuelEntry)",
+            AccessTools.Method(typeof(PlayTableGame), "SetPlayTable"),
+            postfix: AccessTools.Method(typeof(WankulDuelEntryPatch), nameof(WankulDuelEntryPatch.SetPlayTablePostfix))
         );
 
         /* 

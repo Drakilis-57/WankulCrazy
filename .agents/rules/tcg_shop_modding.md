@@ -59,3 +59,15 @@ trigger: always_on
 ## 12. Gestion des Pull Requests (GitHub CLI - `gh`)
 - Dès que le sujet aborde les Pull Requests (lister, analyser, relire, tester, merger ou fermer), **utiliser prioritairement la CLI GitHub (`gh`)** (`gh pr list`, `gh pr diff`, `gh pr view`, `gh pr close`, `gh pr merge`).
 - Préférer une revue ciblée directe avec l'agent principal via `gh` plutôt que des commandes multi-agents verbeuses et coûteuses en tokens.
+
+## 13. Duel Wankul TCG (moteur indépendant)
+
+- Plan d'exécution : `Docs/implementation.md`. Règles du jeu : `Docs/TCG_Wankul.md`. Les lire avant toute modification touchant au duel.
+- Le moteur de règles (`duel/engine/`) est en C# pur : aucun `using UnityEngine`, aucune référence à `PlayTableGame`, `PlayCardSet`, `CardData`, `Plugin` ou Harmony.
+- Le moteur émet des événements ; la vue (`duel/view/`) s'y abonne. Le moteur ne connaît jamais la vue.
+- Un seul état fait foi (`DuelState`). Ne jamais dupliquer l'état dans des listes vanilla.
+- Ne pas ajouter ni réactiver de patch Harmony sur `PlayTableGame` / `PlayCardSet` sans accord explicite de l'utilisateur. Si un patch semble nécessaire, s'arrêter et demander.
+- Travailler une étape à la fois (voir `Docs/implementation.md` §5) : lire, proposer un plan, attendre validation, coder, lancer `dotnet test`, résumer le diff.
+- Ne jamais inventer une règle de jeu : en cas de doute, la lister comme question ouverte pour l'utilisateur.
+- Aléatoire via `IRandom` injecté, jamais `UnityEngine.Random` dans le moteur.
+- Pas de commit sauf demande explicite.

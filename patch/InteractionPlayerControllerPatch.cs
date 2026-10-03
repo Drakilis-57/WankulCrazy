@@ -110,8 +110,6 @@ namespace WankulCrazyPlugin.patch
             EItemType displayLegacyTaux = EnumExtensions.SafeParseEItemType("DisplayLegacyTaux");
             EItemType boosterLegacy = EnumExtensions.SafeParseEItemType("BoosterLegacy");
             EItemType boosterLegacyTaux = EnumExtensions.SafeParseEItemType("BoosterLegacyTaux");
-            EItemType ascensionBox = EnumExtensions.SafeParseEItemType("AscensionCardBox");
-            EItemType ascensionPack = EnumExtensions.SafeParseEItemType("AscensionCardPack");
 
             if (cardBoxItemType == EItemType.BasicCardBox)
                 __result = EItemType.BasicCardPack;
@@ -137,8 +135,6 @@ namespace WankulCrazyPlugin.patch
                 __result = boosterLegacy;
             else if (cardBoxItemType == displayLegacyTaux)
                 __result = boosterLegacyTaux;
-            else if (ascensionBox != (EItemType)0 && cardBoxItemType == ascensionBox)
-                __result = (ascensionPack != (EItemType)0) ? ascensionPack : boosterLegacy;
             else
                 __result = EItemType.None;
 
@@ -596,12 +592,6 @@ namespace WankulCrazyPlugin.patch
                     { EnumExtensions.SafeParseEItemType("BoosterLegacy"), Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Booster_S5.png") },
                     { EnumExtensions.SafeParseEItemType("BoosterLegacyTaux"), Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Booster_S5_TauxDrop.png") },
                 };
-
-                EItemType ascensionPack = EnumExtensions.SafeParseEItemType("AscensionCardPack");
-                if (ascensionPack != (EItemType)0)
-                {
-                    packTexturePaths[ascensionPack] = Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Booster_S5.png");
-                }
             }
             return packTexturePaths;
         }

@@ -175,5 +175,28 @@ namespace WankulCrazyPlugin.Tests
             float effectiveDrop = WeightedCardDropService.GetCardEffectiveDrop(loCard, false, Season.S01);
             Assert.Equal(15f * 0.005f, effectiveDrop);
         }
+
+        [Fact]
+        public void GradedCard_MarketPriceCalculation_ScalesWithGrade()
+        {
+            float basePrice = 100f;
+            float priceGrade0 = GradedCardService.CalculateGradedMarketPrice(basePrice, 0, 0);
+            Assert.Equal(basePrice, priceGrade0);
+
+            float priceGrade7 = GradedCardService.CalculateGradedMarketPrice(basePrice, 0, 7);
+            float priceGrade8 = GradedCardService.CalculateGradedMarketPrice(basePrice, 0, 8);
+            float priceGrade9 = GradedCardService.CalculateGradedMarketPrice(basePrice, 0, 9);
+            float priceGrade10 = GradedCardService.CalculateGradedMarketPrice(basePrice, 0, 10);
+
+            Assert.True(priceGrade7 > priceGrade0);
+            Assert.True(priceGrade8 > priceGrade7);
+            Assert.True(priceGrade9 > priceGrade8);
+            Assert.True(priceGrade10 > priceGrade9);
+
+            // Also test with custom multiplier list
+            var customMultipliers = new List<float> { 0.5f, 1.0f, 1.5f, 2.0f, 3.0f };
+            float customPrice10 = GradedCardService.CalculateGradedMarketPrice(basePrice, 0, 10, customMultipliers);
+            Assert.True(customPrice10 > 0);
+        }
     }
 }

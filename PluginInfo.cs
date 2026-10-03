@@ -1,4 +1,8 @@
-﻿namespace WankulCrazyPlugin
+using System.Runtime.CompilerServices;
+
+[assembly: InternalsVisibleTo("WankulCrazyPlugin.Tests")]
+
+namespace WankulCrazyPlugin
 {
     public static class PluginInfo
     {
