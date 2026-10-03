@@ -467,6 +467,77 @@ public class Plugin : BaseUnityPlugin
             AccessTools.Method(typeof(RestockItemScreen), "EvaluateRestockItemPanelUI", new[] { typeof(int) }),
             prefix: AccessTools.Method(typeof(CustomItemsImporter), nameof(CustomItemsImporter.LogShopEvaluation))
         );
+
+        // 🎮 Récompenses de duel Wankul : remplace les packs Tetramon vanilla par des Boosters Wankul
+        TryPatch(
+            "PlayTableGame.EvaluateEndGameGift",
+            AccessTools.Method(typeof(PlayTableGame), "EvaluateEndGameGift"),
+            prefix: AccessTools.Method(typeof(DuelRewardsPatch), nameof(DuelRewardsPatch.EvaluateEndGameGiftPrefix))
+        );
+
+        // 🎮 Lancement du Duel : auto-complète le deck si le joueur n'a pas encore ses 50 cartes
+        TryPatch(
+            "PlayTableGame.SetPlayTable",
+            AccessTools.Method(typeof(PlayTableGame), "SetPlayTable"),
+            prefix: AccessTools.Method(typeof(DuelOpponentDeckPatch), nameof(DuelOpponentDeckPatch.SetPlayTablePrefix))
+        );
+
+        // 🎮 Deck adversaire Wankul : remplace le deck Tetramon vanilla de l'IA par un deck Wankul (et deck de prêt joueur)
+        TryPatch(
+            "PlayCardSet.ResetBoard (DuelOpponentDeck)",
+            AccessTools.Method(typeof(PlayCardSet), "ResetBoard", new[] { typeof(bool) }),
+            postfix: AccessTools.Method(typeof(DuelOpponentDeckPatch), nameof(DuelOpponentDeckPatch.ResetBoardPostfix))
+        );
+
+        // 🎮 Cycle de vie et contrôleur de match dédié Wankul TCG (Option 2)
+        TryPatch(
+            "PlayTableGame.SetPlayTable (WankulDuelLifecycle)",
+            AccessTools.Method(typeof(PlayTableGame), "SetPlayTable"),
+            postfix: AccessTools.Method(typeof(WankulDuelLifecyclePatch), nameof(WankulDuelLifecyclePatch.SetPlayTablePostfix))
+        );
+
+        TryPatch(
+            "PlayCardSet.EvaluateEnemyAI (WankulEnemyAI)",
+            AccessTools.Method(typeof(PlayCardSet), "EvaluateEnemyAI"),
+            prefix: AccessTools.Method(typeof(WankulDuelLifecyclePatch), nameof(WankulDuelLifecyclePatch.EvaluateEnemyAIPrefix))
+        );
+
+        TryPatch(
+            "PlayTableGame.SwitchTurn (WankulTurnStart)",
+            AccessTools.Method(typeof(PlayTableGame), "SwitchTurn"),
+            prefix: AccessTools.Method(typeof(WankulDuelLifecyclePatch), nameof(WankulDuelLifecyclePatch.SwitchTurnPrefix))
+        );
+
+        TryPatch(
+            "PlayTableGame.OnFinishMulligan (WankulDuelReady)",
+            AccessTools.Method(typeof(PlayTableGame), "OnFinishMulligan", new[] { typeof(bool) }),
+            postfix: AccessTools.Method(typeof(WankulDuelLifecyclePatch), nameof(WankulDuelLifecyclePatch.OnFinishMulliganPostfix))
+        );
+
+        TryPatch(
+            "PlayTableGame.ReportWinner (WankulDuelCleanup)",
+            AccessTools.Method(typeof(PlayTableGame), "ReportWinner", new[] { typeof(bool), typeof(bool) }),
+            postfix: AccessTools.Method(typeof(WankulDuelLifecyclePatch), nameof(WankulDuelLifecyclePatch.ReportWinnerPostfix))
+        );
+
+        // 🃏 Effets de cartes Wankul : injection dans le moteur de duel PlayTableGame
+        TryPatch(
+            "PlayCardEffect_ScriptableObject.GetPlayEffectData",
+            AccessTools.Method(typeof(PlayCardEffect_ScriptableObject), "GetPlayEffectData", new[] { typeof(EMonsterType) }),
+            postfix: AccessTools.Method(typeof(WankulPlayCardEffectPatch), nameof(WankulPlayCardEffectPatch.GetPlayEffectDataPostfix))
+        );
+
+        // 💀 Règle officielle Wankul : Victoire / Défaite immédiate par Meule (deck épuisé)
+        TryPatch(
+            "PlayTableGame.ReportWinner",
+            AccessTools.Method(typeof(PlayTableGame), "ReportWinner", new[] { typeof(bool), typeof(bool) }),
+            prefix: AccessTools.Method(typeof(WankulMillWinConditionPatch), nameof(WankulMillWinConditionPatch.CheckDeckOutBeforeWinner))
+        );
+        TryPatch(
+            "PlayTableGame.SwitchTurn",
+            AccessTools.Method(typeof(PlayTableGame), "SwitchTurn"),
+            postfix: AccessTools.Method(typeof(WankulMillWinConditionPatch), nameof(WankulMillWinConditionPatch.CheckDeckOutOnTurnEnded))
+        );
     }
 
     public static string GetPluginPath()
