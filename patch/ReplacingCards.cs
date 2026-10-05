@@ -62,30 +62,47 @@ public class ReplacingCards
         }
         Plugin.LogInfo($"[CardUI.SetCardUIPrefix] Carte '{wankulCardData.Title}' (Index={wankulCardData.Index}, Type={wankulCardData.GetType().Name}) -> isFoil={gameCardData.isFoil}, HasSpriteMask={(wankulCardData.SpriteMask != null)}");
 
-        // Si monsterData est null (ex: cartes sauvées avec un ID >= 122 dans save_0.json),
-        // le code original de CardUI.SetCardUI crashe en déréférençant monsterData.
-        // On assigne manuellement m_CardData, on applique les visuels Wankul et on saute le code vanilla !
-        if (InventoryBase.GetMonsterData(gameCardData.monsterType) == null)
+        // Pour toute carte Wankul valide, on configure complètement la carte
+        // et on retourne TOUJOURS false pour empêcher l'exécution de CardUI.SetCardUI vanilla
+        // qui crashe avec une NullReferenceException sur les extensions personnalisées.
+        Plugin.SetPProperty(__instance, "m_CardData", gameCardData);
+        ApplyWankulCardVisuals(__instance, gameCardData, wankulCardData);
+        if (gameCardData.cardGrade > 0)
         {
-            Plugin.SetPProperty(__instance, "m_CardData", gameCardData);
-            ApplyWankulCardVisuals(__instance, gameCardData, wankulCardData);
-            if (gameCardData.cardGrade > 0)
+            Card3dUIGroup card3dUIGroup = Plugin.GetPProperty(__instance, "m_Card3dUIGroup") as Card3dUIGroup;
+            if (card3dUIGroup != null)
             {
-                Card3dUIGroup card3dUIGroup = Plugin.GetPProperty(__instance, "m_Card3dUIGroup") as Card3dUIGroup;
-                if (card3dUIGroup != null)
-                {
-                    card3dUIGroup.EvaluateCardGrade(gameCardData);
-                }
-                if (CSingleton<InventoryBase>.Instance?.m_MonsterData_SO != null && __instance.m_GradedCardTextureImage != null)
-                {
-                    __instance.m_GradedCardTextureImage.sprite = CSingleton<InventoryBase>.Instance.m_MonsterData_SO.GetGradedCardScratchTexture(gameCardData.cardGrade);
-                }
-                __instance.ShowGradedCardCase(__instance.m_Show2DGradedCase);
+                card3dUIGroup.EvaluateCardGrade(gameCardData);
             }
-            return false;
-        }
+            if (CSingleton<InventoryBase>.Instance?.m_MonsterData_SO != null && __instance.m_GradedCardTextureImage != null)
+            {
+                __instance.m_GradedCardTextureImage.sprite = CSingleton<InventoryBase>.Instance.m_MonsterData_SO.GetGradedCardScratchTexture(gameCardData.cardGrade);
+            }
+            __instance.ShowGradedCardCase(__instance.m_Show2DGradedCase);
 
-        return true;
+            string cardTitle = wankulCardData.Title ?? "";
+            string cardSub = (wankulCardData is EffigyCardData eff) ? $"{eff.SeasonId} - {eff.RarityId}" : $"{wankulCardData.SeasonId}";
+            if (__instance.m_GradeNameText != null)
+            {
+                __instance.m_GradeNameText.text = cardTitle;
+            }
+            if (__instance.m_GradeExpansionRarityText != null)
+            {
+                __instance.m_GradeExpansionRarityText.text = cardSub;
+            }
+            if (card3dUIGroup != null)
+            {
+                if (card3dUIGroup.m_GradeNameText != null)
+                {
+                    card3dUIGroup.m_GradeNameText.text = cardTitle;
+                }
+                if (card3dUIGroup.m_GradeExpansionRarityText != null)
+                {
+                    card3dUIGroup.m_GradeExpansionRarityText.text = cardSub;
+                }
+            }
+        }
+        return false;
     }
     
     private const float CardImageScale = 0.88f; // Sert a grandir ou réduire la taille des images des cartes
