@@ -1,0 +1,2608 @@
+[
+  {
+    "cardIndex": 100001,
+    "cardTitle": "NAVIRE PIRATE",
+    "comment": "Quand ce Terrain entre en jeu, chaque joueur dÃ©fausse une carte.",
+    "effects": [
+      {
+        "type": "DiscardDeckTop",
+        "count": 3,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100002,
+    "cardTitle": "PORTAL",
+    "comment": "(Permanent) Les cartes Terracid ont +1 en Force.",
+    "effects": [
+      {
+        "type": "BoostCardActiveElement",
+        "count": 20,
+        "isTargetSelf": true,
+        "requiredEffigy": "Terracid",
+        "isOptional": false
+      },
+      {
+        "type": "DiscardDeckTop",
+        "count": 3,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100003,
+    "cardTitle": "QUANTUM",
+    "comment": "Force 0",
+    "effects": [
+      {
+        "type": "DiscardDeckTop",
+        "count": 3,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100004,
+    "cardTitle": "ROCKET FIELD",
+    "comment": "(Permanent) Si un joueur a moins de 3 cartes en main, il pioche une carte.",
+    "effects": [
+      {
+        "type": "DrawCard",
+        "count": 1,
+        "isTargetBoth": true,
+        "isOptional": false
+      },
+      {
+        "type": "DiscardDeckTop",
+        "count": 3,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100005,
+    "cardTitle": "RUST",
+    "comment": "(Permanent) Au dÃ©but de son tour, chaque joueur pioche une carte de plus.",
+    "effects": [
+      {
+        "type": "DrawCard",
+        "count": 1,
+        "isTargetBoth": true,
+        "isOptional": false
+      },
+      {
+        "type": "DiscardDeckTop",
+        "count": 3,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100006,
+    "cardTitle": "IL FAIT PAS CHAUD",
+    "comment": "(Permanent) Pendant son tour, chaque joueur joue un Terrain ou dÃ©fausser une carte.",
+    "effects": [
+      {
+        "type": "DiscardDeckTop",
+        "count": 3,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100007,
+    "cardTitle": "GOLF",
+    "comment": "(Permanent) Chaque joueur pioche une carte de plus Ã  son tour.",
+    "effects": [
+      {
+        "type": "DrawCard",
+        "count": 1,
+        "isTargetBoth": true,
+        "isOptional": false
+      },
+      {
+        "type": "DiscardDeckTop",
+        "count": 3,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100008,
+    "cardTitle": "DUST 2",
+    "comment": "(Permanent) Aucun autre Terrain ne peut Ãªtre posÃ© tant que celui-ci est en jeu.",
+    "effects": [
+      {
+        "type": "DiscardDeckTop",
+        "count": 3,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100009,
+    "cardTitle": "SPACE FACTORY",
+    "comment": "(Permanent) Si un joueur pioche, il le fait jusqu'Ã  avoir au moins 5 cartes en main.",
+    "effects": [
+      {
+        "type": "DrawCard",
+        "count": 1,
+        "isTargetBoth": true,
+        "isOptional": false
+      },
+      {
+        "type": "DiscardDeckTop",
+        "count": 3,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100010,
+    "cardTitle": "LA F.A.Q",
+    "comment": "Quand ce Terrain entre en jeu, chaque joueur pioche pour avoir 5 cartes en main.",
+    "effects": [
+      {
+        "type": "DrawCard",
+        "count": 1,
+        "isTargetBoth": true,
+        "isOptional": false
+      },
+      {
+        "type": "DiscardDeckTop",
+        "count": 3,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100011,
+    "cardTitle": "MUSEE",
+    "comment": "(Permanent) Aucun joueur ne peut piocher sâ€™il a 3 cartes ou plus en main.",
+    "effects": [
+      {
+        "type": "DrawCard",
+        "count": 1,
+        "isTargetBoth": true,
+        "isOptional": false
+      },
+      {
+        "type": "DiscardDeckTop",
+        "count": 3,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100012,
+    "cardTitle": "FNAF",
+    "comment": "Force 0",
+    "effects": [
+      {
+        "type": "DiscardDeckTop",
+        "count": 3,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100013,
+    "cardTitle": "VILLAGE",
+    "comment": "Quand ce Terrain entre en jeu, chaque joueur joue un Personnage gratuitement.",
+    "effects": [
+      {
+        "type": "DiscardDeckTop",
+        "count": 3,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100014,
+    "cardTitle": "LA FERME",
+    "comment": "(Permanent) Toutes les cartes Personnage coÃ»tent +1 Ã  poser.",
+    "effects": [
+      {
+        "type": "DiscardDeckTop",
+        "count": 3,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100015,
+    "cardTitle": "SOCISSEAU FACTORY",
+    "comment": "(Permanent) Si un joueur a plus de 5 cartes en main, il dÃ©fausse pour nâ€™en avoir que 5.",
+    "effects": [
+      {
+        "type": "DiscardDeckTop",
+        "count": 3,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100016,
+    "cardTitle": "TROU DU MONDE",
+    "comment": "(Permanent) Interdiction de jouer une carte ayant le mÃªme nom qu'une carte dÃ©jÃ  en jeu.",
+    "effects": [
+      {
+        "type": "DiscardDeckTop",
+        "count": 3,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100017,
+    "cardTitle": "MORIA",
+    "comment": "(Permanent) Les cartes Laink ont +1 en Force.",
+    "effects": [
+      {
+        "type": "BoostCardActiveElement",
+        "count": 20,
+        "isTargetSelf": true,
+        "requiredEffigy": "Laink",
+        "isOptional": false
+      },
+      {
+        "type": "DiscardDeckTop",
+        "count": 3,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100018,
+    "cardTitle": "TCHERNOBYL",
+    "comment": "Force 0",
+    "effects": [
+      {
+        "type": "DiscardDeckTop",
+        "count": 3,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100019,
+    "cardTitle": "VALHEIM",
+    "comment": "Force 0",
+    "effects": [
+      {
+        "type": "DiscardDeckTop",
+        "count": 3,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100020,
+    "cardTitle": "TRANCHEES",
+    "comment": "(Permanent) Sur ce Terrain, toutes les Personnage coÃ»tent +2 Ã  poser.",
+    "effects": [
+      {
+        "type": "DiscardDeckTop",
+        "count": 3,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100021,
+    "cardTitle": "RAVENHOLM",
+    "comment": "(Permanent) Ce Terrain ne peut Ãªtre scorÃ© que sâ€™il est le seul terrain en jeu.",
+    "effects": [
+      {
+        "type": "DiscardDeckTop",
+        "count": 3,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100022,
+    "cardTitle": "URBEX",
+    "comment": "Force 0",
+    "effects": [
+      {
+        "type": "DiscardDeckTop",
+        "count": 3,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100023,
+    "cardTitle": "MANOIR",
+    "comment": "Force 0",
+    "effects": [
+      {
+        "type": "DiscardDeckTop",
+        "count": 3,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100024,
+    "cardTitle": "BARRAGE",
+    "comment": "Force 0",
+    "effects": [
+      {
+        "type": "DiscardDeckTop",
+        "count": 3,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100025,
+    "cardTitle": "CHERNOGORSK",
+    "comment": "(Permanent) Toutes les cartes Personnage coÃ»tent 1 de moins Ã  poser.",
+    "effects": [
+      {
+        "type": "DiscardDeckTop",
+        "count": 3,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100026,
+    "cardTitle": "AGROU",
+    "comment": "Quand ce Terrain entre en jeu, chaque joueur dÃ©fausse un Personnage en jeu.",
+    "effects": [
+      {
+        "type": "DiscardHandCard",
+        "count": 1,
+        "isTargetBoth": true,
+        "isOptional": false
+      },
+      {
+        "type": "DiscardDeckTop",
+        "count": 3,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100027,
+    "cardTitle": "GARAGE",
+    "comment": "Force 0",
+    "effects": [
+      {
+        "type": "DiscardDeckTop",
+        "count": 3,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100028,
+    "cardTitle": "URETUS",
+    "comment": "Force 0",
+    "effects": [
+      {
+        "type": "DiscardDeckTop",
+        "count": 3,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100029,
+    "cardTitle": "WANKIL SHOW",
+    "comment": "Force 0",
+    "effects": [
+      {
+        "type": "DiscardDeckTop",
+        "count": 3,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100030,
+    "cardTitle": "CONVENTION",
+    "comment": "Force 0",
+    "effects": [
+      {
+        "type": "DiscardDeckTop",
+        "count": 3,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100031,
+    "cardTitle": "GARAGISTE (Laink)",
+    "comment": "Piochez une carte.",
+    "effects": [
+      {
+        "type": "DrawCard",
+        "count": 1,
+        "isTargetSelf": true,
+        "isOptional": false
+      },
+      {
+        "type": "BoostCardActiveElement",
+        "count": 20,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100032,
+    "cardTitle": "GARAGISTE (Terracid)",
+    "comment": "Piochez une carte.",
+    "effects": [
+      {
+        "type": "DrawCard",
+        "count": 1,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100033,
+    "cardTitle": "CAMIONNEUR (Laink)",
+    "comment": "DÃ©faussez un Personnage adverse en jeu dâ€™une Force de 3 maximum.",
+    "effects": [
+      {
+        "type": "DrawCard",
+        "count": 1,
+        "isTargetSelf": true,
+        "isOptional": false
+      },
+      {
+        "type": "BoostCardActiveElement",
+        "count": 20,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100034,
+    "cardTitle": "CAMIONNEUR (Terracid)",
+    "comment": "DÃ©faussez un Personnage adverse en jeu dâ€™une Force de 3 maximum.",
+    "effects": [
+      {
+        "type": "BoostCardActiveElement",
+        "count": 20,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100035,
+    "cardTitle": "VENDEUR (Laink)",
+    "comment": "(Permanent) Votre adversaire dÃ©fausse une carte de plus, si vous gagnez un Terrain.",
+    "effects": [
+      {
+        "type": "DiscardHandCard",
+        "count": 1,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100036,
+    "cardTitle": "VENDEUR (Terracid)",
+    "comment": "(Permanent) Votre adversaire dÃ©fausse une carte de plus, si vous gagnez un Terrain.",
+    "effects": [
+      {
+        "type": "DiscardHandCard",
+        "count": 1,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100037,
+    "cardTitle": "ANNABELLE (Laink)",
+    "comment": "(Permanent) Votre adversaire dÃ©fausse une carte de plus, si vous gagnez un Terrain.",
+    "effects": [
+      {
+        "type": "DiscardHandCard",
+        "count": 1,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100038,
+    "cardTitle": "GRUDGE (Terracid)",
+    "comment": "DÃ©faussez un Personnage en jeu chez votre adversaire.",
+    "effects": [
+      {
+        "type": "DrawCard",
+        "count": 1,
+        "isTargetSelf": true,
+        "isOptional": false
+      },
+      {
+        "type": "DiscardHandCard",
+        "count": 1,
+        "isTargetEnemy": true,
+        "isOptional": false
+      },
+      {
+        "type": "BoostCardActiveElement",
+        "count": 20,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100039,
+    "cardTitle": "ASTRONAUTE (Laink)",
+    "comment": "(Permanent) Si votre adversaire dÃ©fausse au moins 2 cartes, il en dÃ©fausse une de plus.",
+    "effects": [
+      {
+        "type": "DiscardHandCard",
+        "count": 1,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100040,
+    "cardTitle": "ASTRONAUTE (Terracid)",
+    "comment": "(Permanent) Si votre adversaire dÃ©fausse au moins 2 cartes, il en dÃ©fausse une de plus.",
+    "effects": [
+      {
+        "type": "DrawCard",
+        "count": 2,
+        "isTargetSelf": true,
+        "isOptional": false
+      },
+      {
+        "type": "DiscardHandCard",
+        "count": 1,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100041,
+    "cardTitle": "BOXEUR (Laink)",
+    "comment": "(Permanent) DÃ©faussez 1 carte de moins pour mettre vos Personnages en jeu.",
+    "effects": [
+      {
+        "type": "DrawCard",
+        "count": 2,
+        "isTargetSelf": true,
+        "isOptional": false
+      },
+      {
+        "type": "DiscardHandCard",
+        "count": 1,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100042,
+    "cardTitle": "BOXEUR (Terracid)",
+    "comment": "(Permanent) Votre adversaire doit dÃ©fausser une carte de plus pour poser ses Personnages.",
+    "effects": [
+      {
+        "type": "DiscardHandCard",
+        "count": 1,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100043,
+    "cardTitle": "INFECTÉ (Laink)",
+    "comment": "(Permanent) Si vous avez plus de cartes dans votre dÃ©fausse que dans votre deck, reprenez en main la carte du dessus de votre dÃ©fausse en dÃ©but de tour.",
+    "effects": [
+      {
+        "type": "DiscardHandCard",
+        "count": 1,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100044,
+    "cardTitle": "INFECTÉ (Terracid)",
+    "comment": "(Permanent) Si vous avez plus de cartes dans votre dÃ©fausse que dans votre deck, reprenez en main la carte du dessus de votre dÃ©fausse en dÃ©but de tour.",
+    "effects": [
+      {
+        "type": "DiscardHandCard",
+        "count": 1,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100045,
+    "cardTitle": "FERMIER (Laink)",
+    "comment": "(Permanent) Au moment de scorer, vos Personnages Terracid ont +1 en Force.",
+    "effects": [
+      {
+        "type": "BoostCardActiveElement",
+        "count": 20,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100046,
+    "cardTitle": "FERMIER (Terracid)",
+    "comment": "(Permanent) Au moment de scorer, vos Personnages Laink ont +1 en Force.",
+    "effects": [
+      {
+        "type": "BoostCardActiveElement",
+        "count": 20,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100047,
+    "cardTitle": "CHIEN (Laink)",
+    "comment": "Si vous gagnez un Score ce tour, appliquez 2 fois son effet Gagnant.",
+    "effects": [
+      {
+        "type": "BoostCardActiveElement",
+        "count": 45,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100048,
+    "cardTitle": "COCHON (Terracid)",
+    "comment": "Si vous gagnez un Score ce tour, votre adversaire applique 2 fois son effet Perdant.",
+    "effects": [
+      {
+        "type": "BoostCardActiveElement",
+        "count": 30,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100049,
+    "cardTitle": "FROMAGER (Laink)",
+    "comment": "Vous et votre adversaire dÃ©faussez la premiÃ¨re carte de votre deck. Si la vÃ´tre a plus en Force, rÃ©cupÃ©rez-la en main.",
+    "effects": [
+      {
+        "type": "DiscardHandCard",
+        "count": 1,
+        "isTargetEnemy": true,
+        "isOptional": false
+      },
+      {
+        "type": "BoostCardActiveElement",
+        "count": 30,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100050,
+    "cardTitle": "CHARCUTIER (Terracid)",
+    "comment": "Vous et votre adversaire dÃ©faussez la premiÃ¨re carte de votre deck. Si la vÃ´tre a plus en Force, rÃ©cupÃ©rez-la en main.",
+    "effects": [
+      {
+        "type": "DiscardHandCard",
+        "count": 1,
+        "isTargetEnemy": true,
+        "isOptional": false
+      },
+      {
+        "type": "BoostCardActiveElement",
+        "count": 20,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100051,
+    "cardTitle": "BUSINESSMAN (Terracid)",
+    "comment": "(Permanent) Si vous avez moins de Personnages en jeu que votre adversaire, le coÃ»t pour poser vos Personnages est diminuÃ© de 2.",
+    "effects": [
+      {
+        "type": "BoostCardActiveElement",
+        "count": 30,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100052,
+    "cardTitle": "DÉBILE (Laink)",
+    "comment": "Echangez la position de deux de vos Personnages en jeu.",
+    "effects": [
+      {
+        "type": "BoostCardActiveElement",
+        "count": 30,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100053,
+    "cardTitle": "DÉBILE (Terracid)",
+    "comment": "Echangez la position de deux de vos Personnages en jeu.",
+    "effects": [
+      {
+        "type": "BoostCardActiveElement",
+        "count": 30,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100054,
+    "cardTitle": "PAYSAN (Laink)",
+    "comment": "Reprenez en main un Terrain de votre dÃ©fausse.",
+    "effects": [
+      {
+        "type": "DiscardHandCard",
+        "count": 1,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100055,
+    "cardTitle": "PAYSAN (Terracid)",
+    "comment": "Reprenez en main un Terrain de votre dÃ©fausse.",
+    "effects": [
+      {
+        "type": "DiscardHandCard",
+        "count": 1,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100056,
+    "cardTitle": "CUISINIER (Laink)",
+    "comment": "Regardez les 3 prochaines cartes du deck de votre adversaire et reposez-les dans lâ€™ordre de votre choix.",
+    "effects": [
+      {
+        "type": "BoostCardActiveElement",
+        "count": 15,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100057,
+    "cardTitle": "CUISINIER (Terracid)",
+    "comment": "Regardez les 3 prochaines cartes du deck de votre adversaire et reposez-les dans lâ€™ordre de votre choix.",
+    "effects": [
+      {
+        "type": "DrawCard",
+        "count": 1,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100058,
+    "cardTitle": "BÉBÉ (Laink)",
+    "comment": "(Permanent) Si vous ne lâ€™avez pas jouÃ© ce tour, Ã©changez ce Personnage avec un Personnage de votre main et dÃ©faussez une carte.",
+    "effects": [
+      {
+        "type": "BoostCardActiveElement",
+        "count": 15,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100059,
+    "cardTitle": "BÉBÉ (Terracid)",
+    "comment": "(Permanent) Si vous ne lâ€™avez pas jouÃ© ce tour, Ã©changez ce Personnage avec un Personnage de votre main et dÃ©faussez une carte.",
+    "effects": [
+      {
+        "type": "BoostCardActiveElement",
+        "count": 15,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100060,
+    "cardTitle": "CHASSEUR (Laink)",
+    "comment": "DÃ©faussez un de vos Personnages et un Personnage adverse.",
+    "effects": [
+      {
+        "type": "DiscardHandCard",
+        "count": 1,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100061,
+    "cardTitle": "PILOTE D'AVION (Terracid)",
+    "comment": "DÃ©placez un autre Personnage dâ€™un Terrain vers un autre.",
+    "effects": [
+      {
+        "type": "DiscardHandCard",
+        "count": 1,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100062,
+    "cardTitle": "AGROU (Laink)",
+    "comment": "(Permanent) Ce Personnage a +1 en Force pour chaque carte que vous avez en main.",
+    "effects": [
+      {
+        "type": "BoostCardActiveElement",
+        "count": 20,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100063,
+    "cardTitle": "AGROU (Terracid)",
+    "comment": "(Permanent) Ce Personnage a +1 en Force pour chaque carte que vous avez en main.",
+    "effects": [
+      {
+        "type": "DrawCard",
+        "count": 1,
+        "isTargetSelf": true,
+        "isOptional": false
+      },
+      {
+        "type": "BoostCardActiveElement",
+        "count": 20,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100064,
+    "cardTitle": "CHEVALIER (Laink)",
+    "comment": "(Permanent) Pour votre adversaire, le coÃ»t pour poser un Personnage est augmentÃ© de 1.",
+    "effects": [
+      {
+        "type": "BoostCardActiveElement",
+        "count": 30,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100065,
+    "cardTitle": "CHEVALIER (Terracid)",
+    "comment": "(Permanent) Une fois par tour, quand  vous dÃ©clenchez une combo, reprenez en main la carte du dessus de votre dÃ©fausse.",
+    "effects": [
+      {
+        "type": "DiscardHandCard",
+        "count": 1,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100066,
+    "cardTitle": "PEINTRE (Laink)",
+    "comment": "(Permanent) Ce Personnage a +1 en Force pour chacune de vos combos en jeu.",
+    "effects": [
+      {
+        "type": "BoostCardActiveElement",
+        "count": 20,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100067,
+    "cardTitle": "PEINTRE (Terracid)",
+    "comment": "(Permanent) Ce Personnage a +1 en Force pour chacune de vos combos en jeu.",
+    "effects": [
+      {
+        "type": "BoostCardActiveElement",
+        "count": 20,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100068,
+    "cardTitle": "POMPIER (Laink)",
+    "comment": "Si câ€™est la premiÃ¨re carte posÃ©e sur son Terrain, reprenez en main les 3 cartes du dessus de votre dÃ©fausse.",
+    "effects": [
+      {
+        "type": "BoostCardActiveElement",
+        "count": 75,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100069,
+    "cardTitle": "POMPIER (Terracid)",
+    "comment": "Si câ€™est la premiÃ¨re carte posÃ©e sur son Terrain, reprenez en main les 4 cartes du dessus de votre dÃ©fausse.",
+    "effects": [
+      {
+        "type": "BoostCardActiveElement",
+        "count": 90,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100070,
+    "cardTitle": "SORCIER (Laink)",
+    "comment": "(Permanent) Votre adversaire ne peut pas jouer de Personnage de Force 2 ou plus sur le Terrain oÃ¹ est ce Personnage.",
+    "effects": [
+      {
+        "type": "BoostCardActiveElement",
+        "count": 20,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100071,
+    "cardTitle": "SORCIER (Terracid)",
+    "comment": "(Permanent) Votre adversaire ne peut pas jouer de Personnage de Force 2 ou plus sur le Terrain oÃ¹ est ce Personnage.",
+    "effects": [
+      {
+        "type": "BoostCardActiveElement",
+        "count": 20,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100072,
+    "cardTitle": "SDF (Laink)",
+    "comment": "(Permanent) Si câ€™est votre seul Personnage sur ce Terrain, il a +5 en Force.",
+    "effects": [
+      {
+        "type": "DiscardHandCard",
+        "count": 1,
+        "isTargetEnemy": true,
+        "isOptional": false
+      },
+      {
+        "type": "BoostCardActiveElement",
+        "count": 20,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100073,
+    "cardTitle": "SDF (Terracid)",
+    "comment": "(Permanent) Si câ€™est votre seul Personnage sur ce Terrain, il a +5 en Force.",
+    "effects": [
+      {
+        "type": "BoostCardActiveElement",
+        "count": 20,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100074,
+    "cardTitle": "TOURISTE (Laink)",
+    "comment": "(Permanent) Si ce Personnage participe Ã  un Score sur un Terrain, il nâ€™est pas dÃ©faussÃ©, mais va sur un autre Terrain de votre choix.",
+    "effects": [
+      {
+        "type": "BoostCardActiveElement",
+        "count": 60,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100075,
+    "cardTitle": "TOURISTE (Terracid)",
+    "comment": "(Permanent) Si ce Personnage participe Ã  un Score sur un Terrain, il nâ€™est pas dÃ©faussÃ©, mais va sur un autre Terrain de votre choix.",
+    "effects": [
+      {
+        "type": "BoostCardActiveElement",
+        "count": 45,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100076,
+    "cardTitle": "EMPLOYÉ WCDO (Laink)",
+    "comment": "(Permanent) +1 en Force pour chaque EmployÃ© WcDo.",
+    "effects": [
+      {
+        "type": "DiscardHandCard",
+        "count": 1,
+        "isTargetEnemy": true,
+        "isOptional": false
+      },
+      {
+        "type": "BoostCardActiveElement",
+        "count": 20,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100077,
+    "cardTitle": "EMPLOYÉ WCDO (Terracid)",
+    "comment": "(Permanent) +1 en Force pour chaque EmployÃ© WcDo.",
+    "effects": [
+      {
+        "type": "BoostCardActiveElement",
+        "count": 30,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100078,
+    "cardTitle": "MORT-VIVANT (Laink)",
+    "comment": "DÃ©faussez ce Personnage Ã  la fin de votre tour.",
+    "effects": [
+      {
+        "type": "DiscardHandCard",
+        "count": 1,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100079,
+    "cardTitle": "MORT-VIVANT (Terracid)",
+    "comment": "DÃ©faussez ce Personnage Ã  la fin de votre tour.",
+    "effects": [
+      {
+        "type": "DiscardHandCard",
+        "count": 1,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100080,
+    "cardTitle": "SOLDAT ROMAIN (Terracid)",
+    "comment": "(Permanent) Ajoutez 3 Ã  la Force dâ€™un Personnage pour ce tour, puis dÃ©faussez ce Personnage.",
+    "effects": [
+      {
+        "type": "BoostCardActiveElement",
+        "count": 30,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100081,
+    "cardTitle": "SPIDERLAINK (Laink)",
+    "comment": "Votre adversaire dÃ©fausse la carte du dessus de son deck.",
+    "effects": [
+      {
+        "type": "DiscardHandCard",
+        "count": 1,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100082,
+    "cardTitle": "THORRACID (Terracid)",
+    "comment": "Votre adversaire dÃ©fausse la carte du dessus de son deck.",
+    "effects": [
+      {
+        "type": "DiscardHandCard",
+        "count": 1,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100083,
+    "cardTitle": "CT (Laink)",
+    "comment": "Piochez une carte.",
+    "effects": [
+      {
+        "type": "DrawCard",
+        "count": 1,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100084,
+    "cardTitle": "TERRO (Terracid)",
+    "comment": "Piochez une carte.",
+    "effects": [
+      {
+        "type": "DrawCard",
+        "count": 1,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100085,
+    "cardTitle": "CLOWN TUEUR (Terracid)",
+    "comment": "Reprenez en main la carte du dessus de votre dÃ©fausse.",
+    "effects": [
+      {
+        "type": "DiscardHandCard",
+        "count": 1,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100086,
+    "cardTitle": "JOUEUR DU GRENIER (Guest)",
+    "comment": "DÃ©faussez un Personnage en jeu de votre adversaire dâ€™une Force de 2 maximum et scorez un Terrain.",
+    "effects": [
+      {
+        "type": "DiscardHandCard",
+        "count": 1,
+        "isTargetEnemy": true,
+        "isOptional": false
+      },
+      {
+        "type": "BoostCardActiveElement",
+        "count": 30,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100087,
+    "cardTitle": "SEB (Guest)",
+    "comment": "Piochez une carte.",
+    "effects": [
+      {
+        "type": "DrawCard",
+        "count": 1,
+        "isTargetSelf": true,
+        "isOptional": false
+      },
+      {
+        "type": "BoostCardActiveElement",
+        "count": 30,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100088,
+    "cardTitle": "AMIXEM (Guest)",
+    "comment": "Piochez une carte.",
+    "effects": [
+      {
+        "type": "DrawCard",
+        "count": 1,
+        "isTargetSelf": true,
+        "isOptional": false
+      },
+      {
+        "type": "BoostCardActiveElement",
+        "count": 30,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100089,
+    "cardTitle": "PIRATE (Laink)",
+    "comment": "Votre adversaire dÃ©fausse jusquâ€™Ã  ce quâ€™il ait autant de cartes en main que vous.",
+    "effects": [
+      {
+        "type": "BoostCardActiveElement",
+        "count": 75,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100090,
+    "cardTitle": "PIRATE (Terracid)",
+    "comment": "Votre adversaire dÃ©fausse jusquâ€™Ã  ce quâ€™il ait autant de cartes en main que vous.",
+    "effects": [
+      {
+        "type": "BoostCardActiveElement",
+        "count": 60,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100091,
+    "cardTitle": "SEMI-HOMME (Laink)",
+    "comment": "(Permanent) Vous pouvez dÃ©fausser ce Personnage pour scorer un Terrain.",
+    "effects": [
+      {
+        "type": "DiscardHandCard",
+        "count": 1,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100092,
+    "cardTitle": "SEMI-HOMME (Terracid)",
+    "comment": "(Permanent) Vous pouvez dÃ©fausser ce Personnage pour scorer un Terrain.",
+    "effects": [
+      {
+        "type": "DrawCard",
+        "count": 1,
+        "isTargetSelf": true,
+        "isOptional": false
+      },
+      {
+        "type": "DiscardHandCard",
+        "count": 1,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100093,
+    "cardTitle": "MARTHIE (Laink)",
+    "comment": "(Permanent) Au moment de scorer, vous pouvez jouer gratuitement une carte sur le Terrain scorÃ© sans en appliquer les effets.",
+    "effects": [
+      {
+        "type": "DrawCard",
+        "count": 1,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100094,
+    "cardTitle": "DOC (Terracid)",
+    "comment": "(Permanent) Au moment de scorer, vous pouvez jouer gratuitement une carte sur le Terrain scorÃ© sans en appliquer les effets.",
+    "effects": [
+      {
+        "type": "DiscardHandCard",
+        "count": 1,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100095,
+    "cardTitle": "VIEILLE (Laink)",
+    "comment": "Echangez un de vos Personnages posÃ©s avec un de votre main de Force infÃ©rieure ou Ã©gale.",
+    "effects": [
+      {
+        "type": "DrawCard",
+        "count": 1,
+        "isTargetSelf": true,
+        "isOptional": false
+      },
+      {
+        "type": "BoostCardActiveElement",
+        "count": 30,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100096,
+    "cardTitle": "VIEILLE (Terracid)",
+    "comment": "Echangez un de vos Personnages posÃ©s avec un de votre main de Force infÃ©rieure ou Ã©gale.",
+    "effects": [
+      {
+        "type": "BoostCardActiveElement",
+        "count": 30,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100097,
+    "cardTitle": "FANBOY (Laink)",
+    "comment": "Votre adversaire dÃ©fausse depuis sa main pour avoir autant de cartes en main que vous.",
+    "effects": [
+      {
+        "type": "DiscardHandCard",
+        "count": 1,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100098,
+    "cardTitle": "FANGIRL (Terracid)",
+    "comment": "Votre adversaire dÃ©fausse pour avoir autant de cartes en main que vous.",
+    "effects": [
+      {
+        "type": "DrawCard",
+        "count": 1,
+        "isTargetSelf": true,
+        "isOptional": false
+      },
+      {
+        "type": "DiscardHandCard",
+        "count": 1,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100099,
+    "cardTitle": "GOTAGA (Guest)",
+    "comment": "DÃ©faussez un de vos Personnages en jeu. Votre adversaire dÃ©fausse autant de cartes de son deck que sa valeur en Force.",
+    "effects": [
+      {
+        "type": "DiscardHandCard",
+        "count": 1,
+        "isTargetEnemy": true,
+        "isOptional": false
+      },
+      {
+        "type": "BoostCardActiveElement",
+        "count": 30,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100100,
+    "cardTitle": "BILLY LE BONHOMME DE NEIGE (Random)",
+    "comment": "(Permanent) Vous pouvez dÃ©fausser ce Personnage pour scorer 1 ou 2 Terrains.",
+    "effects": [
+      {
+        "type": "DrawCard",
+        "count": 1,
+        "isTargetSelf": true,
+        "isOptional": false
+      },
+      {
+        "type": "DiscardHandCard",
+        "count": 1,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100101,
+    "cardTitle": "GREMLIN (Terracid)",
+    "comment": "(Permanent) Si vous perdez un Score, rÃ©cupÃ©rez en main la premiÃ¨re carte de votre dÃ©fausse.",
+    "effects": [
+      {
+        "type": "DiscardHandCard",
+        "count": 1,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100102,
+    "cardTitle": "STEVE (Laink)",
+    "comment": "Force 2",
+    "effects": [
+      {
+        "type": "BoostCardActiveElement",
+        "count": 20,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100103,
+    "cardTitle": "STEVE (Terracid)",
+    "comment": "Force 2",
+    "effects": [
+      {
+        "type": "BoostCardActiveElement",
+        "count": 30,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100104,
+    "cardTitle": "APPRENTIE SORCIÈRE (Laink)",
+    "comment": "Cherchez dans votre deck et choisissez une carte que vous piochez. MÃ©langez ensuite votre deck.",
+    "effects": [
+      {
+        "type": "DrawCard",
+        "count": 1,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100105,
+    "cardTitle": "ELFE (Terracid)",
+    "comment": "Cherchez dans votre deck et choisissez une carte que vous piochez. MÃ©langez ensuite votre deck.",
+    "effects": [
+      {
+        "type": "DrawCard",
+        "count": 1,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100106,
+    "cardTitle": "SEL (Laink)",
+    "comment": "Ce tour, si vous perdez le prochain Score, votre adversaire dÃ©fausse 2 cartes de sa main.",
+    "effects": [
+      {
+        "type": "DiscardHandCard",
+        "count": 1,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100107,
+    "cardTitle": "SEL (Terracid)",
+    "comment": "Ce tour, si vous perdez le prochain Score, votre adversaire dÃ©fausse un de ses Personnages en jeu.",
+    "effects": [
+      {
+        "type": "DiscardHandCard",
+        "count": 1,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100108,
+    "cardTitle": "MASTU (Guest)",
+    "comment": "Scorez tous les Terrains en jeu.",
+    "effects": [
+      {
+        "type": "DiscardHandCard",
+        "count": 1,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100109,
+    "cardTitle": "DEOTOONS (Guest)",
+    "comment": "(Permanent) Au dÃ©but de votre tour, reprenez en main la carte du dessus de votre dÃ©fausse.",
+    "effects": [
+      {
+        "type": "DiscardHandCard",
+        "count": 1,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100110,
+    "cardTitle": "COWBOY (Laink)",
+    "comment": "DÃ©faussez la premiÃ¨re carte de votre deck. DÃ©faussez tous les Personnages adverses en jeu qui ont moins en Force.",
+    "effects": [
+      {
+        "type": "DiscardHandCard",
+        "count": 1,
+        "isTargetEnemy": true,
+        "isOptional": false
+      },
+      {
+        "type": "BoostCardActiveElement",
+        "count": 30,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100111,
+    "cardTitle": "COWBOY (Terracid)",
+    "comment": "DÃ©faussez la premiÃ¨re carte de votre deck. DÃ©faussez tous les Personnages adverses en jeu qui ont plus en Force.",
+    "effects": [
+      {
+        "type": "DiscardHandCard",
+        "count": 1,
+        "isTargetEnemy": true,
+        "isOptional": false
+      },
+      {
+        "type": "BoostCardActiveElement",
+        "count": 30,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100112,
+    "cardTitle": "POLICIER (Laink)",
+    "comment": "(Permanent) DÃ©faussez ce Personnage Ã  la place de nâ€™importe quel autre qui devait Ãªtre dÃ©faussÃ©.",
+    "effects": [
+      {
+        "type": "DiscardHandCard",
+        "count": 1,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100113,
+    "cardTitle": "POLICIER (Terracid)",
+    "comment": "(Permanent) DÃ©faussez ce Personnage Ã  la place de nâ€™importe quel autre qui devait Ãªtre dÃ©faussÃ©.",
+    "effects": [
+      {
+        "type": "DiscardHandCard",
+        "count": 1,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100114,
+    "cardTitle": "OBÈSE (Laink)",
+    "comment": "(Permanent) Si plus dâ€™un Terrain est scorÃ© dans le tour, tous vos Personnages ont +1 en Force pour le tour.",
+    "effects": [
+      {
+        "type": "BoostCardActiveElement",
+        "count": 30,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100115,
+    "cardTitle": "SINGE (Laink)",
+    "comment": "DÃ©placez un autre Personnage dâ€™un Terrain vers un autre.",
+    "effects": [
+      {
+        "type": "BoostCardActiveElement",
+        "count": 30,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100116,
+    "cardTitle": "ENQUÊTEUR (Terracid)",
+    "comment": "Regardez les 3 premiÃ¨res cartes de votre deck. Piochez-en une, jouez-en une gratuitement et remettez la derniÃ¨re sur le deck.",
+    "effects": [
+      {
+        "type": "DrawCard",
+        "count": 1,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100117,
+    "cardTitle": "POTATOZ (Guest)",
+    "comment": "Scorez un Terrain.",
+    "effects": [
+      {
+        "type": "BoostCardActiveElement",
+        "count": 20,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100118,
+    "cardTitle": "JIRAYA (Guest)",
+    "comment": "Votre adversaire dÃ©fausse depuis sa main jusquâ€™Ã  ce quâ€™il ait moins de cartes en main que vous.",
+    "effects": [
+      {
+        "type": "BoostCardActiveElement",
+        "count": 75,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100119,
+    "cardTitle": "FELDUP (Guest)",
+    "comment": "Votre adversaire dÃ©fausse la carte du dessus de son deck.",
+    "effects": [
+      {
+        "type": "DiscardHandCard",
+        "count": 1,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100120,
+    "cardTitle": "BRETONNE BIGOUDENE (Laink)",
+    "comment": "Si vous avez exactement 3 ou 5 cartes en main, rÃ©cupÃ©rez les 2 cartes du dessus de votre dÃ©fausse.",
+    "effects": [
+      {
+        "type": "DiscardHandCard",
+        "count": 1,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100121,
+    "cardTitle": "ROI (Terracid)",
+    "comment": "(Permanent) Au moment de scorer, vous pouvez jouer gratuitement une carte sur le Terrain scorÃ© sans en appliquer les effets.",
+    "effects": [
+      {
+        "type": "BoostCardActiveElement",
+        "count": 60,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100122,
+    "cardTitle": "HUGO DÉLIRE (Guest)",
+    "comment": "(Permanent) Vos autres Personnages qui ne sont ni Terracid ni Laink triplent leur Force.",
+    "effects": [
+      {
+        "type": "BoostCardActiveElement",
+        "count": 20,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100123,
+    "cardTitle": "XARI (Guest)",
+    "comment": "(Permanent) Si vous devez dÃ©fausser exactement 2 cartes dâ€™un coup, vous nâ€™en dÃ©faussez quâ€™une.",
+    "effects": [
+      {
+        "type": "DiscardHandCard",
+        "count": 1,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100124,
+    "cardTitle": "PRINCESSE (Laink)",
+    "comment": "(Permanent) Les Personnages doivent Ãªtre posÃ©s sur le mÃªme Terrain que celui de ce Personnage.",
+    "effects": [
+      {
+        "type": "BoostCardActiveElement",
+        "count": 15,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100125,
+    "cardTitle": "PRINCESSE (Terracid)",
+    "comment": "(Permanent) Les Personnages doivent Ãªtre posÃ©s sur le mÃªme Terrain que celui de ce Personnage.",
+    "effects": [
+      {
+        "type": "BoostCardActiveElement",
+        "count": 15,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100126,
+    "cardTitle": "PROSTITUÉE (Terracid)",
+    "comment": "Chaque joueur annonce un chiffre en mÃªme temps. Le plus bas dÃ©fausse autant de cartes. Le plus haut reprend en main autant de cartes de sa dÃ©fausse.",
+    "effects": [
+      {
+        "type": "DiscardHandCard",
+        "count": 1,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100127,
+    "cardTitle": "FÉE (Laink)",
+    "comment": "Annoncez un chiffre et piochez la premiÃ¨re carte de votre deck. Si câ€™est un Personnage de Force Ã©gale Ã  ce chiffre, mettez-le en jeu gratuitement et recommencez.",
+    "effects": [
+      {
+        "type": "DrawCard",
+        "count": 1,
+        "isTargetSelf": true,
+        "isOptional": false
+      },
+      {
+        "type": "BoostCardActiveElement",
+        "count": 30,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100128,
+    "cardTitle": "G CRAMÉ (Random)",
+    "comment": "Cherchez dans votre deck et choisissez 2 cartes que vous piochez. MÃ©langez ensuite votre deck.",
+    "effects": [
+      {
+        "type": "DrawCard",
+        "count": 2,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100129,
+    "cardTitle": "SUPERCONERI (Guest)",
+    "comment": "Scorez 1 ou 2 Terrains.",
+    "effects": [
+      {
+        "type": "DiscardHandCard",
+        "count": 1,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100130,
+    "cardTitle": "MOINE (Laink)",
+    "comment": "(Permanent) DÃ©faussez ce personnage pour reprendre en main les 3 cartes du dessus de votre dÃ©fausse.",
+    "effects": [
+      {
+        "type": "DiscardHandCard",
+        "count": 1,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100131,
+    "cardTitle": "CYBERLAINK (Laink)",
+    "comment": "DÃ©faussez un Personnage adverse en jeu dâ€™une Force de 2 maximum.",
+    "effects": [
+      {
+        "type": "BoostCardActiveElement",
+        "count": 30,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100132,
+    "cardTitle": "CYBERTERRA (Terracid)",
+    "comment": "DÃ©faussez un Personnage adverse en jeu dâ€™une Force de 2 maximum.",
+    "effects": [
+      {
+        "type": "DiscardHandCard",
+        "count": 1,
+        "isTargetEnemy": true,
+        "isOptional": false
+      },
+      {
+        "type": "BoostCardActiveElement",
+        "count": 30,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100133,
+    "cardTitle": "JACQUES FLANTIER (Laink)",
+    "comment": "DÃ©faussez un Personnage adverse en jeu dâ€™une Force de 1 maximum.",
+    "effects": [
+      {
+        "type": "BoostCardActiveElement",
+        "count": 20,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100134,
+    "cardTitle": "RICHARD FLANTIER (Terracid)",
+    "comment": "DÃ©faussez un Personnage adverse en jeu dâ€™une Force de 1 maximum.",
+    "effects": [
+      {
+        "type": "BoostCardActiveElement",
+        "count": 30,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100135,
+    "cardTitle": "DRESSEUSE (Laink)",
+    "comment": "(Permanent) Quand votre adversaire pioche, il pioche une carte de plus et en dÃ©fausse une.",
+    "effects": [
+      {
+        "type": "DrawCard",
+        "count": 1,
+        "isTargetSelf": true,
+        "isOptional": false
+      },
+      {
+        "type": "DiscardHandCard",
+        "count": 1,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100136,
+    "cardTitle": "DRESSEUR (Terracid)",
+    "comment": "(Permanent) Quand votre adversaire pioche, il pioche une carte de plus et en dÃ©fausse une.",
+    "effects": [
+      {
+        "type": "DrawCard",
+        "count": 1,
+        "isTargetSelf": true,
+        "isOptional": false
+      },
+      {
+        "type": "DiscardHandCard",
+        "count": 1,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100137,
+    "cardTitle": "SURVIVANT (Laink)",
+    "comment": "Si vous avez exactement 3 cartes en main, rÃ©cupÃ©rez la carte du dessus de votre dÃ©fausse.",
+    "effects": [
+      {
+        "type": "DiscardHandCard",
+        "count": 1,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100138,
+    "cardTitle": "SURVIVANT (Terracid)",
+    "comment": "Si vous avez exactement 4 cartes en main, rÃ©cupÃ©rez la carte du dessus de votre dÃ©fausse.",
+    "effects": [
+      {
+        "type": "DiscardHandCard",
+        "count": 1,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100139,
+    "cardTitle": "WICROMANIA (Laink)",
+    "comment": "Annoncez un nombre, puis regardez la premiÃ¨re carte de votre deck. Si elle a cette valeur de Force, mettez-la en jeu gratuitement. Sinon piochez-la.",
+    "effects": [
+      {
+        "type": "DrawCard",
+        "count": 1,
+        "isTargetSelf": true,
+        "isOptional": false
+      },
+      {
+        "type": "BoostCardActiveElement",
+        "count": 20,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100140,
+    "cardTitle": "VOYANT (Terracid)",
+    "comment": "Regardez les 3 premiÃ¨res cartes de votre deck. Piochez-en une, jouez-en une gratuitement et remettez la derniÃ¨re sur le deck.",
+    "effects": [
+      {
+        "type": "DrawCard",
+        "count": 1,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100141,
+    "cardTitle": "PIERRE RONDIN (Laink)",
+    "comment": "Doublez la Force de tous vos autres Personnages jusquâ€™Ã  la fin de votre tour.",
+    "effects": [
+      {
+        "type": "BoostCardActiveElement",
+        "count": 20,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100142,
+    "cardTitle": "ANDRÉ RONDIN (Terracid)",
+    "comment": "Doublez la Force de tous vos autres Personnages jusquâ€™Ã  la fin de votre tour.",
+    "effects": [
+      {
+        "type": "BoostCardActiveElement",
+        "count": 20,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100143,
+    "cardTitle": "PROFESSEUR (Laink)",
+    "comment": "(Permanent) Doublez la Force de tous vos Personnages de type Laink.",
+    "effects": [
+      {
+        "type": "BoostCardActiveElement",
+        "count": 20,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100144,
+    "cardTitle": "PROFESSEUR (Terracid)",
+    "comment": "(Permanent) Doublez la Force de tous vos Personnages de type Terracid.",
+    "effects": [
+      {
+        "type": "BoostCardActiveElement",
+        "count": 20,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100145,
+    "cardTitle": "SAMOURAÏ (Laink)",
+    "comment": "(Permanent) Doublez la Force de tous vos Personnages sur le mÃªme Terrain que ce Personnage.",
+    "effects": [
+      {
+        "type": "BoostCardActiveElement",
+        "count": 30,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100146,
+    "cardTitle": "SAGE JAPONAIS (Terracid)",
+    "comment": "(Permanent) Divisez par 2 la Force de tous les Personnages adverses sur le mÃªme Terrain que ce Personnage.",
+    "effects": [
+      {
+        "type": "BoostCardActiveElement",
+        "count": 20,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100147,
+    "cardTitle": "JEANINE (Laink)",
+    "comment": "Votre prochaine carte Personnage coÃ»te 0 Ã  mettre en jeu ce tour.",
+    "effects": [
+      {
+        "type": "DiscardHandCard",
+        "count": 1,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100148,
+    "cardTitle": "MARTINE (Terracid)",
+    "comment": "Votre prochaine carte Personnage coÃ»te 0 Ã  mettre en jeu ce tour.",
+    "effects": [
+      {
+        "type": "BoostCardActiveElement",
+        "count": 15,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100149,
+    "cardTitle": "LAINK (Laink)",
+    "comment": "(Permanent) Si vous scorez un Terrain pendant votre tour, dÃ©faussez ce Personnage.",
+    "effects": [
+      {
+        "type": "DiscardHandCard",
+        "count": 1,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100150,
+    "cardTitle": "TERRACID (Terracid)",
+    "comment": "(Permanent) Si vous scorez un Terrain pendant votre tour, dÃ©faussez ce Personnage.",
+    "effects": [
+      {
+        "type": "DiscardHandCard",
+        "count": 1,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100151,
+    "cardTitle": "COWBOY (Laink)",
+    "comment": "DÃ©faussez la premiÃ¨re carte de votre deck. DÃ©faussez tous les Personnages adverses en jeu qui ont moins en Force.",
+    "effects": [
+      {
+        "type": "DiscardHandCard",
+        "count": 1,
+        "isTargetEnemy": true,
+        "isOptional": false
+      },
+      {
+        "type": "BoostCardActiveElement",
+        "count": 30,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100152,
+    "cardTitle": "COWBOY (Terracid)",
+    "comment": "DÃ©faussez la premiÃ¨re carte de votre deck. DÃ©faussez tous les Personnages adverses en jeu qui ont plus en Force.",
+    "effects": [
+      {
+        "type": "DiscardHandCard",
+        "count": 1,
+        "isTargetEnemy": true,
+        "isOptional": false
+      },
+      {
+        "type": "BoostCardActiveElement",
+        "count": 30,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100153,
+    "cardTitle": "POLICIER (Laink)",
+    "comment": "(Permanent) DÃ©faussez ce Personnage Ã  la place de nâ€™importe quel autre qui devait Ãªtre dÃ©faussÃ©.",
+    "effects": [
+      {
+        "type": "DiscardHandCard",
+        "count": 1,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100154,
+    "cardTitle": "POLICIER (Terracid)",
+    "comment": "(Permanent) DÃ©faussez ce Personnage Ã  la place de nâ€™importe quel autre qui devait Ãªtre dÃ©faussÃ©.",
+    "effects": [
+      {
+        "type": "DiscardHandCard",
+        "count": 1,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100155,
+    "cardTitle": "SEL (Laink)",
+    "comment": "Ce tour, si vous perdez le prochain Score, votre adversaire dÃ©fausse 2 cartes de sa main.",
+    "effects": [
+      {
+        "type": "DiscardHandCard",
+        "count": 1,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100156,
+    "cardTitle": "SEL (Terracid)",
+    "comment": "Ce tour, si vous perdez le prochain Score, votre adversaire dÃ©fausse un de ses Personnages en jeu.",
+    "effects": [
+      {
+        "type": "DiscardHandCard",
+        "count": 1,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100157,
+    "cardTitle": "FROMAGER (Laink)",
+    "comment": "Vous et votre adversaire dÃ©faussez la premiÃ¨re carte de votre deck. Si la vÃ´tre a plus en Force, rÃ©cupÃ©rez-la en main.",
+    "effects": [
+      {
+        "type": "DiscardHandCard",
+        "count": 1,
+        "isTargetEnemy": true,
+        "isOptional": false
+      },
+      {
+        "type": "BoostCardActiveElement",
+        "count": 30,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100158,
+    "cardTitle": "CHARCUTIER (Terracid)",
+    "comment": "Vous et votre adversaire dÃ©faussez la premiÃ¨re carte de votre deck. Si la vÃ´tre a plus en Force, rÃ©cupÃ©rez-la en main.",
+    "effects": [
+      {
+        "type": "DiscardHandCard",
+        "count": 1,
+        "isTargetEnemy": true,
+        "isOptional": false
+      },
+      {
+        "type": "BoostCardActiveElement",
+        "count": 20,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100159,
+    "cardTitle": "GOTAGA (Guest)",
+    "comment": "DÃ©faussez un de vos Personnages en jeu. Votre adversaire dÃ©fausse autant de cartes de son deck que sa valeur en Force.",
+    "effects": [
+      {
+        "type": "DiscardHandCard",
+        "count": 1,
+        "isTargetEnemy": true,
+        "isOptional": false
+      },
+      {
+        "type": "BoostCardActiveElement",
+        "count": 30,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100160,
+    "cardTitle": "AMIXEM (Guest)",
+    "comment": "Piochez une carte.",
+    "effects": [
+      {
+        "type": "DrawCard",
+        "count": 1,
+        "isTargetSelf": true,
+        "isOptional": false
+      },
+      {
+        "type": "BoostCardActiveElement",
+        "count": 30,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100161,
+    "cardTitle": "PIRATE (Laink)",
+    "comment": "Votre adversaire dÃ©fausse jusquâ€™Ã  ce quâ€™il ait autant de cartes en main que vous.",
+    "effects": [
+      {
+        "type": "BoostCardActiveElement",
+        "count": 75,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100162,
+    "cardTitle": "PIRATE (Terracid)",
+    "comment": "Votre adversaire dÃ©fausse jusquâ€™Ã  ce quâ€™il ait autant de cartes en main que vous.",
+    "effects": [
+      {
+        "type": "BoostCardActiveElement",
+        "count": 60,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100163,
+    "cardTitle": "MASTU (Guest)",
+    "comment": "Scorez tous les Terrains en jeu.",
+    "effects": [
+      {
+        "type": "DiscardHandCard",
+        "count": 1,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100164,
+    "cardTitle": "G CRAMÉ (Random)",
+    "comment": "Cherchez dans votre deck et choisissez 2 cartes que vous piochez. MÃ©langez ensuite votre deck.",
+    "effects": [
+      {
+        "type": "DrawCard",
+        "count": 2,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100165,
+    "cardTitle": "CT (Laink)",
+    "comment": "Piochez une carte.",
+    "effects": [
+      {
+        "type": "DrawCard",
+        "count": 1,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100166,
+    "cardTitle": "TERRO (Terracid)",
+    "comment": "Piochez une carte.",
+    "effects": [
+      {
+        "type": "DrawCard",
+        "count": 1,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100167,
+    "cardTitle": "JOUEUR DU GRENIER (Guest)",
+    "comment": "DÃ©faussez un Personnage en jeu de votre adversaire d'une Force de 2 maximum et scorez un Terrain.",
+    "effects": [
+      {
+        "type": "DiscardHandCard",
+        "count": 1,
+        "isTargetEnemy": true,
+        "isOptional": false
+      },
+      {
+        "type": "BoostCardActiveElement",
+        "count": 30,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100168,
+    "cardTitle": "SEB (Guest)",
+    "comment": "Piochez une carte.",
+    "effects": [
+      {
+        "type": "DrawCard",
+        "count": 1,
+        "isTargetSelf": true,
+        "isOptional": false
+      },
+      {
+        "type": "BoostCardActiveElement",
+        "count": 30,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100169,
+    "cardTitle": "WICROMANIA (Laink)",
+    "comment": "Annoncez un nombre, puis regardez la premiÃ¨re carte de votre deck. Si elle a cette valeur de Force, mettez-la en jeu gratuitement. Sinon piochez-la.",
+    "effects": [
+      {
+        "type": "DrawCard",
+        "count": 1,
+        "isTargetSelf": true,
+        "isOptional": false
+      },
+      {
+        "type": "BoostCardActiveElement",
+        "count": 20,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100170,
+    "cardTitle": "VOYANT (Terracid)",
+    "comment": "Regardez les 3 premiÃ¨res cartes de votre deck. Piochez-en une, jouez-en une gratuitement et remettez la derniÃ¨re sur le deck.",
+    "effects": [
+      {
+        "type": "DrawCard",
+        "count": 1,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100171,
+    "cardTitle": "PIERRE RONDIN (Laink)",
+    "comment": "Doublez la Force de tous vos autres Personnages jusquâ€™Ã  la fin de votre tour.",
+    "effects": [
+      {
+        "type": "BoostCardActiveElement",
+        "count": 20,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100172,
+    "cardTitle": "ANDRÉ RONDIN (Terracid)",
+    "comment": "Doublez la Force de tous vos autres Personnages jusquâ€™Ã  la fin de votre tour.",
+    "effects": [
+      {
+        "type": "BoostCardActiveElement",
+        "count": 20,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100173,
+    "cardTitle": "SURVIVANT (Laink)",
+    "comment": "Si vous avez exactement 3 cartes en main, rÃ©cupÃ©rez la carte du dessus de votre dÃ©fausse.",
+    "effects": [
+      {
+        "type": "DiscardHandCard",
+        "count": 1,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100174,
+    "cardTitle": "SURVIVANT (Terracid)",
+    "comment": "Si vous avez exactement 4 cartes en main, rÃ©cupÃ©rez la carte du dessus de votre dÃ©fausse.",
+    "effects": [
+      {
+        "type": "DiscardHandCard",
+        "count": 1,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100175,
+    "cardTitle": "JACQUES FLANTIER (Laink)",
+    "comment": "DÃ©faussez un Personnage adverse en jeu dâ€™une Force de 1 maximum.",
+    "effects": [
+      {
+        "type": "BoostCardActiveElement",
+        "count": 20,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100176,
+    "cardTitle": "RICHARD FLANTIER (Terracid)",
+    "comment": "DÃ©faussez un Personnage adverse en jeu dâ€™une Force de 1 maximum.",
+    "effects": [
+      {
+        "type": "BoostCardActiveElement",
+        "count": 30,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100177,
+    "cardTitle": "JEANINE (Laink)",
+    "comment": "Votre prochaine carte Personnage coÃ»te 0 Ã  mettre en jeu ce tour.",
+    "effects": [
+      {
+        "type": "DiscardHandCard",
+        "count": 1,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100178,
+    "cardTitle": "MARTINE (Terracid)",
+    "comment": "Votre prochaine carte Personnage coÃ»te 0 Ã  mettre en jeu ce tour.",
+    "effects": [
+      {
+        "type": "BoostCardActiveElement",
+        "count": 15,
+        "isTargetSelf": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100179,
+    "cardTitle": "LAINK (Laink)",
+    "comment": "(Permanent) Si vous scorez un Terrain pendant votre tour, dÃ©faussez ce Personnage.",
+    "effects": [
+      {
+        "type": "DiscardHandCard",
+        "count": 1,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  },
+  {
+    "cardIndex": 100180,
+    "cardTitle": "TERRACID (Terracid)",
+    "comment": "(Permanent) Si vous scorez un Terrain pendant votre tour, dÃ©faussez ce Personnage.",
+    "effects": [
+      {
+        "type": "DiscardHandCard",
+        "count": 1,
+        "isTargetEnemy": true,
+        "isOptional": false
+      }
+    ]
+  }
+]
