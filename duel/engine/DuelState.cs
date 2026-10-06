@@ -221,6 +221,32 @@ public sealed class DuelState
         _slots[slotIndex] = new TerrainSlot(slotIndex);
     }
 
+
+    internal bool MoveCharacter(PlayerId player, DuelCard card, int fromSlotIndex, int toSlotIndex)
+    {
+        if (fromSlotIndex < 0 || fromSlotIndex >= _slots.Length) return false;
+        if (toSlotIndex < 0 || toSlotIndex >= _slots.Length) return false;
+
+        var fromSlot = _slots[fromSlotIndex];
+        var toSlot = _slots[toSlotIndex];
+
+        if (fromSlot.RemoveCharacter(player, card))
+        {
+            toSlot.AddCharacter(player, card);
+            return true;
+        }
+        return false;
+    }
+
+    internal DuelCard? PopBottomDeckCard(PlayerId player)
+    {
+        var target = player == PlayerId.Player1 ? _deckP1 : _deckP2;
+        if (target.Count == 0) return null;
+        var card = target[0];
+        target.RemoveAt(0);
+        return card;
+    }
+
     internal void AddCharacterToSlot(int slotIndex, PlayerId player, DuelCard card)
     {
         _slots[slotIndex].AddCharacter(player, card);

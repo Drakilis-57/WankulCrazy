@@ -254,13 +254,31 @@ public sealed class DuelEndedEvent : IDuelEvent
     }
 }
 
+public sealed class CharacterMovedSlotEvent : IDuelEvent
+{
+    public PlayerId Player { get; }
+    public DuelCard Card { get; }
+    public int FromSlotIndex { get; }
+    public int ToSlotIndex { get; }
+
+    public CharacterMovedSlotEvent(PlayerId player, DuelCard card, int fromSlotIndex, int toSlotIndex)
+    {
+        Player = player;
+        Card = card;
+        FromSlotIndex = fromSlotIndex;
+        ToSlotIndex = toSlotIndex;
+    }
+}
+
 public sealed class PlayerChoiceRequiredEvent : IDuelEvent
 {
     public PlayerId Player { get; }
     public string Title { get; }
     public string Description { get; }
     public IReadOnlyList<DuelCard> Candidates { get; }
-    public Action<DuelCard> OnCardSelected { get; }
+    public Action<DuelCard>? OnCardSelected { get; }
+    public string ChoiceContext { get; }
+    public DuelCard? SourceCard { get; }
 
     public PlayerChoiceRequiredEvent(
         PlayerId player,
@@ -274,5 +292,30 @@ public sealed class PlayerChoiceRequiredEvent : IDuelEvent
         Description = description ?? "";
         Candidates = candidates ?? Array.Empty<DuelCard>();
         OnCardSelected = onCardSelected;
+        ChoiceContext = "";
+        SourceCard = null;
+    }
+
+    public PlayerChoiceRequiredEvent(PlayerId player, string choiceContext, DuelCard sourceCard)
+    {
+        Player = player;
+        Title = choiceContext ?? "Choix requis";
+        Description = "";
+        Candidates = Array.Empty<DuelCard>();
+        OnCardSelected = null;
+        ChoiceContext = choiceContext ?? "";
+        SourceCard = sourceCard;
+    }
+}
+
+public sealed class CardsRevealedEvent : IDuelEvent
+{
+    public PlayerId Player { get; }
+    public IReadOnlyList<DuelCard> RevealedCards { get; }
+
+    public CardsRevealedEvent(PlayerId player, IReadOnlyList<DuelCard> revealedCards)
+    {
+        Player = player;
+        RevealedCards = revealedCards;
     }
 }

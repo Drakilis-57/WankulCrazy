@@ -340,7 +340,7 @@ namespace WankulCrazyPlugin.duel
                 case 100180: list.AddRange(new[] { "discard_opp_hand_1" }); break;
             }
 
-            // Fallback & S2 Campus / S3 Battle rules
+            // Fallback & S2 Campus / S3 Battle / S4 Stellar rules
             if (list.Count == 0)
             {
                 string title = data.Title != null ? data.Title.ToUpperInvariant() : "";
@@ -354,6 +354,11 @@ namespace WankulCrazyPlugin.duel
 
                     if (!string.IsNullOrEmpty(terrain.WinningEffect))
                     {
+                        var winEffect = terrain.WinningEffect.ToLowerInvariant();
+                        if (winEffect.Contains("pioche jusqu'à avoir 7 cartes")) list.Add("win_draw_until_7");
+                        else if (winEffect.Contains("pioche 3 cartes") || winEffect.Contains("piochez 3 cartes")) list.Add("win_draw_3");
+                        else if (winEffect.Contains("pioche 2 cartes") || winEffect.Contains("piochez 2 cartes")) list.Add("win_draw_2");
+
                         if (terrain.WinningEffect.Contains("Le gagnant ajoute 2 terrains")) list.Add("win_shuffle_terrains");
                         else if (terrain.WinningEffect.Contains("Le gagnant bannit les 2 cartes")) list.Add("win_banish_deck_2");
                         else if (terrain.WinningEffect.Contains("cherche 1 carte dans son deck")) list.Add("win_search_card");
@@ -373,6 +378,16 @@ namespace WankulCrazyPlugin.duel
                     }
                     if (!string.IsNullOrEmpty(terrain.LosingEffect))
                     {
+                        var loseEffect = terrain.LosingEffect.ToLowerInvariant();
+                        if (loseEffect.Contains("défausse 2 cartes") || loseEffect.Contains("défausse 2 de sa main")) list.Add("lose_discard_2");
+                        else if (loseEffect.Contains("défausse 3 cartes")) list.Add("lose_discard_3");
+
+                        if (loseEffect.Contains("meule 1 carte")) list.Add("lose_mill_1");
+                        else if (loseEffect.Contains("meule 2 cartes")) list.Add("lose_mill_2");
+                        else if (loseEffect.Contains("meule 3 cartes")) list.Add("lose_mill_3");
+                        else if (loseEffect.Contains("meule 4 cartes")) list.Add("lose_mill_4");
+                        else if (loseEffect.Contains("meule 5 cartes")) list.Add("lose_mill_5");
+                        else if (loseEffect.Contains("meule 6 cartes")) list.Add("lose_mill_6");
                         // Parse S3 Losing Self Mill (ex: défausse les X cartes du dessus de son deck)
                         var matchLoseMill = System.Text.RegularExpressions.Regex.Match(terrain.LosingEffect, @"défausse (?:les )?(\d+) cartes du dessus de son deck");
                         if (matchLoseMill.Success)
@@ -414,6 +429,16 @@ namespace WankulCrazyPlugin.duel
                         if (!list.Contains("discard_opp_char_any"))
                             list.Add("discard_opp_char_any");
                     }
+
+                    // Stellar specific mapping
+                    if (text.Contains("déplacez un personnage") || text.Contains("déplace un personnage") || text.Contains("déplacez 3 personnages"))
+                        list.Add("move_character");
+
+                    if (text.Contains("carte du dessous de votre deck à votre main") || text.Contains("les 2 cartes du dessous de son deck à sa main"))
+                        list.Add("add_bottom_deck_to_hand");
+
+                    if (text.Contains("regardez les 5 cartes du dessus de vos decks"))
+                        list.Add("look_top_deck_5");
 
                     // Campus specific rules
                     if (text.Contains("bannissez jusqu'à 2 personnages adverses") || text.Contains("bannissez jusqu'Ã  2 personnages adverses")) list.Add("lose_discard_char_in_play");

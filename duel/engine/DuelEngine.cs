@@ -294,6 +294,40 @@ public sealed class DuelEngine
     /// Pose un personnage depuis la main sur un terrain existant (max 4 personnages par tour).
     /// Si la carte est un Scoreur et que le terrain est actif, déclenche immédiatement la résolution du duel.
     /// </summary>
+
+    public DuelActionResult MoveCharacter(PlayerId player, string cardId, int fromSlotIndex, int toSlotIndex)
+    {
+        if (State.TurnNumber == 0)
+            return DuelActionResult.Refused("Game has not started yet.");
+
+        if (State.IsGameOver)
+            return DuelActionResult.Refused("Game is already over.");
+
+        if (fromSlotIndex < 0 || fromSlotIndex >= State.Slots.Count)
+            return DuelActionResult.Refused("Invalid fromSlotIndex.");
+
+        if (toSlotIndex < 0 || toSlotIndex >= State.Slots.Count)
+            return DuelActionResult.Refused("Invalid toSlotIndex.");
+
+        if (fromSlotIndex == toSlotIndex)
+            return DuelActionResult.Refused("Cannot move to the same slot.");
+
+        var fromSlot = State.Slots[fromSlotIndex];
+        var chars = fromSlot.GetCharacters(player);
+        var targetCard = chars.FirstOrDefault(c => c.Id == cardId);
+
+        if (targetCard == null)
+            return DuelActionResult.Refused("Character not found in the specified slot.");
+
+        if (State.MoveCharacter(player, targetCard, fromSlotIndex, toSlotIndex))
+        {
+            Emit(new CharacterMovedSlotEvent(player, targetCard, fromSlotIndex, toSlotIndex));
+            return DuelActionResult.Ok();
+        }
+
+        return DuelActionResult.Refused("Failed to move character.");
+    }
+
     public DuelActionResult PlayCharacter(PlayerId player, string cardId, int slotIndex)
     {
         if (State.TurnNumber == 0)
