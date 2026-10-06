@@ -169,12 +169,28 @@ namespace WankulCrazyPlugin.duel
 
                 if (!string.IsNullOrEmpty(terrain.WinningEffect))
                 {
-                    if (terrain.WinningEffect.IndexOf("pioche", StringComparison.OrdinalIgnoreCase) >= 0) list.Add("win_draw_1");
-                    if (terrain.WinningEffect.IndexOf("défausse", StringComparison.OrdinalIgnoreCase) >= 0 || terrain.WinningEffect.IndexOf("meule", StringComparison.OrdinalIgnoreCase) >= 0) list.Add("win_mill_2");
+                    var winEffect = terrain.WinningEffect.ToLowerInvariant();
+                    if (winEffect.Contains("pioche jusqu'à avoir 7 cartes")) list.Add("win_draw_until_7");
+                    else if (winEffect.Contains("pioche 3 cartes") || winEffect.Contains("piochez 3 cartes")) list.Add("win_draw_3");
+                    else if (winEffect.Contains("pioche 2 cartes") || winEffect.Contains("piochez 2 cartes")) list.Add("win_draw_2");
+                    else if (winEffect.Contains("pioche") || winEffect.Contains("piochez une carte") || winEffect.Contains("pioche 1 carte")) list.Add("win_draw_1");
+
+                    if (winEffect.Contains("meule 2 cartes") || winEffect.Contains("défausse 2 cartes")) list.Add("win_mill_2");
+                    else if (winEffect.Contains("meule 3 cartes") || winEffect.Contains("défausse 3 cartes")) list.Add("win_mill_3");
                 }
                 if (!string.IsNullOrEmpty(terrain.LosingEffect))
                 {
-                    if (terrain.LosingEffect.IndexOf("défausse", StringComparison.OrdinalIgnoreCase) >= 0) list.Add("lose_discard_1");
+                    var loseEffect = terrain.LosingEffect.ToLowerInvariant();
+                    if (loseEffect.Contains("défausse 2 cartes") || loseEffect.Contains("défausse 2 de sa main")) list.Add("lose_discard_2");
+                    else if (loseEffect.Contains("défausse 3 cartes")) list.Add("lose_discard_3");
+                    else if (loseEffect.Contains("défausse") && !loseEffect.Contains("défausse 3") && !loseEffect.Contains("défausse 2")) list.Add("lose_discard_1");
+
+                    if (loseEffect.Contains("meule 1 carte")) list.Add("lose_mill_1");
+                    else if (loseEffect.Contains("meule 2 cartes")) list.Add("lose_mill_2");
+                    else if (loseEffect.Contains("meule 3 cartes")) list.Add("lose_mill_3");
+                    else if (loseEffect.Contains("meule 4 cartes")) list.Add("lose_mill_4");
+                    else if (loseEffect.Contains("meule 5 cartes")) list.Add("lose_mill_5");
+                    else if (loseEffect.Contains("meule 6 cartes")) list.Add("lose_mill_6");
                 }
             }
             else if (data is EffigyCardData effigy)
@@ -185,6 +201,7 @@ namespace WankulCrazyPlugin.duel
                 else if (text.Contains("piochez 1 carte") || text.Contains("piochez une carte") || text.Contains("pioche 1 carte"))
                     list.Add("draw_1");
 
+
                 if (text.Contains("défausse les 3") || text.Contains("défausser 3") || title.Contains("GRUDGE"))
                     list.Add("mill_3");
                 else if (text.Contains("défausse les 2") || text.Contains("défausser 2"))
@@ -192,6 +209,18 @@ namespace WankulCrazyPlugin.duel
 
                 if (text.Contains("défausse une carte de sa main") || text.Contains("défausse 1 carte de sa main") || title.Contains("VENDEUR") || title.Contains("ANNABELLE"))
                     list.Add("discard_opp_hand_1");
+
+                // --- Stellar specific mapping ---
+                if (text.Contains("déplacez un personnage") || text.Contains("déplace un personnage") || text.Contains("déplacez 3 personnages"))
+                    list.Add("move_character");
+
+                if (text.Contains("carte du dessous de votre deck à votre main") || text.Contains("les 2 cartes du dessous de son deck à sa main"))
+                    list.Add("add_bottom_deck_to_hand");
+
+                if (text.Contains("regardez les 5 cartes du dessus de vos decks"))
+                    list.Add("look_top_deck_5");
+                // ---------------------------------
+
 
                 if (title.Contains("CAMIONNEUR"))
                     list.Add("discard_opp_char_force3");

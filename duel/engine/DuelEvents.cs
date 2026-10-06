@@ -226,3 +226,47 @@ public sealed class DuelEndedEvent : IDuelEvent
         Reason = reason;
     }
 }
+
+
+public sealed class CharacterMovedSlotEvent : IDuelEvent
+{
+    public PlayerId Player { get; }
+    public DuelCard Card { get; }
+    public int FromSlotIndex { get; }
+    public int ToSlotIndex { get; }
+
+    public CharacterMovedSlotEvent(PlayerId player, DuelCard card, int fromSlotIndex, int toSlotIndex)
+    {
+        Player = player;
+        Card = card;
+        FromSlotIndex = fromSlotIndex;
+        ToSlotIndex = toSlotIndex;
+    }
+}
+
+
+public sealed class PlayerChoiceRequiredEvent : IDuelEvent
+{
+    public PlayerId Player { get; }
+    public string ChoiceContext { get; } // e.g. "move_character"
+    public DuelCard SourceCard { get; }
+
+    public PlayerChoiceRequiredEvent(PlayerId player, string choiceContext, DuelCard sourceCard)
+    {
+        Player = player;
+        ChoiceContext = choiceContext;
+        SourceCard = sourceCard;
+    }
+}
+
+public sealed class CardsRevealedEvent : IDuelEvent
+{
+    public PlayerId Player { get; }
+    public System.Collections.Generic.IReadOnlyList<DuelCard> RevealedCards { get; }
+
+    public CardsRevealedEvent(PlayerId player, System.Collections.Generic.IReadOnlyList<DuelCard> revealedCards)
+    {
+        Player = player;
+        RevealedCards = revealedCards;
+    }
+}

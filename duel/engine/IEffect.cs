@@ -63,6 +63,97 @@ public sealed class MillOpponentEffect : IEffect
     }
 }
 
+
+public sealed class MillSelfEffect : IEffect
+{
+    public string EffectId { get; }
+    public int Amount { get; }
+
+    public MillSelfEffect(string effectId, int amount)
+    {
+        EffectId = effectId;
+        Amount = amount;
+    }
+
+    public DuelActionResult Execute(EffectContext context)
+    {
+        context.Engine.MillCards(context.Player, Amount);
+        return DuelActionResult.Ok();
+    }
+}
+
+
+public sealed class MoveCharacterEffect : IEffect
+{
+    public string EffectId { get; }
+
+    public MoveCharacterEffect(string effectId)
+    {
+        EffectId = effectId;
+    }
+
+    public DuelActionResult Execute(EffectContext context)
+    {
+        // Require the UI to prompt the player for a movement target
+        // The UI will then call context.Engine.MoveCharacter(...)
+        context.Engine.Emit(new PlayerChoiceRequiredEvent(context.Player, "move_character", context.SourceCard));
+
+        return DuelActionResult.Ok();
+    }
+}
+
+public sealed class AddBottomDeckToHandEffect : IEffect
+{
+    public string EffectId { get; }
+
+    public AddBottomDeckToHandEffect(string effectId)
+    {
+        EffectId = effectId;
+    }
+
+    public DuelActionResult Execute(EffectContext context)
+    {
+        var card = context.Engine.State.PopBottomDeckCard(context.Player);
+        if (card != null)
+        {
+            context.Engine.State.AddCardToHand(context.Player, card);
+        }
+        return DuelActionResult.Ok();
+    }
+}
+
+public sealed class LookTopDeckEffect : IEffect
+{
+    public string EffectId { get; }
+    public int Amount { get; }
+
+    public LookTopDeckEffect(string effectId, int amount)
+    {
+        EffectId = effectId;
+        Amount = amount;
+    }
+
+    public DuelActionResult Execute(EffectContext context)
+    {
+        var deck = context.Engine.State.GetDeck(context.Player);
+        var revealed = new System.Collections.Generic.List<DuelCard>();
+        int count = System.Math.Min(Amount, deck.Count);
+
+        for (int i = 0; i < count; i++)
+        {
+            revealed.Add(deck[deck.Count - 1 - i]);
+        }
+
+        if (revealed.Count > 0)
+        {
+            context.Engine.Emit(new CardsRevealedEvent(context.Player, revealed));
+        }
+
+        // TODO: Phase 2 - Implement interactive LookTopDeck selection UI bridge
+        return DuelActionResult.Ok();
+    }
+}
+
 public sealed class DiscardCardsEffect : IEffect
 {
     public string EffectId { get; }
@@ -138,6 +229,30 @@ public sealed class DiscardOpponentCharacterEffect : IEffect
         {
             slot.RemoveCharacter(opponent, target);
             context.Engine.State.AddCardToDiscard(opponent, target);
+        }
+        return DuelActionResult.Ok();
+    }
+}
+
+
+public sealed class DrawUntilCardsEffect : IEffect
+{
+    public string EffectId { get; }
+    public int TargetAmount { get; }
+
+    public DrawUntilCardsEffect(string effectId, int targetAmount)
+    {
+        EffectId = effectId;
+        TargetAmount = targetAmount;
+    }
+
+    public DuelActionResult Execute(EffectContext context)
+    {
+        var hand = context.Engine.State.GetHand(context.Player);
+        int missing = TargetAmount - hand.Count;
+        if (missing > 0)
+        {
+            context.Engine.DrawCards(context.Player, missing);
         }
         return DuelActionResult.Ok();
     }
@@ -237,8 +352,29 @@ public sealed class EffectRegistry
         // Terrains
         Register(new TerrainStartTurnDrawEffect("terrain_draw_1_turn_start", 1));
         Register(new DrawCardsEffect("win_draw_1", 1));
+
+        Register(new MoveCharacterEffect("move_character"));
+        Register(new AddBottomDeckToHandEffect("add_bottom_deck_to_hand"));
+        Register(new LookTopDeckEffect("look_top_deck_5", 5));
+
         Register(new MillOpponentEffect("win_mill_2", 2));
         Register(new DiscardCardsEffect("lose_discard_1", 1));
+
+        // Registrations pour la Saison 4 (Stellar)
+        Register(new DrawCardsEffect("win_draw_2", 2));
+        Register(new DrawCardsEffect("win_draw_3", 3));
+        Register(new DrawUntilCardsEffect("win_draw_until_7", 7));
+
+        Register(new MillSelfEffect("lose_mill_1", 1));
+        Register(new MillSelfEffect("lose_mill_2", 2));
+        Register(new MillSelfEffect("lose_mill_3", 3));
+        Register(new MillSelfEffect("lose_mill_4", 4));
+        Register(new MillSelfEffect("lose_mill_5", 5));
+        Register(new MillSelfEffect("lose_mill_6", 6));
+
+        Register(new DiscardCardsEffect("lose_discard_2", 2));
+        Register(new DiscardCardsEffect("lose_discard_3", 3));
+
     }
 
     public void Register(IEffect effect)
