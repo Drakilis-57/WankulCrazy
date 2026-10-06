@@ -33,6 +33,25 @@ public class Plugin : BaseUnityPlugin
         }
     }
 
+    public static void ReportError(string context, Exception ex)
+    {
+        if (Logger != null)
+        {
+            Logger.LogError(ex != null ? $"[{context}] {ex}" : $"[{context}]");
+        }
+
+        try
+        {
+            string message = ex != null ? $"{context} : {ex.Message}" : context;
+            string stackTrace = ex != null ? ex.ToString() : null;
+            WankulDebugScreen.Show("EXCEPTION CAPTUREE", message, stackTrace);
+        }
+        catch
+        {
+            // Sécurité anti-crash si l'appel à l'UI échoue
+        }
+    }
+
     private void Awake()
     {
         // Plugin startup logic
