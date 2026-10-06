@@ -199,6 +199,24 @@ public sealed class TerrainStartTurnDrawEffect : IEffect
     }
 }
 
+public sealed class SelfMillEffect : IEffect
+{
+    public string EffectId { get; }
+    public int Amount { get; }
+
+    public SelfMillEffect(string effectId, int amount)
+    {
+        EffectId = effectId;
+        Amount = amount;
+    }
+
+    public DuelActionResult Execute(EffectContext context)
+    {
+        context.Engine.MillCards(context.Player, Amount);
+        return DuelActionResult.Ok();
+    }
+}
+
 public sealed class EffectRegistry
 {
     private readonly Dictionary<string, IEffect> _effects = new Dictionary<string, IEffect>(StringComparer.OrdinalIgnoreCase);
@@ -239,6 +257,17 @@ public sealed class EffectRegistry
         Register(new DrawCardsEffect("win_draw_1", 1));
         Register(new MillOpponentEffect("win_mill_2", 2));
         Register(new DiscardCardsEffect("lose_discard_1", 1));
+
+        // Self Mill variants
+        Register(new SelfMillEffect("self_mill_1", 1));
+        Register(new SelfMillEffect("self_mill_2", 2));
+        Register(new SelfMillEffect("self_mill_3", 3));
+        Register(new SelfMillEffect("self_mill_4", 4));
+        Register(new SelfMillEffect("lose_self_mill_1", 1));
+        Register(new SelfMillEffect("lose_self_mill_2", 2));
+        Register(new SelfMillEffect("lose_self_mill_3", 3));
+        Register(new SelfMillEffect("lose_self_mill_4", 4));
+        Register(new SelfMillEffect("lose_self_mill_5", 5));
     }
 
     public void Register(IEffect effect)
