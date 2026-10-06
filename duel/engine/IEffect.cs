@@ -200,7 +200,6 @@ public sealed class TerrainStartTurnDrawEffect : IEffect
     }
 }
 
-
 public sealed class BoostSelfEffect : IEffect
 {
     public string EffectId { get; }
@@ -216,6 +215,24 @@ public sealed class BoostSelfEffect : IEffect
     {
         // Les boosts de Force statiques sont gérés par le moteur (ex: TerrainSlot.GetForce).
         // L'effet actif ne fait donc rien lors de l'exécution, il sert de tag sur la carte.
+        return DuelActionResult.Ok();
+    }
+}
+
+public sealed class SelfMillEffect : IEffect
+{
+    public string EffectId { get; }
+    public int Amount { get; }
+
+    public SelfMillEffect(string effectId, int amount)
+    {
+        EffectId = effectId;
+        Amount = amount;
+    }
+
+    public DuelActionResult Execute(EffectContext context)
+    {
+        context.Engine.MillCards(context.Player, Amount);
         return DuelActionResult.Ok();
     }
 }
@@ -772,6 +789,17 @@ public sealed class EffectRegistry
         Register(new CopyWinningEffectEffect("win_copy_effect"));
         Register(new DrawOrPutDiscardUnderDeckEffect("win_draw_or_put_under_deck"));
         Register(new PutDiscardUnderDeckEffect("win_put_under_deck"));
+
+        // Battle S3 Self Mill variants
+        Register(new SelfMillEffect("self_mill_1", 1));
+        Register(new SelfMillEffect("self_mill_2", 2));
+        Register(new SelfMillEffect("self_mill_3", 3));
+        Register(new SelfMillEffect("self_mill_4", 4));
+        Register(new SelfMillEffect("lose_self_mill_1", 1));
+        Register(new SelfMillEffect("lose_self_mill_2", 2));
+        Register(new SelfMillEffect("lose_self_mill_3", 3));
+        Register(new SelfMillEffect("lose_self_mill_4", 4));
+        Register(new SelfMillEffect("lose_self_mill_5", 5));
     }
 
     public void Register(IEffect effect)

@@ -340,7 +340,7 @@ namespace WankulCrazyPlugin.duel
                 case 100180: list.AddRange(new[] { "discard_opp_hand_1" }); break;
             }
 
-            // Fallback & S2 Campus rules
+            // Fallback & S2 Campus / S3 Battle rules
             if (list.Count == 0)
             {
                 string title = data.Title != null ? data.Title.ToUpperInvariant() : "";
@@ -373,6 +373,13 @@ namespace WankulCrazyPlugin.duel
                     }
                     if (!string.IsNullOrEmpty(terrain.LosingEffect))
                     {
+                        // Parse S3 Losing Self Mill (ex: défausse les X cartes du dessus de son deck)
+                        var matchLoseMill = System.Text.RegularExpressions.Regex.Match(terrain.LosingEffect, @"défausse (?:les )?(\d+) cartes du dessus de son deck");
+                        if (matchLoseMill.Success)
+                        {
+                            list.Add($"lose_self_mill_{matchLoseMill.Groups[1].Value}");
+                        }
+
                         if (terrain.LosingEffect.Contains("bannit les 3 cartes du dessus de son deck")) list.Add("lose_banish_deck_3");
                         else if (terrain.LosingEffect.Contains("bannit les 4 cartes du dessus de son deck")) list.Add("lose_banish_deck_4");
                         else if (terrain.LosingEffect.Contains("bannit les 5 cartes du dessus de sa défausse") || terrain.LosingEffect.Contains("bannit les 5 cartes du dessus de sa dÃ©fausse")) list.Add("lose_banish_discard_5");
@@ -394,6 +401,19 @@ namespace WankulCrazyPlugin.duel
                 else if (data is EffigyCardData effigy)
                 {
                     string text = ((effigy.Rules ?? "") + " " + (effigy.Combo ?? "")).ToLowerInvariant();
+
+                    // S3 Battle Self Mill for characters
+                    var matchSelfMill = System.Text.RegularExpressions.Regex.Match(text, @"défaussez les (\d+) cartes du dessus de votre deck");
+                    if (matchSelfMill.Success)
+                    {
+                        list.Add($"self_mill_{matchSelfMill.Groups[1].Value}");
+                    }
+
+                    if (text.Contains("défaussez un personnage adverse") || text.Contains("défausse un personnage adverse"))
+                    {
+                        if (!list.Contains("discard_opp_char_any"))
+                            list.Add("discard_opp_char_any");
+                    }
 
                     // Campus specific rules
                     if (text.Contains("bannissez jusqu'à 2 personnages adverses") || text.Contains("bannissez jusqu'Ã  2 personnages adverses")) list.Add("lose_discard_char_in_play");
