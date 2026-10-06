@@ -36,6 +36,9 @@ public sealed class DuelRules
     // PROVISOIRE : Seuil en dessous duquel la pose d'un terrain est obligatoire (0 ou 1 terrain en jeu)
     public int MinTerrainsThreshold { get; }
 
+    // Seuil de force pour déclencher un score automatique sans carte scoreur (11 points = 110 force, ou 11 selon l'échelle)
+    public int AutoScoreForceThreshold { get; }
+
     public DuelRules(
         int startingHandSize = 5,
         int? maxHandSize = null,
@@ -45,7 +48,8 @@ public sealed class DuelRules
         int terrainsToWin = 5,
         int maxCharactersPerTurn = 4,
         int maxTerrainsOnBoard = 3,
-        int minTerrainsThreshold = 1)
+        int minTerrainsThreshold = 1,
+        int autoScoreForceThreshold = 110)
     {
         StartingHandSize = startingHandSize;
         MaxHandSize = maxHandSize;
@@ -56,5 +60,6 @@ public sealed class DuelRules
         MaxCharactersPerTurn = maxCharactersPerTurn;
         MaxTerrainsOnBoard = maxTerrainsOnBoard;
         MinTerrainsThreshold = minTerrainsThreshold;
+        AutoScoreForceThreshold = autoScoreForceThreshold;
     }
 }

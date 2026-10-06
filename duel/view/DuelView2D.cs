@@ -1823,6 +1823,20 @@ namespace WankulCrazyPlugin.duel
                     DuelSfx.PlayGameOver(ended.Winner == PlayerId.Player1);
                     ShowGameOverModal(ended.Winner, ended.Reason);
                     break;
+                case PlayerChoiceRequiredEvent choiceEvt:
+                    if (choiceEvt.Player == PlayerId.Player1)
+                    {
+                        ShowCardChoiceModal(choiceEvt);
+                    }
+                    else
+                    {
+                        // Pour l'IA, sélectionne automatiquement le premier candidat valide
+                        if (choiceEvt.Candidates != null && choiceEvt.Candidates.Count > 0)
+                        {
+                            choiceEvt.OnCardSelected?.Invoke(choiceEvt.Candidates[0]);
+                        }
+                    }
+                    break;
             }
         }
 
@@ -1973,6 +1987,108 @@ namespace WankulCrazyPlugin.duel
 
             _clashBarPanel.SetActive(false);
             _clashAnimationRoutine = null;
+        }
+
+        private void ShowCardChoiceModal(PlayerChoiceRequiredEvent choiceEvt)
+        {
+            if (choiceEvt == null || choiceEvt.Candidates == null || choiceEvt.Candidates.Count == 0)
+            {
+                choiceEvt?.OnCardSelected?.Invoke(null);
+                return;
+            }
+
+            var font = WankulUiKit.GetFont();
+
+            var modalObj = new GameObject("CardChoiceModal");
+            modalObj.transform.SetParent(_canvasObj.transform, false);
+            var mRt = modalObj.AddComponent<RectTransform>();
+            mRt.anchorMin = new Vector2(0.12f, 0.15f);
+            mRt.anchorMax = new Vector2(0.88f, 0.85f);
+            mRt.offsetMin = Vector2.zero;
+            mRt.offsetMax = Vector2.zero;
+
+            var bg = modalObj.AddComponent<Image>();
+            bg.sprite = WankulUiKit.WhiteSprite;
+            bg.color = new Color(0.08f, 0.11f, 0.16f, 0.98f);
+
+            var outline = modalObj.AddComponent<Outline>();
+            outline.effectColor = new Color(1f, 0.85f, 0.35f, 0.8f);
+            outline.effectDistance = new Vector2(2f, -2f);
+
+            // Titre & Description
+            var titleObj = new GameObject("Title");
+            titleObj.transform.SetParent(modalObj.transform, false);
+            var tRt = titleObj.AddComponent<RectTransform>();
+            tRt.anchorMin = new Vector2(0.04f, 0.86f);
+            tRt.anchorMax = new Vector2(0.96f, 0.98f);
+            tRt.offsetMin = Vector2.zero;
+            tRt.offsetMax = Vector2.zero;
+            var tText = titleObj.AddComponent<Text>();
+            tText.font = font;
+            tText.fontSize = 20;
+            tText.fontStyle = FontStyle.Bold;
+            tText.alignment = TextAnchor.MiddleCenter;
+            tText.color = new Color(1f, 0.88f, 0.4f);
+            tText.text = CardAdapter.FixMojibake(choiceEvt.Title);
+
+            // Conteneur horizontal de cartes avec défilement/espacement
+            var containerObj = new GameObject("CardsList");
+            containerObj.transform.SetParent(modalObj.transform, false);
+            var cRt = containerObj.AddComponent<RectTransform>();
+            cRt.anchorMin = new Vector2(0.04f, 0.08f);
+            cRt.anchorMax = new Vector2(0.96f, 0.84f);
+            cRt.offsetMin = Vector2.zero;
+            cRt.offsetMax = Vector2.zero;
+            containerObj.AddComponent<RectMask2D>();
+
+            var hLayout = containerObj.AddComponent<HorizontalLayoutGroup>();
+            hLayout.spacing = 15;
+            hLayout.padding = new RectOffset(10, 10, 10, 10);
+            hLayout.childAlignment = TextAnchor.MiddleCenter;
+            hLayout.childControlWidth = false;
+            hLayout.childControlHeight = false;
+
+            for (int i = 0; i < choiceEvt.Candidates.Count; i++)
+            {
+                var card = choiceEvt.Candidates[i];
+                var cardBtnObj = new GameObject($"ChoiceCard_{card.Id}");
+                cardBtnObj.transform.SetParent(containerObj.transform, false);
+                var btnRt = cardBtnObj.AddComponent<RectTransform>();
+                btnRt.sizeDelta = new Vector2(140, 200);
+
+                var le = cardBtnObj.AddComponent<LayoutElement>();
+                le.minWidth = 140f;
+                le.minHeight = 200f;
+                le.preferredWidth = 140f;
+                le.preferredHeight = 200f;
+
+                var img = cardBtnObj.AddComponent<Image>();
+                var sprite = CardAdapter.GetCardSprite(card);
+                if (sprite != null)
+                {
+                    img.sprite = sprite;
+                    img.color = Color.white;
+                    img.preserveAspect = true;
+                }
+                else
+                {
+                    img.sprite = WankulUiKit.WhiteSprite;
+                    img.color = new Color(0.18f, 0.24f, 0.35f);
+                }
+
+                var btn = cardBtnObj.AddComponent<Button>();
+                btn.onClick.AddListener(() =>
+                {
+                    DuelSfx.PlaySelectCard();
+                    Destroy(modalObj);
+                    choiceEvt.OnCardSelected?.Invoke(card);
+                    RefreshView();
+                });
+
+                var cardOutline = cardBtnObj.AddComponent<Outline>();
+                cardOutline.effectColor = new Color(0.4f, 0.85f, 1f, 0.8f);
+                cardOutline.effectDistance = new Vector2(1.5f, -1.5f);
+            }
         }
     }
 }
