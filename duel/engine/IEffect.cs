@@ -221,7 +221,11 @@ public sealed class EffectRegistry
         Register(new MillOpponentEffect("mill_2", 2));
         Register(new MillOpponentEffect("mill_3", 3));
         Register(new MillOpponentEffect("mill_4", 4));
+        Register(new MillOpponentEffect("mill_5", 5));
         Register(new MillOpponentEffect("mill_10", 10));
+        Register(new BanishDeckTopEffect("banish_deck_3", 3));
+        Register(new BanishDeckTopEffect("banish_deck_4", 4));
+        Register(new BanishDeckTopEffect("banish_deck_6", 6));
 
         // Défausses de main
         Register(new DiscardCardsEffect("discard_1", 1));
@@ -250,5 +254,19 @@ public sealed class EffectRegistry
     public bool TryGetEffect(string effectId, out IEffect? effect)
     {
         return _effects.TryGetValue(effectId, out effect);
+    }
+}
+
+public sealed class BanishDeckTopEffect : IEffect
+{
+    public string EffectId { get; }
+    public int Amount { get; }
+    public BanishDeckTopEffect(string effectId, int amount) { EffectId = effectId; Amount = amount; }
+    public DuelActionResult Execute(EffectContext context)
+    {
+        for(int i = 0; i < Amount; i++) {
+            context.Engine.State.PopTopDeckCard(context.Player);
+        }
+        return DuelActionResult.Ok();
     }
 }

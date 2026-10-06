@@ -175,6 +175,12 @@ namespace WankulCrazyPlugin.duel
                 if (!string.IsNullOrEmpty(terrain.LosingEffect))
                 {
                     if (terrain.LosingEffect.IndexOf("défausse", StringComparison.OrdinalIgnoreCase) >= 0) list.Add("lose_discard_1");
+                    if (terrain.LosingEffect.IndexOf("meule cinq cartes", StringComparison.OrdinalIgnoreCase) >= 0) list.Add("mill_5");
+                    if (terrain.LosingEffect.IndexOf("meule quatre cartes", StringComparison.OrdinalIgnoreCase) >= 0) list.Add("mill_4");
+                    if (terrain.LosingEffect.IndexOf("meule trois cartes", StringComparison.OrdinalIgnoreCase) >= 0) list.Add("mill_3");
+                    if (terrain.LosingEffect.IndexOf("bannit les six cartes", StringComparison.OrdinalIgnoreCase) >= 0) list.Add("banish_deck_6");
+                    if (terrain.LosingEffect.IndexOf("bannit les trois cartes", StringComparison.OrdinalIgnoreCase) >= 0) list.Add("banish_deck_3");
+                    if (terrain.LosingEffect.IndexOf("bannit les quatre cartes", StringComparison.OrdinalIgnoreCase) >= 0) list.Add("banish_deck_4");
                 }
             }
             else if (data is EffigyCardData effigy)
