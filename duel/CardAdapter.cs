@@ -340,7 +340,7 @@ namespace WankulCrazyPlugin.duel
                 case 100180: list.AddRange(new[] { "discard_opp_hand_1" }); break;
             }
 
-            // Fallback pour compatibilité ascendante si l'index n'est pas couvert
+            // Fallback & S2 Campus rules
             if (list.Count == 0)
             {
                 string title = data.Title != null ? data.Title.ToUpperInvariant() : "";
@@ -351,24 +351,70 @@ namespace WankulCrazyPlugin.duel
                     else if (title.Contains("RUST") || title.Contains("GOLF")) list.Add("terrain_draw_1_turn_start");
                     else if (title.Contains("NAVIRE PIRATE")) list.Add("discard_both_hand_1");
                     else if (title.Contains("F.A.Q") || title.Contains("FAQ")) list.Add("draw_both_1");
+
                     if (!string.IsNullOrEmpty(terrain.WinningEffect))
                     {
-                        if (terrain.WinningEffect.IndexOf("pioche", StringComparison.OrdinalIgnoreCase) >= 0) list.Add("win_draw_1");
-                        if (terrain.WinningEffect.IndexOf("défausse", StringComparison.OrdinalIgnoreCase) >= 0 || terrain.WinningEffect.IndexOf("meule", StringComparison.OrdinalIgnoreCase) >= 0) list.Add("win_mill_2");
+                        if (terrain.WinningEffect.Contains("Le gagnant ajoute 2 terrains")) list.Add("win_shuffle_terrains");
+                        else if (terrain.WinningEffect.Contains("Le gagnant bannit les 2 cartes")) list.Add("win_banish_deck_2");
+                        else if (terrain.WinningEffect.Contains("cherche 1 carte dans son deck")) list.Add("win_search_card");
+                        else if (terrain.WinningEffect.Contains("copie l'effet gagnant d'un autre terrain")) list.Add("win_copy_effect");
+                        else if (terrain.WinningEffect.Contains("joue un personnage gratuitement, puis score un autre terrain")) list.Add("win_play_free_score");
+                        else if (terrain.WinningEffect.Contains("joue un personnage sans payer son coût") || terrain.WinningEffect.Contains("joue un personnage sans payer son coÃ»t")) list.Add("win_play_free");
+                        else if (terrain.WinningEffect.Contains("met dans sa main ses 3 cartes mises de côtés") || terrain.WinningEffect.Contains("met dans sa main ses 3 cartes mises de cÃ´tÃ©s")) list.Add("win_take_setaside_3");
+                        else if (terrain.WinningEffect.Contains("mélange sa main à son deck, puis pioche 5 cartes") || terrain.WinningEffect.Contains("mÃ©lange sa main Ã  son deck, puis pioche 5 cartes")) list.Add("win_shuffle_hand_draw_5");
+                        else if (terrain.WinningEffect.Contains("pioche 3 cartes ou met les 3 cartes")) list.Add("win_draw_or_put_under_deck");
+                        else if (terrain.WinningEffect.Contains("pioche et révèle jusqu'à obtenir une carte de coût impair") || terrain.WinningEffect.Contains("pioche et rÃ©vÃ¨le jusqu'Ã  obtenir une carte de coÃ»t impair")) list.Add("win_draw_until_odd");
+                        else if (terrain.WinningEffect.Contains("prend de 0 à 5 cartes du dessus de sa défausse") || terrain.WinningEffect.Contains("prend de 0 Ã  5 cartes du dessus de sa dÃ©fausse")) list.Add("win_put_under_deck");
+                        else if (terrain.WinningEffect.Contains("repend en main les 2 cartes du dessus de sa défausse") || terrain.WinningEffect.Contains("repend en main les 2 cartes du dessus de sa dÃ©fausse")) list.Add("win_take_discard_2");
+                        else if (terrain.WinningEffect.Contains("reprend en main autant de cartes de sa défausse que la Force de base la plus petite") || terrain.WinningEffect.Contains("reprend en main autant de cartes de sa dÃ©fausse que la Force de base la plus petite")) list.Add("win_take_discard_min_force");
+                        else if (terrain.WinningEffect.Contains("reprend en main la carte du dessus de sa défausse") || terrain.WinningEffect.Contains("reprend en main la carte du dessus de sa dÃ©fausse")) list.Add("win_take_discard_1");
+                        else if (terrain.WinningEffect.IndexOf("pioche", StringComparison.OrdinalIgnoreCase) >= 0) list.Add("win_draw_1");
+                        else if (terrain.WinningEffect.IndexOf("défausse", StringComparison.OrdinalIgnoreCase) >= 0 || terrain.WinningEffect.IndexOf("meule", StringComparison.OrdinalIgnoreCase) >= 0) list.Add("win_mill_2");
                     }
                     if (!string.IsNullOrEmpty(terrain.LosingEffect))
                     {
-                        if (terrain.LosingEffect.IndexOf("défausse", StringComparison.OrdinalIgnoreCase) >= 0) list.Add("lose_discard_1");
+                        if (terrain.LosingEffect.Contains("bannit les 3 cartes du dessus de son deck")) list.Add("lose_banish_deck_3");
+                        else if (terrain.LosingEffect.Contains("bannit les 4 cartes du dessus de son deck")) list.Add("lose_banish_deck_4");
+                        else if (terrain.LosingEffect.Contains("bannit les 5 cartes du dessus de sa défausse") || terrain.LosingEffect.Contains("bannit les 5 cartes du dessus de sa dÃ©fausse")) list.Add("lose_banish_discard_5");
+                        else if (terrain.LosingEffect.Contains("bannit ses 3 cartes mises de côtés") || terrain.LosingEffect.Contains("bannit ses 3 cartes mises de cÃ´tÃ©s")) list.Add("lose_banish_setaside_3");
+                        else if (terrain.LosingEffect.Contains("bannit toutes ses cartes en main et en pioche le même nombre") || terrain.LosingEffect.Contains("bannit toutes ses cartes en main et en pioche le mÃªme nombre")) list.Add("lose_banish_hand_draw");
+                        else if (terrain.LosingEffect.Contains("bannit un total de 4 cartes depuis le dessus de son deck et/ou sa main")) list.Add("lose_banish_deck_hand_4");
+                        else if (terrain.LosingEffect.Contains("défausse 3 cartes de sa main") || terrain.LosingEffect.Contains("dÃ©fausse 3 cartes de sa main")) list.Add("lose_discard_3");
+                        else if (terrain.LosingEffect.Contains("défausse 3 cartes du dessus de son deck") || terrain.LosingEffect.Contains("dÃ©fausse 3 cartes du dessus de son deck")) list.Add("lose_mill_3");
+                        else if (terrain.LosingEffect.Contains("défausse 5 cartes du dessus de son deck, moins le nombre") || terrain.LosingEffect.Contains("dÃ©fausse 5 cartes du dessus de son deck, moins le nombre")) list.Add("lose_mill_5_minus_drawn");
+                        else if (terrain.LosingEffect.Contains("défausse autant de cartes de son deck que la Force de base la plus grande") || terrain.LosingEffect.Contains("dÃ©fausse autant de cartes de son deck que la Force de base la plus grande")) list.Add("lose_mill_max_force");
+                        else if (terrain.LosingEffect.Contains("défausse autant de cartes du dessus de son deck que la valeur de Force de base la plus élevée") || terrain.LosingEffect.Contains("dÃ©fausse autant de cartes du dessus de son deck que la valeur de Force de base la plus Ã©levÃ©e")) list.Add("lose_mill_max_force");
+                        else if (terrain.LosingEffect.Contains("défausse les 3 cartes du dessus de son deck") || terrain.LosingEffect.Contains("dÃ©fausse les 3 cartes du dessus de son deck")) list.Add("lose_mill_3");
+                        else if (terrain.LosingEffect.Contains("défausse les 4 cartes du dessus de son deck") || terrain.LosingEffect.Contains("dÃ©fausse les 4 cartes du dessus de son deck")) list.Add("lose_mill_4");
+                        else if (terrain.LosingEffect.Contains("défausse les 5 cartes du dessus de son deck") || terrain.LosingEffect.Contains("dÃ©fausse les 5 cartes du dessus de son deck")) list.Add("lose_mill_5");
+                        else if (terrain.LosingEffect.Contains("défausse un de ses personnages en jeu") || terrain.LosingEffect.Contains("dÃ©fausse un de ses personnages en jeu")) list.Add("lose_discard_char_in_play");
+                        else if (terrain.LosingEffect.IndexOf("défausse", StringComparison.OrdinalIgnoreCase) >= 0) list.Add("lose_discard_1");
                     }
                 }
                 else if (data is EffigyCardData effigy)
                 {
                     string text = ((effigy.Rules ?? "") + " " + (effigy.Combo ?? "")).ToLowerInvariant();
+
+                    // Campus specific rules
+                    if (text.Contains("bannissez jusqu'à 2 personnages adverses") || text.Contains("bannissez jusqu'Ã  2 personnages adverses")) list.Add("lose_discard_char_in_play");
+                    if (text.Contains("bannissez un personnage de force inférieure") || text.Contains("bannissez un personnage de force infÃ©rieure")) list.Add("lose_discard_char_in_play");
+                    if (text.Contains("chaque joueur met de côtés les 3 cartes") || text.Contains("chaque joueur met de cÃ´tÃ©s les 3 cartes")) list.Add("win_take_setaside_3");
+                    if (text.Contains("piochez autant de cartes que la valeur")) list.Add("win_draw_until_odd");
+                    if (text.Contains("scorez un terrain")) list.Add("win_play_free_score");
+                    if (text.Contains("défaussez jusqu'à 2 personnages adverses") || text.Contains("dÃ©faussez jusqu'Ã  2 personnages adverses")) list.Add("lose_discard_char_in_play");
+                    if (text.Contains("votre adversaire pioche 1 carte")) list.Add("draw_both_1");
+                    if (text.Contains("votre adversaire défausse les 2 cartes") || text.Contains("votre adversaire dÃ©fausse les 2 cartes")) list.Add("mill_2");
+                    if (text.Contains("votre adversaire défausse les 3 cartes") || text.Contains("votre adversaire dÃ©fausse les 3 cartes")) list.Add("mill_3");
+
+                    // Standard / S1 rules
                     if (text.Contains("piochez 2 cartes") || text.Contains("pioche 2 cartes") || title.Contains("ASTRONAUTE")) list.Add("draw_2");
                     else if (text.Contains("piochez 1 carte") || text.Contains("piochez une carte") || text.Contains("pioche 1 carte")) list.Add("draw_1");
+
                     if (text.Contains("défausse les 3") || text.Contains("défausser 3") || title.Contains("GRUDGE")) list.Add("mill_3");
                     else if (text.Contains("défausse les 2") || text.Contains("défausser 2")) list.Add("mill_2");
+
                     if (text.Contains("défausse une carte de sa main") || text.Contains("défausse 1 carte de sa main") || title.Contains("VENDEUR") || title.Contains("ANNABELLE")) list.Add("discard_opp_hand_1");
+
                     if (title.Contains("CAMIONNEUR")) list.Add("discard_opp_char_force3");
                     else if (title.Contains("GRUDGE")) list.Add("discard_opp_char_any");
                 }

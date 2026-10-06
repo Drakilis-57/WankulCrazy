@@ -217,7 +217,33 @@ public sealed class CardsDiscardedEvent : IDuelEvent
     }
 }
 
+
+public sealed class CardsBanishedEvent : IDuelEvent
+{
+    public PlayerId Player { get; }
+    public IReadOnlyList<DuelCard> BanishedCards { get; }
+
+    public CardsBanishedEvent(PlayerId player, IReadOnlyList<DuelCard> banishedCards)
+    {
+        Player = player;
+        BanishedCards = banishedCards;
+    }
+}
+
+public sealed class CardsSetAsideEvent : IDuelEvent
+{
+    public PlayerId Player { get; }
+    public IReadOnlyList<DuelCard> SetAsideCards { get; }
+
+    public CardsSetAsideEvent(PlayerId player, IReadOnlyList<DuelCard> setAsideCards)
+    {
+        Player = player;
+        SetAsideCards = setAsideCards;
+    }
+}
+
 public sealed class DuelEndedEvent : IDuelEvent
+
 {
     public PlayerId Winner { get; }
     public GameOverReason Reason { get; }

@@ -600,6 +600,82 @@ public sealed class DuelEngine
     /// <summary>
     /// Défausse count cartes de la main d'un joueur vers sa défausse (du début de la main).
     /// </summary>
+
+    public IReadOnlyList<DuelCard> BanishCardsFromDeck(PlayerId player, int count)
+    {
+        if (count <= 0 || State.IsGameOver) return Array.Empty<DuelCard>();
+        var banished = new List<DuelCard>();
+        for (int i = 0; i < count; i++)
+        {
+            var card = State.PopTopDeckCard(player);
+            if (card == null) break;
+            State.AddCardToBanish(player, card);
+            banished.Add(card);
+        }
+        if (banished.Count > 0) Emit(new CardsBanishedEvent(player, banished));
+        if (banished.Count < count)
+        {
+            Emit(new DeckExhaustedEvent(player));
+            EndGame(player.Opponent(), GameOverReason.DeckOut);
+        }
+        return banished;
+    }
+
+    public IReadOnlyList<DuelCard> BanishCardsFromDiscard(PlayerId player, int count)
+    {
+        if (count <= 0 || State.IsGameOver) return Array.Empty<DuelCard>();
+        var banished = new List<DuelCard>();
+        var discard = State.GetDiscard(player);
+        int toBanish = Math.Min(count, discard.Count);
+        for (int i = 0; i < toBanish; i++)
+        {
+            if (discard.Count == 0) break;
+            var card = discard[discard.Count - 1];
+            State.RemoveCardFromDiscard(player, card);
+            State.AddCardToBanish(player, card);
+            banished.Add(card);
+        }
+        if (banished.Count > 0) Emit(new CardsBanishedEvent(player, banished));
+        return banished;
+    }
+
+    public IReadOnlyList<DuelCard> BanishCardsFromHand(PlayerId player, int count)
+    {
+        if (count <= 0 || State.IsGameOver) return Array.Empty<DuelCard>();
+        var banished = new List<DuelCard>();
+        var hand = State.GetHand(player);
+        int toBanish = Math.Min(count, hand.Count);
+        for (int i = 0; i < toBanish; i++)
+        {
+            var card = hand[0];
+            State.RemoveCardFromHand(player, card);
+            State.AddCardToBanish(player, card);
+            banished.Add(card);
+        }
+        if (banished.Count > 0) Emit(new CardsBanishedEvent(player, banished));
+        return banished;
+    }
+
+    public IReadOnlyList<DuelCard> SetAsideCardsFromDeck(PlayerId player, int count)
+    {
+        if (count <= 0 || State.IsGameOver) return Array.Empty<DuelCard>();
+        var setAside = new List<DuelCard>();
+        for (int i = 0; i < count; i++)
+        {
+            var card = State.PopTopDeckCard(player);
+            if (card == null) break;
+            State.AddCardToSetAside(player, card);
+            setAside.Add(card);
+        }
+        if (setAside.Count > 0) Emit(new CardsSetAsideEvent(player, setAside));
+        if (setAside.Count < count)
+        {
+            Emit(new DeckExhaustedEvent(player));
+            EndGame(player.Opponent(), GameOverReason.DeckOut);
+        }
+        return setAside;
+    }
+
     public IReadOnlyList<DuelCard> DiscardFromHand(PlayerId player, int count)
     {
         if (count <= 0 || State.IsGameOver)
