@@ -340,7 +340,7 @@ namespace WankulCrazyPlugin.duel
                 case 100180: list.AddRange(new[] { "discard_opp_hand_1" }); break;
             }
 
-            // Fallback & S2 Campus / S3 Battle / S4 Stellar rules
+            // Fallback & S2 Campus / S3 Battle / S4 Stellar / S5 Legacy rules
             if (list.Count == 0)
             {
                 string title = data.Title != null ? data.Title.ToUpperInvariant() : "";
@@ -381,6 +381,14 @@ namespace WankulCrazyPlugin.duel
                         var loseEffect = terrain.LosingEffect.ToLowerInvariant();
                         if (loseEffect.Contains("défausse 2 cartes") || loseEffect.Contains("défausse 2 de sa main")) list.Add("lose_discard_2");
                         else if (loseEffect.Contains("défausse 3 cartes")) list.Add("lose_discard_3");
+
+                        // S5 Legacy Losing Mill & Banish triggers
+                        if (loseEffect.Contains("meule cinq cartes")) list.Add("mill_5");
+                        if (loseEffect.Contains("meule quatre cartes")) list.Add("mill_4");
+                        if (loseEffect.Contains("meule trois cartes")) list.Add("mill_3");
+                        if (loseEffect.Contains("bannit les six cartes")) list.Add("banish_deck_6");
+                        if (loseEffect.Contains("bannit les trois cartes")) list.Add("banish_deck_3");
+                        if (loseEffect.Contains("bannit les quatre cartes")) list.Add("banish_deck_4");
 
                         if (loseEffect.Contains("meule 1 carte")) list.Add("lose_mill_1");
                         else if (loseEffect.Contains("meule 2 cartes")) list.Add("lose_mill_2");
