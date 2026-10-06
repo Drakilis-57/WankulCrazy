@@ -37,7 +37,7 @@ public sealed class DuelEngine
         Effects = effects ?? new EffectRegistry();
     }
 
-    private void Emit(IDuelEvent evt) => OnEvent?.Invoke(evt);
+    internal void Emit(IDuelEvent evt) => OnEvent?.Invoke(evt);
 
     /// <summary>
     /// Initialise le duel avec les decks des deux joueurs, mélange les pioches,
@@ -360,18 +360,60 @@ public sealed class DuelEngine
         // Déclenchement automatique du scoring si Scoreur posé sur un terrain actif
         if (!State.IsGameOver && cardToPlay.IsScoreur && slot.IsActive(State.TurnNumber))
         {
-            ResolveScore(slotIndex);
+            ResolveScore(slotIndex, player);
         }
 
         return DuelActionResult.Ok();
     }
 
     /// <summary>
-    /// Résout le combat sur un terrain : compare la force totale de chaque camp,
-    /// attribue 1 point de victoire au gagnant (0 si égalité), envoie toutes les cartes
-    /// engagées dans les défausses respectives, et vide le slot.
+    /// Règle officielle Wankul TCG (Score automatique) :
+    /// Lorsqu'un joueur totalise au moins 11 points (110 Force) sur un terrain actif où il a au moins 1 personnage,
+    /// il peut déclencher le score sans avoir besoin d'un Scoreur.
     /// </summary>
-    public void ResolveScore(int slotIndex)
+    public DuelActionResult TriggerAutoScore(PlayerId player, int slotIndex)
+    {
+        if (State.TurnNumber == 0)
+            return DuelActionResult.Refused("Game has not started yet.");
+
+        if (State.IsGameOver)
+            return DuelActionResult.Refused("Game is already over.");
+
+        if (State.ActivePlayer != player)
+            return DuelActionResult.Refused("Not player's turn.");
+
+        if (State.TerrainRequirementPending)
+            return DuelActionResult.Refused("Must place a terrain first.");
+
+        if (slotIndex < 0 || slotIndex >= State.Slots.Count)
+            return DuelActionResult.Refused($"Invalid slot index: {slotIndex}.");
+
+        var slot = State.Slots[slotIndex];
+        if (slot.IsEmpty)
+            return DuelActionResult.Refused("Slot is empty.");
+
+        if (!slot.IsActive(State.TurnNumber))
+            return DuelActionResult.Refused("Terrain is not active yet.");
+
+        var chars = slot.GetCharacters(player);
+        if (chars == null || chars.Count == 0)
+            return DuelActionResult.Refused("Must have at least one character on the terrain.");
+
+        int force = slot.GetForce(player);
+        if (force < Rules.AutoScoreForceThreshold)
+            return DuelActionResult.Refused($"Insufficient force for auto score: {force} < {Rules.AutoScoreForceThreshold}.");
+
+        ResolveScore(slotIndex, player);
+        return DuelActionResult.Ok();
+    }
+
+    /// <summary>
+    /// Résout le combat sur un terrain : compare la force totale de chaque camp.
+    /// Règle officielle Wankul :
+    /// - Pour gagner, un joueur doit avoir au moins 1 personnage sur le terrain.
+    /// - En cas d'égalité stricte de Force, l'attaquant perd et le défenseur gagne le terrain.
+    /// </summary>
+    public void ResolveScore(int slotIndex, PlayerId? initiator = null)
     {
         if (slotIndex < 0 || slotIndex >= State.Slots.Count) return;
         var slot = State.Slots[slotIndex];
@@ -379,17 +421,51 @@ public sealed class DuelEngine
 
         int forceP1 = slot.GetForce(PlayerId.Player1);
         int forceP2 = slot.GetForce(PlayerId.Player2);
+        int charCountP1 = slot.CharactersP1.Count;
+        int charCountP2 = slot.CharactersP2.Count;
+
+        var attacker = initiator ?? State.ActivePlayer;
+        var defender = attacker.Opponent();
 
         PlayerId? winner = null;
-        if (forceP1 > forceP2)
+
+        // Règle d'or : Il faut au moins 1 personnage pour pouvoir gagner un terrain
+        if (charCountP1 > 0 && charCountP2 == 0)
         {
             winner = PlayerId.Player1;
-            State.AddScore(PlayerId.Player1, 1);
         }
-        else if (forceP2 > forceP1)
+        else if (charCountP2 > 0 && charCountP1 == 0)
         {
             winner = PlayerId.Player2;
-            State.AddScore(PlayerId.Player2, 1);
+        }
+        else if (charCountP1 == 0 && charCountP2 == 0)
+        {
+            // Aucun personnage d'aucun côté : personne ne peut gagner
+            winner = null;
+        }
+        else
+        {
+            // Les deux camps ont au moins 1 personnage
+            if (forceP1 > forceP2)
+            {
+                winner = PlayerId.Player1;
+            }
+            else if (forceP2 > forceP1)
+            {
+                winner = PlayerId.Player2;
+            }
+            else
+            {
+                // ÉGALITÉ : Règle officielle Wankul TCG !
+                // "Si les deux joueurs ont un total de Force identique, l'attaquant est considéré comme perdant.
+                // Le défenseur déclenche donc l'effet Le Gagnant."
+                winner = defender;
+            }
+        }
+
+        if (winner.HasValue)
+        {
+            State.AddScore(winner.Value, 1);
         }
 
         Emit(new ScoreResolvedEvent(slotIndex, forceP1, forceP2, winner));
@@ -524,6 +600,82 @@ public sealed class DuelEngine
     /// <summary>
     /// Défausse count cartes de la main d'un joueur vers sa défausse (du début de la main).
     /// </summary>
+
+    public IReadOnlyList<DuelCard> BanishCardsFromDeck(PlayerId player, int count)
+    {
+        if (count <= 0 || State.IsGameOver) return Array.Empty<DuelCard>();
+        var banished = new List<DuelCard>();
+        for (int i = 0; i < count; i++)
+        {
+            var card = State.PopTopDeckCard(player);
+            if (card == null) break;
+            State.AddCardToBanish(player, card);
+            banished.Add(card);
+        }
+        if (banished.Count > 0) Emit(new CardsBanishedEvent(player, banished));
+        if (banished.Count < count)
+        {
+            Emit(new DeckExhaustedEvent(player));
+            EndGame(player.Opponent(), GameOverReason.DeckOut);
+        }
+        return banished;
+    }
+
+    public IReadOnlyList<DuelCard> BanishCardsFromDiscard(PlayerId player, int count)
+    {
+        if (count <= 0 || State.IsGameOver) return Array.Empty<DuelCard>();
+        var banished = new List<DuelCard>();
+        var discard = State.GetDiscard(player);
+        int toBanish = Math.Min(count, discard.Count);
+        for (int i = 0; i < toBanish; i++)
+        {
+            if (discard.Count == 0) break;
+            var card = discard[discard.Count - 1];
+            State.RemoveCardFromDiscard(player, card);
+            State.AddCardToBanish(player, card);
+            banished.Add(card);
+        }
+        if (banished.Count > 0) Emit(new CardsBanishedEvent(player, banished));
+        return banished;
+    }
+
+    public IReadOnlyList<DuelCard> BanishCardsFromHand(PlayerId player, int count)
+    {
+        if (count <= 0 || State.IsGameOver) return Array.Empty<DuelCard>();
+        var banished = new List<DuelCard>();
+        var hand = State.GetHand(player);
+        int toBanish = Math.Min(count, hand.Count);
+        for (int i = 0; i < toBanish; i++)
+        {
+            var card = hand[0];
+            State.RemoveCardFromHand(player, card);
+            State.AddCardToBanish(player, card);
+            banished.Add(card);
+        }
+        if (banished.Count > 0) Emit(new CardsBanishedEvent(player, banished));
+        return banished;
+    }
+
+    public IReadOnlyList<DuelCard> SetAsideCardsFromDeck(PlayerId player, int count)
+    {
+        if (count <= 0 || State.IsGameOver) return Array.Empty<DuelCard>();
+        var setAside = new List<DuelCard>();
+        for (int i = 0; i < count; i++)
+        {
+            var card = State.PopTopDeckCard(player);
+            if (card == null) break;
+            State.AddCardToSetAside(player, card);
+            setAside.Add(card);
+        }
+        if (setAside.Count > 0) Emit(new CardsSetAsideEvent(player, setAside));
+        if (setAside.Count < count)
+        {
+            Emit(new DeckExhaustedEvent(player));
+            EndGame(player.Opponent(), GameOverReason.DeckOut);
+        }
+        return setAside;
+    }
+
     public IReadOnlyList<DuelCard> DiscardFromHand(PlayerId player, int count)
     {
         if (count <= 0 || State.IsGameOver)

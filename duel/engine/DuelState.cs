@@ -21,6 +21,12 @@ public sealed class DuelState
     private readonly List<DuelCard> _discardP1 = new List<DuelCard>();
     private readonly List<DuelCard> _discardP2 = new List<DuelCard>();
 
+    private readonly List<DuelCard> _banishP1 = new List<DuelCard>();
+    private readonly List<DuelCard> _banishP2 = new List<DuelCard>();
+
+    private readonly List<DuelCard> _setAsideP1 = new List<DuelCard>();
+    private readonly List<DuelCard> _setAsideP2 = new List<DuelCard>();
+
     private readonly TerrainSlot[] _slots;
 
     public IReadOnlyList<DuelCard> DeckP1 => _deckP1;
@@ -31,6 +37,12 @@ public sealed class DuelState
 
     public IReadOnlyList<DuelCard> DiscardP1 => _discardP1;
     public IReadOnlyList<DuelCard> DiscardP2 => _discardP2;
+
+    public IReadOnlyList<DuelCard> BanishP1 => _banishP1;
+    public IReadOnlyList<DuelCard> BanishP2 => _banishP2;
+
+    public IReadOnlyList<DuelCard> SetAsideP1 => _setAsideP1;
+    public IReadOnlyList<DuelCard> SetAsideP2 => _setAsideP2;
 
     public IReadOnlyList<TerrainSlot> Slots => _slots;
 
@@ -55,6 +67,12 @@ public sealed class DuelState
 
     public IReadOnlyList<DuelCard> GetDiscard(PlayerId player) =>
         player == PlayerId.Player1 ? DiscardP1 : DiscardP2;
+
+    public IReadOnlyList<DuelCard> GetBanish(PlayerId player) =>
+        player == PlayerId.Player1 ? BanishP1 : BanishP2;
+
+    public IReadOnlyList<DuelCard> GetSetAside(PlayerId player) =>
+        player == PlayerId.Player1 ? SetAsideP1 : SetAsideP2;
 
     public PlayerId ActivePlayer { get; private set; } = PlayerId.Player1;
     public int TurnNumber { get; private set; } = 0;
@@ -97,6 +115,12 @@ public sealed class DuelState
     {
         var target = player == PlayerId.Player1 ? _deckP1 : _deckP2;
         rng.Shuffle(target);
+    }
+
+    internal bool RemoveCardFromDeck(PlayerId player, DuelCard card)
+    {
+        var target = player == PlayerId.Player1 ? _deckP1 : _deckP2;
+        return target.Remove(card);
     }
 
     internal DuelCard? PopTopDeckCard(PlayerId player)
@@ -143,6 +167,49 @@ public sealed class DuelState
         var target = player == PlayerId.Player1 ? _discardP1 : _discardP2;
         target.AddRange(cards);
     }
+
+    internal void RemoveCardFromDiscard(PlayerId player, DuelCard card)
+    {
+        var target = player == PlayerId.Player1 ? _discardP1 : _discardP2;
+        target.Remove(card);
+    }
+
+    internal void AddCardToBanish(PlayerId player, DuelCard card)
+    {
+        var target = player == PlayerId.Player1 ? _banishP1 : _banishP2;
+        target.Add(card);
+    }
+
+    internal void AddCardsToBanish(PlayerId player, IEnumerable<DuelCard> cards)
+    {
+        var target = player == PlayerId.Player1 ? _banishP1 : _banishP2;
+        target.AddRange(cards);
+    }
+
+    internal void AddCardToSetAside(PlayerId player, DuelCard card)
+    {
+        var target = player == PlayerId.Player1 ? _setAsideP1 : _setAsideP2;
+        target.Add(card);
+    }
+
+    internal void AddCardsToSetAside(PlayerId player, IEnumerable<DuelCard> cards)
+    {
+        var target = player == PlayerId.Player1 ? _setAsideP1 : _setAsideP2;
+        target.AddRange(cards);
+    }
+
+    internal void RemoveCardFromSetAside(PlayerId player, DuelCard card)
+    {
+        var target = player == PlayerId.Player1 ? _setAsideP1 : _setAsideP2;
+        target.Remove(card);
+    }
+
+    internal void ClearSetAside(PlayerId player)
+    {
+        var target = player == PlayerId.Player1 ? _setAsideP1 : _setAsideP2;
+        target.Clear();
+    }
+
 
     internal void SetSlot(int slotIndex, DuelCard? card, int? placedOnTurn, PlayerId? placedBy = null)
     {

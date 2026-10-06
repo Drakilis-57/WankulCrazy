@@ -41,10 +41,21 @@ Pour gagner la partie, un joueur doit remplir **l'une des deux conditions** suiv
   - Des effets spéciaux (À l'arrivée en jeu, Permanents, Réactions).
 - Sont jouées sur un **Terrain précis** et apportent leur valeur de force au camp du joueur sur ce terrain.
 
-### 3.3 Rôle Spécial : Les Scoreurs
+### 3.3 Rôle Spécial : Les Scoreurs & Déclenchement de Score
 - Personnages possédant le mot-clé ou la capacité **Scoreur**.
 - Lorsqu'un Scoreur est posé sur un terrain éligible (qui n'a pas été posé durant ce tour), il **déclenche la résolution immédiate du duel** sur ce terrain.
+- **Score automatique (11 points)** : Lorsqu'un joueur totalise au moins **11 points** (110 de Force) de Personnages sur un terrain actif, il peut déclencher le score automatique du terrain durant son tour, sans nécessiter de carte Scoreur.
 
+### 3.4 Règles d'Or du Combat & Résolution des Scores
+- **Règle d'or** :
+  - Pour déclencher un score, il doit y avoir au moins 1 Personnage sur le Terrain.
+  - Pour **gagner** un score, un joueur doit avoir au moins 1 Personnage sur le Terrain. Un Personnage avec 0 en Force l'emporte si en face il n'y a aucun Personnage.
+- **En cas d'égalité** :
+  - Si les deux joueurs ont un total de Force identique, **"l'attaquant"** (celui qui a déclenché le score, via un Scoreur ou un score automatique) **est considéré comme perdant**.
+  - Le défenseur est déclaré gagnant, remporte le terrain et déclenche l'effet "Le Gagnant", tandis que l'attaquant déclenche l'effet "Le Perdant".
+- **Après le score** :
+  - Une fois les effets "Le Gagnant" puis "Le Perdant" résolus, chaque joueur défausse ses Personnages.
+  - Le propriétaire du terrain défausse ensuite ce terrain.
 ---
 
 ## 4. Déroulement d'un Tour de Jeu

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace WankulCrazy.Duel.Engine;
@@ -216,7 +217,33 @@ public sealed class CardsDiscardedEvent : IDuelEvent
     }
 }
 
+
+public sealed class CardsBanishedEvent : IDuelEvent
+{
+    public PlayerId Player { get; }
+    public IReadOnlyList<DuelCard> BanishedCards { get; }
+
+    public CardsBanishedEvent(PlayerId player, IReadOnlyList<DuelCard> banishedCards)
+    {
+        Player = player;
+        BanishedCards = banishedCards;
+    }
+}
+
+public sealed class CardsSetAsideEvent : IDuelEvent
+{
+    public PlayerId Player { get; }
+    public IReadOnlyList<DuelCard> SetAsideCards { get; }
+
+    public CardsSetAsideEvent(PlayerId player, IReadOnlyList<DuelCard> setAsideCards)
+    {
+        Player = player;
+        SetAsideCards = setAsideCards;
+    }
+}
+
 public sealed class DuelEndedEvent : IDuelEvent
+
 {
     public PlayerId Winner { get; }
     public GameOverReason Reason { get; }
@@ -224,5 +251,28 @@ public sealed class DuelEndedEvent : IDuelEvent
     {
         Winner = winner;
         Reason = reason;
+    }
+}
+
+public sealed class PlayerChoiceRequiredEvent : IDuelEvent
+{
+    public PlayerId Player { get; }
+    public string Title { get; }
+    public string Description { get; }
+    public IReadOnlyList<DuelCard> Candidates { get; }
+    public Action<DuelCard> OnCardSelected { get; }
+
+    public PlayerChoiceRequiredEvent(
+        PlayerId player,
+        string title,
+        string description,
+        IReadOnlyList<DuelCard> candidates,
+        Action<DuelCard> onCardSelected)
+    {
+        Player = player;
+        Title = title ?? "Choisissez une carte";
+        Description = description ?? "";
+        Candidates = candidates ?? Array.Empty<DuelCard>();
+        OnCardSelected = onCardSelected;
     }
 }

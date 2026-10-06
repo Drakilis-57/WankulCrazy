@@ -151,4 +151,59 @@ public class DuelSeason1EffectsTests
         Assert.Equal("Weak", p2Chars[0].Id);
         Assert.Contains(engine.State.GetDiscard(PlayerId.Player2), c => c.Id == "Strong");
     }
+
+    [Fact]
+    public void AutoScore_TriggersWhenPlayerHas110ForceOrMoreOnActiveTerrain()
+    {
+        var rng = new NoShuffleRandom();
+        var rules = new DuelRules(startingHandSize: 0, cardsDrawnPerTurn: 0, autoScoreForceThreshold: 110);
+        var engine = new DuelEngine(rng, rules);
+
+        var terrain = new DuelCard("T1", "Plaine", CardKind.Terrain);
+        var strongChar = new DuelCard("Strong", "Colosse", CardKind.Character, force: 120);
+
+        engine.StartDuel(new[] { terrain }, new[] { terrain }, PlayerId.Player1);
+        engine.State.SetSlot(0, terrain, placedOnTurn: 0, placedBy: PlayerId.Player1);
+        engine.State.SetSlot(1, terrain, placedOnTurn: 0, placedBy: PlayerId.Player2);
+
+        engine.State.Slots[0].AddCharacter(PlayerId.Player1, strongChar);
+
+        engine.StartTurn();
+
+        // P1 a 120 de force (>= 110 = 11 points) sans aucun scoreur -> peut déclencher le score automatique !
+        var result = engine.TriggerAutoScore(PlayerId.Player1, 0);
+        Assert.True(result.Success);
+
+        // P1 l'emporte et marque 1 point
+        Assert.Equal(1, engine.State.ScoreP1);
+        Assert.True(engine.State.Slots[0].IsEmpty);
+    }
+
+    [Fact]
+    public void GoldenRule_ZeroForceCharacterWinsAgainstZeroOpponentCharacters()
+    {
+        var rng = new NoShuffleRandom();
+        var rules = new DuelRules(startingHandSize: 0, cardsDrawnPerTurn: 0);
+        var engine = new DuelEngine(rng, rules);
+
+        var terrain = new DuelCard("T1", "Plaine", CardKind.Terrain);
+        var zeroChar = new DuelCard("Zero", "Faible", CardKind.Character, force: 0);
+        var scoreur = new DuelCard("S1", "Scoreur", CardKind.Character, force: 0, isScoreur: true);
+
+        engine.StartDuel(new[] { terrain }, new[] { terrain }, PlayerId.Player1);
+        engine.State.SetSlot(0, terrain, placedOnTurn: 0, placedBy: PlayerId.Player1);
+        engine.State.SetSlot(1, terrain, placedOnTurn: 0, placedBy: PlayerId.Player2);
+
+        engine.State.Slots[0].AddCharacter(PlayerId.Player1, zeroChar);
+        engine.State.AddCardToHand(PlayerId.Player1, scoreur);
+
+        engine.StartTurn();
+
+        // P1 joue Scoreur sur le slot 0 : P1 a 2 persos (0 force total), P2 a 0 perso
+        // Règle d'or : Même à 0 en Force, le joueur qui a au moins 1 perso l'emporte si en face il n'y en a aucun.
+        var result = engine.PlayCharacter(PlayerId.Player1, "S1", 0);
+        Assert.True(result.Success);
+
+        Assert.Equal(1, engine.State.ScoreP1);
+    }
 }

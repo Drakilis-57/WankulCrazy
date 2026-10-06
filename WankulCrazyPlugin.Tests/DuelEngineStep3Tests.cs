@@ -161,7 +161,7 @@ public class DuelEngineStep3Tests
     }
 
     [Fact]
-    public void Scoreur_OnTiedForce_ResolvesWithNoWinner_AndCleansSlot()
+    public void Scoreur_OnTiedForce_AttackerLoses_DefenderWins_OfficialRule()
     {
         var rng = new NoShuffleRandom();
         var rules = new DuelRules(startingHandSize: 0, cardsDrawnPerTurn: 0);
@@ -183,13 +183,14 @@ public class DuelEngineStep3Tests
 
         engine.StartTurn();
 
-        // Pose du scoreur : 100 force vs 100 force -> Égalité
+        // Pose du scoreur par P1 (attaquant) : 100 force vs 100 force -> Égalité !
+        // Règle officielle Wankul TCG : l'attaquant perd, le défenseur (P2) remporte le terrain.
         engine.PlayCharacter(PlayerId.Player1, "P1_Scoreur", 0);
 
         var scoreEvt = events.OfType<ScoreResolvedEvent>().Single();
-        Assert.Null(scoreEvt.Winner);
+        Assert.Equal(PlayerId.Player2, scoreEvt.Winner);
         Assert.Equal(0, engine.State.ScoreP1);
-        Assert.Equal(0, engine.State.ScoreP2);
+        Assert.Equal(1, engine.State.ScoreP2);
 
         // Slot vidé
         Assert.True(engine.State.Slots[0].IsEmpty);
