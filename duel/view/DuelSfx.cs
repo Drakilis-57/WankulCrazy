@@ -175,6 +175,36 @@ namespace WankulCrazyPlugin.duel
         }
 
         /// <summary>
+        /// Son d'activation de pouvoir ou effet de carte.
+        /// </summary>
+        public static void PlayPowerup()
+        {
+            try
+            {
+                SoundManager.PlayAudio("PlayCard_Powerup", 0.55f);
+            }
+            catch (Exception ex)
+            {
+                Plugin.Logger.LogWarning($"[DuelSfx] Erreur PlayPowerup : {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Son de défausse ou meule.
+        /// </summary>
+        public static void PlayDiscard()
+        {
+            try
+            {
+                SoundManager.PlayAudio("PlayCard_Draw3", 0.45f);
+            }
+            catch (Exception ex)
+            {
+                Plugin.Logger.LogWarning($"[DuelSfx] Erreur PlayDiscard : {ex.Message}");
+            }
+        }
+
+        /// <summary>
         /// Son d'annulation / fermeture de pop-up.
         /// </summary>
         public static void PlayCancel()

@@ -17,6 +17,7 @@ public sealed class DuelCard
     public CardKind Kind { get; }
     public int Force { get; }
     public bool IsScoreur { get; }
+    public string? Effigy { get; }
     public IReadOnlyList<string> EffectIds { get; }
 
     public DuelCard(
@@ -25,7 +26,8 @@ public sealed class DuelCard
         CardKind kind,
         int force = 0,
         bool isScoreur = false,
-        IReadOnlyList<string>? effectIds = null)
+        IReadOnlyList<string>? effectIds = null,
+        string? effigy = null)
     {
         Id = id ?? string.Empty;
         Name = name ?? string.Empty;
@@ -33,7 +35,8 @@ public sealed class DuelCard
         Force = force;
         IsScoreur = isScoreur;
         EffectIds = effectIds ?? Array.Empty<string>();
+        Effigy = effigy;
     }
 
-    public override string ToString() => $"{Name} ({Kind}, Force: {Force}, Scoreur: {IsScoreur})";
+    public override string ToString() => $"{Name} ({Kind}, Force: {Force}, Effigy: {Effigy ?? "None"}, Scoreur: {IsScoreur})";
 }

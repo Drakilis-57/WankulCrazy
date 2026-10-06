@@ -1,6 +1,7 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace WankulCrazy.Duel.Engine;
 
@@ -100,6 +101,28 @@ public sealed class DuelEngine
         {
             DrawCards(State.ActivePlayer, Rules.CardsDrawnPerTurn);
             if (State.IsGameOver) return DuelActionResult.Ok();
+
+            // 1b) Bonus de pioche début de tour accordé par des Terrains actifs (Rust, Golf)
+            int extraDraw = 0;
+            for (int i = 0; i < State.Slots.Count; i++)
+            {
+                var s = State.Slots[i];
+                if (!s.IsEmpty && s.IsActive(State.TurnNumber) && s.Card != null)
+                {
+                    if ((s.Card.EffectIds != null && s.Card.EffectIds.Contains("terrain_draw_1_turn_start")) ||
+                        s.Card.Name.IndexOf("RUST", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                        s.Card.Name.IndexOf("GOLF", StringComparison.OrdinalIgnoreCase) >= 0)
+                    {
+                        extraDraw++;
+                        Emit(new EffectTriggeredEvent(State.ActivePlayer, "terrain_draw_1_turn_start", s.Card, i));
+                    }
+                }
+            }
+            if (extraDraw > 0)
+            {
+                DrawCards(State.ActivePlayer, extraDraw);
+                if (State.IsGameOver) return DuelActionResult.Ok();
+            }
         }
 
         // 2) Redressage des terrains placés au tour précédent (PlacedOnTurn == TurnNumber - 1)
@@ -247,6 +270,23 @@ public sealed class DuelEngine
         State.SetTerrainRequirementPending(false);
 
         Emit(new TerrainPlayedEvent(player, slotIndex, cardToPlay));
+
+        // Exécution des effets OnPlay du terrain posé
+        if (cardToPlay.EffectIds != null && cardToPlay.EffectIds.Count > 0)
+        {
+            var ctx = new EffectContext(this, player, cardToPlay, slotIndex);
+            for (int i = 0; i < cardToPlay.EffectIds.Count; i++)
+            {
+                string effectId = cardToPlay.EffectIds[i];
+                if (Effects.TryGetEffect(effectId, out var effect) && effect != null)
+                {
+                    Emit(new EffectTriggeredEvent(player, effectId, cardToPlay, slotIndex));
+                    effect.Execute(ctx);
+                    if (State.IsGameOver) break;
+                }
+            }
+        }
+
         return DuelActionResult.Ok();
     }
 
@@ -353,6 +393,40 @@ public sealed class DuelEngine
         }
 
         Emit(new ScoreResolvedEvent(slotIndex, forceP1, forceP2, winner));
+
+        // Déclenchement des effets de Victoire et Défaite du terrain
+        if (winner.HasValue && !State.IsGameOver && slot.Card != null)
+        {
+            var winPlayer = winner.Value;
+            var losePlayer = winPlayer.Opponent();
+            var tCard = slot.Card;
+
+            if (tCard.EffectIds != null)
+            {
+                for (int i = 0; i < tCard.EffectIds.Count; i++)
+                {
+                    string effId = tCard.EffectIds[i];
+                    if (effId.StartsWith("win_", StringComparison.OrdinalIgnoreCase))
+                    {
+                        var winCtx = new EffectContext(this, winPlayer, tCard, slotIndex);
+                        if (Effects.TryGetEffect(effId, out var winEff) && winEff != null)
+                        {
+                            Emit(new EffectTriggeredEvent(winPlayer, effId, tCard, slotIndex));
+                            winEff.Execute(winCtx);
+                        }
+                    }
+                    else if (effId.StartsWith("lose_", StringComparison.OrdinalIgnoreCase))
+                    {
+                        var loseCtx = new EffectContext(this, losePlayer, tCard, slotIndex);
+                        if (Effects.TryGetEffect(effId, out var loseEff) && loseEff != null)
+                        {
+                            Emit(new EffectTriggeredEvent(losePlayer, effId, tCard, slotIndex));
+                            loseEff.Execute(loseCtx);
+                        }
+                    }
+                }
+            }
+        }
 
         // Nettoyage : tous les personnages et le terrain vont en défausse
         var charsP1 = new List<DuelCard>(slot.CharactersP1);

@@ -152,6 +152,56 @@ namespace WankulCrazyPlugin.duel
             return current;
         }
 
+        private static List<string> ResolveEffectIds(WankulCardData data)
+        {
+            var list = new List<string>();
+            if (data == null) return list;
+
+            string title = data.Title != null ? data.Title.ToUpperInvariant() : "";
+
+            if (data is TerrainCardData terrain)
+            {
+                if (title.Contains("MORIA")) list.Add("boost_laink_20");
+                else if (title.Contains("PORTAL")) list.Add("boost_terracid_20");
+                else if (title.Contains("RUST") || title.Contains("GOLF")) list.Add("terrain_draw_1_turn_start");
+                else if (title.Contains("NAVIRE PIRATE")) list.Add("discard_both_hand_1");
+                else if (title.Contains("F.A.Q") || title.Contains("FAQ")) list.Add("draw_both_1");
+
+                if (!string.IsNullOrEmpty(terrain.WinningEffect))
+                {
+                    if (terrain.WinningEffect.IndexOf("pioche", StringComparison.OrdinalIgnoreCase) >= 0) list.Add("win_draw_1");
+                    if (terrain.WinningEffect.IndexOf("défausse", StringComparison.OrdinalIgnoreCase) >= 0 || terrain.WinningEffect.IndexOf("meule", StringComparison.OrdinalIgnoreCase) >= 0) list.Add("win_mill_2");
+                }
+                if (!string.IsNullOrEmpty(terrain.LosingEffect))
+                {
+                    if (terrain.LosingEffect.IndexOf("défausse", StringComparison.OrdinalIgnoreCase) >= 0) list.Add("lose_discard_1");
+                }
+            }
+            else if (data is EffigyCardData effigy)
+            {
+                string text = ((effigy.Rules ?? "") + " " + (effigy.Combo ?? "")).ToLowerInvariant();
+                if (text.Contains("piochez 2 cartes") || text.Contains("pioche 2 cartes") || title.Contains("ASTRONAUTE"))
+                    list.Add("draw_2");
+                else if (text.Contains("piochez 1 carte") || text.Contains("piochez une carte") || text.Contains("pioche 1 carte"))
+                    list.Add("draw_1");
+
+                if (text.Contains("défausse les 3") || text.Contains("défausser 3") || title.Contains("GRUDGE"))
+                    list.Add("mill_3");
+                else if (text.Contains("défausse les 2") || text.Contains("défausser 2"))
+                    list.Add("mill_2");
+
+                if (text.Contains("défausse une carte de sa main") || text.Contains("défausse 1 carte de sa main") || title.Contains("VENDEUR") || title.Contains("ANNABELLE"))
+                    list.Add("discard_opp_hand_1");
+
+                if (title.Contains("CAMIONNEUR"))
+                    list.Add("discard_opp_char_force3");
+                else if (title.Contains("GRUDGE"))
+                    list.Add("discard_opp_char_any");
+            }
+
+            return list;
+        }
+
         public static DuelCard ToDuelCard(WankulCardData cardData)
         {
             if (cardData == null)
@@ -161,6 +211,7 @@ namespace WankulCrazyPlugin.duel
 
             string id = !string.IsNullOrEmpty(cardData.Number) ? cardData.Number : cardData.Index.ToString();
             string name = !string.IsNullOrEmpty(cardData.Title) ? FixMojibake(cardData.Title) : "Carte Wankul";
+            var effectIds = ResolveEffectIds(cardData);
 
             if (cardData is EffigyCardData effigy)
             {
@@ -172,17 +223,19 @@ namespace WankulCrazyPlugin.duel
                     name: name,
                     kind: CardKind.Character,
                     force: force,
-                    isScoreur: effigy.IsScoreur
+                    isScoreur: effigy.IsScoreur,
+                    effectIds: effectIds,
+                    effigy: effigy.Effigy
                 );
             }
 
             if (cardData is TerrainCardData || cardData.CardType == CardType.Terrain)
             {
-                return new DuelCard(id, name, CardKind.Terrain, 0, isScoreur: false);
+                return new DuelCard(id, name, CardKind.Terrain, 0, isScoreur: false, effectIds: effectIds);
             }
 
             // Fallback pour SpecialCardData ou autres
-            return new DuelCard(id, name, CardKind.Character, 0, isScoreur: false);
+            return new DuelCard(id, name, CardKind.Character, 0, isScoreur: false, effectIds: effectIds);
         }
 
         public static List<DuelCard> ConvertDeck(IEnumerable<WankulCardData> deckData)

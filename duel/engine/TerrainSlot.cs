@@ -56,9 +56,22 @@ public sealed class TerrainSlot
     {
         var chars = GetCharacters(player);
         int total = 0;
+        bool isMoria = Card != null && (Card.Name.IndexOf("MORIA", StringComparison.OrdinalIgnoreCase) >= 0 || (Card.EffectIds != null && Card.EffectIds.Contains("boost_laink_20")));
+        bool isPortal = Card != null && (Card.Name.IndexOf("PORTAL", StringComparison.OrdinalIgnoreCase) >= 0 || (Card.EffectIds != null && Card.EffectIds.Contains("boost_terracid_20")));
+
         for (int i = 0; i < chars.Count; i++)
         {
-            total += chars[i].Force;
+            var c = chars[i];
+            int charForce = c.Force;
+            if (isMoria && string.Equals(c.Effigy, "Laink", StringComparison.OrdinalIgnoreCase))
+            {
+                charForce += 20;
+            }
+            else if (isPortal && string.Equals(c.Effigy, "Terracid", StringComparison.OrdinalIgnoreCase))
+            {
+                charForce += 20;
+            }
+            total += charForce;
         }
         return total;
     }
@@ -67,6 +80,12 @@ public sealed class TerrainSlot
     {
         if (player == PlayerId.Player1) _charactersP1.Add(card);
         else _charactersP2.Add(card);
+    }
+
+    internal bool RemoveCharacter(PlayerId player, DuelCard card)
+    {
+        var list = player == PlayerId.Player1 ? _charactersP1 : _charactersP2;
+        return list.Remove(card);
     }
 
     public override string ToString()
