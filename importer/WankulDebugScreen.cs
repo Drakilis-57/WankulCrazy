@@ -45,13 +45,22 @@ namespace WankulCrazyPlugin.importer
 
         private void Awake()
         {
-            CreateUI();
             Application.logMessageReceived += HandleUnityLog;
+            Application.logMessageReceivedThreaded += HandleUnityLog;
+            try
+            {
+                CreateUI();
+            }
+            catch (Exception ex)
+            {
+                Plugin.Logger?.LogError($"[WankulDebugScreen] Erreur initialisation CreateUI: {ex}");
+            }
         }
 
         private void OnDestroy()
         {
             Application.logMessageReceived -= HandleUnityLog;
+            Application.logMessageReceivedThreaded -= HandleUnityLog;
             if (_instance == this) _instance = null;
             _isDisplaying = false;
         }
@@ -68,8 +77,8 @@ namespace WankulCrazyPlugin.importer
 
         private static bool IsFromMod(string logString, string stackTrace)
         {
-            return (stackTrace != null && stackTrace.Contains(ModTag))
-                || (logString != null && logString.Contains(ModTag));
+            return (stackTrace != null && (stackTrace.Contains(ModTag) || stackTrace.Contains("Wankul")))
+                || (logString != null && (logString.Contains(ModTag) || logString.Contains("Wankul")));
         }
 
         private void HandleUnityLog(string logString, string stackTrace, LogType type)
@@ -105,6 +114,10 @@ namespace WankulCrazyPlugin.importer
             if (_isDisplaying) return;
 
             _currentHash = hash;
+            if (_canvas == null)
+            {
+                try { CreateUI(); } catch { }
+            }
             DisplayError(title, message, stackTrace);
         }
 

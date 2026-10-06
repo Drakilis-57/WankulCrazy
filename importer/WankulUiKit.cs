@@ -20,6 +20,18 @@ namespace WankulCrazyPlugin.importer
             {
                 try { _font = Font.CreateDynamicFontFromOSFont("Arial", 16); } catch { }
             }
+            if (_font == null)
+            {
+                try
+                {
+                    Font[] fonts = Resources.FindObjectsOfTypeAll<Font>();
+                    if (fonts != null && fonts.Length > 0)
+                    {
+                        _font = fonts[0];
+                    }
+                }
+                catch { }
+            }
             return _font;
         }
 

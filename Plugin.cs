@@ -182,7 +182,7 @@ public class Plugin : BaseUnityPlugin
         TryPatch(
             "CPlayerData.GetCardMarketPrice(CardData)",
             AccessTools.Method(typeof(CPlayerData), "GetCardMarketPrice", new[] { typeof(CardData) }),
-            postfix: AccessTools.Method(typeof(CardPrice), nameof(CardPrice.Postfix_GetCardMarketPrice_CardData))
+            prefix: AccessTools.Method(typeof(CardPrice), nameof(CardPrice.Prefix_GetCardMarketPrice_CardData))
         );
 
         TryPatch(

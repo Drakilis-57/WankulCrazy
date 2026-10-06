@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using BepInEx.Logging;
 using Logger = HarmonyLib.Tools.Logger;
@@ -66,6 +67,20 @@ public class ReplacingCards
         // et on retourne TOUJOURS false pour empêcher l'exécution de CardUI.SetCardUI vanilla
         // qui crashe avec une NullReferenceException sur les extensions personnalisées.
         Plugin.SetPProperty(__instance, "m_CardData", gameCardData);
+        try
+        {
+            CardUISetting cardUISetting = InventoryBase.GetCardUISetting(gameCardData.expansionType);
+            if (cardUISetting != null)
+            {
+                Plugin.SetPProperty(__instance, "m_CardUISetting", cardUISetting);
+                var settingData = cardUISetting.GetCardUISettingData(gameCardData.GetCardBorderType(), gameCardData.isDestiny);
+                Plugin.SetPProperty(__instance, "m_CardUISettingData", settingData);
+            }
+        }
+        catch (Exception ex)
+        {
+            Plugin.Logger.LogWarning($"[SetCardUIPrefix] Impossible d'assigner CardUISetting: {ex.Message}");
+        }
         ApplyWankulCardVisuals(__instance, gameCardData, wankulCardData);
         if (gameCardData.cardGrade > 0)
         {
@@ -487,8 +502,11 @@ public class ReplacingCards
                 return false;
             }
             __instance.m_CardList[cardIndex].m_CardUI.SetCardUI(cardData);
-            __instance.m_CardList[cardIndex].m_CardUI.SetFoilMaterialListFromSettingData(isWorldView: false);
-            __instance.m_CardList[cardIndex].m_CardUI.SetFoilBlendedMaterialListFromSettingData(isWorldView: false);
+            if (Plugin.GetPProperty(__instance.m_CardList[cardIndex].m_CardUI, "m_CardUISettingData") != null)
+            {
+                __instance.m_CardList[cardIndex].m_CardUI.SetFoilMaterialListFromSettingData(isWorldView: false);
+                __instance.m_CardList[cardIndex].m_CardUI.SetFoilBlendedMaterialListFromSettingData(isWorldView: false);
+            }
             __instance.m_CardList[cardIndex].SetVisibility(isVisible: true);
             __instance.m_CardList[cardIndex].SetCardCountText(cardCount, sortingType == ECollectionSortingType.DuplicatePrice);
             __instance.m_CardList[cardIndex].SetCardCountTextVisibility(isVisible: false);
@@ -506,8 +524,11 @@ public class ReplacingCards
             return false;
         }
         __instance.m_CardList[cardIndex].m_CardUI.SetCardUI(cardData);
-        __instance.m_CardList[cardIndex].m_CardUI.SetFoilMaterialListFromSettingData(isWorldView: false);
-        __instance.m_CardList[cardIndex].m_CardUI.SetFoilBlendedMaterialListFromSettingData(isWorldView: false);
+        if (Plugin.GetPProperty(__instance.m_CardList[cardIndex].m_CardUI, "m_CardUISettingData") != null)
+        {
+            __instance.m_CardList[cardIndex].m_CardUI.SetFoilMaterialListFromSettingData(isWorldView: false);
+            __instance.m_CardList[cardIndex].m_CardUI.SetFoilBlendedMaterialListFromSettingData(isWorldView: false);
+        }
         __instance.m_CardList[cardIndex].SetVisibility(isVisible: true);
         __instance.m_CardList[cardIndex].SetCardCountText(cardCount, sortingType == ECollectionSortingType.DuplicatePrice);
         __instance.m_CardList[cardIndex].SetCardCountTextVisibility(isVisible: true);

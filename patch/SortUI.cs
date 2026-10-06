@@ -484,19 +484,32 @@ namespace WankulCrazyPlugin.patch
 
                 CardData cardData = wankulCardTuple.card;
 
-                // fixing broken saves
+                // fixing broken saves / missing associations
                 if (cardData == null)
                 {
-                    Plugin.Logger.LogWarning("gameCardData is null");
+                    Plugin.Logger.LogWarning($"[SortUI] gameCardData is null for Wankul card '{wankulCardData?.Title}' (Index={index})");
 
-                    cardData = WankulCardsData.Instance.GetUnassciatedCardData();
-                    WankulCardData debugwankulCardData = WankulCardsData.GetAJETER();
+                    cardData = WankulCardsData.Instance.GetCardDataFromWankulCardData(wankulCardData);
+                    if (cardData == null)
+                    {
+                        cardData = WankulCardsData.Instance.GetUnassciatedCardData();
+                        if (cardData != null)
+                        {
+                            WankulCardsData.Instance.SetFromMonster(cardData, wankulCardData);
+                        }
+                    }
 
-                    string debugkey = $"{cardData.monsterType}_{cardData.borderType}_{cardData.expansionType}";
-                    Plugin.Logger.LogWarning($"gameCardData is null, adding to inventory {debugwankulCardData.Title} {debugwankulCardData.Index}, {debugkey}");
-
-                    WankulCardsData.Instance.SetFromMonster(cardData, debugwankulCardData);
-                    CPlayerData.AddCard(cardData, 1);
+                    if (cardData != null)
+                    {
+                        WankulInventory.Instance.wankulCards[index] = (wankulCardData, cardData, wankulCardTuple.amount);
+                        CPlayerData.AddCard(cardData, 1);
+                    }
+                    else
+                    {
+                        Plugin.Logger.LogError($"[SortUI] Impossible d'associer un CardData pour '{wankulCardData?.Title}' (Index={index})");
+                        __instance.m_BinderPageGrpList[binderIndex].SetSingleCard(i, null, 0, ECollectionSortingType.Default);
+                        continue;
+                    }
                 }
 
                 __instance.m_BinderPageGrpList[binderIndex].SetSingleCard(i, cardData, wankulCardTuple.amount, ECollectionSortingType.Default);

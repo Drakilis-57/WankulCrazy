@@ -246,12 +246,12 @@ namespace WankulCrazyPlugin.patch
             return GradedCardService.CalculateGradedMarketPrice(baseMarketPrice, cardSaveIndex, cardGrade, CPlayerData.m_GenGradedCardPriceMultiplierList);
         }
 
-        public static void Postfix_GetCardMarketPrice_CardData(CardData cardData, ref float __result)
+        public static bool Prefix_GetCardMarketPrice_CardData(CardData cardData, ref float __result)
         {
             if (cardData == null)
             {
                 __result = 0f;
-                return;
+                return false;
             }
 
             WankulCardsData wankulCardsData = WankulCardsData.Instance;
@@ -262,18 +262,25 @@ namespace WankulCrazyPlugin.patch
                 float basePrice = wankulCardData.MarketPrice;
                 if (cardData.cardGrade > 0)
                 {
-                    int cardSaveIndex = CPlayerData.GetCardSaveIndex(cardData);
-                    __result = CalculateGradedMarketPrice(basePrice, cardSaveIndex, cardData.cardGrade);
+                    try
+                    {
+                        int cardSaveIndex = CPlayerData.GetCardSaveIndex(cardData);
+                        __result = CalculateGradedMarketPrice(basePrice, cardSaveIndex, cardData.cardGrade);
+                    }
+                    catch
+                    {
+                        __result = basePrice;
+                    }
                 }
                 else
                 {
                     __result = basePrice;
                 }
+                return false;
             }
-            else
-            {
-                __result = 0f;
-            }
+
+            __result = 0f;
+            return false;
         }
 
         public static void Postfix_GetCardMarketPrice_Params(int index, ECardExpansionType expansionType, bool isDestiny, int cardGrade, ref float __result)
