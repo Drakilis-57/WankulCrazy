@@ -156,49 +156,223 @@ namespace WankulCrazyPlugin.duel
         {
             var list = new List<string>();
             if (data == null) return list;
-
-            string title = data.Title != null ? data.Title.ToUpperInvariant() : "";
-
-            if (data is TerrainCardData terrain)
+            switch (data.Index)
             {
-                if (title.Contains("MORIA")) list.Add("boost_laink_20");
-                else if (title.Contains("PORTAL")) list.Add("boost_terracid_20");
-                else if (title.Contains("RUST") || title.Contains("GOLF")) list.Add("terrain_draw_1_turn_start");
-                else if (title.Contains("NAVIRE PIRATE")) list.Add("discard_both_hand_1");
-                else if (title.Contains("F.A.Q") || title.Contains("FAQ")) list.Add("draw_both_1");
+                case 100001: list.AddRange(new[] { "mill_3" }); break;
+                case 100002: list.AddRange(new[] { "boost_terracid_20", "mill_3" }); break;
+                case 100003: list.AddRange(new[] { "mill_3" }); break;
+                case 100004: list.AddRange(new[] { "draw_both_1", "mill_3" }); break;
+                case 100005: list.AddRange(new[] { "draw_both_1", "mill_3" }); break;
+                case 100006: list.AddRange(new[] { "mill_3" }); break;
+                case 100007: list.AddRange(new[] { "draw_both_1", "mill_3" }); break;
+                case 100008: list.AddRange(new[] { "mill_3" }); break;
+                case 100009: list.AddRange(new[] { "draw_both_1", "mill_3" }); break;
+                case 100010: list.AddRange(new[] { "draw_both_1", "mill_3" }); break;
+                case 100011: list.AddRange(new[] { "draw_both_1", "mill_3" }); break;
+                case 100012: list.AddRange(new[] { "mill_3" }); break;
+                case 100013: list.AddRange(new[] { "mill_3" }); break;
+                case 100014: list.AddRange(new[] { "mill_3" }); break;
+                case 100015: list.AddRange(new[] { "mill_3" }); break;
+                case 100016: list.AddRange(new[] { "mill_3" }); break;
+                case 100017: list.AddRange(new[] { "boost_laink_20", "mill_3" }); break;
+                case 100018: list.AddRange(new[] { "mill_3" }); break;
+                case 100019: list.AddRange(new[] { "mill_3" }); break;
+                case 100020: list.AddRange(new[] { "mill_3" }); break;
+                case 100021: list.AddRange(new[] { "mill_3" }); break;
+                case 100022: list.AddRange(new[] { "mill_3" }); break;
+                case 100023: list.AddRange(new[] { "mill_3" }); break;
+                case 100024: list.AddRange(new[] { "mill_3" }); break;
+                case 100025: list.AddRange(new[] { "mill_3" }); break;
+                case 100026: list.AddRange(new[] { "discard_both_hand_1", "mill_3" }); break;
+                case 100027: list.AddRange(new[] { "mill_3" }); break;
+                case 100028: list.AddRange(new[] { "mill_3" }); break;
+                case 100029: list.AddRange(new[] { "mill_3" }); break;
+                case 100030: list.AddRange(new[] { "mill_3" }); break;
+                case 100031: list.AddRange(new[] { "draw_1", "boost_self_20" }); break;
+                case 100032: list.AddRange(new[] { "draw_1" }); break;
+                case 100033: list.AddRange(new[] { "draw_1", "boost_self_20" }); break;
+                case 100034: list.AddRange(new[] { "boost_self_20" }); break;
+                case 100035: list.AddRange(new[] { "discard_opp_hand_1" }); break;
+                case 100036: list.AddRange(new[] { "discard_opp_hand_1" }); break;
+                case 100037: list.AddRange(new[] { "discard_opp_hand_1" }); break;
+                case 100038: list.AddRange(new[] { "draw_1", "discard_opp_hand_1", "boost_self_20" }); break;
+                case 100039: list.AddRange(new[] { "discard_opp_hand_1" }); break;
+                case 100040: list.AddRange(new[] { "draw_2", "discard_opp_hand_1" }); break;
+                case 100041: list.AddRange(new[] { "draw_2", "discard_opp_hand_1" }); break;
+                case 100042: list.AddRange(new[] { "discard_opp_hand_1" }); break;
+                case 100043: list.AddRange(new[] { "discard_opp_hand_1" }); break;
+                case 100044: list.AddRange(new[] { "discard_opp_hand_1" }); break;
+                case 100045: list.AddRange(new[] { "boost_self_20" }); break;
+                case 100046: list.AddRange(new[] { "boost_self_20" }); break;
+                case 100047: list.AddRange(new[] { "boost_self_45" }); break;
+                case 100048: list.AddRange(new[] { "boost_self_30" }); break;
+                case 100049: list.AddRange(new[] { "discard_opp_hand_1", "boost_self_30" }); break;
+                case 100050: list.AddRange(new[] { "discard_opp_hand_1", "boost_self_20" }); break;
+                case 100051: list.AddRange(new[] { "boost_self_30" }); break;
+                case 100052: list.AddRange(new[] { "boost_self_30" }); break;
+                case 100053: list.AddRange(new[] { "boost_self_30" }); break;
+                case 100054: list.AddRange(new[] { "discard_opp_hand_1" }); break;
+                case 100055: list.AddRange(new[] { "discard_opp_hand_1" }); break;
+                case 100056: list.AddRange(new[] { "boost_self_15" }); break;
+                case 100057: list.AddRange(new[] { "draw_1" }); break;
+                case 100058: list.AddRange(new[] { "boost_self_15" }); break;
+                case 100059: list.AddRange(new[] { "boost_self_15" }); break;
+                case 100060: list.AddRange(new[] { "discard_opp_hand_1" }); break;
+                case 100061: list.AddRange(new[] { "discard_opp_hand_1" }); break;
+                case 100062: list.AddRange(new[] { "boost_self_20" }); break;
+                case 100063: list.AddRange(new[] { "draw_1", "boost_self_20" }); break;
+                case 100064: list.AddRange(new[] { "boost_self_30" }); break;
+                case 100065: list.AddRange(new[] { "discard_opp_hand_1" }); break;
+                case 100066: list.AddRange(new[] { "boost_self_20" }); break;
+                case 100067: list.AddRange(new[] { "boost_self_20" }); break;
+                case 100068: list.AddRange(new[] { "boost_self_75" }); break;
+                case 100069: list.AddRange(new[] { "boost_self_90" }); break;
+                case 100070: list.AddRange(new[] { "boost_self_20" }); break;
+                case 100071: list.AddRange(new[] { "boost_self_20" }); break;
+                case 100072: list.AddRange(new[] { "discard_opp_hand_1", "boost_self_20" }); break;
+                case 100073: list.AddRange(new[] { "boost_self_20" }); break;
+                case 100074: list.AddRange(new[] { "boost_self_60" }); break;
+                case 100075: list.AddRange(new[] { "boost_self_45" }); break;
+                case 100076: list.AddRange(new[] { "discard_opp_hand_1", "boost_self_20" }); break;
+                case 100077: list.AddRange(new[] { "boost_self_30" }); break;
+                case 100078: list.AddRange(new[] { "discard_opp_hand_1" }); break;
+                case 100079: list.AddRange(new[] { "discard_opp_hand_1" }); break;
+                case 100080: list.AddRange(new[] { "boost_self_30" }); break;
+                case 100081: list.AddRange(new[] { "discard_opp_hand_1" }); break;
+                case 100082: list.AddRange(new[] { "discard_opp_hand_1" }); break;
+                case 100083: list.AddRange(new[] { "draw_1" }); break;
+                case 100084: list.AddRange(new[] { "draw_1" }); break;
+                case 100085: list.AddRange(new[] { "discard_opp_hand_1" }); break;
+                case 100086: list.AddRange(new[] { "discard_opp_hand_1", "boost_self_30" }); break;
+                case 100087: list.AddRange(new[] { "draw_1", "boost_self_30" }); break;
+                case 100088: list.AddRange(new[] { "draw_1", "boost_self_30" }); break;
+                case 100089: list.AddRange(new[] { "boost_self_75" }); break;
+                case 100090: list.AddRange(new[] { "boost_self_60" }); break;
+                case 100091: list.AddRange(new[] { "discard_opp_hand_1" }); break;
+                case 100092: list.AddRange(new[] { "draw_1", "discard_opp_hand_1" }); break;
+                case 100093: list.AddRange(new[] { "draw_1" }); break;
+                case 100094: list.AddRange(new[] { "discard_opp_hand_1" }); break;
+                case 100095: list.AddRange(new[] { "draw_1", "boost_self_30" }); break;
+                case 100096: list.AddRange(new[] { "boost_self_30" }); break;
+                case 100097: list.AddRange(new[] { "discard_opp_hand_1" }); break;
+                case 100098: list.AddRange(new[] { "draw_1", "discard_opp_hand_1" }); break;
+                case 100099: list.AddRange(new[] { "discard_opp_hand_1", "boost_self_30" }); break;
+                case 100100: list.AddRange(new[] { "draw_1", "discard_opp_hand_1" }); break;
+                case 100101: list.AddRange(new[] { "discard_opp_hand_1" }); break;
+                case 100102: list.AddRange(new[] { "boost_self_20" }); break;
+                case 100103: list.AddRange(new[] { "boost_self_30" }); break;
+                case 100104: list.AddRange(new[] { "draw_1" }); break;
+                case 100105: list.AddRange(new[] { "draw_1" }); break;
+                case 100106: list.AddRange(new[] { "discard_opp_hand_1" }); break;
+                case 100107: list.AddRange(new[] { "discard_opp_hand_1" }); break;
+                case 100108: list.AddRange(new[] { "discard_opp_hand_1" }); break;
+                case 100109: list.AddRange(new[] { "discard_opp_hand_1" }); break;
+                case 100110: list.AddRange(new[] { "discard_opp_hand_1", "boost_self_30" }); break;
+                case 100111: list.AddRange(new[] { "discard_opp_hand_1", "boost_self_30" }); break;
+                case 100112: list.AddRange(new[] { "discard_opp_hand_1" }); break;
+                case 100113: list.AddRange(new[] { "discard_opp_hand_1" }); break;
+                case 100114: list.AddRange(new[] { "boost_self_30" }); break;
+                case 100115: list.AddRange(new[] { "boost_self_30" }); break;
+                case 100116: list.AddRange(new[] { "draw_1" }); break;
+                case 100117: list.AddRange(new[] { "boost_self_20" }); break;
+                case 100118: list.AddRange(new[] { "boost_self_75" }); break;
+                case 100119: list.AddRange(new[] { "discard_opp_hand_1" }); break;
+                case 100120: list.AddRange(new[] { "discard_opp_hand_1" }); break;
+                case 100121: list.AddRange(new[] { "boost_self_60" }); break;
+                case 100122: list.AddRange(new[] { "boost_self_20" }); break;
+                case 100123: list.AddRange(new[] { "discard_opp_hand_1" }); break;
+                case 100124: list.AddRange(new[] { "boost_self_15" }); break;
+                case 100125: list.AddRange(new[] { "boost_self_15" }); break;
+                case 100126: list.AddRange(new[] { "discard_opp_hand_1" }); break;
+                case 100127: list.AddRange(new[] { "draw_1", "boost_self_30" }); break;
+                case 100128: list.AddRange(new[] { "draw_2" }); break;
+                case 100129: list.AddRange(new[] { "discard_opp_hand_1" }); break;
+                case 100130: list.AddRange(new[] { "discard_opp_hand_1" }); break;
+                case 100131: list.AddRange(new[] { "boost_self_30" }); break;
+                case 100132: list.AddRange(new[] { "discard_opp_hand_1", "boost_self_30" }); break;
+                case 100133: list.AddRange(new[] { "boost_self_20" }); break;
+                case 100134: list.AddRange(new[] { "boost_self_30" }); break;
+                case 100135: list.AddRange(new[] { "draw_1", "discard_opp_hand_1" }); break;
+                case 100136: list.AddRange(new[] { "draw_1", "discard_opp_hand_1" }); break;
+                case 100137: list.AddRange(new[] { "discard_opp_hand_1" }); break;
+                case 100138: list.AddRange(new[] { "discard_opp_hand_1" }); break;
+                case 100139: list.AddRange(new[] { "draw_1", "boost_self_20" }); break;
+                case 100140: list.AddRange(new[] { "draw_1" }); break;
+                case 100141: list.AddRange(new[] { "boost_self_20" }); break;
+                case 100142: list.AddRange(new[] { "boost_self_20" }); break;
+                case 100143: list.AddRange(new[] { "boost_self_20" }); break;
+                case 100144: list.AddRange(new[] { "boost_self_20" }); break;
+                case 100145: list.AddRange(new[] { "boost_self_30" }); break;
+                case 100146: list.AddRange(new[] { "boost_self_20" }); break;
+                case 100147: list.AddRange(new[] { "discard_opp_hand_1" }); break;
+                case 100148: list.AddRange(new[] { "boost_self_15" }); break;
+                case 100149: list.AddRange(new[] { "discard_opp_hand_1" }); break;
+                case 100150: list.AddRange(new[] { "discard_opp_hand_1" }); break;
+                case 100151: list.AddRange(new[] { "discard_opp_hand_1", "boost_self_30" }); break;
+                case 100152: list.AddRange(new[] { "discard_opp_hand_1", "boost_self_30" }); break;
+                case 100153: list.AddRange(new[] { "discard_opp_hand_1" }); break;
+                case 100154: list.AddRange(new[] { "discard_opp_hand_1" }); break;
+                case 100155: list.AddRange(new[] { "discard_opp_hand_1" }); break;
+                case 100156: list.AddRange(new[] { "discard_opp_hand_1" }); break;
+                case 100157: list.AddRange(new[] { "discard_opp_hand_1", "boost_self_30" }); break;
+                case 100158: list.AddRange(new[] { "discard_opp_hand_1", "boost_self_20" }); break;
+                case 100159: list.AddRange(new[] { "discard_opp_hand_1", "boost_self_30" }); break;
+                case 100160: list.AddRange(new[] { "draw_1", "boost_self_30" }); break;
+                case 100161: list.AddRange(new[] { "boost_self_75" }); break;
+                case 100162: list.AddRange(new[] { "boost_self_60" }); break;
+                case 100163: list.AddRange(new[] { "discard_opp_hand_1" }); break;
+                case 100164: list.AddRange(new[] { "draw_2" }); break;
+                case 100165: list.AddRange(new[] { "draw_1" }); break;
+                case 100166: list.AddRange(new[] { "draw_1" }); break;
+                case 100167: list.AddRange(new[] { "discard_opp_hand_1", "boost_self_30" }); break;
+                case 100168: list.AddRange(new[] { "draw_1", "boost_self_30" }); break;
+                case 100169: list.AddRange(new[] { "draw_1", "boost_self_20" }); break;
+                case 100170: list.AddRange(new[] { "draw_1" }); break;
+                case 100171: list.AddRange(new[] { "boost_self_20" }); break;
+                case 100172: list.AddRange(new[] { "boost_self_20" }); break;
+                case 100173: list.AddRange(new[] { "discard_opp_hand_1" }); break;
+                case 100174: list.AddRange(new[] { "discard_opp_hand_1" }); break;
+                case 100175: list.AddRange(new[] { "boost_self_20" }); break;
+                case 100176: list.AddRange(new[] { "boost_self_30" }); break;
+                case 100177: list.AddRange(new[] { "discard_opp_hand_1" }); break;
+                case 100178: list.AddRange(new[] { "boost_self_15" }); break;
+                case 100179: list.AddRange(new[] { "discard_opp_hand_1" }); break;
+                case 100180: list.AddRange(new[] { "discard_opp_hand_1" }); break;
+            }
 
-                if (!string.IsNullOrEmpty(terrain.WinningEffect))
+            // Fallback pour compatibilité ascendante si l'index n'est pas couvert
+            if (list.Count == 0)
+            {
+                string title = data.Title != null ? data.Title.ToUpperInvariant() : "";
+                if (data is TerrainCardData terrain)
                 {
-                    if (terrain.WinningEffect.IndexOf("pioche", StringComparison.OrdinalIgnoreCase) >= 0) list.Add("win_draw_1");
-                    if (terrain.WinningEffect.IndexOf("défausse", StringComparison.OrdinalIgnoreCase) >= 0 || terrain.WinningEffect.IndexOf("meule", StringComparison.OrdinalIgnoreCase) >= 0) list.Add("win_mill_2");
+                    if (title.Contains("MORIA")) list.Add("boost_laink_20");
+                    else if (title.Contains("PORTAL")) list.Add("boost_terracid_20");
+                    else if (title.Contains("RUST") || title.Contains("GOLF")) list.Add("terrain_draw_1_turn_start");
+                    else if (title.Contains("NAVIRE PIRATE")) list.Add("discard_both_hand_1");
+                    else if (title.Contains("F.A.Q") || title.Contains("FAQ")) list.Add("draw_both_1");
+                    if (!string.IsNullOrEmpty(terrain.WinningEffect))
+                    {
+                        if (terrain.WinningEffect.IndexOf("pioche", StringComparison.OrdinalIgnoreCase) >= 0) list.Add("win_draw_1");
+                        if (terrain.WinningEffect.IndexOf("défausse", StringComparison.OrdinalIgnoreCase) >= 0 || terrain.WinningEffect.IndexOf("meule", StringComparison.OrdinalIgnoreCase) >= 0) list.Add("win_mill_2");
+                    }
+                    if (!string.IsNullOrEmpty(terrain.LosingEffect))
+                    {
+                        if (terrain.LosingEffect.IndexOf("défausse", StringComparison.OrdinalIgnoreCase) >= 0) list.Add("lose_discard_1");
+                    }
                 }
-                if (!string.IsNullOrEmpty(terrain.LosingEffect))
+                else if (data is EffigyCardData effigy)
                 {
-                    if (terrain.LosingEffect.IndexOf("défausse", StringComparison.OrdinalIgnoreCase) >= 0) list.Add("lose_discard_1");
+                    string text = ((effigy.Rules ?? "") + " " + (effigy.Combo ?? "")).ToLowerInvariant();
+                    if (text.Contains("piochez 2 cartes") || text.Contains("pioche 2 cartes") || title.Contains("ASTRONAUTE")) list.Add("draw_2");
+                    else if (text.Contains("piochez 1 carte") || text.Contains("piochez une carte") || text.Contains("pioche 1 carte")) list.Add("draw_1");
+                    if (text.Contains("défausse les 3") || text.Contains("défausser 3") || title.Contains("GRUDGE")) list.Add("mill_3");
+                    else if (text.Contains("défausse les 2") || text.Contains("défausser 2")) list.Add("mill_2");
+                    if (text.Contains("défausse une carte de sa main") || text.Contains("défausse 1 carte de sa main") || title.Contains("VENDEUR") || title.Contains("ANNABELLE")) list.Add("discard_opp_hand_1");
+                    if (title.Contains("CAMIONNEUR")) list.Add("discard_opp_char_force3");
+                    else if (title.Contains("GRUDGE")) list.Add("discard_opp_char_any");
                 }
             }
-            else if (data is EffigyCardData effigy)
-            {
-                string text = ((effigy.Rules ?? "") + " " + (effigy.Combo ?? "")).ToLowerInvariant();
-                if (text.Contains("piochez 2 cartes") || text.Contains("pioche 2 cartes") || title.Contains("ASTRONAUTE"))
-                    list.Add("draw_2");
-                else if (text.Contains("piochez 1 carte") || text.Contains("piochez une carte") || text.Contains("pioche 1 carte"))
-                    list.Add("draw_1");
-
-                if (text.Contains("défausse les 3") || text.Contains("défausser 3") || title.Contains("GRUDGE"))
-                    list.Add("mill_3");
-                else if (text.Contains("défausse les 2") || text.Contains("défausser 2"))
-                    list.Add("mill_2");
-
-                if (text.Contains("défausse une carte de sa main") || text.Contains("défausse 1 carte de sa main") || title.Contains("VENDEUR") || title.Contains("ANNABELLE"))
-                    list.Add("discard_opp_hand_1");
-
-                if (title.Contains("CAMIONNEUR"))
-                    list.Add("discard_opp_char_force3");
-                else if (title.Contains("GRUDGE"))
-                    list.Add("discard_opp_char_any");
-            }
-
             return list;
         }
 

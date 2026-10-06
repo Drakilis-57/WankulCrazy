@@ -71,6 +71,22 @@ public sealed class TerrainSlot
             {
                 charForce += 20;
             }
+
+            if (c.EffectIds != null)
+            {
+                for (int j = 0; j < c.EffectIds.Count; j++)
+                {
+                    string eff = c.EffectIds[j];
+                    if (eff.StartsWith("boost_self_"))
+                    {
+                        if (int.TryParse(eff.Substring("boost_self_".Length), out int boostVal))
+                        {
+                            charForce += boostVal;
+                        }
+                    }
+                }
+            }
+
             total += charForce;
         }
         return total;
