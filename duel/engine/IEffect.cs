@@ -199,6 +199,26 @@ public sealed class TerrainStartTurnDrawEffect : IEffect
     }
 }
 
+
+public sealed class BoostSelfEffect : IEffect
+{
+    public string EffectId { get; }
+    public int Amount { get; }
+
+    public BoostSelfEffect(string effectId, int amount)
+    {
+        EffectId = effectId;
+        Amount = amount;
+    }
+
+    public DuelActionResult Execute(EffectContext context)
+    {
+        // Les boosts de Force statiques sont gérés par le moteur (ex: TerrainSlot.GetForce).
+        // L'effet actif ne fait donc rien lors de l'exécution, il sert de tag sur la carte.
+        return DuelActionResult.Ok();
+    }
+}
+
 public sealed class EffectRegistry
 {
     private readonly Dictionary<string, IEffect> _effects = new Dictionary<string, IEffect>(StringComparer.OrdinalIgnoreCase);
@@ -239,6 +259,17 @@ public sealed class EffectRegistry
         Register(new DrawCardsEffect("win_draw_1", 1));
         Register(new MillOpponentEffect("win_mill_2", 2));
         Register(new DiscardCardsEffect("lose_discard_1", 1));
+        Register(new MillOpponentEffect("mill_opp_3", 3));
+        Register(new MillOpponentEffect("mill_opp_4", 4));
+        Register(new MillOpponentEffect("mill_opp_5", 5));
+        Register(new MillOpponentEffect("mill_opp_10", 10));
+        Register(new BoostSelfEffect("boost_self_15", 15));
+        Register(new BoostSelfEffect("boost_self_20", 20));
+        Register(new BoostSelfEffect("boost_self_30", 30));
+        Register(new BoostSelfEffect("boost_self_45", 45));
+        Register(new BoostSelfEffect("boost_self_60", 60));
+        Register(new BoostSelfEffect("boost_self_75", 75));
+        Register(new BoostSelfEffect("boost_self_90", 90));
     }
 
     public void Register(IEffect effect)

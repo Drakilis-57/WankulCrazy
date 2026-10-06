@@ -206,4 +206,55 @@ public class DuelSeason1EffectsTests
 
         Assert.Equal(1, engine.State.ScoreP1);
     }
+
+    [Fact]
+    public void BoostSelf_IncreasesForceByAmount()
+    {
+        var terrain = new DuelCard("T1", "Plaine", CardKind.Terrain);
+        var slot = new TerrainSlot(0, terrain, placedOnTurn: 1, placedBy: PlayerId.Player1);
+
+        var normalChar = new DuelCard("C1", "Normal", CardKind.Character, force: 100);
+        var boostedChar = new DuelCard("C2", "Boosted", CardKind.Character, force: 100, effectIds: new[] { "boost_self_30" });
+
+        slot.AddCharacter(PlayerId.Player1, normalChar);
+        slot.AddCharacter(PlayerId.Player1, boostedChar);
+
+        Assert.Equal(230, slot.GetForce(PlayerId.Player1));
+    }
+
+    [Fact]
+    public void LoseMill_And_WinMill_ResolvesCorrectly()
+    {
+        var rng = new NoShuffleRandom();
+        var rules = new DuelRules(startingHandSize: 0, cardsDrawnPerTurn: 0);
+        var engine = new DuelEngine(rng, rules);
+
+        var deckP1 = new[] { new DuelCard("P1_1", "P1 Card", CardKind.Character) };
+        var deckP2 = new[] {
+            new DuelCard("P2_1", "P2 Card 1", CardKind.Character),
+            new DuelCard("P2_2", "P2 Card 2", CardKind.Character),
+            new DuelCard("P2_3", "P2 Card 3", CardKind.Character),
+            new DuelCard("P2_4", "P2 Card 4", CardKind.Character),
+        };
+
+        engine.StartDuel(deckP1, deckP2, PlayerId.Player1);
+
+        var terrain = new DuelCard("T_Custom", "Custom", CardKind.Terrain, effectIds: new[] { "win_mill_3" });
+        engine.State.SetSlot(0, terrain, placedOnTurn: 0, placedBy: PlayerId.Player1);
+
+        var scoreur = new DuelCard("S1", "Scoreur", CardKind.Character, force: 100, isScoreur: true);
+        engine.State.Slots[0].AddCharacter(PlayerId.Player1, scoreur);
+
+        var events = new List<IDuelEvent>();
+        engine.OnEvent += events.Add;
+
+        engine.ResolveScore(0);
+
+        var effectContext = new EffectContext(engine, PlayerId.Player1, terrain, 0);
+        engine.Effects.TryGetEffect("mill_opp_3", out var eff);
+        eff.Execute(effectContext);
+
+        Assert.Single(engine.State.GetDeck(PlayerId.Player2));
+        Assert.Equal(3, engine.State.GetDiscard(PlayerId.Player2).Count);
+    }
 }
