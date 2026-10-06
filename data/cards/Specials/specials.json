@@ -1,0 +1,26 @@
+[
+  {
+    "Index": 742,
+    "Number": "742",
+    "Title": "TICKET D'OR !!!",
+    "Artist": "Wankil",
+    "CardType": "Special",
+    "SeasonId": "HS",
+    "TexturePath": "cards/Specials/textures/742_742.png",
+    "Special": "TOR",
+    "Drop": 0.0001,
+    "Percentage": 100
+  },
+  {
+    "Index": 743,
+    "Number": "743",
+    "Title": "À JETER",
+    "Artist": "Wankil",
+    "CardType": "Special",
+    "SeasonId": "HS",
+    "TexturePath": "cards/Specials/textures/743_743.png",
+    "Special": "AJETER",
+    "Drop": 0.0,
+    "Percentage": 100
+  }
+]

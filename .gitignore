@@ -2,7 +2,24 @@
 .vs/
 .idea/
 .DS_Store
-data/
+# Data assets (textures, models, bundles, audio are heavy and excluded from git)
+data/**/textures/
+data/sprites/
+data/audio/
+data/models/
+data/bundles/
+data/meshes/
+data/names/
+data/customitems/meshes/
+data/**/*.png
+data/**/*.jpg
+data/**/*.jpeg
+data/**/*.dds
+data/**/*.assetbundle
+data/**/*.unity3d
+data/**/*.wav
+data/**/*.mp3
+data/**/*.ogg
 bin/
 obj/
 dist/
