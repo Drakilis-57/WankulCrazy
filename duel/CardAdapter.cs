@@ -197,6 +197,19 @@ namespace WankulCrazyPlugin.duel
                     list.Add("discard_opp_char_force3");
                 else if (title.Contains("GRUDGE"))
                     list.Add("discard_opp_char_any");
+
+                // Parse Self Mill for S3 characters
+                var matchSelfMill = System.Text.RegularExpressions.Regex.Match(text, @"défaussez les (\d+) cartes du dessus de votre deck");
+                if (matchSelfMill.Success)
+                {
+                    list.Add($"self_mill_{matchSelfMill.Groups[1].Value}");
+                }
+
+                if (text.Contains("défaussez un personnage adverse") || text.Contains("défausse un personnage adverse"))
+                {
+                    if (!list.Contains("discard_opp_char_any"))
+                        list.Add("discard_opp_char_any");
+                }
             }
 
             return list;
