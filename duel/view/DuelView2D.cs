@@ -801,7 +801,6 @@ namespace WankulCrazyPlugin.duel
             handRt.anchorMax = new Vector2(0.835f, 1f);
             handRt.offsetMin = Vector2.zero;
             handRt.offsetMax = Vector2.zero;
-            handScroll.AddComponent<RectMask2D>();
             var hLayout = handScroll.AddComponent<HorizontalLayoutGroup>();
             hLayout.spacing = 10;
             hLayout.padding = new RectOffset(10, 10, 5, 5);
@@ -1295,13 +1294,21 @@ namespace WankulCrazyPlugin.duel
 
                 // Effet visuel si la carte est sélectionnée (liseré doré + surélévation)
                 bool isSelected = _selectedHandCard != null && _selectedHandCard.Id == card.Id;
+
+                // Canvas dÃ©diÃ© pour contrÃ´ler l'ordre d'affichage (Z-order) sans perturber le HorizontalLayoutGroup
+                // Note: Le Canvas racine DuelView2DCanvas est au sortingOrder 600.
+                var cardCanvas = cardBtnObj.AddComponent<Canvas>();
+                cardCanvas.overrideSorting = true;
+                int baseOrder = 610 + i;
+                cardCanvas.sortingOrder = isSelected ? 650 : baseOrder;
+                cardBtnObj.AddComponent<GraphicRaycaster>();
+
                 if (isSelected)
                 {
                     var cardOutline = cardBtnObj.AddComponent<Outline>();
                     cardOutline.effectColor = new Color(1f, 0.85f, 0.2f, 1f);
                     cardOutline.effectDistance = new Vector2(3.5f, -3.5f);
-                    cRt.anchoredPosition = new Vector2(0f, 15f);
-                    cardBtnObj.transform.SetAsLastSibling();
+                    cardBtnObj.transform.localScale = new Vector3(1.08f, 1.08f, 1f);
                 }
 
                 Sprite cardSprite = CardAdapter.GetCardSprite(card);
@@ -1362,16 +1369,21 @@ namespace WankulCrazyPlugin.duel
                     WankulUiKit.Stretch(txtObj.GetComponent<RectTransform>());
                 }
 
-                // Gestion du survol (Hover) pour l'inspection au clic droit et mise au premier plan
+                // Gestion du survol (Hover) pour l'inspection au clic droit et agrandissement au premier plan
                 var trigger = cardBtnObj.AddComponent<UnityEngine.EventSystems.EventTrigger>();
-                int cardSiblingIndex = i;
                 var capturedObj = cardBtnObj;
+                var capturedCanvas = cardCanvas;
+
                 var enterEntry = new UnityEngine.EventSystems.EventTrigger.Entry { eventID = UnityEngine.EventSystems.EventTriggerType.PointerEnter };
                 enterEntry.callback.AddListener((data) => {
                     _hoveredCard = card;
                     if (capturedObj != null)
                     {
-                        capturedObj.transform.SetAsLastSibling();
+                        capturedObj.transform.localScale = new Vector3(1.08f, 1.08f, 1f);
+                        if (capturedCanvas != null)
+                        {
+                            capturedCanvas.sortingOrder = 640;
+                        }
                     }
                 });
                 trigger.triggers.Add(enterEntry);
@@ -1381,7 +1393,11 @@ namespace WankulCrazyPlugin.duel
                     if (_hoveredCard == card) _hoveredCard = null;
                     if (capturedObj != null && !isSelected)
                     {
-                        capturedObj.transform.SetSiblingIndex(cardSiblingIndex);
+                        capturedObj.transform.localScale = Vector3.one;
+                        if (capturedCanvas != null)
+                        {
+                            capturedCanvas.sortingOrder = baseOrder;
+                        }
                     }
                 });
                 trigger.triggers.Add(exitEntry);
