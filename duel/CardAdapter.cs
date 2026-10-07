@@ -491,6 +491,33 @@ namespace WankulCrazyPlugin.duel
                 // Dans les données Wankul, Force = -1 désigne les cartes utilitaires sans force imprimée (tiret '-')
                 int force = effigy.Force == -1 ? 0 : effigy.Force;
 
+                var comboEffectIds = new List<string>();
+                bool hasClosingGem = false;
+
+                if (!string.IsNullOrEmpty(effigy.Combo))
+                {
+                    string comboText = effigy.Combo.ToLowerInvariant();
+                    hasClosingGem = true;
+
+                    var matchBoost = System.Text.RegularExpressions.Regex.Match(comboText, @"\+?\s?(\d+)\s?(?:points? )?de force");
+                    if (matchBoost.Success && int.TryParse(matchBoost.Groups[1].Value, out int bonus))
+                    {
+                        comboEffectIds.Add($"boost_self_{bonus}");
+                    }
+                    else if (comboText.Contains("+ 20 de force") || comboText.Contains("+20 de force"))
+                    {
+                        comboEffectIds.Add("boost_self_20");
+                    }
+                    else if (comboText.Contains("+ 15") || comboText.Contains("+15"))
+                    {
+                        comboEffectIds.Add("boost_self_15");
+                    }
+                    else if (comboText.Contains("+ 30") || comboText.Contains("+30"))
+                    {
+                        comboEffectIds.Add("boost_self_30");
+                    }
+                }
+
                 return new DuelCard(
                     id: id,
                     name: name,
@@ -498,7 +525,10 @@ namespace WankulCrazyPlugin.duel
                     force: force,
                     isScoreur: effigy.IsScoreur,
                     effectIds: effectIds,
-                    effigy: effigy.Effigy
+                    effigy: effigy.Effigy,
+                    comboEffectIds: comboEffectIds,
+                    hasOpeningGem: true,
+                    hasClosingGem: hasClosingGem
                 );
             }
 

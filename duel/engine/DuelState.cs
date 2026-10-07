@@ -222,7 +222,7 @@ public sealed class DuelState
     }
 
 
-    internal bool MoveCharacter(PlayerId player, DuelCard card, int fromSlotIndex, int toSlotIndex)
+    internal bool MoveCharacter(PlayerId player, DuelCard card, int fromSlotIndex, int toSlotIndex, int insertIndex = -1)
     {
         if (fromSlotIndex < 0 || fromSlotIndex >= _slots.Length) return false;
         if (toSlotIndex < 0 || toSlotIndex >= _slots.Length) return false;
@@ -247,9 +247,9 @@ public sealed class DuelState
         return card;
     }
 
-    internal void AddCharacterToSlot(int slotIndex, PlayerId player, DuelCard card)
+    internal void AddCharacterToSlot(int slotIndex, PlayerId player, DuelCard card, int insertIndex = -1)
     {
-        _slots[slotIndex].AddCharacter(player, card);
+        _slots[slotIndex].AddCharacter(player, card, insertIndex);
     }
 
     internal void IncrementCharactersPlayed() => CharactersPlayedThisTurn++;

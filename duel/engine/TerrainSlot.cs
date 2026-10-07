@@ -87,15 +87,37 @@ public sealed class TerrainSlot
                 }
             }
 
+            if (ComboEvaluator.IsComboActive(chars, i) && c.ComboEffectIds != null)
+            {
+                for (int j = 0; j < c.ComboEffectIds.Count; j++)
+                {
+                    string eff = c.ComboEffectIds[j];
+                    if (eff.StartsWith("boost_self_"))
+                    {
+                        if (int.TryParse(eff.Substring("boost_self_".Length), out int boostVal))
+                        {
+                            charForce += boostVal;
+                        }
+                    }
+                }
+            }
+
             total += charForce;
         }
         return total;
     }
 
-    internal void AddCharacter(PlayerId player, DuelCard card)
+    internal void AddCharacter(PlayerId player, DuelCard card, int insertIndex = -1)
     {
-        if (player == PlayerId.Player1) _charactersP1.Add(card);
-        else _charactersP2.Add(card);
+        var list = player == PlayerId.Player1 ? _charactersP1 : _charactersP2;
+        if (insertIndex >= 0 && insertIndex <= list.Count)
+        {
+            list.Insert(insertIndex, card);
+        }
+        else
+        {
+            list.Add(card);
+        }
     }
 
     internal bool RemoveCharacter(PlayerId player, DuelCard card)

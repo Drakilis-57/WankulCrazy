@@ -116,6 +116,36 @@ public sealed class TerrainsReadiedEvent : IDuelEvent
     }
 }
 
+public sealed class ComboFormedEvent : IDuelEvent
+{
+    public PlayerId Player { get; }
+    public int SlotIndex { get; }
+    public DuelCard LeftCard { get; }
+    public DuelCard RightCard { get; }
+
+    public ComboFormedEvent(PlayerId player, int slotIndex, DuelCard leftCard, DuelCard rightCard)
+    {
+        Player = player;
+        SlotIndex = slotIndex;
+        LeftCard = leftCard;
+        RightCard = rightCard;
+    }
+}
+
+public sealed class ComboBrokenEvent : IDuelEvent
+{
+    public PlayerId Player { get; }
+    public int SlotIndex { get; }
+    public DuelCard CardWithBrokenCombo { get; }
+
+    public ComboBrokenEvent(PlayerId player, int slotIndex, DuelCard cardWithBrokenCombo)
+    {
+        Player = player;
+        SlotIndex = slotIndex;
+        CardWithBrokenCombo = cardWithBrokenCombo;
+    }
+}
+
 public sealed class CharacterPlayedEvent : IDuelEvent
 {
     public PlayerId Player { get; }

@@ -295,7 +295,7 @@ public sealed class DuelEngine
     /// Si la carte est un Scoreur et que le terrain est actif, déclenche immédiatement la résolution du duel.
     /// </summary>
 
-    public DuelActionResult MoveCharacter(PlayerId player, string cardId, int fromSlotIndex, int toSlotIndex)
+    public DuelActionResult MoveCharacter(PlayerId player, string cardId, int fromSlotIndex, int toSlotIndex, int insertIndex = -1)
     {
         if (State.TurnNumber == 0)
             return DuelActionResult.Refused("Game has not started yet.");
@@ -319,16 +319,37 @@ public sealed class DuelEngine
         if (targetCard == null)
             return DuelActionResult.Refused("Character not found in the specified slot.");
 
-        if (State.MoveCharacter(player, targetCard, fromSlotIndex, toSlotIndex))
+        if (State.MoveCharacter(player, targetCard, fromSlotIndex, toSlotIndex, insertIndex))
         {
             Emit(new CharacterMovedSlotEvent(player, targetCard, fromSlotIndex, toSlotIndex));
+            CheckCombosAfterPlayOrMove(player, fromSlotIndex);
+            CheckCombosAfterPlayOrMove(player, toSlotIndex);
             return DuelActionResult.Ok();
         }
 
         return DuelActionResult.Refused("Failed to move character.");
     }
 
-    public DuelActionResult PlayCharacter(PlayerId player, string cardId, int slotIndex)
+    private void CheckCombosAfterPlayOrMove(PlayerId player, int slotIndex)
+    {
+        if (slotIndex < 0 || slotIndex >= State.Slots.Count) return;
+        var slot = State.Slots[slotIndex];
+        var chars = slot.GetCharacters(player);
+
+        // Simple iteration to detect combos and emit formed/broken events.
+        // In a more complex game, we'd track previous states to emit exact "broken" events,
+        // but since Wankul combos apply dynamically during scoring,
+        // emitting Formed is sufficient for UI/Effects that trigger on combo creation.
+        for (int i = 1; i < chars.Count; i++)
+        {
+            if (ComboEvaluator.IsComboActive(chars, i))
+            {
+                Emit(new ComboFormedEvent(player, slotIndex, chars[i - 1], chars[i]));
+            }
+        }
+    }
+
+    public DuelActionResult PlayCharacter(PlayerId player, string cardId, int slotIndex, int insertIndex = -1)
     {
         if (State.TurnNumber == 0)
             return DuelActionResult.Refused("Game has not started yet.");
@@ -370,10 +391,12 @@ public sealed class DuelEngine
             return DuelActionResult.Refused($"Card {cardId} is not a Character.");
 
         State.RemoveCardFromHand(player, cardToPlay);
-        State.AddCharacterToSlot(slotIndex, player, cardToPlay);
+        State.AddCharacterToSlot(slotIndex, player, cardToPlay, insertIndex);
         State.IncrementCharactersPlayed();
 
         Emit(new CharacterPlayedEvent(player, slotIndex, cardToPlay));
+
+        CheckCombosAfterPlayOrMove(player, slotIndex);
 
         // Exécution des effets de la carte (IEffect)
         if (cardToPlay.EffectIds != null && cardToPlay.EffectIds.Count > 0)
