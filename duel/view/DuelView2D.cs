@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using WankulCrazy.Duel.Engine;
+using WankulCrazy.Duel;
 using WankulCrazyPlugin.cards;
 using WankulCrazyPlugin.importer;
 
@@ -1098,6 +1099,22 @@ namespace WankulCrazyPlugin.duel
             ExecutePlayCard(cardToPlay, slotIndex, insertIndex);
         }
 
+
+        private Coroutine _statusCoroutine;
+        private void ShowStatusMessage(string message, float duration = 2.5f)
+        {
+            if (_statusCoroutine != null) StopCoroutine(_statusCoroutine);
+            _statusCoroutine = StartCoroutine(StatusMessageRoutine(message, duration));
+        }
+
+        private System.Collections.IEnumerator StatusMessageRoutine(string message, float duration)
+        {
+            _statusMessageText.text = message;
+            yield return new WaitForSeconds(duration);
+            _statusCoroutine = null;
+            RefreshView();
+        }
+
         private void RefreshView()
         {
             if (_engine == null) return;
@@ -1141,7 +1158,7 @@ namespace WankulCrazyPlugin.duel
             }
             _topScoreP2Pips.text = p2Diamonds.TrimEnd();
 
-            // 2. Guide d'action & instruction (MessageBanner)
+            if (_statusCoroutine != null) { /* Ne pas écraser le message temporaire */ } else {
             if (_selectedHandCard != null)
             {
                 string actionHint = _selectedHandCard.Kind == CardKind.Terrain
@@ -1163,6 +1180,7 @@ namespace WankulCrazyPlugin.duel
             else
             {
                 _statusMessageText.text = "💡 Cliquez sur une carte en main pour la sélectionner. Clic droit pour inspecter.";
+            }
             }
 
             // 3. Dock gauche (Quotas et stats pioche/défausse)
@@ -1854,6 +1872,7 @@ namespace WankulCrazyPlugin.duel
 
         private void HandleDuelEvent(IDuelEvent evt)
         {
+            DuelViewLogger.LogDuelEvent(evt);
             switch (evt)
             {
                 case CardsDrawnEvent:
@@ -1877,17 +1896,17 @@ namespace WankulCrazyPlugin.duel
                 case EffectTriggeredEvent effectEvt:
                     string effPlayer = effectEvt.Player == PlayerId.Player1 ? "Votre" : "Adversaire :";
                     string effCardName = CardAdapter.FixMojibake(effectEvt.SourceCard.Name);
-                    _statusMessageText.text = $"⚡ <b>EFFET ACTIVÉ :</b> {effPlayer} [{effCardName}] active son pouvoir !";
+                    ShowStatusMessage($"⚡ <b>EFFET ACTIVÉ :</b> {effPlayer} [{effCardName}] active son pouvoir !");
                     DuelSfx.PlayPowerup();
                     break;
                 case CardsMilledEvent milled:
                     string millPlayer = milled.TargetPlayer == PlayerId.Player1 ? "Le joueur" : "L'adversaire";
-                    _statusMessageText.text = $"🂠 <b>MEULE :</b> {millPlayer} défausse {milled.MilledCards.Count} carte(s) du dessus de son deck !";
+                    ShowStatusMessage($"🂠 <b>MEULE :</b> {millPlayer} défausse {milled.MilledCards.Count} carte(s) du dessus de son deck !");
                     DuelSfx.PlayDiscard();
                     break;
                 case CardsDiscardedEvent discarded:
                     string discPlayer = discarded.Player == PlayerId.Player1 ? "Le joueur" : "L'adversaire";
-                    _statusMessageText.text = $"🗑 <b>DÉFAUSSE :</b> {discPlayer} a défaussé {discarded.DiscardedCards.Count} carte(s) !";
+                    ShowStatusMessage($"🗑 <b>DÉFAUSSE :</b> {discPlayer} a défaussé {discarded.DiscardedCards.Count} carte(s) !");
                     DuelSfx.PlayDiscard();
                     break;
                 case DuelEndedEvent ended:
