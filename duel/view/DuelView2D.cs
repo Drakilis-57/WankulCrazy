@@ -504,12 +504,12 @@ namespace WankulCrazyPlugin.duel
                 p2CCRt.offsetMin = Vector2.zero;
                 p2CCRt.offsetMax = Vector2.zero;
                 p2CardsContainerObj.AddComponent<RectMask2D>();
-                var p2VLayout = p2CardsContainerObj.AddComponent<VerticalLayoutGroup>();
+                var p2VLayout = p2CardsContainerObj.AddComponent<HorizontalLayoutGroup>();
                 p2VLayout.spacing = 3;
                 p2VLayout.padding = new RectOffset(2, 2, 2, 2);
                 p2VLayout.childAlignment = TextAnchor.UpperCenter;
-                p2VLayout.childControlWidth = true;
-                p2VLayout.childControlHeight = false;
+                p2VLayout.childControlWidth = false;
+                p2VLayout.childControlHeight = true;
                 _slotP2CardsContainers[i] = p2CardsContainerObj.transform;
 
                 // ==================== 2. ZONE MILIEU : TERRAIN ====================
@@ -667,12 +667,12 @@ namespace WankulCrazyPlugin.duel
                 p1CCRt.offsetMin = Vector2.zero;
                 p1CCRt.offsetMax = Vector2.zero;
                 p1CardsContainerObj.AddComponent<RectMask2D>();
-                var p1VLayout = p1CardsContainerObj.AddComponent<VerticalLayoutGroup>();
+                var p1VLayout = p1CardsContainerObj.AddComponent<HorizontalLayoutGroup>();
                 p1VLayout.spacing = 3;
                 p1VLayout.padding = new RectOffset(2, 2, 2, 2);
                 p1VLayout.childAlignment = TextAnchor.UpperCenter;
-                p1VLayout.childControlWidth = true;
-                p1VLayout.childControlHeight = false;
+                p1VLayout.childControlWidth = false;
+                p1VLayout.childControlHeight = true;
                 _slotP1CardsContainers[i] = p1CardsContainerObj.transform;
             }
 
@@ -1085,6 +1085,19 @@ namespace WankulCrazyPlugin.duel
             _clashBarPanel.SetActive(false);
         }
 
+        private void OnInsertSlotClicked(int slotIndex, int insertIndex)
+        {
+            if (_engine.State.ActivePlayer != PlayerId.Player1 || _engine.State.IsGameOver)
+                return;
+
+            if (_selectedHandCard == null)
+                return;
+
+            var cardToPlay = _selectedHandCard;
+            _selectedHandCard = null;
+            ExecutePlayCard(cardToPlay, slotIndex, insertIndex);
+        }
+
         private void RefreshView()
         {
             if (_engine == null) return;
@@ -1208,8 +1221,8 @@ namespace WankulCrazyPlugin.duel
                 }
 
                 // Population visuelle des cartes déployées
-                PopulateSlotCards(_slotP1CardsContainers[i], slot.CharactersP1, isPlayer: true, font);
-                PopulateSlotCards(_slotP2CardsContainers[i], slot.CharactersP2, isPlayer: false, font);
+                PopulateSlotCards(_slotP1CardsContainers[i], slot.CharactersP1, isPlayer: true, font, i);
+                PopulateSlotCards(_slotP2CardsContainers[i], slot.CharactersP2, isPlayer: false, font, i);
 
                 if (slot.IsEmpty)
                 {
@@ -1428,7 +1441,7 @@ namespace WankulCrazyPlugin.duel
             }
         }
 
-        private void PopulateSlotCards(Transform container, IReadOnlyList<DuelCard> cards, bool isPlayer, Font font)
+        private void PopulateSlotCards(Transform container, IReadOnlyList<DuelCard> cards, bool isPlayer, Font font, int slotIndex = -1)
         {
             if (container == null) return;
 
@@ -1448,29 +1461,68 @@ namespace WankulCrazyPlugin.duel
                 t.color = isPlayer ? new Color(0.45f, 0.55f, 0.70f, 0.75f) : new Color(0.70f, 0.45f, 0.50f, 0.75f);
                 t.text = isPlayer ? "(Aucun personnage déployé)" : "(Aucun personnage adverse)";
                 var le = emptyObj.AddComponent<LayoutElement>();
-                le.minHeight = 22;
-                le.preferredHeight = 24;
-                le.flexibleWidth = 1f;
+                le.minWidth = 100f;
+                le.preferredWidth = 120f;
+                le.flexibleHeight = 1f;
+
+                // Si aucune carte, le conteneur lui-même sert pour insérer à l'index 0 (via slotBtn)
                 return;
             }
 
-            // Calcul de taille dynamique des plaquettes selon le nombre de cartes déployées
-            // cards <= 3 : 24px (font 11) | cards == 4 : 20px (font 10) | cards >= 5 : 17px (font 9)
-            float plateHeight = cards.Count <= 3 ? 24f : (cards.Count == 4 ? 20f : 17f);
-            int plateFontSize = cards.Count <= 3 ? 11 : (cards.Count == 4 ? 10 : 9);
+            // Calcul de taille dynamique des tuiles selon le nombre de cartes déployées
+            float plateWidth = cards.Count <= 3 ? 70f : (cards.Count == 4 ? 50f : 40f);
+            int plateFontSize = cards.Count <= 3 ? 11 : (cards.Count == 4 ? 9 : 8);
 
             for (int i = 0; i < cards.Count; i++)
             {
+                // On ajoute un bouton d'insertion invisible *avant* la carte si c'est au joueur de jouer et qu'il sélectionne un perso.
+                if (isPlayer && slotIndex >= 0)
+                {
+                    int insertIdx = i; // capture locale pour la lambda
+                    var insertObj = new GameObject($"InsertBtn_{insertIdx}");
+                    insertObj.transform.SetParent(container, false);
+                    var insertLe = insertObj.AddComponent<LayoutElement>();
+                    insertLe.minWidth = 10f;
+                    insertLe.preferredWidth = 10f;
+
+                    var insertImg = insertObj.AddComponent<Image>();
+                    insertImg.color = new Color(0f, 1f, 0f, 0f); // Invisible par défaut
+
+                    var insertBtn = insertObj.AddComponent<Button>();
+                    insertBtn.onClick.AddListener(() => OnInsertSlotClicked(slotIndex, insertIdx));
+
+                    // Si on survole ou si on a une carte sélectionnée, on pourrait le rendre plus visible, mais pour l'instant restons simple
+                    if (_selectedHandCard != null && _selectedHandCard.Kind == CardKind.Character)
+                    {
+                        insertImg.color = new Color(0f, 1f, 0f, 0.2f); // Légèrement vert
+                    }
+                }
+
+                // Si on a un combo actif (la carte a closing gem, la précédente a opening gem), on affiche le connecteur
+                if (i > 0 && ComboEvaluator.IsComboActive(cards, i))
+                {
+                    var comboObj = new GameObject("ComboGem");
+                    comboObj.transform.SetParent(container, false);
+                    var comboLe = comboObj.AddComponent<LayoutElement>();
+                    comboLe.minWidth = 16f;
+                    comboLe.preferredWidth = 16f;
+
+                    var comboImg = comboObj.AddComponent<Image>();
+                    comboImg.sprite = WankulUiKit.WhiteSprite;
+                    // Connecteur brillant
+                    comboImg.color = new Color(1f, 0.8f, 0.2f, 0.9f);
+                }
+
                 var card = cards[i];
                 var itemObj = new GameObject($"CardPlate_{card.Id}");
                 itemObj.transform.SetParent(container, false);
                 var itemRt = itemObj.AddComponent<RectTransform>();
-                itemRt.sizeDelta = new Vector2(0, plateHeight);
 
                 var le = itemObj.AddComponent<LayoutElement>();
-                le.minHeight = plateHeight - 2f;
-                le.preferredHeight = plateHeight;
-                le.flexibleWidth = 1f;
+                le.minWidth = plateWidth;
+                le.preferredWidth = plateWidth;
+                le.flexibleHeight = 1f;
+                le.minHeight = 80f;
 
                 var bg = itemObj.AddComponent<Image>();
                 bg.sprite = WankulUiKit.WhiteSprite;
@@ -1480,15 +1532,15 @@ namespace WankulCrazyPlugin.duel
                 outline.effectColor = isPlayer ? new Color(0.25f, 0.55f, 0.85f, 0.5f) : new Color(0.85f, 0.30f, 0.35f, 0.5f);
                 outline.effectDistance = new Vector2(1f, -1f);
 
-                // Miniature sprite
+                // Miniature sprite au centre
                 var sprite = CardAdapter.GetCardSprite(card);
                 if (sprite != null)
                 {
                     var iconObj = new GameObject("Icon");
                     iconObj.transform.SetParent(itemObj.transform, false);
                     var iconRt = iconObj.AddComponent<RectTransform>();
-                    iconRt.anchorMin = new Vector2(0.02f, 0.08f);
-                    iconRt.anchorMax = new Vector2(0.12f, 0.92f);
+                    iconRt.anchorMin = new Vector2(0.1f, 0.3f);
+                    iconRt.anchorMax = new Vector2(0.9f, 0.95f);
                     iconRt.offsetMin = Vector2.zero;
                     iconRt.offsetMax = Vector2.zero;
                     var iconImg = iconObj.AddComponent<Image>();
@@ -1496,35 +1548,38 @@ namespace WankulCrazyPlugin.duel
                     iconImg.preserveAspect = true;
                 }
 
-                // Nom du personnage
+                // Nom du personnage (en bas)
                 var nameObj = new GameObject("Name");
                 nameObj.transform.SetParent(itemObj.transform, false);
                 var nameRt = nameObj.AddComponent<RectTransform>();
-                nameRt.anchorMin = new Vector2(sprite != null ? 0.14f : 0.04f, 0f);
-                nameRt.anchorMax = new Vector2(0.68f, 1f);
+                nameRt.anchorMin = new Vector2(0.05f, 0.15f);
+                nameRt.anchorMax = new Vector2(0.95f, 0.3f);
                 nameRt.offsetMin = Vector2.zero;
                 nameRt.offsetMax = Vector2.zero;
                 var nameTxt = nameObj.AddComponent<Text>();
                 nameTxt.font = font;
                 nameTxt.fontSize = plateFontSize;
                 nameTxt.fontStyle = FontStyle.Bold;
-                nameTxt.alignment = TextAnchor.MiddleLeft;
+                nameTxt.alignment = TextAnchor.MiddleCenter;
                 nameTxt.color = Color.white;
                 nameTxt.text = CardAdapter.FixMojibake(card.Name);
+                nameTxt.resizeTextForBestFit = true;
+                nameTxt.resizeTextMinSize = 6;
+                nameTxt.resizeTextMaxSize = plateFontSize;
 
-                // Stats Force & Scoreur
+                // Stats Force & Scoreur (tout en bas)
                 var statsObj = new GameObject("Stats");
                 statsObj.transform.SetParent(itemObj.transform, false);
                 var statsRt = statsObj.AddComponent<RectTransform>();
-                statsRt.anchorMin = new Vector2(0.68f, 0f);
-                statsRt.anchorMax = new Vector2(0.97f, 1f);
+                statsRt.anchorMin = new Vector2(0.05f, 0.0f);
+                statsRt.anchorMax = new Vector2(0.95f, 0.15f);
                 statsRt.offsetMin = Vector2.zero;
                 statsRt.offsetMax = Vector2.zero;
                 var statsTxt = statsObj.AddComponent<Text>();
                 statsTxt.font = font;
                 statsTxt.fontSize = plateFontSize;
                 statsTxt.fontStyle = FontStyle.Bold;
-                statsTxt.alignment = TextAnchor.MiddleRight;
+                statsTxt.alignment = TextAnchor.MiddleCenter;
                 string star = card.IsScoreur ? " <color=#FFE080>★</color>" : "";
                 string forceColor = isPlayer ? "#55C5FF" : "#FF7777";
                 statsTxt.text = $"<color={forceColor}>⚡ {card.Force}</color>{star}";
@@ -1574,7 +1629,7 @@ namespace WankulCrazyPlugin.duel
             ExecutePlayCard(cardToPlay, slotIndex);
         }
 
-        private void ExecutePlayCard(DuelCard card, int slotIndex)
+        private void ExecutePlayCard(DuelCard card, int slotIndex, int insertIndex = -1)
         {
             DuelActionResult result;
             if (card.Kind == CardKind.Terrain)
@@ -1583,7 +1638,7 @@ namespace WankulCrazyPlugin.duel
             }
             else
             {
-                result = _engine.PlayCharacter(PlayerId.Player1, card.Id, slotIndex);
+                result = _engine.PlayCharacter(PlayerId.Player1, card.Id, slotIndex, insertIndex);
             }
 
             if (!result.Success)
