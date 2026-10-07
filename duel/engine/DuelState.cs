@@ -242,8 +242,8 @@ public sealed class DuelState
     {
         var target = player == PlayerId.Player1 ? _deckP1 : _deckP2;
         if (target.Count == 0) return null;
-        var card = target[0];
-        target.RemoveAt(0);
+        var card = target[target.Count - 1];
+        target.RemoveAt(target.Count - 1);
         return card;
     }
 

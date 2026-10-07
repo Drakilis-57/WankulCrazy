@@ -21,6 +21,13 @@ public sealed class EffectContext
     }
 }
 
+public sealed class MarkerEffect : IEffect
+{
+    public string EffectId { get; }
+    public MarkerEffect(string effectId) { EffectId = effectId; }
+    public DuelActionResult Execute(EffectContext context) => DuelActionResult.Ok();
+}
+
 public interface IEffect
 {
     string EffectId { get; }
@@ -142,7 +149,7 @@ public sealed class LookTopDeckEffect : IEffect
 
         for (int i = 0; i < count; i++)
         {
-            revealed.Add(deck[deck.Count - 1 - i]);
+            revealed.Add(deck[i]);
         }
 
         if (revealed.Count > 0)
@@ -859,6 +866,8 @@ public sealed class EffectRegistry
         Register(new MillOpponentEffect("mill_opp_10", 10));
         Register(new BoostSelfEffect("boost_self_15", 15));
         Register(new BoostSelfEffect("boost_self_20", 20));
+        Register(new MarkerEffect("boost_laink_20"));
+        Register(new MarkerEffect("boost_terracid_20"));
         Register(new BoostSelfEffect("boost_self_30", 30));
         Register(new BoostSelfEffect("boost_self_45", 45));
         Register(new BoostSelfEffect("boost_self_60", 60));

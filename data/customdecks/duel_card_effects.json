@@ -1,0 +1,2289 @@
+[
+  {
+    "cardIndex": 200001,
+    "effects": [
+      "win_take_discard_1",
+      "lose_banish_deck_3"
+    ]
+  },
+  {
+    "cardIndex": 200002,
+    "effects": [
+      "win_play_free_score",
+      "lose_mill_3"
+    ]
+  },
+  {
+    "cardIndex": 200003,
+    "effects": [
+      "win_draw_until_odd",
+      "lose_mill_4"
+    ]
+  },
+  {
+    "cardIndex": 200004,
+    "effects": [
+      "lose_mill_5"
+    ]
+  },
+  {
+    "cardIndex": 200005,
+    "effects": [
+      "win_take_discard_min_force",
+      "lose_mill_max_force"
+    ]
+  },
+  {
+    "cardIndex": 200006,
+    "effects": [
+      "lose_mill_3"
+    ]
+  },
+  {
+    "cardIndex": 200007,
+    "effects": [
+      "win_play_free",
+      "lose_mill_4"
+    ]
+  },
+  {
+    "cardIndex": 200008,
+    "effects": [
+      "lose_discard_3"
+    ]
+  },
+  {
+    "cardIndex": 200009,
+    "effects": [
+      "win_banish_deck_2",
+      "lose_banish_deck_4"
+    ]
+  },
+  {
+    "cardIndex": 200010,
+    "effects": [
+      "win_copy_effect",
+      "lose_mill_4"
+    ]
+  },
+  {
+    "cardIndex": 200011,
+    "effects": [
+      "win_take_discard_1",
+      "lose_mill_3"
+    ]
+  },
+  {
+    "cardIndex": 200012,
+    "effects": [
+      "win_draw_3",
+      "win_draw_or_put_under_deck",
+      "lose_mill_3"
+    ]
+  },
+  {
+    "cardIndex": 200013,
+    "effects": [
+      "lose_discard_char_in_play"
+    ]
+  },
+  {
+    "cardIndex": 200014,
+    "effects": [
+      "lose_mill_max_force"
+    ]
+  },
+  {
+    "cardIndex": 200015,
+    "effects": [
+      "win_shuffle_terrains",
+      "lose_mill_3"
+    ]
+  },
+  {
+    "cardIndex": 200016,
+    "effects": [
+      "win_shuffle_hand_draw_5",
+      "lose_banish_deck_hand_4"
+    ]
+  },
+  {
+    "cardIndex": 200017,
+    "effects": [
+      "win_take_setaside_3",
+      "lose_banish_setaside_3"
+    ]
+  },
+  {
+    "cardIndex": 200018,
+    "effects": [
+      "lose_mill_3"
+    ]
+  },
+  {
+    "cardIndex": 200019,
+    "effects": [
+      "lose_mill_5"
+    ]
+  },
+  {
+    "cardIndex": 200020,
+    "effects": [
+      "win_put_under_deck",
+      "lose_mill_5_minus_drawn"
+    ]
+  },
+  {
+    "cardIndex": 200021,
+    "effects": [
+      "win_search_card",
+      "lose_mill_3"
+    ]
+  },
+  {
+    "cardIndex": 200022,
+    "effects": [
+      "win_take_discard_2",
+      "lose_banish_discard_5"
+    ]
+  },
+  {
+    "cardIndex": 200023,
+    "effects": [
+      "lose_mill_4"
+    ]
+  },
+  {
+    "cardIndex": 200024,
+    "effects": [
+      "lose_banish_hand_draw"
+    ]
+  },
+  {
+    "cardIndex": 200025,
+    "effects": [
+      "lose_mill_3"
+    ]
+  },
+  {
+    "cardIndex": 200026,
+    "effects": [
+      "draw_2"
+    ]
+  },
+  {
+    "cardIndex": 200027,
+    "effects": [
+      "draw_2"
+    ]
+  },
+  {
+    "cardIndex": 200033,
+    "effects": [
+      "win_play_free_score",
+      "draw_2"
+    ]
+  },
+  {
+    "cardIndex": 200034,
+    "effects": [
+      "win_play_free_score"
+    ]
+  },
+  {
+    "cardIndex": 200055,
+    "effects": [
+      "win_play_free_score"
+    ]
+  },
+  {
+    "cardIndex": 200056,
+    "effects": [
+      "win_play_free_score"
+    ]
+  },
+  {
+    "cardIndex": 200058,
+    "effects": [
+      "win_play_free_score"
+    ]
+  },
+  {
+    "cardIndex": 200067,
+    "effects": [
+      "win_play_free_score"
+    ]
+  },
+  {
+    "cardIndex": 200068,
+    "effects": [
+      "draw_2"
+    ]
+  },
+  {
+    "cardIndex": 200069,
+    "effects": [
+      "draw_2"
+    ]
+  },
+  {
+    "cardIndex": 200081,
+    "effects": [
+      "draw_1"
+    ]
+  },
+  {
+    "cardIndex": 200092,
+    "effects": [
+      "win_play_free_score"
+    ]
+  },
+  {
+    "cardIndex": 200096,
+    "effects": [
+      "win_play_free_score"
+    ]
+  },
+  {
+    "cardIndex": 200102,
+    "effects": [
+      "win_play_free_score"
+    ]
+  },
+  {
+    "cardIndex": 200103,
+    "effects": [
+      "draw_2"
+    ]
+  },
+  {
+    "cardIndex": 200104,
+    "effects": [
+      "win_play_free_score",
+      "draw_both_1",
+      "draw_1"
+    ]
+  },
+  {
+    "cardIndex": 200107,
+    "effects": [
+      "win_draw_until_odd"
+    ]
+  },
+  {
+    "cardIndex": 200108,
+    "effects": [
+      "win_play_free_score"
+    ]
+  },
+  {
+    "cardIndex": 200109,
+    "effects": [
+      "win_play_free_score"
+    ]
+  },
+  {
+    "cardIndex": 200110,
+    "effects": [
+      "win_play_free_score"
+    ]
+  },
+  {
+    "cardIndex": 200127,
+    "effects": [
+      "win_play_free_score"
+    ]
+  },
+  {
+    "cardIndex": 200137,
+    "effects": [
+      "win_play_free_score"
+    ]
+  },
+  {
+    "cardIndex": 200145,
+    "effects": [
+      "win_play_free_score"
+    ]
+  },
+  {
+    "cardIndex": 300001,
+    "effects": [
+      "lose_mill_5"
+    ]
+  },
+  {
+    "cardIndex": 300002,
+    "effects": [
+      "lose_mill_4"
+    ]
+  },
+  {
+    "cardIndex": 300006,
+    "effects": [
+      "lose_mill_5"
+    ]
+  },
+  {
+    "cardIndex": 300007,
+    "effects": [
+      "lose_mill_3"
+    ]
+  },
+  {
+    "cardIndex": 300008,
+    "effects": [
+      "lose_mill_5"
+    ]
+  },
+  {
+    "cardIndex": 300009,
+    "effects": [
+      "win_draw_1"
+    ]
+  },
+  {
+    "cardIndex": 300010,
+    "effects": [
+      "lose_banish_deck_3"
+    ]
+  },
+  {
+    "cardIndex": 300012,
+    "effects": [
+      "lose_banish_deck_4"
+    ]
+  },
+  {
+    "cardIndex": 300014,
+    "effects": [
+      "lose_mill_4"
+    ]
+  },
+  {
+    "cardIndex": 300015,
+    "effects": [
+      "lose_mill_3"
+    ]
+  },
+  {
+    "cardIndex": 300016,
+    "effects": [
+      "lose_mill_4"
+    ]
+  },
+  {
+    "cardIndex": 300017,
+    "effects": [
+      "lose_mill_4"
+    ]
+  },
+  {
+    "cardIndex": 300018,
+    "effects": [
+      "win_draw_2",
+      "win_draw_1",
+      "lose_mill_4"
+    ]
+  },
+  {
+    "cardIndex": 300019,
+    "effects": [
+      "lose_mill_5"
+    ]
+  },
+  {
+    "cardIndex": 300020,
+    "effects": [
+      "lose_mill_3"
+    ]
+  },
+  {
+    "cardIndex": 300022,
+    "effects": [
+      "win_draw_1"
+    ]
+  },
+  {
+    "cardIndex": 300024,
+    "effects": [
+      "lose_mill_4"
+    ]
+  },
+  {
+    "cardIndex": 300025,
+    "effects": [
+      "lose_mill_3"
+    ]
+  },
+  {
+    "cardIndex": 300026,
+    "effects": [
+      "lose_mill_3"
+    ]
+  },
+  {
+    "cardIndex": 300027,
+    "effects": [
+      "lose_mill_4"
+    ]
+  },
+  {
+    "cardIndex": 300029,
+    "effects": [
+      "lose_mill_4"
+    ]
+  },
+  {
+    "cardIndex": 300033,
+    "effects": [
+      "win_play_free_score"
+    ]
+  },
+  {
+    "cardIndex": 300041,
+    "effects": [
+      "win_play_free_score"
+    ]
+  },
+  {
+    "cardIndex": 300054,
+    "effects": [
+      "win_play_free_score"
+    ]
+  },
+  {
+    "cardIndex": 300057,
+    "effects": [
+      "draw_1"
+    ]
+  },
+  {
+    "cardIndex": 300067,
+    "effects": [
+      "draw_1"
+    ]
+  },
+  {
+    "cardIndex": 300073,
+    "effects": [
+      "win_play_free_score"
+    ]
+  },
+  {
+    "cardIndex": 300095,
+    "effects": [
+      "draw_1"
+    ]
+  },
+  {
+    "cardIndex": 300096,
+    "effects": [
+      "win_play_free_score"
+    ]
+  },
+  {
+    "cardIndex": 300104,
+    "effects": [
+      "win_play_free_score"
+    ]
+  },
+  {
+    "cardIndex": 300107,
+    "effects": [
+      "win_play_free_score"
+    ]
+  },
+  {
+    "cardIndex": 300111,
+    "effects": [
+      "draw_2"
+    ]
+  },
+  {
+    "cardIndex": 300112,
+    "effects": [
+      "draw_2"
+    ]
+  },
+  {
+    "cardIndex": 300115,
+    "effects": [
+      "win_play_free_score"
+    ]
+  },
+  {
+    "cardIndex": 300117,
+    "effects": [
+      "win_play_free_score"
+    ]
+  },
+  {
+    "cardIndex": 300120,
+    "effects": [
+      "win_play_free_score"
+    ]
+  },
+  {
+    "cardIndex": 300131,
+    "effects": [
+      "win_play_free_score"
+    ]
+  },
+  {
+    "cardIndex": 300142,
+    "effects": [
+      "win_play_free_score",
+      "draw_2"
+    ]
+  },
+  {
+    "cardIndex": 300144,
+    "effects": [
+      "draw_2"
+    ]
+  },
+  {
+    "cardIndex": 300146,
+    "effects": [
+      "draw_1"
+    ]
+  },
+  {
+    "cardIndex": 300155,
+    "effects": [
+      "win_play_free_score"
+    ]
+  },
+  {
+    "cardIndex": 300162,
+    "effects": [
+      "win_play_free_score"
+    ]
+  },
+  {
+    "cardIndex": 300174,
+    "effects": [
+      "draw_2"
+    ]
+  },
+  {
+    "cardIndex": 300176,
+    "effects": [
+      "draw_1"
+    ]
+  },
+  {
+    "cardIndex": 500001,
+    "effects": [
+      "mill_4"
+    ]
+  },
+  {
+    "cardIndex": 500002,
+    "effects": [
+      "mill_3"
+    ]
+  },
+  {
+    "cardIndex": 500003,
+    "effects": [
+      "banish_deck_6"
+    ]
+  },
+  {
+    "cardIndex": 500004,
+    "effects": [
+      "mill_5"
+    ]
+  },
+  {
+    "cardIndex": 500005,
+    "effects": [
+      "win_draw_1",
+      "mill_3"
+    ]
+  },
+  {
+    "cardIndex": 500006,
+    "effects": [
+      "mill_4"
+    ]
+  },
+  {
+    "cardIndex": 500007,
+    "effects": [
+      "mill_3"
+    ]
+  },
+  {
+    "cardIndex": 500008,
+    "effects": [
+      "win_mill_2",
+      "mill_4"
+    ]
+  },
+  {
+    "cardIndex": 500009,
+    "effects": [
+      "mill_3"
+    ]
+  },
+  {
+    "cardIndex": 500010,
+    "effects": [
+      "mill_4"
+    ]
+  },
+  {
+    "cardIndex": 500011,
+    "effects": [
+      "mill_3"
+    ]
+  },
+  {
+    "cardIndex": 500012,
+    "effects": [
+      "mill_4"
+    ]
+  },
+  {
+    "cardIndex": 500013,
+    "effects": [
+      "mill_5"
+    ]
+  },
+  {
+    "cardIndex": 500015,
+    "effects": [
+      "mill_5"
+    ]
+  },
+  {
+    "cardIndex": 500016,
+    "effects": [
+      "win_mill_2",
+      "mill_3"
+    ]
+  },
+  {
+    "cardIndex": 500017,
+    "effects": [
+      "win_draw_1",
+      "mill_3"
+    ]
+  },
+  {
+    "cardIndex": 500018,
+    "effects": [
+      "mill_4"
+    ]
+  },
+  {
+    "cardIndex": 500019,
+    "effects": [
+      "mill_3"
+    ]
+  },
+  {
+    "cardIndex": 500020,
+    "effects": [
+      "win_mill_2",
+      "mill_4"
+    ]
+  },
+  {
+    "cardIndex": 500021,
+    "effects": [
+      "win_mill_2",
+      "mill_3"
+    ]
+  },
+  {
+    "cardIndex": 500022,
+    "effects": [
+      "banish_deck_3"
+    ]
+  },
+  {
+    "cardIndex": 500023,
+    "effects": [
+      "mill_4"
+    ]
+  },
+  {
+    "cardIndex": 500024,
+    "effects": [
+      "win_draw_1",
+      "mill_3"
+    ]
+  },
+  {
+    "cardIndex": 500025,
+    "effects": [
+      "win_mill_2",
+      "lose_discard_1"
+    ]
+  },
+  {
+    "cardIndex": 500026,
+    "effects": [
+      "mill_5"
+    ]
+  },
+  {
+    "cardIndex": 500027,
+    "effects": [
+      "banish_deck_4"
+    ]
+  },
+  {
+    "cardIndex": 500028,
+    "effects": [
+      "mill_5"
+    ]
+  },
+  {
+    "cardIndex": 500029,
+    "effects": [
+      "mill_3"
+    ]
+  },
+  {
+    "cardIndex": 500030,
+    "effects": [
+      "win_mill_2",
+      "mill_4"
+    ]
+  },
+  {
+    "cardIndex": 500031,
+    "effects": [
+      "draw_1"
+    ]
+  },
+  {
+    "cardIndex": 500044,
+    "effects": [
+      "win_play_free_score"
+    ]
+  },
+  {
+    "cardIndex": 500049,
+    "effects": [
+      "discard_opp_char_any"
+    ]
+  },
+  {
+    "cardIndex": 500055,
+    "effects": [
+      "win_play_free_score"
+    ]
+  },
+  {
+    "cardIndex": 500057,
+    "effects": [
+      "win_play_free_score"
+    ]
+  },
+  {
+    "cardIndex": 500058,
+    "effects": [
+      "win_play_free_score"
+    ]
+  },
+  {
+    "cardIndex": 500064,
+    "effects": [
+      "discard_opp_char_any",
+      "win_play_free_score"
+    ]
+  },
+  {
+    "cardIndex": 500066,
+    "effects": [
+      "draw_1"
+    ]
+  },
+  {
+    "cardIndex": 500072,
+    "effects": [
+      "win_play_free_score"
+    ]
+  },
+  {
+    "cardIndex": 500079,
+    "effects": [
+      "draw_1"
+    ]
+  },
+  {
+    "cardIndex": 500091,
+    "effects": [
+      "win_play_free_score"
+    ]
+  },
+  {
+    "cardIndex": 500101,
+    "effects": [
+      "draw_1"
+    ]
+  },
+  {
+    "cardIndex": 500105,
+    "effects": [
+      "win_play_free_score"
+    ]
+  },
+  {
+    "cardIndex": 500112,
+    "effects": [
+      "win_play_free_score"
+    ]
+  },
+  {
+    "cardIndex": 500113,
+    "effects": [
+      "win_play_free_score"
+    ]
+  },
+  {
+    "cardIndex": 500145,
+    "effects": [
+      "win_play_free_score"
+    ]
+  },
+  {
+    "cardIndex": 500175,
+    "effects": [
+      "win_play_free_score"
+    ]
+  },
+  {
+    "cardIndex": 100001,
+    "effects": [
+      "discard_both_hand_1",
+      "lose_mill_5"
+    ]
+  },
+  {
+    "cardIndex": 100002,
+    "effects": [
+      "boost_terracid_20"
+    ]
+  },
+  {
+    "cardIndex": 100003,
+    "effects": [
+      "win_take_discard_1",
+      "lose_mill_3"
+    ]
+  },
+  {
+    "cardIndex": 100004,
+    "effects": [
+      "draw_both_1"
+    ]
+  },
+  {
+    "cardIndex": 100005,
+    "effects": [
+      "draw_both_1",
+      "terrain_draw_1_turn_start"
+    ]
+  },
+  {
+    "cardIndex": 100007,
+    "effects": [
+      "draw_both_1",
+      "terrain_draw_1_turn_start"
+    ]
+  },
+  {
+    "cardIndex": 100008,
+    "effects": [
+      "lose_mill_3"
+    ]
+  },
+  {
+    "cardIndex": 100009,
+    "effects": [
+      "draw_both_1"
+    ]
+  },
+  {
+    "cardIndex": 100010,
+    "effects": [
+      "draw_both_1"
+    ]
+  },
+  {
+    "cardIndex": 100011,
+    "effects": [
+      "draw_both_1"
+    ]
+  },
+  {
+    "cardIndex": 100013,
+    "effects": [
+      "lose_mill_3"
+    ]
+  },
+  {
+    "cardIndex": 100014,
+    "effects": [
+      "lose_mill_3"
+    ]
+  },
+  {
+    "cardIndex": 100015,
+    "effects": [
+      "lose_mill_3"
+    ]
+  },
+  {
+    "cardIndex": 100016,
+    "effects": [
+      "lose_mill_3"
+    ]
+  },
+  {
+    "cardIndex": 100017,
+    "effects": [
+      "boost_laink_20"
+    ]
+  },
+  {
+    "cardIndex": 100018,
+    "effects": [
+      "lose_mill_3"
+    ]
+  },
+  {
+    "cardIndex": 100019,
+    "effects": [
+      "lose_mill_5"
+    ]
+  },
+  {
+    "cardIndex": 100020,
+    "effects": [
+      "lose_mill_4"
+    ]
+  },
+  {
+    "cardIndex": 100021,
+    "effects": [
+      "lose_mill_4"
+    ]
+  },
+  {
+    "cardIndex": 100022,
+    "effects": [
+      "lose_mill_4"
+    ]
+  },
+  {
+    "cardIndex": 100023,
+    "effects": [
+      "win_take_discard_1",
+      "lose_mill_5"
+    ]
+  },
+  {
+    "cardIndex": 100024,
+    "effects": [
+      "lose_mill_4"
+    ]
+  },
+  {
+    "cardIndex": 100025,
+    "effects": [
+      "win_take_discard_1",
+      "lose_mill_4"
+    ]
+  },
+  {
+    "cardIndex": 100026,
+    "effects": [
+      "discard_both_hand_1"
+    ]
+  },
+  {
+    "cardIndex": 100027,
+    "effects": [
+      "lose_mill_3"
+    ]
+  },
+  {
+    "cardIndex": 100028,
+    "effects": [
+      "lose_mill_3"
+    ]
+  },
+  {
+    "cardIndex": 100031,
+    "effects": [
+      "draw_1",
+      "boost_self_20"
+    ]
+  },
+  {
+    "cardIndex": 100032,
+    "effects": [
+      "draw_1"
+    ]
+  },
+  {
+    "cardIndex": 100033,
+    "effects": [
+      "draw_1",
+      "boost_self_20"
+    ]
+  },
+  {
+    "cardIndex": 100034,
+    "effects": [
+      "boost_self_20"
+    ]
+  },
+  {
+    "cardIndex": 100035,
+    "effects": [
+      "discard_opp_hand_1"
+    ]
+  },
+  {
+    "cardIndex": 100036,
+    "effects": [
+      "discard_opp_hand_1"
+    ]
+  },
+  {
+    "cardIndex": 100037,
+    "effects": [
+      "discard_opp_hand_1"
+    ]
+  },
+  {
+    "cardIndex": 100038,
+    "effects": [
+      "draw_1",
+      "discard_opp_hand_1",
+      "boost_self_20"
+    ]
+  },
+  {
+    "cardIndex": 100039,
+    "effects": [
+      "discard_opp_hand_1"
+    ]
+  },
+  {
+    "cardIndex": 100040,
+    "effects": [
+      "draw_2",
+      "discard_opp_hand_1"
+    ]
+  },
+  {
+    "cardIndex": 100041,
+    "effects": [
+      "draw_2",
+      "discard_opp_hand_1"
+    ]
+  },
+  {
+    "cardIndex": 100042,
+    "effects": [
+      "discard_opp_hand_1"
+    ]
+  },
+  {
+    "cardIndex": 100043,
+    "effects": [
+      "discard_opp_hand_1"
+    ]
+  },
+  {
+    "cardIndex": 100044,
+    "effects": [
+      "discard_opp_hand_1"
+    ]
+  },
+  {
+    "cardIndex": 100045,
+    "effects": [
+      "boost_self_20"
+    ]
+  },
+  {
+    "cardIndex": 100046,
+    "effects": [
+      "boost_self_20"
+    ]
+  },
+  {
+    "cardIndex": 100047,
+    "effects": [
+      "boost_self_45"
+    ]
+  },
+  {
+    "cardIndex": 100048,
+    "effects": [
+      "boost_self_30"
+    ]
+  },
+  {
+    "cardIndex": 100049,
+    "effects": [
+      "discard_opp_hand_1",
+      "boost_self_30"
+    ]
+  },
+  {
+    "cardIndex": 100050,
+    "effects": [
+      "discard_opp_hand_1",
+      "boost_self_20"
+    ]
+  },
+  {
+    "cardIndex": 100051,
+    "effects": [
+      "boost_self_30"
+    ]
+  },
+  {
+    "cardIndex": 100052,
+    "effects": [
+      "boost_self_30"
+    ]
+  },
+  {
+    "cardIndex": 100053,
+    "effects": [
+      "boost_self_30"
+    ]
+  },
+  {
+    "cardIndex": 100054,
+    "effects": [
+      "discard_opp_hand_1"
+    ]
+  },
+  {
+    "cardIndex": 100055,
+    "effects": [
+      "discard_opp_hand_1"
+    ]
+  },
+  {
+    "cardIndex": 100056,
+    "effects": [
+      "boost_self_15"
+    ]
+  },
+  {
+    "cardIndex": 100057,
+    "effects": [
+      "draw_1"
+    ]
+  },
+  {
+    "cardIndex": 100058,
+    "effects": [
+      "boost_self_15"
+    ]
+  },
+  {
+    "cardIndex": 100059,
+    "effects": [
+      "boost_self_15"
+    ]
+  },
+  {
+    "cardIndex": 100060,
+    "effects": [
+      "discard_opp_hand_1"
+    ]
+  },
+  {
+    "cardIndex": 100061,
+    "effects": [
+      "discard_opp_hand_1"
+    ]
+  },
+  {
+    "cardIndex": 100062,
+    "effects": [
+      "boost_self_20"
+    ]
+  },
+  {
+    "cardIndex": 100063,
+    "effects": [
+      "draw_1",
+      "boost_self_20"
+    ]
+  },
+  {
+    "cardIndex": 100064,
+    "effects": [
+      "boost_self_30"
+    ]
+  },
+  {
+    "cardIndex": 100065,
+    "effects": [
+      "discard_opp_hand_1"
+    ]
+  },
+  {
+    "cardIndex": 100066,
+    "effects": [
+      "boost_self_20"
+    ]
+  },
+  {
+    "cardIndex": 100067,
+    "effects": [
+      "boost_self_20"
+    ]
+  },
+  {
+    "cardIndex": 100068,
+    "effects": [
+      "boost_self_75"
+    ]
+  },
+  {
+    "cardIndex": 100069,
+    "effects": [
+      "boost_self_90"
+    ]
+  },
+  {
+    "cardIndex": 100070,
+    "effects": [
+      "boost_self_20"
+    ]
+  },
+  {
+    "cardIndex": 100071,
+    "effects": [
+      "boost_self_20"
+    ]
+  },
+  {
+    "cardIndex": 100072,
+    "effects": [
+      "discard_opp_hand_1",
+      "boost_self_20"
+    ]
+  },
+  {
+    "cardIndex": 100073,
+    "effects": [
+      "boost_self_20"
+    ]
+  },
+  {
+    "cardIndex": 100074,
+    "effects": [
+      "boost_self_60"
+    ]
+  },
+  {
+    "cardIndex": 100075,
+    "effects": [
+      "boost_self_45"
+    ]
+  },
+  {
+    "cardIndex": 100076,
+    "effects": [
+      "discard_opp_hand_1",
+      "boost_self_20"
+    ]
+  },
+  {
+    "cardIndex": 100077,
+    "effects": [
+      "boost_self_30"
+    ]
+  },
+  {
+    "cardIndex": 100078,
+    "effects": [
+      "discard_opp_hand_1"
+    ]
+  },
+  {
+    "cardIndex": 100079,
+    "effects": [
+      "discard_opp_hand_1"
+    ]
+  },
+  {
+    "cardIndex": 100080,
+    "effects": [
+      "boost_self_30"
+    ]
+  },
+  {
+    "cardIndex": 100081,
+    "effects": [
+      "discard_opp_hand_1"
+    ]
+  },
+  {
+    "cardIndex": 100082,
+    "effects": [
+      "discard_opp_hand_1"
+    ]
+  },
+  {
+    "cardIndex": 100083,
+    "effects": [
+      "draw_1"
+    ]
+  },
+  {
+    "cardIndex": 100084,
+    "effects": [
+      "draw_1"
+    ]
+  },
+  {
+    "cardIndex": 100085,
+    "effects": [
+      "discard_opp_hand_1"
+    ]
+  },
+  {
+    "cardIndex": 100086,
+    "effects": [
+      "discard_opp_hand_1",
+      "boost_self_30"
+    ]
+  },
+  {
+    "cardIndex": 100087,
+    "effects": [
+      "draw_1",
+      "boost_self_30"
+    ]
+  },
+  {
+    "cardIndex": 100088,
+    "effects": [
+      "draw_1",
+      "boost_self_30"
+    ]
+  },
+  {
+    "cardIndex": 100089,
+    "effects": [
+      "boost_self_75"
+    ]
+  },
+  {
+    "cardIndex": 100090,
+    "effects": [
+      "boost_self_60"
+    ]
+  },
+  {
+    "cardIndex": 100091,
+    "effects": [
+      "discard_opp_hand_1"
+    ]
+  },
+  {
+    "cardIndex": 100092,
+    "effects": [
+      "draw_1",
+      "discard_opp_hand_1"
+    ]
+  },
+  {
+    "cardIndex": 100093,
+    "effects": [
+      "draw_1"
+    ]
+  },
+  {
+    "cardIndex": 100094,
+    "effects": [
+      "discard_opp_hand_1"
+    ]
+  },
+  {
+    "cardIndex": 100095,
+    "effects": [
+      "draw_1",
+      "boost_self_30"
+    ]
+  },
+  {
+    "cardIndex": 100096,
+    "effects": [
+      "boost_self_30"
+    ]
+  },
+  {
+    "cardIndex": 100097,
+    "effects": [
+      "discard_opp_hand_1"
+    ]
+  },
+  {
+    "cardIndex": 100098,
+    "effects": [
+      "draw_1",
+      "discard_opp_hand_1"
+    ]
+  },
+  {
+    "cardIndex": 100099,
+    "effects": [
+      "discard_opp_hand_1",
+      "boost_self_30"
+    ]
+  },
+  {
+    "cardIndex": 100100,
+    "effects": [
+      "draw_1",
+      "discard_opp_hand_1"
+    ]
+  },
+  {
+    "cardIndex": 100101,
+    "effects": [
+      "discard_opp_hand_1"
+    ]
+  },
+  {
+    "cardIndex": 100102,
+    "effects": [
+      "boost_self_20"
+    ]
+  },
+  {
+    "cardIndex": 100103,
+    "effects": [
+      "boost_self_30"
+    ]
+  },
+  {
+    "cardIndex": 100104,
+    "effects": [
+      "draw_1"
+    ]
+  },
+  {
+    "cardIndex": 100105,
+    "effects": [
+      "draw_1"
+    ]
+  },
+  {
+    "cardIndex": 100106,
+    "effects": [
+      "discard_opp_hand_1"
+    ]
+  },
+  {
+    "cardIndex": 100107,
+    "effects": [
+      "discard_opp_hand_1"
+    ]
+  },
+  {
+    "cardIndex": 100108,
+    "effects": [
+      "discard_opp_hand_1"
+    ]
+  },
+  {
+    "cardIndex": 100109,
+    "effects": [
+      "discard_opp_hand_1"
+    ]
+  },
+  {
+    "cardIndex": 100110,
+    "effects": [
+      "discard_opp_hand_1",
+      "boost_self_30"
+    ]
+  },
+  {
+    "cardIndex": 100111,
+    "effects": [
+      "discard_opp_hand_1",
+      "boost_self_30"
+    ]
+  },
+  {
+    "cardIndex": 100112,
+    "effects": [
+      "discard_opp_hand_1"
+    ]
+  },
+  {
+    "cardIndex": 100113,
+    "effects": [
+      "discard_opp_hand_1"
+    ]
+  },
+  {
+    "cardIndex": 100114,
+    "effects": [
+      "boost_self_30"
+    ]
+  },
+  {
+    "cardIndex": 100115,
+    "effects": [
+      "boost_self_30"
+    ]
+  },
+  {
+    "cardIndex": 100116,
+    "effects": [
+      "draw_1"
+    ]
+  },
+  {
+    "cardIndex": 100117,
+    "effects": [
+      "boost_self_20"
+    ]
+  },
+  {
+    "cardIndex": 100118,
+    "effects": [
+      "boost_self_75"
+    ]
+  },
+  {
+    "cardIndex": 100119,
+    "effects": [
+      "discard_opp_hand_1"
+    ]
+  },
+  {
+    "cardIndex": 100120,
+    "effects": [
+      "discard_opp_hand_1"
+    ]
+  },
+  {
+    "cardIndex": 100121,
+    "effects": [
+      "boost_self_60"
+    ]
+  },
+  {
+    "cardIndex": 100122,
+    "effects": [
+      "boost_self_20"
+    ]
+  },
+  {
+    "cardIndex": 100123,
+    "effects": [
+      "discard_opp_hand_1"
+    ]
+  },
+  {
+    "cardIndex": 100124,
+    "effects": [
+      "boost_self_15"
+    ]
+  },
+  {
+    "cardIndex": 100125,
+    "effects": [
+      "boost_self_15"
+    ]
+  },
+  {
+    "cardIndex": 100126,
+    "effects": [
+      "discard_opp_hand_1"
+    ]
+  },
+  {
+    "cardIndex": 100127,
+    "effects": [
+      "draw_1",
+      "boost_self_30"
+    ]
+  },
+  {
+    "cardIndex": 100128,
+    "effects": [
+      "draw_2"
+    ]
+  },
+  {
+    "cardIndex": 100129,
+    "effects": [
+      "discard_opp_hand_1"
+    ]
+  },
+  {
+    "cardIndex": 100130,
+    "effects": [
+      "discard_opp_hand_1"
+    ]
+  },
+  {
+    "cardIndex": 100131,
+    "effects": [
+      "boost_self_30"
+    ]
+  },
+  {
+    "cardIndex": 100132,
+    "effects": [
+      "discard_opp_hand_1",
+      "boost_self_30"
+    ]
+  },
+  {
+    "cardIndex": 100133,
+    "effects": [
+      "boost_self_20"
+    ]
+  },
+  {
+    "cardIndex": 100134,
+    "effects": [
+      "boost_self_30"
+    ]
+  },
+  {
+    "cardIndex": 100135,
+    "effects": [
+      "draw_1",
+      "discard_opp_hand_1"
+    ]
+  },
+  {
+    "cardIndex": 100136,
+    "effects": [
+      "draw_1",
+      "discard_opp_hand_1"
+    ]
+  },
+  {
+    "cardIndex": 100137,
+    "effects": [
+      "discard_opp_hand_1"
+    ]
+  },
+  {
+    "cardIndex": 100138,
+    "effects": [
+      "discard_opp_hand_1"
+    ]
+  },
+  {
+    "cardIndex": 100139,
+    "effects": [
+      "draw_1",
+      "boost_self_20"
+    ]
+  },
+  {
+    "cardIndex": 100140,
+    "effects": [
+      "draw_1"
+    ]
+  },
+  {
+    "cardIndex": 100141,
+    "effects": [
+      "boost_self_20"
+    ]
+  },
+  {
+    "cardIndex": 100142,
+    "effects": [
+      "boost_self_20"
+    ]
+  },
+  {
+    "cardIndex": 100143,
+    "effects": [
+      "boost_self_20"
+    ]
+  },
+  {
+    "cardIndex": 100144,
+    "effects": [
+      "boost_self_20"
+    ]
+  },
+  {
+    "cardIndex": 100145,
+    "effects": [
+      "boost_self_30"
+    ]
+  },
+  {
+    "cardIndex": 100146,
+    "effects": [
+      "boost_self_20"
+    ]
+  },
+  {
+    "cardIndex": 100147,
+    "effects": [
+      "discard_opp_hand_1"
+    ]
+  },
+  {
+    "cardIndex": 100148,
+    "effects": [
+      "boost_self_15"
+    ]
+  },
+  {
+    "cardIndex": 100149,
+    "effects": [
+      "discard_opp_hand_1"
+    ]
+  },
+  {
+    "cardIndex": 100150,
+    "effects": [
+      "discard_opp_hand_1"
+    ]
+  },
+  {
+    "cardIndex": 100151,
+    "effects": [
+      "discard_opp_hand_1",
+      "boost_self_30"
+    ]
+  },
+  {
+    "cardIndex": 100152,
+    "effects": [
+      "discard_opp_hand_1",
+      "boost_self_30"
+    ]
+  },
+  {
+    "cardIndex": 100153,
+    "effects": [
+      "discard_opp_hand_1"
+    ]
+  },
+  {
+    "cardIndex": 100154,
+    "effects": [
+      "discard_opp_hand_1"
+    ]
+  },
+  {
+    "cardIndex": 100155,
+    "effects": [
+      "discard_opp_hand_1"
+    ]
+  },
+  {
+    "cardIndex": 100156,
+    "effects": [
+      "discard_opp_hand_1"
+    ]
+  },
+  {
+    "cardIndex": 100157,
+    "effects": [
+      "discard_opp_hand_1",
+      "boost_self_30"
+    ]
+  },
+  {
+    "cardIndex": 100158,
+    "effects": [
+      "discard_opp_hand_1",
+      "boost_self_20"
+    ]
+  },
+  {
+    "cardIndex": 100159,
+    "effects": [
+      "discard_opp_hand_1",
+      "boost_self_30"
+    ]
+  },
+  {
+    "cardIndex": 100160,
+    "effects": [
+      "draw_1",
+      "boost_self_30"
+    ]
+  },
+  {
+    "cardIndex": 100161,
+    "effects": [
+      "boost_self_75"
+    ]
+  },
+  {
+    "cardIndex": 100162,
+    "effects": [
+      "boost_self_60"
+    ]
+  },
+  {
+    "cardIndex": 100163,
+    "effects": [
+      "discard_opp_hand_1"
+    ]
+  },
+  {
+    "cardIndex": 100164,
+    "effects": [
+      "draw_2"
+    ]
+  },
+  {
+    "cardIndex": 100165,
+    "effects": [
+      "draw_1"
+    ]
+  },
+  {
+    "cardIndex": 100166,
+    "effects": [
+      "draw_1"
+    ]
+  },
+  {
+    "cardIndex": 100167,
+    "effects": [
+      "discard_opp_hand_1",
+      "boost_self_30"
+    ]
+  },
+  {
+    "cardIndex": 100168,
+    "effects": [
+      "draw_1",
+      "boost_self_30"
+    ]
+  },
+  {
+    "cardIndex": 100169,
+    "effects": [
+      "draw_1",
+      "boost_self_20"
+    ]
+  },
+  {
+    "cardIndex": 100170,
+    "effects": [
+      "draw_1"
+    ]
+  },
+  {
+    "cardIndex": 100171,
+    "effects": [
+      "boost_self_20"
+    ]
+  },
+  {
+    "cardIndex": 100172,
+    "effects": [
+      "boost_self_20"
+    ]
+  },
+  {
+    "cardIndex": 100173,
+    "effects": [
+      "discard_opp_hand_1"
+    ]
+  },
+  {
+    "cardIndex": 100174,
+    "effects": [
+      "discard_opp_hand_1"
+    ]
+  },
+  {
+    "cardIndex": 100175,
+    "effects": [
+      "boost_self_20"
+    ]
+  },
+  {
+    "cardIndex": 100176,
+    "effects": [
+      "boost_self_30"
+    ]
+  },
+  {
+    "cardIndex": 100177,
+    "effects": [
+      "discard_opp_hand_1"
+    ]
+  },
+  {
+    "cardIndex": 100178,
+    "effects": [
+      "boost_self_15"
+    ]
+  },
+  {
+    "cardIndex": 100179,
+    "effects": [
+      "discard_opp_hand_1"
+    ]
+  },
+  {
+    "cardIndex": 100180,
+    "effects": [
+      "discard_opp_hand_1"
+    ]
+  },
+  {
+    "cardIndex": 400001,
+    "effects": [
+      "win_draw_1",
+      "lose_mill_4"
+    ]
+  },
+  {
+    "cardIndex": 400002,
+    "effects": [
+      "win_draw_2",
+      "win_draw_1",
+      "lose_mill_4"
+    ]
+  },
+  {
+    "cardIndex": 400003,
+    "effects": [
+      "lose_mill_3"
+    ]
+  },
+  {
+    "cardIndex": 400004,
+    "effects": [
+      "lose_mill_4"
+    ]
+  },
+  {
+    "cardIndex": 400006,
+    "effects": [
+      "lose_mill_4"
+    ]
+  },
+  {
+    "cardIndex": 400007,
+    "effects": [
+      "lose_mill_5"
+    ]
+  },
+  {
+    "cardIndex": 400008,
+    "effects": [
+      "lose_mill_3"
+    ]
+  },
+  {
+    "cardIndex": 400009,
+    "effects": [
+      "lose_mill_5"
+    ]
+  },
+  {
+    "cardIndex": 400010,
+    "effects": [
+      "lose_mill_1"
+    ]
+  },
+  {
+    "cardIndex": 400011,
+    "effects": [
+      "lose_mill_4"
+    ]
+  },
+  {
+    "cardIndex": 400013,
+    "effects": [
+      "lose_mill_4"
+    ]
+  },
+  {
+    "cardIndex": 400014,
+    "effects": [
+      "lose_mill_1"
+    ]
+  },
+  {
+    "cardIndex": 400015,
+    "effects": [
+      "lose_mill_5"
+    ]
+  },
+  {
+    "cardIndex": 400016,
+    "effects": [
+      "win_draw_1",
+      "lose_mill_3"
+    ]
+  },
+  {
+    "cardIndex": 400017,
+    "effects": [
+      "lose_mill_4"
+    ]
+  },
+  {
+    "cardIndex": 400018,
+    "effects": [
+      "lose_mill_4"
+    ]
+  },
+  {
+    "cardIndex": 400019,
+    "effects": [
+      "lose_mill_3"
+    ]
+  },
+  {
+    "cardIndex": 400020,
+    "effects": [
+      "lose_mill_3"
+    ]
+  },
+  {
+    "cardIndex": 400021,
+    "effects": [
+      "lose_mill_2"
+    ]
+  },
+  {
+    "cardIndex": 400022,
+    "effects": [
+      "lose_mill_6"
+    ]
+  },
+  {
+    "cardIndex": 400023,
+    "effects": [
+      "lose_mill_3"
+    ]
+  },
+  {
+    "cardIndex": 400024,
+    "effects": [
+      "lose_mill_4"
+    ]
+  },
+  {
+    "cardIndex": 400025,
+    "effects": [
+      "lose_mill_4"
+    ]
+  },
+  {
+    "cardIndex": 400026,
+    "effects": [
+      "lose_mill_2"
+    ]
+  },
+  {
+    "cardIndex": 400027,
+    "effects": [
+      "win_draw_3",
+      "win_draw_1"
+    ]
+  },
+  {
+    "cardIndex": 400028,
+    "effects": [
+      "lose_mill_4"
+    ]
+  },
+  {
+    "cardIndex": 400033,
+    "effects": [
+      "win_play_free_score"
+    ]
+  },
+  {
+    "cardIndex": 400035,
+    "effects": [
+      "win_play_free_score"
+    ]
+  },
+  {
+    "cardIndex": 400037,
+    "effects": [
+      "win_play_free_score"
+    ]
+  },
+  {
+    "cardIndex": 400039,
+    "effects": [
+      "win_play_free_score"
+    ]
+  },
+  {
+    "cardIndex": 400044,
+    "effects": [
+      "win_play_free_score"
+    ]
+  },
+  {
+    "cardIndex": 400047,
+    "effects": [
+      "win_play_free_score"
+    ]
+  },
+  {
+    "cardIndex": 400049,
+    "effects": [
+      "win_play_free_score"
+    ]
+  },
+  {
+    "cardIndex": 400052,
+    "effects": [
+      "win_play_free_score"
+    ]
+  },
+  {
+    "cardIndex": 400055,
+    "effects": [
+      "win_play_free_score"
+    ]
+  },
+  {
+    "cardIndex": 400059,
+    "effects": [
+      "draw_1"
+    ]
+  },
+  {
+    "cardIndex": 400060,
+    "effects": [
+      "win_play_free_score"
+    ]
+  },
+  {
+    "cardIndex": 400069,
+    "effects": [
+      "draw_2"
+    ]
+  },
+  {
+    "cardIndex": 400071,
+    "effects": [
+      "win_play_free_score"
+    ]
+  },
+  {
+    "cardIndex": 400072,
+    "effects": [
+      "win_play_free_score",
+      "draw_1"
+    ]
+  },
+  {
+    "cardIndex": 400095,
+    "effects": [
+      "draw_2"
+    ]
+  },
+  {
+    "cardIndex": 400100,
+    "effects": [
+      "draw_2"
+    ]
+  },
+  {
+    "cardIndex": 400111,
+    "effects": [
+      "draw_2"
+    ]
+  },
+  {
+    "cardIndex": 400112,
+    "effects": [
+      "draw_2"
+    ]
+  },
+  {
+    "cardIndex": 400122,
+    "effects": [
+      "draw_2"
+    ]
+  },
+  {
+    "cardIndex": 400129,
+    "effects": [
+      "win_play_free_score"
+    ]
+  },
+  {
+    "cardIndex": 400132,
+    "effects": [
+      "draw_1"
+    ]
+  },
+  {
+    "cardIndex": 400136,
+    "effects": [
+      "win_play_free_score"
+    ]
+  },
+  {
+    "cardIndex": 400140,
+    "effects": [
+      "win_play_free_score"
+    ]
+  },
+  {
+    "cardIndex": 400149,
+    "effects": [
+      "win_play_free_score"
+    ]
+  },
+  {
+    "cardIndex": 400160,
+    "effects": [
+      "draw_2"
+    ]
+  },
+  {
+    "cardIndex": 400161,
+    "effects": [
+      "draw_2"
+    ]
+  },
+  {
+    "cardIndex": 400173,
+    "effects": [
+      "win_play_free_score"
+    ]
+  },
+  {
+    "cardIndex": 400179,
+    "effects": [
+      "win_play_free_score"
+    ]
+  }
+]

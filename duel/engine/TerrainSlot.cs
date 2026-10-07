@@ -56,8 +56,8 @@ public sealed class TerrainSlot
     {
         var chars = GetCharacters(player);
         int total = 0;
-        bool isMoria = Card != null && (Card.Name.IndexOf("MORIA", StringComparison.OrdinalIgnoreCase) >= 0 || (Card.EffectIds != null && Card.EffectIds.Contains("boost_laink_20")));
-        bool isPortal = Card != null && (Card.Name.IndexOf("PORTAL", StringComparison.OrdinalIgnoreCase) >= 0 || (Card.EffectIds != null && Card.EffectIds.Contains("boost_terracid_20")));
+        bool isMoria = Card != null && Card.EffectIds != null && Card.EffectIds.Contains("boost_laink_20");
+        bool isPortal = Card != null && Card.EffectIds != null && Card.EffectIds.Contains("boost_terracid_20");
 
         for (int i = 0; i < chars.Count; i++)
         {

@@ -164,7 +164,7 @@ public class DuelSeason4EffectsTests
 
         // Ensure we know the bottom card. Deck is populated in CreateEngine.
         var deck = engine.State.GetDeck(p1);
-        var expectedCard = deck[0];
+        var expectedCard = deck[deck.Count - 1];
 
         int initialHandCount = engine.State.GetHand(p1).Count;
 
