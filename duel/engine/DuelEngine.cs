@@ -109,9 +109,7 @@ public sealed class DuelEngine
                 var s = State.Slots[i];
                 if (!s.IsEmpty && s.IsActive(State.TurnNumber) && s.Card != null)
                 {
-                    if ((s.Card.EffectIds != null && s.Card.EffectIds.Contains("terrain_draw_1_turn_start")) ||
-                        s.Card.Name.IndexOf("RUST", StringComparison.OrdinalIgnoreCase) >= 0 ||
-                        s.Card.Name.IndexOf("GOLF", StringComparison.OrdinalIgnoreCase) >= 0)
+                    if ((s.Card.EffectIds != null && s.Card.EffectIds.Contains("terrain_draw_1_turn_start")))
                     {
                         extraDraw++;
                         Emit(new EffectTriggeredEvent(State.ActivePlayer, "terrain_draw_1_turn_start", s.Card, i));

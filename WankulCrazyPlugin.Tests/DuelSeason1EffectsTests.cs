@@ -17,7 +17,7 @@ public class DuelSeason1EffectsTests
     [Fact]
     public void Moria_Terrain_GivesPlus20ForceToLainkCardsOnly()
     {
-        var moria = new DuelCard("T_Moria", "Moria", CardKind.Terrain, effectIds: new[] { "win_mill_2" });
+        var moria = new DuelCard("T_Moria", "Moria", CardKind.Terrain, effectIds: new[] { "win_mill_2", "boost_laink_20" });
         var slot = new TerrainSlot(0, moria, placedOnTurn: 1, placedBy: PlayerId.Player1);
 
         var lainkCard = new DuelCard("C1", "Laink Guerrier", CardKind.Character, force: 100, effigy: "Laink");
@@ -33,7 +33,7 @@ public class DuelSeason1EffectsTests
     [Fact]
     public void Portal_Terrain_GivesPlus20ForceToTerracidCardsOnly()
     {
-        var portal = new DuelCard("T_Portal", "Portal", CardKind.Terrain, effectIds: new[] { "win_draw_1" });
+        var portal = new DuelCard("T_Portal", "Portal", CardKind.Terrain, effectIds: new[] { "win_draw_1", "boost_terracid_20" });
         var slot = new TerrainSlot(0, portal, placedOnTurn: 1, placedBy: PlayerId.Player1);
 
         var lainkCard = new DuelCard("C1", "Laink Guerrier", CardKind.Character, force: 80, effigy: "Laink");
@@ -97,7 +97,7 @@ public class DuelSeason1EffectsTests
 
         engine.StartDuel(deckP1, deckP2, PlayerId.Player1);
 
-        var moria = new DuelCard("T_Moria", "Moria", CardKind.Terrain, effectIds: new[] { "win_mill_2" });
+        var moria = new DuelCard("T_Moria", "Moria", CardKind.Terrain, effectIds: new[] { "win_mill_2", "boost_laink_20" });
         engine.State.SetSlot(0, moria, placedOnTurn: 0, placedBy: PlayerId.Player1);
 
         // P1 a 1 scoreur avec 100 de force, P2 a 0
