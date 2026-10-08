@@ -496,21 +496,38 @@ namespace WankulCrazyPlugin.duel
                 p2FText.text = "⚡ Force: 0";
                 _slotP2ForceTexts[i] = p2FText;
 
-                // Conteneur dynamique de cartes déployées (Adversaire)
+                // Conteneur dynamique de cartes déployées (Adversaire) - ScrollView
+                var p2ScrollObj = new GameObject("P2Scroll");
+                p2ScrollObj.transform.SetParent(p2Area.transform, false);
+                var p2ScrollRt = p2ScrollObj.AddComponent<RectTransform>();
+                p2ScrollRt.anchorMin = new Vector2(0.02f, 0.04f);
+                p2ScrollRt.anchorMax = new Vector2(0.98f, 0.76f);
+                p2ScrollRt.offsetMin = Vector2.zero;
+                p2ScrollRt.offsetMax = Vector2.zero;
+                var p2Scroll = p2ScrollObj.AddComponent<UnityEngine.UI.ScrollRect>();
+                p2Scroll.horizontal = true;
+                p2Scroll.vertical = false;
+                p2ScrollObj.AddComponent<RectMask2D>();
+
                 var p2CardsContainerObj = new GameObject("P2CardsContainer");
-                p2CardsContainerObj.transform.SetParent(p2Area.transform, false);
+                p2CardsContainerObj.transform.SetParent(p2ScrollObj.transform, false);
                 var p2CCRt = p2CardsContainerObj.AddComponent<RectTransform>();
-                p2CCRt.anchorMin = new Vector2(0.02f, 0.04f);
-                p2CCRt.anchorMax = new Vector2(0.98f, 0.76f);
+                p2CCRt.anchorMin = new Vector2(0f, 0f);
+                p2CCRt.anchorMax = new Vector2(1f, 1f);
                 p2CCRt.offsetMin = Vector2.zero;
                 p2CCRt.offsetMax = Vector2.zero;
-                p2CardsContainerObj.AddComponent<RectMask2D>();
+
                 var p2VLayout = p2CardsContainerObj.AddComponent<HorizontalLayoutGroup>();
                 p2VLayout.spacing = 3;
                 p2VLayout.padding = new RectOffset(2, 2, 2, 2);
-                p2VLayout.childAlignment = TextAnchor.UpperCenter;
+                p2VLayout.childAlignment = TextAnchor.UpperLeft;
                 p2VLayout.childControlWidth = false;
                 p2VLayout.childControlHeight = true;
+
+                var p2Fitter = p2CardsContainerObj.AddComponent<UnityEngine.UI.ContentSizeFitter>();
+                p2Fitter.horizontalFit = UnityEngine.UI.ContentSizeFitter.FitMode.PreferredSize;
+
+                p2Scroll.content = p2CCRt;
                 _slotP2CardsContainers[i] = p2CardsContainerObj.transform;
 
                 // ==================== 2. ZONE MILIEU : TERRAIN ====================
@@ -659,21 +676,38 @@ namespace WankulCrazyPlugin.duel
                 p1FText.text = "⚡ Force: 0";
                 _slotP1ForceTexts[i] = p1FText;
 
-                // Conteneur dynamique de cartes déployées (Joueur)
+                // Conteneur dynamique de cartes déployées (Joueur) - ScrollView
+                var p1ScrollObj = new GameObject("P1Scroll");
+                p1ScrollObj.transform.SetParent(p1Area.transform, false);
+                var p1ScrollRt = p1ScrollObj.AddComponent<RectTransform>();
+                p1ScrollRt.anchorMin = new Vector2(0.02f, 0.04f);
+                p1ScrollRt.anchorMax = new Vector2(0.98f, 0.76f);
+                p1ScrollRt.offsetMin = Vector2.zero;
+                p1ScrollRt.offsetMax = Vector2.zero;
+                var p1Scroll = p1ScrollObj.AddComponent<UnityEngine.UI.ScrollRect>();
+                p1Scroll.horizontal = true;
+                p1Scroll.vertical = false;
+                p1ScrollObj.AddComponent<RectMask2D>();
+
                 var p1CardsContainerObj = new GameObject("P1CardsContainer");
-                p1CardsContainerObj.transform.SetParent(p1Area.transform, false);
+                p1CardsContainerObj.transform.SetParent(p1ScrollObj.transform, false);
                 var p1CCRt = p1CardsContainerObj.AddComponent<RectTransform>();
-                p1CCRt.anchorMin = new Vector2(0.02f, 0.04f);
-                p1CCRt.anchorMax = new Vector2(0.98f, 0.76f);
+                p1CCRt.anchorMin = new Vector2(0f, 0f);
+                p1CCRt.anchorMax = new Vector2(1f, 1f);
                 p1CCRt.offsetMin = Vector2.zero;
                 p1CCRt.offsetMax = Vector2.zero;
-                p1CardsContainerObj.AddComponent<RectMask2D>();
+
                 var p1VLayout = p1CardsContainerObj.AddComponent<HorizontalLayoutGroup>();
                 p1VLayout.spacing = 3;
                 p1VLayout.padding = new RectOffset(2, 2, 2, 2);
-                p1VLayout.childAlignment = TextAnchor.UpperCenter;
+                p1VLayout.childAlignment = TextAnchor.UpperLeft;
                 p1VLayout.childControlWidth = false;
                 p1VLayout.childControlHeight = true;
+
+                var p1Fitter = p1CardsContainerObj.AddComponent<UnityEngine.UI.ContentSizeFitter>();
+                p1Fitter.horizontalFit = UnityEngine.UI.ContentSizeFitter.FitMode.PreferredSize;
+
+                p1Scroll.content = p1CCRt;
                 _slotP1CardsContainers[i] = p1CardsContainerObj.transform;
             }
 
@@ -1516,21 +1550,6 @@ namespace WankulCrazyPlugin.duel
                     }
                 }
 
-                // Si on a un combo actif (la carte a closing gem, la précédente a opening gem), on affiche le connecteur
-                if (i > 0 && ComboEvaluator.IsComboActive(cards, i))
-                {
-                    var comboObj = new GameObject("ComboGem");
-                    comboObj.transform.SetParent(container, false);
-                    var comboLe = comboObj.AddComponent<LayoutElement>();
-                    comboLe.minWidth = 16f;
-                    comboLe.preferredWidth = 16f;
-
-                    var comboImg = comboObj.AddComponent<Image>();
-                    comboImg.sprite = WankulUiKit.WhiteSprite;
-                    // Connecteur brillant
-                    comboImg.color = new Color(1f, 0.8f, 0.2f, 0.9f);
-                }
-
                 var card = cards[i];
                 var itemObj = new GameObject($"CardPlate_{card.Id}");
                 itemObj.transform.SetParent(container, false);
@@ -1611,6 +1630,24 @@ namespace WankulCrazyPlugin.duel
                 var exitEntry = new UnityEngine.EventSystems.EventTrigger.Entry { eventID = UnityEngine.EventSystems.EventTriggerType.PointerExit };
                 exitEntry.callback.AddListener((data) => { if (_hoveredCard == card) _hoveredCard = null; });
                 trigger.triggers.Add(exitEntry);
+
+                // Connecteur visuel de Combo rattaché à la carte pour ne pas casser le LayoutGroup
+                if (i > 0 && ComboEvaluator.IsComboActive(cards, i))
+                {
+                    var comboObj = new GameObject("ComboGem");
+                    comboObj.transform.SetParent(itemObj.transform, false);
+                    var comboRt = comboObj.AddComponent<RectTransform>();
+                    // Ancré sur le bord gauche, centré verticalement, débordant vers la gauche
+                    comboRt.anchorMin = new Vector2(0f, 0.5f);
+                    comboRt.anchorMax = new Vector2(0f, 0.5f);
+                    // Taille : 16 de large, 6 de haut, déplacé de -8 vers la gauche
+                    comboRt.sizeDelta = new Vector2(16f, 6f);
+                    comboRt.anchoredPosition = new Vector2(-8f, 0f);
+
+                    var comboImg = comboObj.AddComponent<Image>();
+                    comboImg.sprite = WankulUiKit.WhiteSprite;
+                    comboImg.color = new Color(1f, 0.8f, 0.2f, 0.95f);
+                }
             }
         }
 

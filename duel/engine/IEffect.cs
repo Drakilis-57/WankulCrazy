@@ -529,34 +529,23 @@ public sealed class PlayCharacterFreeAndScoreEffect : IEffect
             context.Engine.Emit(new PlayerChoiceRequiredEvent(
                 context.Player,
                 "Jouez un personnage gratuitement",
-                "Sélectionnez un personnage",
+                "Sélectionnez un personnage (suivi du choix du terrain)",
                 hand,
                 chosenCard => {
-                    context.Engine.State.RemoveCardFromHand(context.Player, chosenCard);
-
-                    int targetSlot = -1;
-                    for (int i = 0; i < context.Engine.State.Slots.Count; i++)
-                    {
-                        var s = context.Engine.State.Slots[i];
-                        if (i != context.SlotIndex && s.IsActive(context.Engine.State.TurnNumber) && s.Card != null)
-                        {
-                            targetSlot = i;
-                            break;
+                    context.Engine.Emit(new PlayerSlotChoiceRequiredEvent(
+                        context.Player,
+                        "Choisissez un terrain cible",
+                        $"Sélectionnez un terrain actif pour poser {chosenCard.Name} et le scorer.",
+                        slotIdx => {
+                            if (slotIdx >= 0 && slotIdx < context.Engine.State.Slots.Count)
+                            {
+                                context.Engine.State.RemoveCardFromHand(context.Player, chosenCard);
+                                context.Engine.State.AddCharacterToSlot(slotIdx, context.Player, chosenCard);
+                                context.Engine.Emit(new CharacterPlayedEvent(context.Player, slotIdx, chosenCard));
+                                context.Engine.ResolveScore(slotIdx);
+                            }
                         }
-                    }
-
-                    if (targetSlot != -1)
-                    {
-                        context.Engine.State.AddCharacterToSlot(targetSlot, context.Player, chosenCard);
-                        context.Engine.Emit(new CharacterPlayedEvent(context.Player, targetSlot, chosenCard));
-                        // Score the OTHER slot
-                        context.Engine.ResolveScore(targetSlot);
-                    }
-                    else
-                    {
-                        // Fallback if no other active terrain
-                        context.Engine.State.AddCardToDiscard(context.Player, chosenCard);
-                    }
+                    ));
                 }
             ));
         }

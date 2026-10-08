@@ -133,5 +133,22 @@ namespace WankulCrazyPlugin.patch
                 Plugin.Logger.LogError($"[WankulDuelLifecyclePatch] Erreur dans ReportWinnerPostfix: {ex}");
             }
         }
+
+        [HarmonyPatch(typeof(PlayTableGame), "DelayExit")]
+        public static bool DelayExitPrefix(PlayTableGame __instance)
+        {
+            var currentTable = Plugin.GetPProperty(__instance, "m_CurrentInteractablePlayTable");
+            if (currentTable == null)
+            {
+                Plugin.Logger.LogWarning("[WankulDuelLifecyclePatch] DelayExit annulé : m_CurrentInteractablePlayTable est null (prévention NRE).");
+                if (CSingleton<InteractionPlayerController>.Instance != null)
+                {
+                    CSingleton<InteractionPlayerController>.Instance.OnExitPlayTableGameMode();
+                    CSingleton<InteractionPlayerController>.Instance.ExitUIMode();
+                }
+                return false;
+            }
+            return true;
+        }
     }
 }

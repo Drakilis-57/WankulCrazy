@@ -349,3 +349,23 @@ public sealed class CardsRevealedEvent : IDuelEvent
         RevealedCards = revealedCards;
     }
 }
+
+public sealed class PlayerSlotChoiceRequiredEvent : IDuelEvent
+{
+    public PlayerId Player { get; }
+    public string Title { get; }
+    public string Description { get; }
+    public Action<int> OnSlotSelected { get; }
+
+    public PlayerSlotChoiceRequiredEvent(
+        PlayerId player,
+        string title,
+        string description,
+        Action<int> onSlotSelected)
+    {
+        Player = player;
+        Title = title ?? "Choisissez un terrain";
+        Description = description ?? "";
+        OnSlotSelected = onSlotSelected;
+    }
+}

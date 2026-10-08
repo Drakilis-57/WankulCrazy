@@ -117,6 +117,23 @@ public class ReplacingCards
                 }
             }
         }
+        else
+        {
+            __instance.ShowGradedCardCase(false);
+            if (__instance.m_GradedCardTextureImage != null)
+            {
+                __instance.m_GradedCardTextureImage.sprite = null;
+            }
+            Card3dUIGroup card3dUIGroup = Plugin.GetPProperty(__instance, "m_Card3dUIGroup") as Card3dUIGroup;
+            if (card3dUIGroup != null)
+            {
+                var gradeCaseObj = Plugin.GetPProperty(card3dUIGroup, "m_GradeCaseObj") as UnityEngine.GameObject;
+                if (gradeCaseObj != null)
+                {
+                    gradeCaseObj.SetActive(false);
+                }
+            }
+        }
         return false;
     }
     
@@ -248,6 +265,23 @@ public class ReplacingCards
                 if (card3dUIGroup.m_GradeExpansionRarityText != null)
                 {
                     card3dUIGroup.m_GradeExpansionRarityText.text = cardSub;
+                }
+            }
+        }
+        else
+        {
+            __instance.ShowGradedCardCase(false);
+            if (__instance.m_GradedCardTextureImage != null)
+            {
+                __instance.m_GradedCardTextureImage.sprite = null;
+            }
+            Card3dUIGroup card3dUIGroup = Plugin.GetPProperty(__instance, "m_Card3dUIGroup") as Card3dUIGroup;
+            if (card3dUIGroup != null)
+            {
+                var gradeCaseObj = Plugin.GetPProperty(card3dUIGroup, "m_GradeCaseObj") as UnityEngine.GameObject;
+                if (gradeCaseObj != null)
+                {
+                    gradeCaseObj.SetActive(false);
                 }
             }
         }

@@ -278,6 +278,13 @@ public sealed class DuelEngine
             for (int i = 0; i < cardToPlay.EffectIds.Count; i++)
             {
                 string effectId = cardToPlay.EffectIds[i];
+                // Les effets win_ et lose_ sont résolus uniquement lors du score.
+                if (effectId.StartsWith("win_", StringComparison.OrdinalIgnoreCase) ||
+                    effectId.StartsWith("lose_", StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
+
                 if (Effects.TryGetEffect(effectId, out var effect) && effect != null)
                 {
                     Emit(new EffectTriggeredEvent(player, effectId, cardToPlay, slotIndex));
