@@ -144,7 +144,7 @@ namespace WankulCrazyPlugin.importer
             if (string.IsNullOrEmpty(card.TexturePath)) return;
 
             string texturePath = ResolveExistingPath(Path.Combine(pluginPath, "data", card.TexturePath));
-            string maskPath = ResolveExistingPath(Path.Combine(pluginPath, "data/masks", card.TexturePath));
+            string maskPath = ResolveMaskPath(card, pluginPath);
 
             try
             {
@@ -169,6 +169,7 @@ namespace WankulCrazyPlugin.importer
                 }
 
                 // Le masque est optionnel : son absence est normale.
+                bool isFoil = IsCardFoil(card);
                 if (maskPath != null)
                 {
                     Texture2D mask = LoadTexture(maskPath);
@@ -177,6 +178,14 @@ namespace WankulCrazyPlugin.importer
                         card.TextureMask = mask;
                         card.SpriteMask = CreateSprite(mask);
                     }
+                    else if (isFoil)
+                    {
+                        Plugin.Logger?.LogWarning($"[Foil] Le masque a echoue au chargement pour la carte foil {card.Title} (#{card.Number}): {maskPath}");
+                    }
+                }
+                else if (isFoil)
+                {
+                    Plugin.Logger?.LogWarning($"[Foil] Aucun masque trouve pour la carte foil {card.Title} (#{card.Number})");
                 }
             }
             catch (Exception ex)
@@ -186,7 +195,39 @@ namespace WankulCrazyPlugin.importer
             }
         }
 
-        private static string ResolveExistingPath(string path)
+        public static bool IsCardFoil(WankulCardData card)
+        {
+            if (card is EffigyCardData effigyCard)
+            {
+                var rarityData = RaritiesManager.GetRarity(effigyCard.RarityId);
+                if ((rarityData != null && rarityData.IsEligibleForFoil) || effigyCard.Rarity >= Rarity.UR1)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public static string ResolveMaskPath(WankulCardData card, string pluginPath)
+        {
+            if (string.IsNullOrEmpty(card.TexturePath)) return null;
+
+            string directPath = Path.Combine(pluginPath, "data/masks", card.TexturePath);
+            string resolvedDirect = ResolveExistingPath(directPath);
+            if (resolvedDirect != null) return resolvedDirect;
+
+            int id = card.NumberInt - 1;
+            if (id >= 0)
+            {
+                string idPath = Path.Combine(pluginPath, "data/masks/textures", $"{id}_{card.Number}.png");
+                string resolvedId = ResolveExistingPath(idPath);
+                if (resolvedId != null) return resolvedId;
+            }
+
+            return null;
+        }
+
+        public static string ResolveExistingPath(string path)
         {
             if (File.Exists(path)) return path;
 

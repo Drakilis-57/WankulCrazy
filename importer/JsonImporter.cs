@@ -238,14 +238,15 @@ public class JsonImporter
             if (!string.IsNullOrEmpty(card.TexturePath))
             {
                 string texturepath = Path.Combine(pluginPath, "data", card.TexturePath);
-                string texturepathmask = Path.Combine(pluginPath, "data/masks", card.TexturePath);
+                string texturepathmask = WankulLoadingScreen.ResolveMaskPath(card, pluginPath);
 
                 try
                 {
                     Texture2D texture = LoadTexture(texturepath);
                     Texture2D texturemask = null;
 
-                    if (File.Exists(texturepathmask))
+                    bool isFoil = WankulLoadingScreen.IsCardFoil(card);
+                    if (texturepathmask != null && File.Exists(texturepathmask))
                     {
                         texturemask = LoadTexture(texturepathmask);
                     }
@@ -263,9 +264,13 @@ public class JsonImporter
                     {
                         card.TextureMask = texturemask;
                     }
-                    else if (File.Exists(texturepathmask))
+                    else if (texturepathmask != null && File.Exists(texturepathmask))
                     {
                         Plugin.Logger?.LogError("Failed to load texture mask: " + texturepathmask);
+                    }
+                    else if (isFoil)
+                    {
+                        Plugin.Logger?.LogWarning($"[Foil] Aucun masque trouve pour la carte foil {card.Title} (#{card.Number})");
                     }
 
                     Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
