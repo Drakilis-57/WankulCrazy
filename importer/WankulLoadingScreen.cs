@@ -212,16 +212,47 @@ namespace WankulCrazyPlugin.importer
         {
             if (string.IsNullOrEmpty(card.TexturePath)) return null;
 
+            // 1. Chemin direct relatif (data/masks/<TexturePath>)
             string directPath = Path.Combine(pluginPath, "data/masks", card.TexturePath);
             string resolvedDirect = ResolveExistingPath(directPath);
             if (resolvedDirect != null) return resolvedDirect;
 
-            int id = card.NumberInt - 1;
-            if (id >= 0)
+            // 2. Résolution dynamique selon la saison dans data/masks/textures/{prefix}_{card.Number}.png
+            int num = card.NumberInt;
+            if (num > 0)
             {
-                string idPath = Path.Combine(pluginPath, "data/masks/textures", $"{id}_{card.Number}.png");
-                string resolvedId = ResolveExistingPath(idPath);
-                if (resolvedId != null) return resolvedId;
+                string season = !string.IsNullOrEmpty(card.SeasonId) ? card.SeasonId : "";
+                string texturePath = card.TexturePath.Replace('\\', '/');
+
+                int? prefix = null;
+                if (season == "S01" || texturePath.Contains("Origins/"))
+                {
+                    prefix = 150 + (num - 151); // 151 -> 150_151.png, 180 -> 179_180.png
+                }
+                else if (season == "S02" || texturePath.Contains("Campus/"))
+                {
+                    prefix = 305 + (num - 126); // 126 -> 305_126.png, 155 -> 334_155.png
+                }
+                else if (season == "S03" || texturePath.Contains("Battle/"))
+                {
+                    prefix = 516 + (num - 151); // 151 -> 516_151.png, 180 -> 545_180.png
+                }
+                else if (season == "S04" || texturePath.Contains("Stellar/"))
+                {
+                    prefix = 696 + (num - 151); // 151 -> 696_151.png, 180 -> 725_180.png
+                }
+
+                if (prefix.HasValue && prefix.Value >= 0)
+                {
+                    string seasonMaskPath = Path.Combine(pluginPath, "data/masks/textures", $"{prefix.Value}_{card.Number}.png");
+                    string resolvedSeason = ResolveExistingPath(seasonMaskPath);
+                    if (resolvedSeason != null) return resolvedSeason;
+                }
+
+                // Fallback générique : {num-1}_{num}.png
+                string fallbackIdPath = Path.Combine(pluginPath, "data/masks/textures", $"{num - 1}_{card.Number}.png");
+                string resolvedFallback = ResolveExistingPath(fallbackIdPath);
+                if (resolvedFallback != null) return resolvedFallback;
             }
 
             return null;
