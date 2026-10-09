@@ -127,10 +127,10 @@ public class ReplacingCards
             Card3dUIGroup card3dUIGroup = Plugin.GetPProperty(__instance, "m_Card3dUIGroup") as Card3dUIGroup;
             if (card3dUIGroup != null)
             {
-                var gradeCaseObj = Plugin.GetPProperty(card3dUIGroup, "m_GradeCaseObj") as UnityEngine.GameObject;
-                if (gradeCaseObj != null)
+                card3dUIGroup.EvaluateCardGrade(gameCardData);
+                if (card3dUIGroup.m_GradedCardGrp != null)
                 {
-                    gradeCaseObj.SetActive(false);
+                    card3dUIGroup.m_GradedCardGrp.SetActive(false);
                 }
             }
         }
@@ -224,8 +224,13 @@ public class ReplacingCards
         CleanCardVisuals(__instance, gameCardData.isFoil, wankulCardData);
     }
 
-    static void SetCardUIPostFix(CardData cardData, CardUI __instance)
+    static void SetCardUIPostFix(CardData cardData, CardUI __instance, bool __runOriginal = true)
     {
+        if (!__runOriginal)
+        {
+            return;
+        }
+
         if (cardData == null)
         {
             Plugin.Logger.LogError("gameCardData is null");
@@ -278,10 +283,10 @@ public class ReplacingCards
             Card3dUIGroup card3dUIGroup = Plugin.GetPProperty(__instance, "m_Card3dUIGroup") as Card3dUIGroup;
             if (card3dUIGroup != null)
             {
-                var gradeCaseObj = Plugin.GetPProperty(card3dUIGroup, "m_GradeCaseObj") as UnityEngine.GameObject;
-                if (gradeCaseObj != null)
+                card3dUIGroup.EvaluateCardGrade(gameCardData);
+                if (card3dUIGroup.m_GradedCardGrp != null)
                 {
-                    gradeCaseObj.SetActive(false);
+                    card3dUIGroup.m_GradedCardGrp.SetActive(false);
                 }
             }
         }
