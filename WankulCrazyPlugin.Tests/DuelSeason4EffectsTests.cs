@@ -32,7 +32,7 @@ public class DuelSeason4EffectsTests
         var engine = new DuelEngine(rng, rules);
         engine.StartDuel(deck1, deck2);
         // Force state to Turn 1 since StartDuel alone doesn't increment it directly, StartTurn does.
-        typeof(DuelState).GetMethod("IncrementTurnNumber", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).Invoke(engine.State, null);
+        typeof(DuelState).GetMethod("IncrementTurnNumber", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!.Invoke(engine.State, null);
         return engine;
     }
 
@@ -51,7 +51,7 @@ public class DuelSeason4EffectsTests
 
         var terrain = new DuelCard("T_CYBERPUNK", "Ville Cyberpunk", CardKind.Terrain, effectIds: new[] { "win_draw_until_7" });
         var slot = new TerrainSlot(0, terrain, placedOnTurn: 0, placedBy: p1);
-        var slotsField = typeof(DuelState).GetField("_slots", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        var slotsField = typeof(DuelState).GetField("_slots", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!;
         var slotsArray = (TerrainSlot[])slotsField.GetValue(engine.State)!;
         slotsArray[0] = slot;
 
@@ -76,7 +76,7 @@ public class DuelSeason4EffectsTests
 
         var terrain = new DuelCard("T_LUCKY", "Lucky Block", CardKind.Terrain, effectIds: new[] { "lose_mill_4" });
         var slot = new TerrainSlot(0, terrain, placedOnTurn: 0, placedBy: p1);
-        var slotsField = typeof(DuelState).GetField("_slots", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        var slotsField = typeof(DuelState).GetField("_slots", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!;
         var slotsArray = (TerrainSlot[])slotsField.GetValue(engine.State)!;
         slotsArray[0] = slot;
 
@@ -113,7 +113,7 @@ public class DuelSeason4EffectsTests
 
         var terrain = new DuelCard("T_COBBLE", "Cobblestone", CardKind.Terrain, effectIds: new[] { "lose_discard_3" });
         var slot = new TerrainSlot(0, terrain, placedOnTurn: 0, placedBy: p1);
-        var slotsField = typeof(DuelState).GetField("_slots", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        var slotsField = typeof(DuelState).GetField("_slots", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!;
         var slotsArray = (TerrainSlot[])slotsField.GetValue(engine.State)!;
         slotsArray[0] = slot;
 
@@ -142,7 +142,7 @@ public class DuelSeason4EffectsTests
         bool eventFired = false;
         engine.OnEvent += (evt) =>
         {
-            if (evt is PlayerChoiceRequiredEvent choiceEvt && choiceEvt.ChoiceContext == "move_character" && choiceEvt.SourceCard.Id == "C1")
+            if (evt is PlayerChoiceRequiredEvent choiceEvt && choiceEvt.ChoiceContext == "move_character" && choiceEvt.SourceCard?.Id == "C1")
             {
                 eventFired = true;
             }

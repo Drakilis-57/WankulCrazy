@@ -306,9 +306,11 @@ public sealed class PlayerChoiceRequiredEvent : IDuelEvent
     public string Title { get; }
     public string Description { get; }
     public IReadOnlyList<DuelCard> Candidates { get; }
+#nullable enable
     public Action<DuelCard>? OnCardSelected { get; }
     public string ChoiceContext { get; }
     public DuelCard? SourceCard { get; }
+#nullable restore
 
     public PlayerChoiceRequiredEvent(
         PlayerId player,

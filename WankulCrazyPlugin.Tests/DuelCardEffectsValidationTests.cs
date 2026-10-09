@@ -12,7 +12,7 @@ namespace WankulCrazyPlugin.Tests
         private class EffectMapping
         {
             public int cardIndex { get; set; }
-            public List<string> effects { get; set; }
+            public List<string> effects { get; set; } = new List<string>();
         }
 
         [Fact]

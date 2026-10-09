@@ -138,9 +138,13 @@ elseif ($Mode -eq 'release') {
     $zipPath = Join-Path $zipOutputDir "WankulCrazy.zip"
     $datedZipPath = Join-Path $zipOutputDir "WankulCrazy_Release_$timestamp.zip"
 
-    Write-Host "[Release] Compression du package zip -> $zipPath" -ForegroundColor Green
-    Compress-Archive -Path $pluginReleaseDir -DestinationPath $zipPath -Force
-    Copy-Item -Path $zipPath -Destination $datedZipPath -Force
+    Write-Host "[Release] Compression du package zip -> $datedZipPath" -ForegroundColor Green
+    Compress-Archive -Path $pluginReleaseDir -DestinationPath $datedZipPath -Force
+    try {
+        Copy-Item -Path $datedZipPath -Destination $zipPath -Force -ErrorAction Stop
+    } catch {
+        Write-Warning "[Release] Impossible d'écraser $zipPath (verrouillé par l'explorateur ou une autre application). L'archive datée $datedZipPath est prête."
+    }
 
     # Nettoyage dossier temporaire
     Remove-Item -Recurse -Force $releaseRoot

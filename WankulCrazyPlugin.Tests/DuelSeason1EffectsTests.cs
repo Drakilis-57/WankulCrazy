@@ -251,8 +251,10 @@ public class DuelSeason1EffectsTests
         engine.ResolveScore(0);
 
         var effectContext = new EffectContext(engine, PlayerId.Player1, terrain, 0);
-        engine.Effects.TryGetEffect("mill_opp_3", out var eff);
-        eff.Execute(effectContext);
+        bool found = engine.Effects.TryGetEffect("mill_opp_3", out var eff);
+        Assert.True(found);
+        Assert.NotNull(eff);
+        eff!.Execute(effectContext);
 
         Assert.Single(engine.State.GetDeck(PlayerId.Player2));
         Assert.Equal(3, engine.State.GetDiscard(PlayerId.Player2).Count);

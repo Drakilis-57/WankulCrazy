@@ -99,7 +99,7 @@ public class DuelSeason2EffectsTests
                 Assert.Equal(charCard, pce.Candidates[0]);
 
                 // Simulate player making choice
-                pce.OnCardSelected(charCard);
+                pce.OnCardSelected?.Invoke(charCard);
             }
         };
 
