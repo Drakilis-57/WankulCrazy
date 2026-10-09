@@ -144,7 +144,7 @@ namespace WankulCrazyPlugin.importer
             if (string.IsNullOrEmpty(card.TexturePath)) return;
 
             string texturePath = ResolveExistingPath(Path.Combine(pluginPath, "data", card.TexturePath));
-            string maskPath = ResolveExistingPath(Path.Combine(pluginPath, "data/masks", card.TexturePath));
+            string maskPath = ResolveMaskPath(card, pluginPath);
 
             try
             {
@@ -169,6 +169,7 @@ namespace WankulCrazyPlugin.importer
                 }
 
                 // Le masque est optionnel : son absence est normale.
+                bool isFoil = IsCardFoil(card);
                 if (maskPath != null)
                 {
                     Texture2D mask = LoadTexture(maskPath);
@@ -177,6 +178,14 @@ namespace WankulCrazyPlugin.importer
                         card.TextureMask = mask;
                         card.SpriteMask = CreateSprite(mask);
                     }
+                    else if (isFoil)
+                    {
+                        Plugin.Logger?.LogWarning($"[Foil] Le masque a echoue au chargement pour la carte foil {card.Title} (#{card.Number}): {maskPath}");
+                    }
+                }
+                else if (isFoil)
+                {
+                    Plugin.Logger?.LogWarning($"[Foil] Aucun masque trouve pour la carte foil {card.Title} (#{card.Number})");
                 }
             }
             catch (Exception ex)
@@ -186,7 +195,70 @@ namespace WankulCrazyPlugin.importer
             }
         }
 
-        private static string ResolveExistingPath(string path)
+        public static bool IsCardFoil(WankulCardData card)
+        {
+            if (card is EffigyCardData effigyCard)
+            {
+                var rarityData = RaritiesManager.GetRarity(effigyCard.RarityId);
+                if ((rarityData != null && rarityData.IsEligibleForFoil) || effigyCard.Rarity >= Rarity.UR1)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public static string ResolveMaskPath(WankulCardData card, string pluginPath)
+        {
+            if (string.IsNullOrEmpty(card.TexturePath)) return null;
+
+            // 1. Chemin direct relatif (data/masks/<TexturePath>)
+            string directPath = Path.Combine(pluginPath, "data/masks", card.TexturePath);
+            string resolvedDirect = ResolveExistingPath(directPath);
+            if (resolvedDirect != null) return resolvedDirect;
+
+            // 2. Résolution dynamique selon la saison dans data/masks/textures/{prefix}_{card.Number}.png
+            int num = card.NumberInt;
+            if (num > 0)
+            {
+                string season = !string.IsNullOrEmpty(card.SeasonId) ? card.SeasonId : "";
+                string texturePath = card.TexturePath.Replace('\\', '/');
+
+                int? prefix = null;
+                if (season == "S01" || texturePath.Contains("Origins/"))
+                {
+                    prefix = 150 + (num - 151); // 151 -> 150_151.png, 180 -> 179_180.png
+                }
+                else if (season == "S02" || texturePath.Contains("Campus/"))
+                {
+                    prefix = 305 + (num - 126); // 126 -> 305_126.png, 155 -> 334_155.png
+                }
+                else if (season == "S03" || texturePath.Contains("Battle/"))
+                {
+                    prefix = 516 + (num - 151); // 151 -> 516_151.png, 180 -> 545_180.png
+                }
+                else if (season == "S04" || texturePath.Contains("Stellar/"))
+                {
+                    prefix = 696 + (num - 151); // 151 -> 696_151.png, 180 -> 725_180.png
+                }
+
+                if (prefix.HasValue && prefix.Value >= 0)
+                {
+                    string seasonMaskPath = Path.Combine(pluginPath, "data/masks/textures", $"{prefix.Value}_{card.Number}.png");
+                    string resolvedSeason = ResolveExistingPath(seasonMaskPath);
+                    if (resolvedSeason != null) return resolvedSeason;
+                }
+
+                // Fallback générique : {num-1}_{num}.png
+                string fallbackIdPath = Path.Combine(pluginPath, "data/masks/textures", $"{num - 1}_{card.Number}.png");
+                string resolvedFallback = ResolveExistingPath(fallbackIdPath);
+                if (resolvedFallback != null) return resolvedFallback;
+            }
+
+            return null;
+        }
+
+        public static string ResolveExistingPath(string path)
         {
             if (File.Exists(path)) return path;
 
