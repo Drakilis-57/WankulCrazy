@@ -233,3 +233,7 @@ La logique actuelle montre clairement une volonté d’ouvrir le système à de 
 - `patch/workbench/WorkbenchPatch.cs`
 - `WankulCrazyPlugin.Tests/DocsFeaturesVerificationTests.cs`
 
+## 8. A faire plus tard :
+
+- Il manque les foils pour la Saison 5 (Legacy), pour l'instant hypothèse c'est de cherche sur le site Wankuldex(mais je pense pas).
+
