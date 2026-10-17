@@ -5,6 +5,7 @@ using UnityEngine;
 using WankulCrazyPlugin.cards;
 using System.Reflection;
 using WankulCrazyPlugin.inventory;
+using WankulCrazyPlugin.importer;
 
 namespace WankulCrazyPlugin.patch
 {
@@ -239,6 +240,7 @@ namespace WankulCrazyPlugin.patch
         public static void OnDayStarted()
         {
             UpdateAllCardsMarketPrice();
+            CustomItemsImporter.SyncCustomItemPrices();
         }
 
         public static float CalculateGradedMarketPrice(float baseMarketPrice, int cardSaveIndex, int cardGrade)

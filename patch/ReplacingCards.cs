@@ -119,19 +119,20 @@ public class ReplacingCards
         }
         else
         {
-            __instance.ShowGradedCardCase(false);
+            if (__instance.m_GradedCardCaseGrp != null)
+            {
+                __instance.m_GradedCardCaseGrp.SetActive(false);
+            }
             if (__instance.m_GradedCardTextureImage != null)
             {
+                __instance.m_GradedCardTextureImage.enabled = false;
+                __instance.m_GradedCardTextureImage.gameObject.SetActive(false);
                 __instance.m_GradedCardTextureImage.sprite = null;
             }
             Card3dUIGroup card3dUIGroup = Plugin.GetPProperty(__instance, "m_Card3dUIGroup") as Card3dUIGroup;
-            if (card3dUIGroup != null)
+            if (card3dUIGroup != null && card3dUIGroup.m_GradedCardGrp != null)
             {
-                card3dUIGroup.EvaluateCardGrade(gameCardData);
-                if (card3dUIGroup.m_GradedCardGrp != null)
-                {
-                    card3dUIGroup.m_GradedCardGrp.SetActive(false);
-                }
+                card3dUIGroup.m_GradedCardGrp.SetActive(false);
             }
         }
         return false;
@@ -224,13 +225,8 @@ public class ReplacingCards
         CleanCardVisuals(__instance, gameCardData.isFoil, wankulCardData);
     }
 
-    static void SetCardUIPostFix(CardData cardData, CardUI __instance, bool __runOriginal = true)
+    static void SetCardUIPostFix(CardData cardData, CardUI __instance)
     {
-        if (!__runOriginal)
-        {
-            return;
-        }
-
         if (cardData == null)
         {
             Plugin.Logger.LogError("gameCardData is null");
@@ -275,19 +271,20 @@ public class ReplacingCards
         }
         else
         {
-            __instance.ShowGradedCardCase(false);
+            if (__instance.m_GradedCardCaseGrp != null)
+            {
+                __instance.m_GradedCardCaseGrp.SetActive(false);
+            }
             if (__instance.m_GradedCardTextureImage != null)
             {
+                __instance.m_GradedCardTextureImage.enabled = false;
+                __instance.m_GradedCardTextureImage.gameObject.SetActive(false);
                 __instance.m_GradedCardTextureImage.sprite = null;
             }
             Card3dUIGroup card3dUIGroup = Plugin.GetPProperty(__instance, "m_Card3dUIGroup") as Card3dUIGroup;
-            if (card3dUIGroup != null)
+            if (card3dUIGroup != null && card3dUIGroup.m_GradedCardGrp != null)
             {
-                card3dUIGroup.EvaluateCardGrade(gameCardData);
-                if (card3dUIGroup.m_GradedCardGrp != null)
-                {
-                    card3dUIGroup.m_GradedCardGrp.SetActive(false);
-                }
+                card3dUIGroup.m_GradedCardGrp.SetActive(false);
             }
         }
     }
@@ -301,6 +298,11 @@ public class ReplacingCards
     {
         if (__instance == null) return;
 
+        Transform cardBGMask = __instance.m_CardFullBGOffsetGrp != null
+            ? __instance.m_CardFullBGOffsetGrp.transform.parent
+            : (__instance.m_FoilShowList != null && __instance.m_FoilShowList.Count > 0 ? __instance.m_FoilShowList[0].transform.parent : null);
+        Transform foilMaskTrans = cardBGMask?.Find("WankulFoilMask");
+
         if (wankulCardData != null && wankulCardData.SpriteMask != null && isFoil)
         {
             Plugin.LogInfo($"[CleanCardVisuals] ACTIVATION FOIL pour '{wankulCardData.Title}' (isFoil=True)");
@@ -308,6 +310,63 @@ public class ReplacingCards
             {
                 __instance.m_FoilGrp.SetActive(true);
             }
+
+            if (cardBGMask != null)
+            {
+                if (foilMaskTrans == null)
+                {
+                    GameObject maskObj = new GameObject("WankulFoilMask", typeof(RectTransform), typeof(UnityEngine.UI.Image), typeof(UnityEngine.UI.Mask));
+                    maskObj.transform.SetParent(cardBGMask, false);
+                    RectTransform rt = maskObj.GetComponent<RectTransform>();
+                    rt.anchorMin = Vector2.zero;
+                    rt.anchorMax = Vector2.one;
+                    rt.offsetMin = Vector2.zero;
+                    rt.offsetMax = Vector2.zero;
+                    rt.localScale = new Vector3(CardImageScale, CardImageScale, 1f);
+                    rt.localRotation = Quaternion.identity;
+
+                    var maskComp = maskObj.GetComponent<UnityEngine.UI.Mask>();
+                    maskComp.showMaskGraphic = false;
+
+                    foilMaskTrans = maskObj.transform;
+
+                    if (__instance.m_FoilShowList != null)
+                    {
+                        foreach (var foilImg in __instance.m_FoilShowList)
+                        {
+                            if (foilImg != null)
+                            {
+                                foilImg.transform.SetParent(foilMaskTrans, false);
+                                RectTransform cRt = foilImg.rectTransform;
+                                if (cRt != null)
+                                {
+                                    cRt.anchorMin = Vector2.zero;
+                                    cRt.anchorMax = Vector2.one;
+                                    cRt.offsetMin = Vector2.zero;
+                                    cRt.offsetMax = Vector2.zero;
+                                    cRt.localScale = Vector3.one;
+                                    cRt.localRotation = Quaternion.identity;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                foilMaskTrans.gameObject.SetActive(true);
+                var maskImage = foilMaskTrans.GetComponent<UnityEngine.UI.Image>();
+                if (maskImage != null)
+                {
+                    maskImage.enabled = true;
+                    maskImage.sprite = (Sprite)wankulCardData.SpriteMask;
+                    maskImage.preserveAspect = true;
+                }
+                var maskComponent = foilMaskTrans.GetComponent<UnityEngine.UI.Mask>();
+                if (maskComponent != null)
+                {
+                    maskComponent.enabled = true;
+                }
+            }
+
             if (__instance.m_FoilShowList != null)
             {
                 foreach (var foilImg in __instance.m_FoilShowList)
@@ -315,24 +374,16 @@ public class ReplacingCards
                     if (foilImg != null)
                     {
                         foilImg.gameObject.SetActive(true);
-                        foilImg.sprite = (Sprite)wankulCardData.SpriteMask;
-                        foilImg.preserveAspect = true;
-
-                        RectTransform maskRect = foilImg.rectTransform;
-                        if (maskRect != null)
-                        {
-                            maskRect.anchorMin = Vector2.zero;
-                            maskRect.anchorMax = Vector2.one;
-                            maskRect.offsetMin = Vector2.zero;
-                            maskRect.offsetMax = Vector2.zero;
-                            maskRect.localScale = new Vector3(CardImageScale, CardImageScale, 1f);
-                        }
                     }
                 }
             }
         }
         else
         {
+            if (foilMaskTrans != null)
+            {
+                foilMaskTrans.gameObject.SetActive(false);
+            }
             if (__instance.m_FoilGrp != null)
             {
                 __instance.m_FoilGrp.SetActive(false);
@@ -410,27 +461,32 @@ public class ReplacingCards
         if (__instance.m_CardBorderMask != null) __instance.m_CardBorderMask.gameObject.SetActive(false);
         if (__instance.m_CardFullTransparentLayerBGImage != null) __instance.m_CardFullTransparentLayerBGImage.gameObject.SetActive(false);
 
-        // Désactivation récursive des composants foil/glare parasites si la carte n'est pas foil
-        if (!isFoil || wankulCardData?.SpriteMask == null)
+        CardData cData = __instance.GetCardData();
+        bool isGraded = cData != null && cData.cardGrade > 0;
+
+        // Désactivation récursive des composants parasites vanilla (glow, shine, monstres, masques, gradation)
+        foreach (Transform t in __instance.GetComponentsInChildren<Transform>(true))
         {
-            foreach (Transform t in __instance.GetComponentsInChildren<Transform>(true))
+            if (t == null) continue;
+            string n = t.name;
+
+            // Toujours désactiver les résidus vanilla non utilisés par Wankul
+            if (n.StartsWith("FadeBar") || n.Contains("Glitter") ||
+                n == "StatGrp" || n == "RarityImage" || n == "RarityText" ||
+                n == "GlowMask" || n == "LegendaryShine" || n == "MonsterMask" || n == "GlowMaskMonster")
             {
-                if (t == null) continue;
-                string n = t.name;
-                if (n.StartsWith("CameraFoilShine") || n.StartsWith("FadeBar") || n == "FoilGrp" || n.Contains("Glitter") || n == "StatGrp" || n == "RarityImage" || n == "RarityText")
-                {
-                    t.gameObject.SetActive(false);
-                }
+                t.gameObject.SetActive(false);
             }
-        }
-        else
-        {
-            // Même pour une carte foil, désactiver les dégradés et glitters parasites du jeu de base non utilisés par le masque Wankul
-            if (__instance.m_CenterFoilGlitter != null) __instance.m_CenterFoilGlitter.SetActive(false);
-            if (__instance.m_CenterFoilGlitterBtm != null) __instance.m_CenterFoilGlitterBtm.SetActive(false);
-            if (__instance.m_BorderFoilGlitter != null) __instance.m_BorderFoilGlitter.SetActive(false);
-            if (__instance.m_FadeBarTopImage != null) __instance.m_FadeBarTopImage.gameObject.SetActive(false);
-            if (__instance.m_FadeBarBtmImage != null) __instance.m_FadeBarBtmImage.gameObject.SetActive(false);
+            // Si la carte n'est pas foil ou n'a pas de masque, désactiver FoilGrp et CameraFoilShine
+            else if ((!isFoil || wankulCardData?.SpriteMask == null) && (n == "FoilGrp" || n.StartsWith("CameraFoilShine")))
+            {
+                t.gameObject.SetActive(false);
+            }
+            // Si la carte n'est pas gradée, désactiver tous les overlays de gradation
+            else if (!isGraded && n.StartsWith("GradedCard") && n != "CardBrightnessControl")
+            {
+                t.gameObject.SetActive(false);
+            }
         }
 
         // Réinitialiser la luminosité à pleine clarté (alpha = 0 sur m_BrightnessControl)
@@ -571,6 +627,7 @@ public class ReplacingCards
         __instance.m_CardList[cardIndex].SetVisibility(isVisible: true);
         __instance.m_CardList[cardIndex].SetCardCountText(cardCount, sortingType == ECollectionSortingType.DuplicatePrice);
         __instance.m_CardList[cardIndex].SetCardCountTextVisibility(isVisible: true);
+
         return false;
     }
 
