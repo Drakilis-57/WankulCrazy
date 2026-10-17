@@ -494,6 +494,18 @@ namespace WankulCrazyPlugin.patch
 
         public static void EvaluateOpenCardPackPostFix(EvaluateOpenCardPack__State __state, InteractionPlayerController __instance)
         {
+            try
+            {
+                EvaluateOpenCardPackPostFixCore(__state, __instance);
+            }
+            catch (Exception ex)
+            {
+                Plugin.Logger.LogError($"[CardOpening] EvaluateOpenCardPackPostFix a echoue : {ex}");
+            }
+        }
+
+        private static void EvaluateOpenCardPackPostFixCore(EvaluateOpenCardPack__State __state, InteractionPlayerController __instance)
+        {
             if (__state.CanOpenCardBox)
             {
                 LegendaryBoosters.Clear();
@@ -507,6 +519,7 @@ namespace WankulCrazyPlugin.patch
                 List<int> availableHash = new List<int>();
 
                 ECollectionPackType collectionPackType = InventoryBase.ItemTypeToCollectionPackType(m_HoldItemList[0].GetItemType());
+                Plugin.LogInfo($"[CardOpening] Ouverture display/box : itemType={m_HoldItemList[0].GetItemType()} packType={collectionPackType} holdCount={m_HoldItemList.Count}");
                 bool isEligibleForGold =
                     collectionPackType == ECollectionPackType.EpicCardPack ||
                     collectionPackType == ECollectionPackType.DestinyEpicCardPack ||

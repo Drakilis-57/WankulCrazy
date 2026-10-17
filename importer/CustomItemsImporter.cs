@@ -96,6 +96,8 @@ namespace WankulCrazyPlugin.importer
 
             isImported = true;
             Plugin.LogInfo("[CustomItemsImporter] Custom items successfully imported & positioned in shop categories.");
+
+            SyncCustomItemPrices();
         }
 
         public static List<ItemData> DeserializeItemDataListJson()
@@ -400,6 +402,16 @@ namespace WankulCrazyPlugin.importer
 
         public static void GetCardExpansionType(ECollectionPackType collectionPackType, ref ECardExpansionType __result)
         {
+            ECollectionPackType stellarPack = EnumExtensions.SafeParseECollectionPackType("Stellar");
+            ECollectionPackType stellarPackTaux = EnumExtensions.SafeParseECollectionPackType("StellarTaux");
+            ECollectionPackType legacyPack = EnumExtensions.SafeParseECollectionPackType("Legacy");
+            ECollectionPackType legacyPackTaux = EnumExtensions.SafeParseECollectionPackType("LegacyTaux");
+
+            if (collectionPackType == stellarPack || collectionPackType == stellarPackTaux ||
+                collectionPackType == legacyPack || collectionPackType == legacyPackTaux)
+            {
+                __result = ECardExpansionType.Tetramon;
+            }
         }
 
         private static void RegisterCustomItemsToShopCategories(List<ItemData> items)
@@ -548,6 +560,30 @@ namespace WankulCrazyPlugin.importer
                 _ => $"Onglet #{pageIndex}"
             };
             Plugin.LogInfo($"[SHOP EVALUATE] Ouverture de l'onglet: {tabName} (index={pageIndex})");
+
+            var so = CSingleton<InventoryBase>.Instance?.m_StockItemData_SO;
+            if (so != null)
+            {
+                List<EItemType> list = pageIndex switch
+                {
+                    0 => so.m_ShownItemType,
+                    1 => so.m_ShownAccessoryItemType,
+                    2 => so.m_ShownFigurineItemType,
+                    3 => so.m_ShownAllItemType,
+                    _ => null
+                };
+
+                if (list != null)
+                {
+                    Plugin.LogInfo($"[SHOP EVALUATE] {tabName} contient {list.Count} éléments :");
+                    for (int i = 0; i < list.Count; i++)
+                    {
+                        var it = list[i];
+                        bool hasRestock = so.m_RestockDataList != null && so.m_RestockDataList.Exists(r => r.itemType == it);
+                        Plugin.LogInfo($"  [{i}] {it} (HasRestockData: {hasRestock})");
+                    }
+                }
+            }
         }
 
         public static bool GetItemMeshDataPrefix(EItemType itemType, ref ItemMeshData __result)
@@ -689,6 +725,147 @@ namespace WankulCrazyPlugin.importer
             }
 
             return true;
+        }
+
+        public static void SyncCustomItemPrices()
+        {
+            try
+            {
+                if (CPlayerData.m_GeneratedCostPriceList == null || CPlayerData.m_GeneratedCostPriceList.Count == 0) return;
+                if (ItemDataList == null || ItemDataList.Count == 0) return;
+
+                // 1. Première passe : items normaux (boosters, accessoires, etc.)
+                foreach (var customItem in ItemDataList)
+                {
+                    EItemType itemType = EnumExtensions.SafeParseEItemType(customItem.name);
+                    int itemIndex = (int)itemType;
+                    if (itemIndex >= 0 && itemIndex < CPlayerData.m_GeneratedCostPriceList.Count)
+                    {
+                        if (customItem.boxFollowItemPrice == EItemType.None)
+                        {
+                            float currentCost = CPlayerData.m_GeneratedCostPriceList[itemIndex];
+                            // Si le prix généré stocké dans la sauvegarde diverge anormalement du baseCost configuré
+                            if (currentCost <= 0f || currentCost > customItem.baseCost * 2f || currentCost < customItem.baseCost * 0.4f)
+                            {
+                                float newCost = customItem.baseCost * UnityEngine.Random.Range(1f, 1.15f);
+                                CPlayerData.m_GeneratedCostPriceList[itemIndex] = newCost;
+
+                                float minP = customItem.marketPriceMinPercent > 0 ? customItem.marketPriceMinPercent : 1.2f;
+                                float maxP = customItem.marketPriceMaxPercent > 0 ? customItem.marketPriceMaxPercent : 1.8f;
+                                if (itemIndex < CPlayerData.m_GeneratedMarketPriceList.Count)
+                                {
+                                    CPlayerData.m_GeneratedMarketPriceList[itemIndex] = newCost * UnityEngine.Random.Range(minP, maxP);
+                                }
+                                Plugin.LogInfo($"[PriceSync] Prix réajusté pour {customItem.name} : Cost={newCost:F2}€ (baseCost={customItem.baseCost})");
+                            }
+                        }
+                    }
+                }
+
+                // 2. Deuxième passe : items boîtes / displays (boxFollowItemPrice)
+                foreach (var customItem in ItemDataList)
+                {
+                    EItemType itemType = EnumExtensions.SafeParseEItemType(customItem.name);
+                    int itemIndex = (int)itemType;
+                    if (itemIndex >= 0 && itemIndex < CPlayerData.m_GeneratedCostPriceList.Count)
+                    {
+                        if (customItem.boxFollowItemPrice != EItemType.None)
+                        {
+                            float boosterCost = CPlayerData.GetItemCost(customItem.boxFollowItemPrice);
+                            float newCost = boosterCost * 8f * UnityEngine.Random.Range(1f, 1.1f);
+                            CPlayerData.m_GeneratedCostPriceList[itemIndex] = newCost;
+
+                            float boosterMarket = CPlayerData.GetItemMarketPrice(customItem.boxFollowItemPrice);
+                            float minP = customItem.marketPriceMinPercent > 0 ? customItem.marketPriceMinPercent : 0.9f;
+                            float maxP = customItem.marketPriceMaxPercent > 0 ? customItem.marketPriceMaxPercent : 1.1f;
+                            if (itemIndex < CPlayerData.m_GeneratedMarketPriceList.Count)
+                            {
+                                CPlayerData.m_GeneratedMarketPriceList[itemIndex] = boosterMarket * 8f * UnityEngine.Random.Range(minP, maxP);
+                            }
+                            Plugin.LogInfo($"[PriceSync] Display réajusté pour {customItem.name} : Cost={newCost:F2}€ (suivi de {customItem.boxFollowItemPrice})");
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Plugin.Logger.LogError($"[CustomItemsImporter] Erreur SyncCustomItemPrices : {ex}");
+            }
+        }
+
+        private static Dictionary<EItemType, ItemData> _customItemDataCache;
+
+        public static ItemData GetCustomItemData(EItemType itemType)
+        {
+            if (ItemDataList == null) return null;
+            if (_customItemDataCache == null || _customItemDataCache.Count != ItemDataList.Count)
+            {
+                _customItemDataCache = new Dictionary<EItemType, ItemData>();
+                foreach (var item in ItemDataList)
+                {
+                    EItemType type = EnumExtensions.SafeParseEItemType(item.name);
+                    if (type != EItemType.None && !_customItemDataCache.ContainsKey(type))
+                    {
+                        _customItemDataCache[type] = item;
+                    }
+                }
+            }
+            _customItemDataCache.TryGetValue(itemType, out var result);
+            return result;
+        }
+
+        public static void GetItemCostPostfix(EItemType itemType, ref float __result)
+        {
+            var customItem = GetCustomItemData(itemType);
+            if (customItem != null)
+            {
+                float percentChange = 0f;
+                int idx = (int)itemType;
+                if (CPlayerData.m_ItemPricePercentChangeList != null && idx >= 0 && idx < CPlayerData.m_ItemPricePercentChangeList.Count)
+                {
+                    percentChange = CPlayerData.m_ItemPricePercentChangeList[idx];
+                }
+
+                if (customItem.boxFollowItemPrice == EItemType.None)
+                {
+                    __result = (float)Mathf.RoundToInt((customItem.baseCost + customItem.baseCost * (percentChange / 100f)) * 100f) / 100f;
+                }
+                else
+                {
+                    float boosterCost = RestockManager.GetItemCost(customItem.boxFollowItemPrice);
+                    __result = (float)Mathf.RoundToInt((boosterCost * 8f + (boosterCost * 8f) * (percentChange / 100f)) * 100f) / 100f;
+                }
+            }
+        }
+
+        public static void GetItemMarketPricePostfix(EItemType itemType, ref float __result)
+        {
+            var customItem = GetCustomItemData(itemType);
+            if (customItem != null)
+            {
+                float percentChange = 0f;
+                int idx = (int)itemType;
+                if (CPlayerData.m_ItemPricePercentChangeList != null && idx >= 0 && idx < CPlayerData.m_ItemPricePercentChangeList.Count)
+                {
+                    percentChange = CPlayerData.m_ItemPricePercentChangeList[idx];
+                }
+
+                float minP = customItem.marketPriceMinPercent > 0 ? customItem.marketPriceMinPercent : 1.2f;
+                float maxP = customItem.marketPriceMaxPercent > 0 ? customItem.marketPriceMaxPercent : 1.8f;
+                float avgMargin = (minP + maxP) * 0.5f;
+
+                if (customItem.boxFollowItemPrice == EItemType.None)
+                {
+                    float baseMarket = customItem.baseCost * avgMargin;
+                    __result = (float)Mathf.RoundToInt((baseMarket + baseMarket * (percentChange / 100f)) * 100f) / 100f;
+                }
+                else
+                {
+                    float boosterMarket = RestockManager.GetItemMarketPrice(customItem.boxFollowItemPrice);
+                    float displayMarket = boosterMarket * 8f * avgMargin;
+                    __result = (float)Mathf.RoundToInt((displayMarket + displayMarket * (percentChange / 100f)) * 100f) / 100f;
+                }
+            }
         }
     }
 }

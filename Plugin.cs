@@ -216,6 +216,18 @@ public class Plugin : BaseUnityPlugin
         );
 
         TryPatch(
+            "RestockManager.GetItemCost",
+            AccessTools.Method(typeof(RestockManager), "GetItemCost", new[] { typeof(EItemType) }),
+            postfix: AccessTools.Method(typeof(WankulCrazyPlugin.importer.CustomItemsImporter), "GetItemCostPostfix")
+        );
+
+        TryPatch(
+            "RestockManager.GetItemMarketPrice",
+            AccessTools.Method(typeof(RestockManager), "GetItemMarketPrice", new[] { typeof(EItemType) }),
+            postfix: AccessTools.Method(typeof(WankulCrazyPlugin.importer.CustomItemsImporter), "GetItemMarketPricePostfix")
+        );
+
+        TryPatch(
             "CPlayerData.AddCard",
             AccessTools.Method(typeof(CPlayerData), "AddCard"),
             postfix: AccessTools.Method(typeof(Inventory), "AddCard")
