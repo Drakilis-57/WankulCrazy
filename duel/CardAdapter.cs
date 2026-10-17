@@ -22,8 +22,26 @@ namespace WankulCrazyPlugin.duel
 
         private static void EnsureIndexBuilt()
         {
-            if (_cardsByIdCache != null) return;
-            _cardsByIdCache = new Dictionary<string, WankulCardData>(StringComparer.OrdinalIgnoreCase);
+            if (_cardsByIdCache != null && _cardsByIdCache.Count > 0) return;
+
+            System.Collections.Generic.List<WankulCardData> allCards = null;
+            try {
+                var type = System.Type.GetType("WankulCrazyPlugin.cards.WankulCardsData, WankulCrazyPlugin");
+                if (type != null) {
+                    var propInst = type.GetProperty("Instance", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
+                    var inst = propInst?.GetValue(null);
+                    if (inst != null) {
+                        var propCards = type.GetProperty("cards", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+                        allCards = propCards?.GetValue(inst) as System.Collections.Generic.List<WankulCardData>;
+                    }
+                }
+            } catch { }
+            if (allCards == null || allCards.Count == 0) return;
+
+            if (_cardsByIdCache == null)
+            {
+                _cardsByIdCache = new Dictionary<string, WankulCardData>(StringComparer.OrdinalIgnoreCase);
+            }
 
             _effectsByIndexCache = new Dictionary<int, List<string>>();
             string effectsPath = "data/customdecks/duel_card_effects.json";
@@ -62,23 +80,6 @@ namespace WankulCrazyPlugin.duel
                     System.Console.WriteLine("Error loading duel_card_effects.json: " + ex);
                 }
             }
-            System.Collections.Generic.List<WankulCardData> allCards = null;
-            try {
-                var type = System.Type.GetType("WankulCrazyPlugin.cards.WankulCardsData, WankulCrazyPlugin");
-                if (type != null) {
-                    var prop = type.GetProperty("Instance", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
-                    if (prop != null) {
-                        var inst = prop.GetValue(null);
-                        if (inst != null) {
-                            var f = type.GetField("cards", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
-                            if (f != null) {
-                                allCards = f.GetValue(inst) as System.Collections.Generic.List<WankulCardData>;
-                            }
-                        }
-                    }
-                }
-            } catch { }
-            if (allCards == null) return;
 
             for (int i = 0; i < allCards.Count; i++)
             {

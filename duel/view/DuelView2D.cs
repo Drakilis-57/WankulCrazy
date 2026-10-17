@@ -1964,6 +1964,28 @@ namespace WankulCrazyPlugin.duel
                         }
                     }
                     break;
+                case PlayerSlotChoiceRequiredEvent slotChoice:
+                    if (slotChoice.Player == PlayerId.Player1)
+                    {
+                        // Auto-sélectionne le premier slot actif ou premier slot disponible pour le joueur
+                        int chosenSlot = 0;
+                        for (int s = 0; s < _engine.State.Slots.Count; s++)
+                        {
+                            if (!_engine.State.Slots[s].IsEmpty) { chosenSlot = s; break; }
+                        }
+                        slotChoice.OnSlotSelected?.Invoke(chosenSlot);
+                        RefreshView();
+                    }
+                    else
+                    {
+                        int chosenSlot = 0;
+                        for (int s = 0; s < _engine.State.Slots.Count; s++)
+                        {
+                            if (!_engine.State.Slots[s].IsEmpty) { chosenSlot = s; break; }
+                        }
+                        slotChoice.OnSlotSelected?.Invoke(chosenSlot);
+                    }
+                    break;
             }
         }
 
@@ -2019,8 +2041,15 @@ namespace WankulCrazyPlugin.duel
                 Destroy(gameObject);
                 if (_playTable != null)
                 {
-                    _playTable.ReportWinner(isPlayerWin, isDraw: false);
-                    _playTable.FinishLeaveGame(isPlayerWin);
+                    try
+                    {
+                        _playTable.ReportWinner(isPlayerWin, isDraw: false);
+                        _playTable.FinishLeaveGame(isPlayerWin);
+                    }
+                    catch (Exception ex)
+                    {
+                        Plugin.Logger.LogWarning($"[DuelView2D] Exception during FinishLeaveGame (handled): {ex.Message}");
+                    }
                 }
             });
 
