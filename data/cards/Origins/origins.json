@@ -1,25 +1,25 @@
-﻿[
+[
   {
     "Index": 100001,
     "Number": "1",
     "Title": "NAVIRE PIRATE",
-    "Artist": "LÃ©onard Lam",
+    "Artist": "Léonard Lam",
     "CardType": "Terrain",
     "SeasonId": "S01",
     "TexturePath": "cards/Origins/textures/001_NAVIRE PIRATE.jpg",
     "Drop": 15.0,
     "Percentage": 100,
     "RarityId": "C",
-    "Rules": "Quand ce Terrain entre en jeu, chaque joueur dÃ©fausse une carte.",
+    "Rules": "Quand ce Terrain entre en jeu, chaque joueur défausse une carte.",
     "WinningEffect": "",
-    "LosingEffect": "Le perdant dÃ©fausse les 5 cartes du dessus de son deck.",
-    "SpecialEffect": "Quand ce Terrain entre en jeu, chaque joueur dÃ©fausse une carte."
+    "LosingEffect": "Le perdant défausse les 5 cartes du dessus de son deck.",
+    "SpecialEffect": "Quand ce Terrain entre en jeu, chaque joueur défausse une carte."
   },
   {
     "Index": 100002,
     "Number": "2",
     "Title": "PORTAL",
-    "Artist": "LÃ©onard Lam",
+    "Artist": "Léonard Lam",
     "CardType": "Terrain",
     "SeasonId": "S01",
     "TexturePath": "cards/Origins/textures/002_PORTAL.jpg",
@@ -27,15 +27,15 @@
     "Percentage": 100,
     "RarityId": "C",
     "Rules": "(Permanent) Les cartes Terracid ont +1 en Force.",
-    "WinningEffect": "Le gagnant dÃ©place un Personnage depuis ce Terrain vers un autre.",
-    "LosingEffect": "Le perdant dÃ©fausse les 3 cartes du dessus de son deck.",
+    "WinningEffect": "Le gagnant déplace un Personnage depuis ce Terrain vers un autre.",
+    "LosingEffect": "Le perdant défausse les 3 cartes du dessus de son deck.",
     "SpecialEffect": "(Permanent) Les cartes Terracid ont +1 en Force."
   },
   {
     "Index": 100003,
     "Number": "3",
     "Title": "QUANTUM",
-    "Artist": "LÃ©onard Lam",
+    "Artist": "Léonard Lam",
     "CardType": "Terrain",
     "SeasonId": "S01",
     "TexturePath": "cards/Origins/textures/003_QUANTUM.jpg",
@@ -43,15 +43,15 @@
     "Percentage": 100,
     "RarityId": "C",
     "Rules": "",
-    "WinningEffect": "Le gagnant reprend en main la carte du dessus de sa dÃ©fausse.",
-    "LosingEffect": "Le perdant dÃ©fausse les 3 cartes du dessus de son deck.",
+    "WinningEffect": "Le gagnant reprend en main la carte du dessus de sa défausse.",
+    "LosingEffect": "Le perdant défausse les 3 cartes du dessus de son deck.",
     "SpecialEffect": ""
   },
   {
     "Index": 100004,
     "Number": "4",
     "Title": "ROCKET FIELD",
-    "Artist": "LÃ©onard Lam",
+    "Artist": "Léonard Lam",
     "CardType": "Terrain",
     "SeasonId": "S01",
     "TexturePath": "cards/Origins/textures/004_ROCKET FIELD.jpg",
@@ -59,25 +59,25 @@
     "Percentage": 100,
     "RarityId": "C",
     "Rules": "(Permanent) Si un joueur a moins de 3 cartes en main, il pioche une carte.",
-    "WinningEffect": "Le gagnant dÃ©fausse les 2 cartes du dessus de son deck.",
-    "LosingEffect": "Le perdant dÃ©fausse les 5 cartes du dessus de son deck.",
+    "WinningEffect": "Le gagnant défausse les 2 cartes du dessus de son deck.",
+    "LosingEffect": "Le perdant défausse les 5 cartes du dessus de son deck.",
     "SpecialEffect": "(Permanent) Si un joueur a moins de 3 cartes en main, il pioche une carte."
   },
   {
     "Index": 100005,
     "Number": "5",
     "Title": "RUST",
-    "Artist": "LÃ©onard Lam",
+    "Artist": "Léonard Lam",
     "CardType": "Terrain",
     "SeasonId": "S01",
     "TexturePath": "cards/Origins/textures/005_RUST.jpg",
     "Drop": 15.0,
     "Percentage": 100,
     "RarityId": "C",
-    "Rules": "(Permanent) Au dÃ©but de son tour, chaque joueur pioche une carte de plus.",
+    "Rules": "(Permanent) Au début de son tour, chaque joueur pioche une carte de plus.",
     "WinningEffect": "",
-    "LosingEffect": "Le perdant dÃ©fausse autant de cartes du dessus de son deck qu'il a de cartes en main.",
-    "SpecialEffect": "(Permanent) Au dÃ©but de son tour, chaque joueur pioche une carte de plus."
+    "LosingEffect": "Le perdant défausse autant de cartes du dessus de son deck qu'il a de cartes en main.",
+    "SpecialEffect": "(Permanent) Au début de son tour, chaque joueur pioche une carte de plus."
   },
   {
     "Index": 100006,
@@ -90,10 +90,10 @@
     "Drop": 15.0,
     "Percentage": 100,
     "RarityId": "C",
-    "Rules": "(Permanent) Pendant son tour, chaque joueur joue un Terrain ou dÃ©fausser une carte.",
-    "WinningEffect": "Le gagnant reprend en main un Terrain de sa dÃ©fausse.",
-    "LosingEffect": "Le perdant dÃ©fausse 2 cartes de sa main par Terrain encore en jeu.",
-    "SpecialEffect": "(Permanent) Pendant son tour, chaque joueur joue un Terrain ou dÃ©fausser une carte."
+    "Rules": "(Permanent) Pendant son tour, chaque joueur joue un Terrain ou défausser une carte.",
+    "WinningEffect": "Le gagnant reprend en main un Terrain de sa défausse.",
+    "LosingEffect": "Le perdant défausse 2 cartes de sa main par Terrain encore en jeu.",
+    "SpecialEffect": "(Permanent) Pendant son tour, chaque joueur joue un Terrain ou défausser une carte."
   },
   {
     "Index": 100007,
@@ -106,10 +106,10 @@
     "Drop": 15.0,
     "Percentage": 100,
     "RarityId": "C",
-    "Rules": "(Permanent) Chaque joueur pioche une carte de plus Ã  son tour.",
+    "Rules": "(Permanent) Chaque joueur pioche une carte de plus à son tour.",
     "WinningEffect": "Le gagnant pioche pour avoir 5 cartes en main.",
-    "LosingEffect": "Le perdant dÃ©fausse pour avoir au maximum 3 cartes en main.",
-    "SpecialEffect": "(Permanent) Chaque joueur pioche une carte de plus Ã  son tour."
+    "LosingEffect": "Le perdant défausse pour avoir au maximum 3 cartes en main.",
+    "SpecialEffect": "(Permanent) Chaque joueur pioche une carte de plus à son tour."
   },
   {
     "Index": 100008,
@@ -122,10 +122,10 @@
     "Drop": 15.0,
     "Percentage": 100,
     "RarityId": "C",
-    "Rules": "(Permanent) Aucun autre Terrain ne peut Ãªtre posÃ© tant que celui-ci est en jeu.",
+    "Rules": "(Permanent) Aucun autre Terrain ne peut être posé tant que celui-ci est en jeu.",
     "WinningEffect": "",
-    "LosingEffect": "Le perdant dÃ©fausse les 3 cartes du dessus de son deck.",
-    "SpecialEffect": "(Permanent) Aucun autre Terrain ne peut Ãªtre posÃ© tant que celui-ci est en jeu."
+    "LosingEffect": "Le perdant défausse les 3 cartes du dessus de son deck.",
+    "SpecialEffect": "(Permanent) Aucun autre Terrain ne peut être posé tant que celui-ci est en jeu."
   },
   {
     "Index": 100009,
@@ -138,10 +138,10 @@
     "Drop": 15.0,
     "Percentage": 100,
     "RarityId": "C",
-    "Rules": "(Permanent) Si un joueur pioche, il le fait jusqu'Ã  avoir au moins 5 cartes en main.",
+    "Rules": "(Permanent) Si un joueur pioche, il le fait jusqu'à avoir au moins 5 cartes en main.",
     "WinningEffect": "",
-    "LosingEffect": "Le perdant dÃ©fausse toutes les cartes de sa main.",
-    "SpecialEffect": "(Permanent) Si un joueur pioche, il le fait jusqu'Ã  avoir au moins 5 cartes en main."
+    "LosingEffect": "Le perdant défausse toutes les cartes de sa main.",
+    "SpecialEffect": "(Permanent) Si un joueur pioche, il le fait jusqu'à avoir au moins 5 cartes en main."
   },
   {
     "Index": 100010,
@@ -156,7 +156,7 @@
     "RarityId": "C",
     "Rules": "Quand ce Terrain entre en jeu, chaque joueur pioche pour avoir 5 cartes en main.",
     "WinningEffect": "",
-    "LosingEffect": "Le perdant dÃ©fausse les 3 cartes du dessus de son deck.",
+    "LosingEffect": "Le perdant défausse les 3 cartes du dessus de son deck.",
     "SpecialEffect": "Quand ce Terrain entre en jeu, chaque joueur pioche pour avoir 5 cartes en main."
   },
   {
@@ -170,10 +170,10 @@
     "Drop": 15.0,
     "Percentage": 100,
     "RarityId": "C",
-    "Rules": "(Permanent) Aucun joueur ne peut piocher sâ€™il a 3 cartes ou plus en main.",
-    "WinningEffect": "Le gagnant reprend en main un Terrain de sa dÃ©fausse.",
-    "LosingEffect": "Le perdant dÃ©fausse les 4 cartes du dessus de son deck.",
-    "SpecialEffect": "(Permanent) Aucun joueur ne peut piocher sâ€™il a 3 cartes ou plus en main."
+    "Rules": "(Permanent) Aucun joueur ne peut piocher s’il a 3 cartes ou plus en main.",
+    "WinningEffect": "Le gagnant reprend en main un Terrain de sa défausse.",
+    "LosingEffect": "Le perdant défausse les 4 cartes du dessus de son deck.",
+    "SpecialEffect": "(Permanent) Aucun joueur ne peut piocher s’il a 3 cartes ou plus en main."
   },
   {
     "Index": 100012,
@@ -188,7 +188,7 @@
     "RarityId": "C",
     "Rules": "",
     "WinningEffect": "Le gagnant repose autant de cartes qu'il veut de sa main sur le dessus de son deck.",
-    "LosingEffect": "Le perdant dÃ©fausse toutes les cartes de sa main.",
+    "LosingEffect": "Le perdant défausse toutes les cartes de sa main.",
     "SpecialEffect": ""
   },
   {
@@ -204,7 +204,7 @@
     "RarityId": "C",
     "Rules": "Quand ce Terrain entre en jeu, chaque joueur joue un Personnage gratuitement.",
     "WinningEffect": "",
-    "LosingEffect": "Le perdant dÃ©fausse les 3 cartes du dessus de son deck.",
+    "LosingEffect": "Le perdant défausse les 3 cartes du dessus de son deck.",
     "SpecialEffect": "Quand ce Terrain entre en jeu, chaque joueur joue un Personnage gratuitement."
   },
   {
@@ -218,10 +218,10 @@
     "Drop": 15.0,
     "Percentage": 100,
     "RarityId": "C",
-    "Rules": "(Permanent) Toutes les cartes Personnage coÃ»tent +1 Ã  poser.",
+    "Rules": "(Permanent) Toutes les cartes Personnage coûtent +1 à poser.",
     "WinningEffect": "Le gagnant joue une de ses cartes gratuitement.",
-    "LosingEffect": "Le perdant dÃ©fausse les 3 cartes du dessus de son deck.",
-    "SpecialEffect": "(Permanent) Toutes les cartes Personnage coÃ»tent +1 Ã  poser."
+    "LosingEffect": "Le perdant défausse les 3 cartes du dessus de son deck.",
+    "SpecialEffect": "(Permanent) Toutes les cartes Personnage coûtent +1 à poser."
   },
   {
     "Index": 100015,
@@ -234,10 +234,10 @@
     "Drop": 15.0,
     "Percentage": 100,
     "RarityId": "C",
-    "Rules": "(Permanent) Si un joueur a plus de 5 cartes en main, il dÃ©fausse pour nâ€™en avoir que 5.",
+    "Rules": "(Permanent) Si un joueur a plus de 5 cartes en main, il défausse pour n’en avoir que 5.",
     "WinningEffect": "Le gagnant score un autre Terrain, de son choix (si possible).",
-    "LosingEffect": "Le perdant dÃ©fausse les 3 cartes du dessus de son deck.",
-    "SpecialEffect": "(Permanent) Si un joueur a plus de 5 cartes en main, il dÃ©fausse pour nâ€™en avoir que 5."
+    "LosingEffect": "Le perdant défausse les 3 cartes du dessus de son deck.",
+    "SpecialEffect": "(Permanent) Si un joueur a plus de 5 cartes en main, il défausse pour n’en avoir que 5."
   },
   {
     "Index": 100016,
@@ -250,10 +250,10 @@
     "Drop": 15.0,
     "Percentage": 100,
     "RarityId": "C",
-    "Rules": "(Permanent) Interdiction de jouer une carte ayant le mÃªme nom qu'une carte dÃ©jÃ  en jeu.",
+    "Rules": "(Permanent) Interdiction de jouer une carte ayant le même nom qu'une carte déjà en jeu.",
     "WinningEffect": "",
-    "LosingEffect": "Le perdant dÃ©fausse les 3 cartes du dessus de son deck.",
-    "SpecialEffect": "(Permanent) Interdiction de jouer une carte ayant le mÃªme nom qu'une carte dÃ©jÃ  en jeu."
+    "LosingEffect": "Le perdant défausse les 3 cartes du dessus de son deck.",
+    "SpecialEffect": "(Permanent) Interdiction de jouer une carte ayant le même nom qu'une carte déjà en jeu."
   },
   {
     "Index": 100017,
@@ -267,8 +267,8 @@
     "Percentage": 100,
     "RarityId": "C",
     "Rules": "(Permanent) Les cartes Laink ont +1 en Force.",
-    "WinningEffect": "Le gagnant dÃ©place un de ses Personnages depuis ce Terrain vers un autre.",
-    "LosingEffect": "Le perdant dÃ©fausse les 3 cartes du dessus de son deck.",
+    "WinningEffect": "Le gagnant déplace un de ses Personnages depuis ce Terrain vers un autre.",
+    "LosingEffect": "Le perdant défausse les 3 cartes du dessus de son deck.",
     "SpecialEffect": "(Permanent) Les cartes Laink ont +1 en Force."
   },
   {
@@ -283,8 +283,8 @@
     "Percentage": 100,
     "RarityId": "C",
     "Rules": "",
-    "WinningEffect": "Le gagnant reprend en main un de ses Personnages qui Ã©tait sur ce Terrain.",
-    "LosingEffect": "Le perdant dÃ©fausse les 3 cartes du dessus de son deck.",
+    "WinningEffect": "Le gagnant reprend en main un de ses Personnages qui était sur ce Terrain.",
+    "LosingEffect": "Le perdant défausse les 3 cartes du dessus de son deck.",
     "SpecialEffect": ""
   },
   {
@@ -299,8 +299,8 @@
     "Percentage": 100,
     "RarityId": "C",
     "Rules": "",
-    "WinningEffect": "Le gagnant dÃ©fausse la premiÃ¨re carte du dessus de son deck.",
-    "LosingEffect": "Le perdant dÃ©fausse les 5 cartes du dessus de son deck.",
+    "WinningEffect": "Le gagnant défausse la première carte du dessus de son deck.",
+    "LosingEffect": "Le perdant défausse les 5 cartes du dessus de son deck.",
     "SpecialEffect": ""
   },
   {
@@ -314,10 +314,10 @@
     "Drop": 15.0,
     "Percentage": 100,
     "RarityId": "C",
-    "Rules": "(Permanent) Sur ce Terrain, toutes les Personnage coÃ»tent +2 Ã  poser.",
+    "Rules": "(Permanent) Sur ce Terrain, toutes les Personnage coûtent +2 à poser.",
     "WinningEffect": "",
-    "LosingEffect": "Le perdant dÃ©fausse les 4 cartes du dessus de son deck.",
-    "SpecialEffect": "(Permanent) Sur ce Terrain, toutes les Personnage coÃ»tent +2 Ã  poser."
+    "LosingEffect": "Le perdant défausse les 4 cartes du dessus de son deck.",
+    "SpecialEffect": "(Permanent) Sur ce Terrain, toutes les Personnage coûtent +2 à poser."
   },
   {
     "Index": 100021,
@@ -330,10 +330,10 @@
     "Drop": 15.0,
     "Percentage": 100,
     "RarityId": "C",
-    "Rules": "(Permanent) Ce Terrain ne peut Ãªtre scorÃ© que sâ€™il est le seul terrain en jeu.",
-    "WinningEffect": "Le gagnant Ã©change son deck et sa dÃ©fausse, puis dÃ©fausse sa main.",
-    "LosingEffect": "Le perdant dÃ©fausse les 4 cartes du dessus de son deck.",
-    "SpecialEffect": "(Permanent) Ce Terrain ne peut Ãªtre scorÃ© que sâ€™il est le seul terrain en jeu."
+    "Rules": "(Permanent) Ce Terrain ne peut être scoré que s’il est le seul terrain en jeu.",
+    "WinningEffect": "Le gagnant échange son deck et sa défausse, puis défausse sa main.",
+    "LosingEffect": "Le perdant défausse les 4 cartes du dessus de son deck.",
+    "SpecialEffect": "(Permanent) Ce Terrain ne peut être scoré que s’il est le seul terrain en jeu."
   },
   {
     "Index": 100022,
@@ -347,15 +347,15 @@
     "Percentage": 100,
     "RarityId": "C",
     "Rules": "",
-    "WinningEffect": "Le gagnant regarde les 5 premiÃ¨res cartes du deck adverse et les rÃ©organise.",
-    "LosingEffect": "Le perdant dÃ©fausse les 4 cartes du dessus de son deck.",
+    "WinningEffect": "Le gagnant regarde les 5 premières cartes du deck adverse et les réorganise.",
+    "LosingEffect": "Le perdant défausse les 4 cartes du dessus de son deck.",
     "SpecialEffect": ""
   },
   {
     "Index": 100023,
     "Number": "23",
     "Title": "MANOIR",
-    "Artist": "LÃ©onard Lam",
+    "Artist": "Léonard Lam",
     "CardType": "Terrain",
     "SeasonId": "S01",
     "TexturePath": "cards/Origins/textures/023_MANOIR.jpg",
@@ -363,8 +363,8 @@
     "Percentage": 100,
     "RarityId": "C",
     "Rules": "",
-    "WinningEffect": "Le gagnant reprend en main la carte du dessus de sa dÃ©fausse.",
-    "LosingEffect": "Le perdant dÃ©fausse les 5 cartes du dessus de son deck.",
+    "WinningEffect": "Le gagnant reprend en main la carte du dessus de sa défausse.",
+    "LosingEffect": "Le perdant défausse les 5 cartes du dessus de son deck.",
     "SpecialEffect": ""
   },
   {
@@ -379,8 +379,8 @@
     "Percentage": 100,
     "RarityId": "C",
     "Rules": "",
-    "WinningEffect": "Le gagnant cherche une carte dans son deck et la met en main et mÃ©lange son deck.",
-    "LosingEffect": "Le perdant dÃ©fausse les 4 cartes du dessus de son deck.",
+    "WinningEffect": "Le gagnant cherche une carte dans son deck et la met en main et mélange son deck.",
+    "LosingEffect": "Le perdant défausse les 4 cartes du dessus de son deck.",
     "SpecialEffect": ""
   },
   {
@@ -394,10 +394,10 @@
     "Drop": 15.0,
     "Percentage": 100,
     "RarityId": "C",
-    "Rules": "(Permanent) Toutes les cartes Personnage coÃ»tent 1 de moins Ã  poser.",
-    "WinningEffect": "Le gagnant reprend en main la carte du dessus de sa dÃ©fausse.",
-    "LosingEffect": "Le perdant dÃ©fausse les 4 cartes du dessus de son deck.",
-    "SpecialEffect": "(Permanent) Toutes les cartes Personnage coÃ»tent 1 de moins Ã  poser."
+    "Rules": "(Permanent) Toutes les cartes Personnage coûtent 1 de moins à poser.",
+    "WinningEffect": "Le gagnant reprend en main la carte du dessus de sa défausse.",
+    "LosingEffect": "Le perdant défausse les 4 cartes du dessus de son deck.",
+    "SpecialEffect": "(Permanent) Toutes les cartes Personnage coûtent 1 de moins à poser."
   },
   {
     "Index": 100026,
@@ -410,10 +410,10 @@
     "Drop": 15.0,
     "Percentage": 100,
     "RarityId": "C",
-    "Rules": "Quand ce Terrain entre en jeu, chaque joueur dÃ©fausse un Personnage en jeu.",
+    "Rules": "Quand ce Terrain entre en jeu, chaque joueur défausse un Personnage en jeu.",
     "WinningEffect": "",
-    "LosingEffect": "Le perdant dÃ©fausse les 3 cartes du dessus de son deck.",
-    "SpecialEffect": "Quand ce Terrain entre en jeu, chaque joueur dÃ©fausse un Personnage en jeu."
+    "LosingEffect": "Le perdant défausse les 3 cartes du dessus de son deck.",
+    "SpecialEffect": "Quand ce Terrain entre en jeu, chaque joueur défausse un Personnage en jeu."
   },
   {
     "Index": 100027,
@@ -427,8 +427,8 @@
     "Percentage": 100,
     "RarityId": "C",
     "Rules": "",
-    "WinningEffect": "Le gagnant reprend en main un Terrain de sa dÃ©fausse.",
-    "LosingEffect": "Le perdant dÃ©fausse les 3 cartes du dessus de son deck.",
+    "WinningEffect": "Le gagnant reprend en main un Terrain de sa défausse.",
+    "LosingEffect": "Le perdant défausse les 3 cartes du dessus de son deck.",
     "SpecialEffect": ""
   },
   {
@@ -443,8 +443,8 @@
     "Percentage": 100,
     "RarityId": "C",
     "Rules": "",
-    "WinningEffect": "Le gagnant dÃ©fausse, si possible, un autre Terrain en jeu et le remplace par un de sa main.",
-    "LosingEffect": "Le perdant dÃ©fausse les 3 cartes du dessus de son deck.",
+    "WinningEffect": "Le gagnant défausse, si possible, un autre Terrain en jeu et le remplace par un de sa main.",
+    "LosingEffect": "Le perdant défausse les 3 cartes du dessus de son deck.",
     "SpecialEffect": ""
   },
   {
@@ -459,8 +459,8 @@
     "Percentage": 100,
     "RarityId": "C",
     "Rules": "",
-    "WinningEffect": "Le gagnant prend la carte du dessus de sa dÃ©fausse en main pour chacune de ses cartes Laink en jeu.",
-    "LosingEffect": "Le perdant dÃ©fausse la carte du dessus de son deck  jusquâ€™Ã  dÃ©fausser une carte Terracid.",
+    "WinningEffect": "Le gagnant prend la carte du dessus de sa défausse en main pour chacune de ses cartes Laink en jeu.",
+    "LosingEffect": "Le perdant défausse la carte du dessus de son deck  jusqu’à défausser une carte Terracid.",
     "SpecialEffect": ""
   },
   {
@@ -475,15 +475,15 @@
     "Percentage": 100,
     "RarityId": "C",
     "Rules": "",
-    "WinningEffect": "Le gagnant prend la carte du dessus de sa dÃ©fausse en main pour chacune de ses cartes Terracid en jeu.",
-    "LosingEffect": "Le perdant dÃ©fausse la carte du dessus de son deck jusquâ€™Ã  dÃ©fausser une carte Laink.",
+    "WinningEffect": "Le gagnant prend la carte du dessus de sa défausse en main pour chacune de ses cartes Terracid en jeu.",
+    "LosingEffect": "Le perdant défausse la carte du dessus de son deck jusqu’à défausser une carte Laink.",
     "SpecialEffect": ""
   },
   {
     "Index": 100031,
     "Number": "31",
     "Title": "GARAGISTE",
-    "Artist": "LÃ©onard Lam",
+    "Artist": "Léonard Lam",
     "CardType": "Effigy",
     "SeasonId": "S01",
     "TexturePath": "cards/Origins/textures/031_GARAGISTE.jpg",
@@ -495,13 +495,13 @@
     "Cost": 0,
     "Rules": "Piochez une carte.",
     "Combo": "(Permanent) +1 en Force.",
-    "Quote": "â€œCâ€™est la rotule dâ€™embrayage de la culasse quâ€™a pÃ©tÃ©. On sera dans les 5000 balles, ma bonne dame.â€"
+    "Quote": "“C’est la rotule d’embrayage de la culasse qu’a pété. On sera dans les 5000 balles, ma bonne dame.”"
   },
   {
     "Index": 100032,
     "Number": "32",
     "Title": "GARAGISTE",
-    "Artist": "LÃ©onard Lam",
+    "Artist": "Léonard Lam",
     "CardType": "Effigy",
     "SeasonId": "S01",
     "TexturePath": "cards/Origins/textures/032_GARAGISTE.jpg",
@@ -513,13 +513,13 @@
     "Cost": 0,
     "Rules": "Piochez une carte.",
     "Combo": "",
-    "Quote": "Sur le cÃ´tÃ© droit, on trouve la jauge Ã  huile. Sur le cÃ´tÃ© gauche, on trouve le cÃ´tÃ© gauche."
+    "Quote": "Sur le côté droit, on trouve la jauge à huile. Sur le côté gauche, on trouve le côté gauche."
   },
   {
     "Index": 100033,
     "Number": "33",
     "Title": "CAMIONNEUR",
-    "Artist": "LÃ©onard Lam",
+    "Artist": "Léonard Lam",
     "CardType": "Effigy",
     "SeasonId": "S01",
     "TexturePath": "cards/Origins/textures/033_CAMIONNEUR.jpg",
@@ -529,15 +529,15 @@
     "Effigy": "Laink",
     "Force": 1,
     "Cost": 0,
-    "Rules": "DÃ©faussez un Personnage adverse en jeu dâ€™une Force de 3 maximum.",
+    "Rules": "Défaussez un Personnage adverse en jeu d’une Force de 3 maximum.",
     "Combo": "Piochez une carte.",
-    "Quote": "â€œQuand je vois les flammes sur mon camtar, Ã§a me donne envie de chialer.â€"
+    "Quote": "“Quand je vois les flammes sur mon camtar, ça me donne envie de chialer.”"
   },
   {
     "Index": 100034,
     "Number": "34",
     "Title": "CAMIONNEUR",
-    "Artist": "LÃ©onard Lam",
+    "Artist": "Léonard Lam",
     "CardType": "Effigy",
     "SeasonId": "S01",
     "TexturePath": "cards/Origins/textures/034_CAMIONNEUR.jpg",
@@ -547,15 +547,15 @@
     "Effigy": "Terracid",
     "Force": 1,
     "Cost": 0,
-    "Rules": "DÃ©faussez un Personnage adverse en jeu dâ€™une Force de 3 maximum.",
+    "Rules": "Défaussez un Personnage adverse en jeu d’une Force de 3 maximum.",
     "Combo": "",
-    "Quote": "Souvent vu sur lâ€™A1 Ã  150 km/h, avec du pinard, un sandwich rosette et Johnny Ã  fond dans la cabine."
+    "Quote": "Souvent vu sur l’A1 à 150 km/h, avec du pinard, un sandwich rosette et Johnny à fond dans la cabine."
   },
   {
     "Index": 100035,
     "Number": "35",
     "Title": "VENDEUR",
-    "Artist": "LÃ©onard Lam",
+    "Artist": "Léonard Lam",
     "CardType": "Effigy",
     "SeasonId": "S01",
     "TexturePath": "cards/Origins/textures/035_VENDEUR.jpg",
@@ -565,15 +565,15 @@
     "Effigy": "Laink",
     "Force": 3,
     "Cost": 1,
-    "Rules": "(Permanent) Votre adversaire dÃ©fausse une carte de plus, si vous gagnez un Terrain.",
+    "Rules": "(Permanent) Votre adversaire défausse une carte de plus, si vous gagnez un Terrain.",
     "Combo": "Scorez un Terrain.",
-    "Quote": "Le saviez-vous ? Brico Sympa est nÃ© de la collaboration entre 2 types qui savent pas percer un mur."
+    "Quote": "Le saviez-vous ? Brico Sympa est né de la collaboration entre 2 types qui savent pas percer un mur."
   },
   {
     "Index": 100036,
     "Number": "36",
     "Title": "VENDEUR",
-    "Artist": "LÃ©onard Lam",
+    "Artist": "Léonard Lam",
     "CardType": "Effigy",
     "SeasonId": "S01",
     "TexturePath": "cards/Origins/textures/036_VENDEUR.jpg",
@@ -583,9 +583,9 @@
     "Effigy": "Terracid",
     "Force": 4,
     "Cost": 1,
-    "Rules": "(Permanent) Votre adversaire dÃ©fausse une carte de plus, si vous gagnez un Terrain.",
+    "Rules": "(Permanent) Votre adversaire défausse une carte de plus, si vous gagnez un Terrain.",
     "Combo": "",
-    "Quote": "Vu Ã  la tÃ©lÃ©, Socisseau est LA rÃ©volution de la saucisse sous vide au goÃ»t douteux !"
+    "Quote": "Vu à la télé, Socisseau est LA révolution de la saucisse sous vide au goût douteux !"
   },
   {
     "Index": 100037,
@@ -601,9 +601,9 @@
     "Effigy": "Laink",
     "Force": 2,
     "Cost": 0,
-    "Rules": "(Permanent) Votre adversaire dÃ©fausse une carte de plus, si vous gagnez un Terrain.",
+    "Rules": "(Permanent) Votre adversaire défausse une carte de plus, si vous gagnez un Terrain.",
     "Combo": "Scorez un Terrain.",
-    "Quote": "Aucun de ses propriÃ©taires nâ€™a jamais eu Ã  se plaindre d'elle (ils sont tous morts)."
+    "Quote": "Aucun de ses propriétaires n’a jamais eu à se plaindre d'elle (ils sont tous morts)."
   },
   {
     "Index": 100038,
@@ -619,9 +619,9 @@
     "Effigy": "Terracid",
     "Force": 1,
     "Cost": 0,
-    "Rules": "DÃ©faussez un Personnage en jeu chez votre adversaire.",
-    "Combo": "Piochez une carte par point de Force chez le Personnage dÃ©faussÃ©.",
-    "Quote": "Elle fait peur comme Ã§a, mais en rÃ©alitÃ©, si on apprend Ã  la connaÃ®tre, elle est super sympa."
+    "Rules": "Défaussez un Personnage en jeu chez votre adversaire.",
+    "Combo": "Piochez une carte par point de Force chez le Personnage défaussé.",
+    "Quote": "Elle fait peur comme ça, mais en réalité, si on apprend à la connaître, elle est super sympa."
   },
   {
     "Index": 100039,
@@ -637,9 +637,9 @@
     "Effigy": "Laink",
     "Force": 2,
     "Cost": 1,
-    "Rules": "(Permanent) Si votre adversaire dÃ©fausse au moins 2 cartes, il en dÃ©fausse une de plus.",
+    "Rules": "(Permanent) Si votre adversaire défausse au moins 2 cartes, il en défausse une de plus.",
     "Combo": "",
-    "Quote": "â€œAllÃ´, Houston ! Il y a un invitÃ© surprise dans le vaisseau, vous pourriez mâ€™aider ?â€"
+    "Quote": "“Allô, Houston ! Il y a un invité surprise dans le vaisseau, vous pourriez m’aider ?”"
   },
   {
     "Index": 100040,
@@ -655,9 +655,9 @@
     "Effigy": "Terracid",
     "Force": 2,
     "Cost": 1,
-    "Rules": "(Permanent) Si votre adversaire dÃ©fausse au moins 2 cartes, il en dÃ©fausse une de plus.",
+    "Rules": "(Permanent) Si votre adversaire défausse au moins 2 cartes, il en défausse une de plus.",
     "Combo": "Piochez 2 cartes.",
-    "Quote": "Ses derniÃ¨res paroles ont Ã©tÃ© : â€œHal, pourquoi tu as ouvert tous les SAS de sÃ©curitÃ© ?â€"
+    "Quote": "Ses dernières paroles ont été : “Hal, pourquoi tu as ouvert tous les SAS de sécurité ?”"
   },
   {
     "Index": 100041,
@@ -673,9 +673,9 @@
     "Effigy": "Laink",
     "Force": 2,
     "Cost": 1,
-    "Rules": "(Permanent) DÃ©faussez 1 carte de moins pour mettre vos Personnages en jeu.",
-    "Combo": "(Permanent) A chaque fois que votre adversaire dÃ©fausse 2 cartes ou plus, piochez une carte.",
-    "Quote": "CouchÃ© tout le temps au 1er round, mais ne baisse jamais les bras car monte toujours sa garde."
+    "Rules": "(Permanent) Défaussez 1 carte de moins pour mettre vos Personnages en jeu.",
+    "Combo": "(Permanent) A chaque fois que votre adversaire défausse 2 cartes ou plus, piochez une carte.",
+    "Quote": "Couché tout le temps au 1er round, mais ne baisse jamais les bras car monte toujours sa garde."
   },
   {
     "Index": 100042,
@@ -691,9 +691,9 @@
     "Effigy": "Terracid",
     "Force": 2,
     "Cost": 0,
-    "Rules": "(Permanent) Votre adversaire doit dÃ©fausser une carte de plus pour poser ses Personnages.",
+    "Rules": "(Permanent) Votre adversaire doit défausser une carte de plus pour poser ses Personnages.",
     "Combo": "",
-    "Quote": "La seule ceinture quâ€™il a eue Ã©tait celle de sÃ©curitÃ© dans sa Peugeot 206."
+    "Quote": "La seule ceinture qu’il a eue était celle de sécurité dans sa Peugeot 206."
   },
   {
     "Index": 100043,
@@ -709,9 +709,9 @@
     "Effigy": "Laink",
     "Force": 2,
     "Cost": 1,
-    "Rules": "(Permanent) Si vous avez plus de cartes dans votre dÃ©fausse que dans votre deck, reprenez en main la carte du dessus de votre dÃ©fausse en dÃ©but de tour.",
-    "Combo": "Reprenez en main la carte du dessus de votre dÃ©fausse.",
-    "Quote": "â€œEeeeeuuuh... zbaaaarg mhhhh oooooergggg !â€"
+    "Rules": "(Permanent) Si vous avez plus de cartes dans votre défausse que dans votre deck, reprenez en main la carte du dessus de votre défausse en début de tour.",
+    "Combo": "Reprenez en main la carte du dessus de votre défausse.",
+    "Quote": "“Eeeeeuuuh... zbaaaarg mhhhh oooooergggg !”"
   },
   {
     "Index": 100044,
@@ -727,9 +727,9 @@
     "Effigy": "Terracid",
     "Force": 1,
     "Cost": 0,
-    "Rules": "(Permanent) Si vous avez plus de cartes dans votre dÃ©fausse que dans votre deck, reprenez en main la carte du dessus de votre dÃ©fausse en dÃ©but de tour.",
+    "Rules": "(Permanent) Si vous avez plus de cartes dans votre défausse que dans votre deck, reprenez en main la carte du dessus de votre défausse en début de tour.",
     "Combo": "",
-    "Quote": "â€œBlaaaarg mhhhhoooooo euuuuuoooo saucisse zbeeeeerg !â€"
+    "Quote": "“Blaaaarg mhhhhoooooo euuuuuoooo saucisse zbeeeeerg !”"
   },
   {
     "Index": 100045,
@@ -747,7 +747,7 @@
     "Cost": 0,
     "Rules": "(Permanent) Au moment de scorer, vos Personnages Terracid ont +1 en Force.",
     "Combo": "",
-    "Quote": "Depuis quâ€™il a quittÃ© la ville pour un village, il a la belle vie Ã  la ferme de Tournan-en-Brie."
+    "Quote": "Depuis qu’il a quitté la ville pour un village, il a la belle vie à la ferme de Tournan-en-Brie."
   },
   {
     "Index": 100046,
@@ -765,7 +765,7 @@
     "Cost": 0,
     "Rules": "(Permanent) Au moment de scorer, vos Personnages Laink ont +1 en Force.",
     "Combo": "",
-    "Quote": "Il a tout plaquÃ© et est parti Ã©lever des vaches par passion. Le lait quâ€™il produit est dÃ©gueulasse."
+    "Quote": "Il a tout plaqué et est parti élever des vaches par passion. Le lait qu’il produit est dégueulasse."
   },
   {
     "Index": 100047,
@@ -817,9 +817,9 @@
     "Effigy": "Laink",
     "Force": 3,
     "Cost": 0,
-    "Rules": "Vous et votre adversaire dÃ©faussez la premiÃ¨re carte de votre deck. Si la vÃ´tre a plus en Force, rÃ©cupÃ©rez-la en main.",
+    "Rules": "Vous et votre adversaire défaussez la première carte de votre deck. Si la vôtre a plus en Force, récupérez-la en main.",
     "Combo": "",
-    "Quote": "Lâ€™avantage est que, dans sa fromagerie, il peut faire un prout bien odorant en toute discrÃ©tion."
+    "Quote": "L’avantage est que, dans sa fromagerie, il peut faire un prout bien odorant en toute discrétion."
   },
   {
     "Index": 100050,
@@ -835,7 +835,7 @@
     "Effigy": "Terracid",
     "Force": 2,
     "Cost": 0,
-    "Rules": "Vous et votre adversaire dÃ©faussez la premiÃ¨re carte de votre deck. Si la vÃ´tre a plus en Force, rÃ©cupÃ©rez-la en main.",
+    "Rules": "Vous et votre adversaire défaussez la première carte de votre deck. Si la vôtre a plus en Force, récupérez-la en main.",
     "Combo": "",
     "Quote": "Jambon, saucisson, terrine, rillettes, mais surtout un excellent boudin qui pue bien comme il faut."
   },
@@ -853,9 +853,9 @@
     "Effigy": "Terracid",
     "Force": 2,
     "Cost": 1,
-    "Rules": "(Permanent) Si vous avez moins de Personnages en jeu que votre adversaire, le coÃ»t pour poser vos Personnages est diminuÃ© de 2.",
+    "Rules": "(Permanent) Si vous avez moins de Personnages en jeu que votre adversaire, le coût pour poser vos Personnages est diminué de 2.",
     "Combo": "",
-    "Quote": "Il paraÃ®t quâ€™il a rachetÃ© tous les hÃ´pitaux pour en faire des casinos"
+    "Quote": "Il paraît qu’il a racheté tous les hôpitaux pour en faire des casinos"
   },
   {
     "Index": 100052,
@@ -873,7 +873,7 @@
     "Cost": 0,
     "Rules": "Echangez la position de deux de vos Personnages en jeu.",
     "Combo": "",
-    "Quote": "Inventeur de la paille saucisse et de lâ€™Å“uf sur PC, il est dÃ©sormais Ã©tudiÃ© pour son â€œintelligenceâ€."
+    "Quote": "Inventeur de la paille saucisse et de l’œuf sur PC, il est désormais étudié pour son “intelligence”."
   },
   {
     "Index": 100053,
@@ -891,7 +891,7 @@
     "Cost": 0,
     "Rules": "Echangez la position de deux de vos Personnages en jeu.",
     "Combo": "",
-    "Quote": "Il pense encore que le tacos saucisse va rÃ©volutionner le monde de la cuisine."
+    "Quote": "Il pense encore que le tacos saucisse va révolutionner le monde de la cuisine."
   },
   {
     "Index": 100054,
@@ -907,9 +907,9 @@
     "Effigy": "Laink",
     "Force": 1,
     "Cost": 0,
-    "Rules": "Reprenez en main un Terrain de votre dÃ©fausse.",
-    "Combo": "Reprenez en main un Terrain de votre dÃ©fausse.",
-    "Quote": "Il est incapable de compter le nombre de dents de sa fourche, mais y a pas plus calÃ© en cochon !"
+    "Rules": "Reprenez en main un Terrain de votre défausse.",
+    "Combo": "Reprenez en main un Terrain de votre défausse.",
+    "Quote": "Il est incapable de compter le nombre de dents de sa fourche, mais y a pas plus calé en cochon !"
   },
   {
     "Index": 100055,
@@ -925,9 +925,9 @@
     "Effigy": "Terracid",
     "Force": 2,
     "Cost": 0,
-    "Rules": "Reprenez en main un Terrain de votre dÃ©fausse.",
+    "Rules": "Reprenez en main un Terrain de votre défausse.",
     "Combo": "",
-    "Quote": "Une fois le paysan voisin lui a volÃ© une chÃ¨vre. Pour se venger, il lui a cramÃ© sa baraque."
+    "Quote": "Une fois le paysan voisin lui a volé une chèvre. Pour se venger, il lui a cramé sa baraque."
   },
   {
     "Index": 100056,
@@ -943,9 +943,9 @@
     "Effigy": "Laink",
     "Force": 1,
     "Cost": 0,
-    "Rules": "Regardez les 3 prochaines cartes du deck de votre adversaire et reposez-les dans lâ€™ordre de votre choix.",
+    "Rules": "Regardez les 3 prochaines cartes du deck de votre adversaire et reposez-les dans l’ordre de votre choix.",
     "Combo": "",
-    "Quote": "CÃ©lÃ¨bre inventeur du nutri-score F et reconnu pour sa cuisine gÃ©nÃ©reuse (voire dangereuse)."
+    "Quote": "Célèbre inventeur du nutri-score F et reconnu pour sa cuisine généreuse (voire dangereuse)."
   },
   {
     "Index": 100057,
@@ -961,9 +961,9 @@
     "Effigy": "Terracid",
     "Force": 2,
     "Cost": 0,
-    "Rules": "Regardez les 3 prochaines cartes du deck de votre adversaire et reposez-les dans lâ€™ordre de votre choix.",
+    "Rules": "Regardez les 3 prochaines cartes du deck de votre adversaire et reposez-les dans l’ordre de votre choix.",
     "Combo": "Piochez une carte.",
-    "Quote": "Il a participÃ© briÃ¨vement Ã  une Ã©mission de cuisine, intoxiquÃ© tout le jury et brÃ»lÃ© 50% du studio."
+    "Quote": "Il a participé brièvement à une émission de cuisine, intoxiqué tout le jury et brûlé 50% du studio."
   },
   {
     "Index": 100058,
@@ -979,9 +979,9 @@
     "Effigy": "Laink",
     "Force": 1,
     "Cost": 0,
-    "Rules": "(Permanent) Si vous ne lâ€™avez pas jouÃ© ce tour, Ã©changez ce Personnage avec un Personnage de votre main et dÃ©faussez une carte.",
+    "Rules": "(Permanent) Si vous ne l’avez pas joué ce tour, échangez ce Personnage avec un Personnage de votre main et défaussez une carte.",
     "Combo": "",
-    "Quote": "Il semble avoir trouvÃ© le jouet de maman."
+    "Quote": "Il semble avoir trouvé le jouet de maman."
   },
   {
     "Index": 100059,
@@ -997,9 +997,9 @@
     "Effigy": "Terracid",
     "Force": 1,
     "Cost": 0,
-    "Rules": "(Permanent) Si vous ne lâ€™avez pas jouÃ© ce tour, Ã©changez ce Personnage avec un Personnage de votre main et dÃ©faussez une carte.",
+    "Rules": "(Permanent) Si vous ne l’avez pas joué ce tour, échangez ce Personnage avec un Personnage de votre main et défaussez une carte.",
     "Combo": "",
-    "Quote": "Avec 18 compotes par jour, bÃ©bÃ© est obligÃ© de rester constamment sur le pot."
+    "Quote": "Avec 18 compotes par jour, bébé est obligé de rester constamment sur le pot."
   },
   {
     "Index": 100060,
@@ -1015,9 +1015,9 @@
     "Effigy": "Laink",
     "Force": 3,
     "Cost": 0,
-    "Rules": "DÃ©faussez un de vos Personnages et un Personnage adverse.",
+    "Rules": "Défaussez un de vos Personnages et un Personnage adverse.",
     "Combo": "Regardez la carte du dessous de votre deck. Vous pouvez la reposer au-dessus.",
-    "Quote": "â€œJâ€™ai abattu un cerf ce matin ! Par contre, super bizarre, il avait un anorak jaune et des moufles.â€"
+    "Quote": "“J’ai abattu un cerf ce matin ! Par contre, super bizarre, il avait un anorak jaune et des moufles.”"
   },
   {
     "Index": 100061,
@@ -1033,9 +1033,9 @@
     "Effigy": "Terracid",
     "Force": 3,
     "Cost": 1,
-    "Rules": "DÃ©placez un autre Personnage dâ€™un Terrain vers un autre.",
-    "Combo": "Reprenez en main la carte du dessus de votre dÃ©fausse.",
-    "Quote": "\"Mesdames, messieurs, bienvenue Ã  bord du vol 370, veuillez attacher vos ceintures, Ã§a va secouerâ€"
+    "Rules": "Déplacez un autre Personnage d’un Terrain vers un autre.",
+    "Combo": "Reprenez en main la carte du dessus de votre défausse.",
+    "Quote": "\"Mesdames, messieurs, bienvenue à bord du vol 370, veuillez attacher vos ceintures, ça va secouer”"
   },
   {
     "Index": 100062,
@@ -1053,7 +1053,7 @@
     "Cost": 0,
     "Rules": "(Permanent) Ce Personnage a +1 en Force pour chaque carte que vous avez en main.",
     "Combo": "",
-    "Quote": "Tout le village a votÃ© pour le pendre la premiÃ¨re nuit alors quâ€™il Ã©tait Maire depuis 5 minutes."
+    "Quote": "Tout le village a voté pour le pendre la première nuit alors qu’il était Maire depuis 5 minutes."
   },
   {
     "Index": 100063,
@@ -1071,13 +1071,13 @@
     "Cost": 0,
     "Rules": "(Permanent) Ce Personnage a +1 en Force pour chaque carte que vous avez en main.",
     "Combo": "Piochez une carte.",
-    "Quote": "Une fois il sâ€™est transformÃ© en loup-garou mais vu quâ€™il est vÃ©gÃ©tarien, il est restÃ© super sympa."
+    "Quote": "Une fois il s’est transformé en loup-garou mais vu qu’il est végétarien, il est resté super sympa."
   },
   {
     "Index": 100064,
     "Number": "64",
     "Title": "CHEVALIER",
-    "Artist": "MaÃ«l Lohbrunner",
+    "Artist": "Maël Lohbrunner",
     "CardType": "Effigy",
     "SeasonId": "S01",
     "TexturePath": "cards/Origins/textures/064_CHEVALIER.jpg",
@@ -1087,15 +1087,15 @@
     "Effigy": "Laink",
     "Force": 5,
     "Cost": 2,
-    "Rules": "(Permanent) Pour votre adversaire, le coÃ»t pour poser un Personnage est augmentÃ© de 1.",
-    "Combo": "DÃ©faussez un Personnage en jeu dâ€™une Force de 2 ou moins.",
-    "Quote": "On lui a ordonnÃ© de protÃ©ger le bien le plus prÃ©cieux du chÃ¢teau : la cave Ã  biÃ¨re."
+    "Rules": "(Permanent) Pour votre adversaire, le coût pour poser un Personnage est augmenté de 1.",
+    "Combo": "Défaussez un Personnage en jeu d’une Force de 2 ou moins.",
+    "Quote": "On lui a ordonné de protéger le bien le plus précieux du château : la cave à bière."
   },
   {
     "Index": 100065,
     "Number": "65",
     "Title": "CHEVALIER",
-    "Artist": "MaÃ«l Lohbrunner",
+    "Artist": "Maël Lohbrunner",
     "CardType": "Effigy",
     "SeasonId": "S01",
     "TexturePath": "cards/Origins/textures/065_CHEVALIER.jpg",
@@ -1105,15 +1105,15 @@
     "Effigy": "Terracid",
     "Force": 5,
     "Cost": 2,
-    "Rules": "(Permanent) Une fois par tour, quand  vous dÃ©clenchez une combo, reprenez en main la carte du dessus de votre dÃ©fausse.",
-    "Combo": "Reprenez en main un Terrain de votre dÃ©fausse.",
-    "Quote": "Il a bravÃ© tous les dangers pour sauver la princesse de Montmirail (marcher sous la pluie)."
+    "Rules": "(Permanent) Une fois par tour, quand  vous déclenchez une combo, reprenez en main la carte du dessus de votre défausse.",
+    "Combo": "Reprenez en main un Terrain de votre défausse.",
+    "Quote": "Il a bravé tous les dangers pour sauver la princesse de Montmirail (marcher sous la pluie)."
   },
   {
     "Index": 100066,
     "Number": "66",
     "Title": "PEINTRE",
-    "Artist": "MaÃ«l Lohbrunner",
+    "Artist": "Maël Lohbrunner",
     "CardType": "Effigy",
     "SeasonId": "S01",
     "TexturePath": "cards/Origins/textures/066_PEINTRE.jpg",
@@ -1125,13 +1125,13 @@
     "Cost": 0,
     "Rules": "(Permanent) Ce Personnage a +1 en Force pour chacune de vos combos en jeu.",
     "Combo": "",
-    "Quote": "Il utilise le pointillisme, comme un de ses camarades de classe autrichiens dâ€™ailleurs."
+    "Quote": "Il utilise le pointillisme, comme un de ses camarades de classe autrichiens d’ailleurs."
   },
   {
     "Index": 100067,
     "Number": "67",
     "Title": "PEINTRE",
-    "Artist": "MaÃ«l Lohbrunner",
+    "Artist": "Maël Lohbrunner",
     "CardType": "Effigy",
     "SeasonId": "S01",
     "TexturePath": "cards/Origins/textures/067_PEINTRE.jpg",
@@ -1143,13 +1143,13 @@
     "Cost": 0,
     "Rules": "(Permanent) Ce Personnage a +1 en Force pour chacune de vos combos en jeu.",
     "Combo": "(Permanent) Ce Personnage a +1 en Force pour chacune de vos combos en jeu.",
-    "Quote": "Beaucoup de talent, mais si vous voulez le fÃ©liciter pour Ã§a, alors ne parlez quâ€™Ã  sa droite."
+    "Quote": "Beaucoup de talent, mais si vous voulez le féliciter pour ça, alors ne parlez qu’à sa droite."
   },
   {
     "Index": 100068,
     "Number": "68",
     "Title": "POMPIER",
-    "Artist": "LÃ©onard Lam",
+    "Artist": "Léonard Lam",
     "CardType": "Effigy",
     "SeasonId": "S01",
     "TexturePath": "cards/Origins/textures/068_POMPIER.jpg",
@@ -1159,15 +1159,15 @@
     "Effigy": "Laink",
     "Force": 5,
     "Cost": 2,
-    "Rules": "Si câ€™est la premiÃ¨re carte posÃ©e sur son Terrain, reprenez en main les 3 cartes du dessus de votre dÃ©fausse.",
+    "Rules": "Si c’est la première carte posée sur son Terrain, reprenez en main les 3 cartes du dessus de votre défausse.",
     "Combo": "",
-    "Quote": "Le pauvre, il ne voulait Ãªtre pompier que pour draguer, il ne savait pas quâ€™il allait Ãªtre sur le terrain."
+    "Quote": "Le pauvre, il ne voulait être pompier que pour draguer, il ne savait pas qu’il allait être sur le terrain."
   },
   {
     "Index": 100069,
     "Number": "69",
     "Title": "POMPIER",
-    "Artist": "LÃ©onard Lam",
+    "Artist": "Léonard Lam",
     "CardType": "Effigy",
     "SeasonId": "S01",
     "TexturePath": "cards/Origins/textures/069_POMPIER.jpg",
@@ -1177,9 +1177,9 @@
     "Effigy": "Terracid",
     "Force": 6,
     "Cost": 3,
-    "Rules": "Si câ€™est la premiÃ¨re carte posÃ©e sur son Terrain, reprenez en main les 4 cartes du dessus de votre dÃ©fausse.",
+    "Rules": "Si c’est la première carte posée sur son Terrain, reprenez en main les 4 cartes du dessus de votre défausse.",
     "Combo": "",
-    "Quote": "Un vrai pompier choisira toujours de sauver en premier ce quâ€™il y a de plus important."
+    "Quote": "Un vrai pompier choisira toujours de sauver en premier ce qu’il y a de plus important."
   },
   {
     "Index": 100070,
@@ -1195,9 +1195,9 @@
     "Effigy": "Laink",
     "Force": 1,
     "Cost": 0,
-    "Rules": "(Permanent) Votre adversaire ne peut pas jouer de Personnage de Force 2 ou plus sur le Terrain oÃ¹ est ce Personnage.",
+    "Rules": "(Permanent) Votre adversaire ne peut pas jouer de Personnage de Force 2 ou plus sur le Terrain où est ce Personnage.",
     "Combo": "",
-    "Quote": "Demandez-lui une potion dâ€™invisibilitÃ© et vous aurez une chance sur deux dâ€™Ãªtre empoisonnÃ©."
+    "Quote": "Demandez-lui une potion d’invisibilité et vous aurez une chance sur deux d’être empoisonné."
   },
   {
     "Index": 100071,
@@ -1213,9 +1213,9 @@
     "Effigy": "Terracid",
     "Force": 2,
     "Cost": 1,
-    "Rules": "(Permanent) Votre adversaire ne peut pas jouer de Personnage de Force 2 ou plus sur le Terrain oÃ¹ est ce Personnage.",
+    "Rules": "(Permanent) Votre adversaire ne peut pas jouer de Personnage de Force 2 ou plus sur le Terrain où est ce Personnage.",
     "Combo": "",
-    "Quote": "Une fois il a fait disparaÃ®tre le petit Jimmy pendant un spectacle, il nâ€™est jamais rÃ©apparu."
+    "Quote": "Une fois il a fait disparaître le petit Jimmy pendant un spectacle, il n’est jamais réapparu."
   },
   {
     "Index": 100072,
@@ -1231,9 +1231,9 @@
     "Effigy": "Laink",
     "Force": 2,
     "Cost": 0,
-    "Rules": "(Permanent) Si câ€™est votre seul Personnage sur ce Terrain, il a +5 en Force.",
-    "Combo": "Reprenez en main la carte du dessus de votre dÃ©fausse.",
-    "Quote": "SurnommÃ© â€œlâ€™Architecteâ€, il aurait construit un 15mÂ² intÃ©gralement en carton."
+    "Rules": "(Permanent) Si c’est votre seul Personnage sur ce Terrain, il a +5 en Force.",
+    "Combo": "Reprenez en main la carte du dessus de votre défausse.",
+    "Quote": "Surnommé “l’Architecte”, il aurait construit un 15m² intégralement en carton."
   },
   {
     "Index": 100073,
@@ -1249,9 +1249,9 @@
     "Effigy": "Terracid",
     "Force": 1,
     "Cost": 0,
-    "Rules": "(Permanent) Si câ€™est votre seul Personnage sur ce Terrain, il a +5 en Force.",
+    "Rules": "(Permanent) Si c’est votre seul Personnage sur ce Terrain, il a +5 en Force.",
     "Combo": "",
-    "Quote": "Il a sorti une chanson Ã  succÃ¨s sur sa libertÃ© de penser et Ã§a s'est fini par un contrÃ´le fiscal."
+    "Quote": "Il a sorti une chanson à succès sur sa liberté de penser et ça s'est fini par un contrôle fiscal."
   },
   {
     "Index": 100074,
@@ -1267,9 +1267,9 @@
     "Effigy": "Laink",
     "Force": 4,
     "Cost": 1,
-    "Rules": "(Permanent) Si ce Personnage participe Ã  un Score sur un Terrain, il nâ€™est pas dÃ©faussÃ©, mais va sur un autre Terrain de votre choix.",
+    "Rules": "(Permanent) Si ce Personnage participe à un Score sur un Terrain, il n’est pas défaussé, mais va sur un autre Terrain de votre choix.",
     "Combo": "",
-    "Quote": "HabituÃ© du camping des Vaguelettes depuis 30 ans, tireur de slips et responsable des apÃ©ros."
+    "Quote": "Habitué du camping des Vaguelettes depuis 30 ans, tireur de slips et responsable des apéros."
   },
   {
     "Index": 100075,
@@ -1285,9 +1285,9 @@
     "Effigy": "Terracid",
     "Force": 3,
     "Cost": 1,
-    "Rules": "(Permanent) Si ce Personnage participe Ã  un Score sur un Terrain, il nâ€™est pas dÃ©faussÃ©, mais va sur un autre Terrain de votre choix.",
+    "Rules": "(Permanent) Si ce Personnage participe à un Score sur un Terrain, il n’est pas défaussé, mais va sur un autre Terrain de votre choix.",
     "Combo": "",
-    "Quote": "DÃ©tenteur du record de tubes de Biafine utilisÃ©s en une semaine."
+    "Quote": "Détenteur du record de tubes de Biafine utilisés en une semaine."
   },
   {
     "Index": 100076,
@@ -1303,9 +1303,9 @@
     "Effigy": "Laink",
     "Force": 2,
     "Cost": 0,
-    "Rules": "(Permanent) +1 en Force pour chaque EmployÃ© WcDo.",
-    "Combo": "Reprenez en main une carte WcDo de votre dÃ©fausse.",
-    "Quote": "TrÃ¨s gentil mais incapable de retenir â€œpain viande salade painâ€."
+    "Rules": "(Permanent) +1 en Force pour chaque Employé WcDo.",
+    "Combo": "Reprenez en main une carte WcDo de votre défausse.",
+    "Quote": "Très gentil mais incapable de retenir “pain viande salade pain”."
   },
   {
     "Index": 100077,
@@ -1321,7 +1321,7 @@
     "Effigy": "Terracid",
     "Force": 3,
     "Cost": 0,
-    "Rules": "(Permanent) +1 en Force pour chaque EmployÃ© WcDo.",
+    "Rules": "(Permanent) +1 en Force pour chaque Employé WcDo.",
     "Combo": "",
     "Quote": "Il fait pipi dans les frites des clients qui ne disent pas bonjour."
   },
@@ -1339,9 +1339,9 @@
     "Effigy": "Laink",
     "Force": 4,
     "Cost": 0,
-    "Rules": "DÃ©faussez ce Personnage Ã  la fin de votre tour.",
+    "Rules": "Défaussez ce Personnage à la fin de votre tour.",
     "Combo": "",
-    "Quote": "Il a utilisÃ© son fÃ©mur comme arme contre le dernier aventurier venu explorer sa grotte."
+    "Quote": "Il a utilisé son fémur comme arme contre le dernier aventurier venu explorer sa grotte."
   },
   {
     "Index": 100079,
@@ -1357,9 +1357,9 @@
     "Effigy": "Terracid",
     "Force": 5,
     "Cost": 1,
-    "Rules": "DÃ©faussez ce Personnage Ã  la fin de votre tour.",
+    "Rules": "Défaussez ce Personnage à la fin de votre tour.",
     "Combo": "Scorez un Terrain.",
-    "Quote": "Il garde le trÃ©sor enfoui de la caverne Longmur depuis plus de 300 ans. Il a avouÃ© sâ€™ennuyer un peu."
+    "Quote": "Il garde le trésor enfoui de la caverne Longmur depuis plus de 300 ans. Il a avoué s’ennuyer un peu."
   },
   {
     "Index": 100080,
@@ -1375,15 +1375,15 @@
     "Effigy": "Terracid",
     "Force": 4,
     "Cost": 2,
-    "Rules": "(Permanent) Ajoutez 3 Ã  la Force dâ€™un Personnage pour ce tour, puis dÃ©faussez ce Personnage.",
+    "Rules": "(Permanent) Ajoutez 3 à la Force d’un Personnage pour ce tour, puis défaussez ce Personnage.",
     "Combo": "",
-    "Quote": "Câ€™est lui qui a inventÃ© la formation tortue, en rÃ©fÃ©rence Ã  lâ€™animal du mÃªme nom (la tortue)."
+    "Quote": "C’est lui qui a inventé la formation tortue, en référence à l’animal du même nom (la tortue)."
   },
   {
     "Index": 100081,
     "Number": "81",
     "Title": "SPIDERLAINK",
-    "Artist": "LÃ©onard Lam",
+    "Artist": "Léonard Lam",
     "CardType": "Effigy",
     "SeasonId": "S01",
     "TexturePath": "cards/Origins/textures/081_SPIDERLAINK.jpg",
@@ -1393,15 +1393,15 @@
     "Effigy": "Laink",
     "Force": 2,
     "Cost": 0,
-    "Rules": "Votre adversaire dÃ©fausse la carte du dessus de son deck.",
+    "Rules": "Votre adversaire défausse la carte du dessus de son deck.",
     "Combo": "",
-    "Quote": "La race dâ€™araignÃ©es Ã©tait super bof. Du coup, il fait 50 kg, ne sait pas se battre et livre des pizzas."
+    "Quote": "La race d’araignées était super bof. Du coup, il fait 50 kg, ne sait pas se battre et livre des pizzas."
   },
   {
     "Index": 100082,
     "Number": "82",
     "Title": "THORRACID",
-    "Artist": "LÃ©onard Lam",
+    "Artist": "Léonard Lam",
     "CardType": "Effigy",
     "SeasonId": "S01",
     "TexturePath": "cards/Origins/textures/082_THORRACID.jpg",
@@ -1411,15 +1411,15 @@
     "Effigy": "Terracid",
     "Force": 2,
     "Cost": 0,
-    "Rules": "Votre adversaire dÃ©fausse la carte du dessus de son deck.",
-    "Combo": "Votre adversaire dÃ©fausse la carte du dessus de son deck.",
-    "Quote": "â€œSi vous pouviez vous dÃ©pÃªcher de prendre la photo, car le marteau est trÃ¨s lourd.â€"
+    "Rules": "Votre adversaire défausse la carte du dessus de son deck.",
+    "Combo": "Votre adversaire défausse la carte du dessus de son deck.",
+    "Quote": "“Si vous pouviez vous dépêcher de prendre la photo, car le marteau est très lourd.”"
   },
   {
     "Index": 100083,
     "Number": "83",
     "Title": "CT",
-    "Artist": "LÃ©onard Lam",
+    "Artist": "Léonard Lam",
     "CardType": "Effigy",
     "SeasonId": "S01",
     "TexturePath": "cards/Origins/textures/083_CT.jpg",
@@ -1431,13 +1431,13 @@
     "Cost": 2,
     "Rules": "Piochez une carte.",
     "Combo": "",
-    "Quote": "Soldat dâ€™Ã©lite reconnu, il perd cependant tous ses moyens quand un Russe crie dans son micro."
+    "Quote": "Soldat d’élite reconnu, il perd cependant tous ses moyens quand un Russe crie dans son micro."
   },
   {
     "Index": 100084,
     "Number": "84",
     "Title": "TERRO",
-    "Artist": "LÃ©onard Lam",
+    "Artist": "Léonard Lam",
     "CardType": "Effigy",
     "SeasonId": "S01",
     "TexturePath": "cards/Origins/textures/084_TERRO.jpg",
@@ -1449,13 +1449,13 @@
     "Cost": 2,
     "Rules": "Piochez une carte.",
     "Combo": "",
-    "Quote": "â€œIl faut que je maÃ®trise mon nova pomme dâ€™amour comme je maÃ®trise ma vie.â€"
+    "Quote": "“Il faut que je maîtrise mon nova pomme d’amour comme je maîtrise ma vie.”"
   },
   {
     "Index": 100085,
     "Number": "85",
     "Title": "CLOWN TUEUR",
-    "Artist": "LÃ©onard Lam",
+    "Artist": "Léonard Lam",
     "CardType": "Effigy",
     "SeasonId": "S01",
     "TexturePath": "cards/Origins/textures/085_CLOWN TUEUR.jpg",
@@ -1465,15 +1465,15 @@
     "Effigy": "Terracid",
     "Force": 2,
     "Cost": 0,
-    "Rules": "Reprenez en main la carte du dessus de votre dÃ©fausse.",
+    "Rules": "Reprenez en main la carte du dessus de votre défausse.",
     "Combo": "",
-    "Quote": "Il a vÃ©cu 20 ans dans le placard dâ€™enfance de Terracid, mais nâ€™a jamais Ã©tÃ© remarquÃ© (dÃ©pressif)."
+    "Quote": "Il a vécu 20 ans dans le placard d’enfance de Terracid, mais n’a jamais été remarqué (dépressif)."
   },
   {
     "Index": 100086,
     "Number": "86",
     "Title": "JOUEUR DU GRENIER",
-    "Artist": "LÃ©onard Lam",
+    "Artist": "Léonard Lam",
     "CardType": "Effigy",
     "SeasonId": "S01",
     "TexturePath": "cards/Origins/textures/086_JOUEUR DU GRENIER.jpg",
@@ -1483,15 +1483,15 @@
     "Effigy": "Guest",
     "Force": 3,
     "Cost": 1,
-    "Rules": "DÃ©faussez un Personnage en jeu de votre adversaire dâ€™une Force de 2 maximum et scorez un Terrain.",
-    "Combo": "Votre adversaire dÃ©fausse la carte du dessus de son deck.",
-    "Quote": "Il a Å“uvrÃ© toute sa vie contre lâ€™addiction aux drogues chez les dÃ©veloppeurs de jeux."
+    "Rules": "Défaussez un Personnage en jeu de votre adversaire d’une Force de 2 maximum et scorez un Terrain.",
+    "Combo": "Votre adversaire défausse la carte du dessus de son deck.",
+    "Quote": "Il a œuvré toute sa vie contre l’addiction aux drogues chez les développeurs de jeux."
   },
   {
     "Index": 100087,
     "Number": "87",
     "Title": "SEB",
-    "Artist": "LÃ©onard Lam",
+    "Artist": "Léonard Lam",
     "CardType": "Effigy",
     "SeasonId": "S01",
     "TexturePath": "cards/Origins/textures/087_SEB.jpg",
@@ -1503,13 +1503,13 @@
     "Cost": 2,
     "Rules": "Piochez une carte.",
     "Combo": "(Permanent) +2 en Force",
-    "Quote": "Autrefois YouTuber Ã©mÃ©rite, Seb vit dÃ©sormais dans la jungle au sein dâ€™une famille de chimpanzÃ©s."
+    "Quote": "Autrefois YouTuber émérite, Seb vit désormais dans la jungle au sein d’une famille de chimpanzés."
   },
   {
     "Index": 100088,
     "Number": "88",
     "Title": "AMIXEM",
-    "Artist": "LÃ©onard Lam",
+    "Artist": "Léonard Lam",
     "CardType": "Effigy",
     "SeasonId": "S01",
     "TexturePath": "cards/Origins/textures/088_AMIXEM.jpg",
@@ -1521,7 +1521,7 @@
     "Cost": 0,
     "Rules": "Piochez une carte.",
     "Combo": "(Permanent) +2 en Force",
-    "Quote": "Grand entrepreneur et futur astronaute, mais a tendance Ã  Ã©garer les objets offerts par ses amis."
+    "Quote": "Grand entrepreneur et futur astronaute, mais a tendance à égarer les objets offerts par ses amis."
   },
   {
     "Index": 100089,
@@ -1537,9 +1537,9 @@
     "Effigy": "Laink",
     "Force": 5,
     "Cost": 2,
-    "Rules": "Votre adversaire dÃ©fausse jusquâ€™Ã  ce quâ€™il ait autant de cartes en main que vous.",
+    "Rules": "Votre adversaire défausse jusqu’à ce qu’il ait autant de cartes en main que vous.",
     "Combo": "",
-    "Quote": "On raconte que son navire a coulÃ© dans le sud du Pacifique (Ã  cause du poids de lâ€™or dans la cale)."
+    "Quote": "On raconte que son navire a coulé dans le sud du Pacifique (à cause du poids de l’or dans la cale)."
   },
   {
     "Index": 100090,
@@ -1555,9 +1555,9 @@
     "Effigy": "Terracid",
     "Force": 4,
     "Cost": 1,
-    "Rules": "Votre adversaire dÃ©fausse jusquâ€™Ã  ce quâ€™il ait autant de cartes en main que vous.",
+    "Rules": "Votre adversaire défausse jusqu’à ce qu’il ait autant de cartes en main que vous.",
     "Combo": "",
-    "Quote": "Il aime lâ€™or, le sang, la bagarre, mais aussi lâ€™odeur des croissants chauds de la boulangerie."
+    "Quote": "Il aime l’or, le sang, la bagarre, mais aussi l’odeur des croissants chauds de la boulangerie."
   },
   {
     "Index": 100091,
@@ -1573,9 +1573,9 @@
     "Effigy": "Laink",
     "Force": 3,
     "Cost": 1,
-    "Rules": "(Permanent) Vous pouvez dÃ©fausser ce Personnage pour scorer un Terrain.",
+    "Rules": "(Permanent) Vous pouvez défausser ce Personnage pour scorer un Terrain.",
     "Combo": "",
-    "Quote": "MalgrÃ© les difficultÃ©s, il insiste pour entretenir une romance hÃ©tÃ©ro curieux avec son compagnon."
+    "Quote": "Malgré les difficultés, il insiste pour entretenir une romance hétéro curieux avec son compagnon."
   },
   {
     "Index": 100092,
@@ -1591,9 +1591,9 @@
     "Effigy": "Terracid",
     "Force": 4,
     "Cost": 2,
-    "Rules": "(Permanent) Vous pouvez dÃ©fausser ce Personnage pour scorer un Terrain.",
+    "Rules": "(Permanent) Vous pouvez défausser ce Personnage pour scorer un Terrain.",
     "Combo": "Placez une ou plusieurs cartes de votre main sous  votre deck. Repiochez autant de cartes.",
-    "Quote": "Il ne lâ€™avouera pas, mais il cherche par tous les moyens Ã  sâ€™accaparer la rondelle de son compagnon."
+    "Quote": "Il ne l’avouera pas, mais il cherche par tous les moyens à s’accaparer la rondelle de son compagnon."
   },
   {
     "Index": 100093,
@@ -1609,9 +1609,9 @@
     "Effigy": "Laink",
     "Force": 4,
     "Cost": 2,
-    "Rules": "(Permanent) Au moment de scorer, vous pouvez jouer gratuitement une carte sur le Terrain scorÃ© sans en appliquer les effets.",
+    "Rules": "(Permanent) Au moment de scorer, vous pouvez jouer gratuitement une carte sur le Terrain scoré sans en appliquer les effets.",
     "Combo": "Piochez une carte.",
-    "Quote": "Il fait croire Ã  tout le monde quâ€™il nâ€™a pris aucun plaisir en embrassant sa propre mÃ¨re."
+    "Quote": "Il fait croire à tout le monde qu’il n’a pris aucun plaisir en embrassant sa propre mère."
   },
   {
     "Index": 100094,
@@ -1627,9 +1627,9 @@
     "Effigy": "Terracid",
     "Force": 4,
     "Cost": 2,
-    "Rules": "(Permanent) Au moment de scorer, vous pouvez jouer gratuitement une carte sur le Terrain scorÃ© sans en appliquer les effets.",
-    "Combo": "Reprenez en main la carte du dessus de votre dÃ©fausse.",
-    "Quote": "A la base, il voulait juste mettre de la nitro dans sa DeLorean, puis Ã§a a dÃ©gÃ©nÃ©rÃ©."
+    "Rules": "(Permanent) Au moment de scorer, vous pouvez jouer gratuitement une carte sur le Terrain scoré sans en appliquer les effets.",
+    "Combo": "Reprenez en main la carte du dessus de votre défausse.",
+    "Quote": "A la base, il voulait juste mettre de la nitro dans sa DeLorean, puis ça a dégénéré."
   },
   {
     "Index": 100095,
@@ -1645,9 +1645,9 @@
     "Effigy": "Laink",
     "Force": 4,
     "Cost": 2,
-    "Rules": "Echangez un de vos Personnages posÃ©s avec un de votre main de Force infÃ©rieure ou Ã©gale.",
+    "Rules": "Echangez un de vos Personnages posés avec un de votre main de Force inférieure ou égale.",
     "Combo": "Piochez 3 cartes.",
-    "Quote": "â€œJâ€™ai dÃ©jÃ  vu le marÃ©chal PÃ©tain en slip. Eh bÃ©, croyez-moi, câ€™Ã©tait pas beau Ã  voir !â€"
+    "Quote": "“J’ai déjà vu le maréchal Pétain en slip. Eh bé, croyez-moi, c’était pas beau à voir !”"
   },
   {
     "Index": 100096,
@@ -1663,9 +1663,9 @@
     "Effigy": "Terracid",
     "Force": 4,
     "Cost": 2,
-    "Rules": "Echangez un de vos Personnages posÃ©s avec un de votre main de Force infÃ©rieure ou Ã©gale.",
+    "Rules": "Echangez un de vos Personnages posés avec un de votre main de Force inférieure ou égale.",
     "Combo": "",
-    "Quote": "â€œMoi, de mon temps, on avait un bÃ¢ton et des cailloux pour sâ€™amuser et câ€™Ã©tait trÃ¨s bien comme Ã§a !â€"
+    "Quote": "“Moi, de mon temps, on avait un bâton et des cailloux pour s’amuser et c’était très bien comme ça !”"
   },
   {
     "Index": 100097,
@@ -1681,9 +1681,9 @@
     "Effigy": "Laink",
     "Force": 4,
     "Cost": 2,
-    "Rules": "Votre adversaire dÃ©fausse depuis sa main pour avoir autant de cartes en main que vous.",
+    "Rules": "Votre adversaire défausse depuis sa main pour avoir autant de cartes en main que vous.",
     "Combo": "",
-    "Quote": "A seulement 16 ans, comme chaque viewer du tchat, il est Ã  la fois archÃ©ologue, boulanger, comptable, mÃ©canicien..."
+    "Quote": "A seulement 16 ans, comme chaque viewer du tchat, il est à la fois archéologue, boulanger, comptable, mécanicien..."
   },
   {
     "Index": 100098,
@@ -1699,9 +1699,9 @@
     "Effigy": "Terracid",
     "Force": 3,
     "Cost": 1,
-    "Rules": "Votre adversaire dÃ©fausse pour avoir autant de cartes en main que vous.",
+    "Rules": "Votre adversaire défausse pour avoir autant de cartes en main que vous.",
     "Combo": "Piochez 3 cartes",
-    "Quote": "Ne vous fiez pas Ã  son air innocent, elle a Ã©crit pas moins de 326 fanfictions Ã©rotiques sur ses YouTubeurs prÃ©fÃ©rÃ©s."
+    "Quote": "Ne vous fiez pas à son air innocent, elle a écrit pas moins de 326 fanfictions érotiques sur ses YouTubeurs préférés."
   },
   {
     "Index": 100099,
@@ -1717,9 +1717,9 @@
     "Effigy": "Guest",
     "Force": 3,
     "Cost": 0,
-    "Rules": "DÃ©faussez un de vos Personnages en jeu. Votre adversaire dÃ©fausse autant de cartes de son deck que sa valeur en Force.",
+    "Rules": "Défaussez un de vos Personnages en jeu. Votre adversaire défausse autant de cartes de son deck que sa valeur en Force.",
     "Combo": "",
-    "Quote": "Les journaux lâ€™appellent â€œFrench Monsterâ€ ou â€œCelui qui a pris une belle tÃªte par Terracidâ€."
+    "Quote": "Les journaux l’appellent “French Monster” ou “Celui qui a pris une belle tête par Terracid”."
   },
   {
     "Index": 100100,
@@ -1735,9 +1735,9 @@
     "Effigy": "Random",
     "Force": 5,
     "Cost": 2,
-    "Rules": "(Permanent) Vous pouvez dÃ©fausser ce Personnage pour scorer 1 ou 2 Terrains.",
+    "Rules": "(Permanent) Vous pouvez défausser ce Personnage pour scorer 1 ou 2 Terrains.",
     "Combo": "Placez une ou plusieurs cartes de votre main sous votre deck. Repiochez autant de cartes.",
-    "Quote": "Il aime NoÃ«l, sa casquette, mais surtout assassiner des gens discrÃ¨tement."
+    "Quote": "Il aime Noël, sa casquette, mais surtout assassiner des gens discrètement."
   },
   {
     "Index": 100101,
@@ -1753,9 +1753,9 @@
     "Effigy": "Terracid",
     "Force": 3,
     "Cost": 1,
-    "Rules": "(Permanent) Si vous perdez un Score, rÃ©cupÃ©rez en main la premiÃ¨re carte de votre dÃ©fausse.",
-    "Combo": "DÃ©placez un autre Personnage dâ€™un Terrain Ã  un autre.",
-    "Quote": "Sâ€™il mange aprÃ¨s minuit, ce monstre est capable de pÃ©ter et roter indÃ©finiment."
+    "Rules": "(Permanent) Si vous perdez un Score, récupérez en main la première carte de votre défausse.",
+    "Combo": "Déplacez un autre Personnage d’un Terrain à un autre.",
+    "Quote": "S’il mange après minuit, ce monstre est capable de péter et roter indéfiniment."
   },
   {
     "Index": 100102,
@@ -1772,8 +1772,8 @@
     "Force": 2,
     "Cost": 0,
     "Rules": "",
-    "Combo": "(Permanent) Cette carte Ã  +1 en Force pour chacun des vos Personnages sur ce Terrain.",
-    "Quote": "Avant, il avait une ferme avec beaucoup dâ€™animaux trÃ¨s mignons, mais un jour, il a eu besoin dâ€™XP..."
+    "Combo": "(Permanent) Cette carte à +1 en Force pour chacun des vos Personnages sur ce Terrain.",
+    "Quote": "Avant, il avait une ferme avec beaucoup d’animaux très mignons, mais un jour, il a eu besoin d’XP..."
   },
   {
     "Index": 100103,
@@ -1791,7 +1791,7 @@
     "Cost": 0,
     "Rules": "",
     "Combo": "",
-    "Quote": "Ne lui montrez surtout pas un diamant, sinon il devient inarrÃªtable."
+    "Quote": "Ne lui montrez surtout pas un diamant, sinon il devient inarrêtable."
   },
   {
     "Index": 100104,
@@ -1807,9 +1807,9 @@
     "Effigy": "Laink",
     "Force": 2,
     "Cost": 0,
-    "Rules": "Cherchez dans votre deck et choisissez une carte que vous piochez. MÃ©langez ensuite votre deck.",
+    "Rules": "Cherchez dans votre deck et choisissez une carte que vous piochez. Mélangez ensuite votre deck.",
     "Combo": "",
-    "Quote": "â€œPlus quâ€™une goutte de polymorphie et ma potion contre lâ€™acnÃ© juvÃ©nile sera enfin prÃªte.â€"
+    "Quote": "“Plus qu’une goutte de polymorphie et ma potion contre l’acné juvénile sera enfin prête.”"
   },
   {
     "Index": 100105,
@@ -1825,9 +1825,9 @@
     "Effigy": "Terracid",
     "Force": 2,
     "Cost": 1,
-    "Rules": "Cherchez dans votre deck et choisissez une carte que vous piochez. MÃ©langez ensuite votre deck.",
+    "Rules": "Cherchez dans votre deck et choisissez une carte que vous piochez. Mélangez ensuite votre deck.",
     "Combo": "Jouez gratuitement une de vos cartes Personnage.",
-    "Quote": "Il veut faire des saloperies avec la chaussette de son maÃ®tre."
+    "Quote": "Il veut faire des saloperies avec la chaussette de son maître."
   },
   {
     "Index": 100106,
@@ -1843,9 +1843,9 @@
     "Effigy": "Laink",
     "Force": 2,
     "Cost": 0,
-    "Rules": "Ce tour, si vous perdez le prochain Score, votre adversaire dÃ©fausse 2 cartes de sa main.",
+    "Rules": "Ce tour, si vous perdez le prochain Score, votre adversaire défausse 2 cartes de sa main.",
     "Combo": "",
-    "Quote": "Quand il sâ€™Ã©nerve, il est capable de dÃ©verser plus de sel que toute la mer MÃ©diterranÃ©e."
+    "Quote": "Quand il s’énerve, il est capable de déverser plus de sel que toute la mer Méditerranée."
   },
   {
     "Index": 100107,
@@ -1861,9 +1861,9 @@
     "Effigy": "Terracid",
     "Force": 2,
     "Cost": 0,
-    "Rules": "Ce tour, si vous perdez le prochain Score, votre adversaire dÃ©fausse un de ses Personnages en jeu.",
-    "Combo": "Reprenez en main un Terrain de votre dÃ©fausse.",
-    "Quote": "Quand il rage, il a le pouvoir de faire augmenter en flÃ¨che votre hypertension artÃ©rielle."
+    "Rules": "Ce tour, si vous perdez le prochain Score, votre adversaire défausse un de ses Personnages en jeu.",
+    "Combo": "Reprenez en main un Terrain de votre défausse.",
+    "Quote": "Quand il rage, il a le pouvoir de faire augmenter en flèche votre hypertension artérielle."
   },
   {
     "Index": 100108,
@@ -1880,8 +1880,8 @@
     "Force": 3,
     "Cost": 1,
     "Rules": "Scorez tous les Terrains en jeu.",
-    "Combo": "Reprenez en main un Terrain de votre dÃ©fausse.",
-    "Quote": "DrÃ´le, musclÃ©, chanteur, a-t-il un dÃ©faut ? Aucun, sauf son furoncle entre les fesses depuis 2014."
+    "Combo": "Reprenez en main un Terrain de votre défausse.",
+    "Quote": "Drôle, musclé, chanteur, a-t-il un défaut ? Aucun, sauf son furoncle entre les fesses depuis 2014."
   },
   {
     "Index": 100109,
@@ -1897,9 +1897,9 @@
     "Effigy": "Guest",
     "Force": 1,
     "Cost": 1,
-    "Rules": "(Permanent) Au dÃ©but de votre tour, reprenez en main la carte du dessus de votre dÃ©fausse.",
-    "Combo": "Reprenez en main deux cartes du dessus de votre dÃ©fausse.",
-    "Quote": "Il est trÃ¨s gentil, mais ne tombez surtout pas sur son double malÃ©fique Diabo."
+    "Rules": "(Permanent) Au début de votre tour, reprenez en main la carte du dessus de votre défausse.",
+    "Combo": "Reprenez en main deux cartes du dessus de votre défausse.",
+    "Quote": "Il est très gentil, mais ne tombez surtout pas sur son double maléfique Diabo."
   },
   {
     "Index": 100110,
@@ -1915,9 +1915,9 @@
     "Effigy": "Laink",
     "Force": 3,
     "Cost": 2,
-    "Rules": "DÃ©faussez la premiÃ¨re carte de votre deck. DÃ©faussez tous les Personnages adverses en jeu qui ont moins en Force.",
-    "Combo": "Jouez une carte Personnage sans payer son coÃ»t.",
-    "Quote": "Câ€™est le premier Ã  avoir avouÃ© quâ€™il y avait assez de place pour tout le monde dans cette ville."
+    "Rules": "Défaussez la première carte de votre deck. Défaussez tous les Personnages adverses en jeu qui ont moins en Force.",
+    "Combo": "Jouez une carte Personnage sans payer son coût.",
+    "Quote": "C’est le premier à avoir avoué qu’il y avait assez de place pour tout le monde dans cette ville."
   },
   {
     "Index": 100111,
@@ -1933,9 +1933,9 @@
     "Effigy": "Terracid",
     "Force": 3,
     "Cost": 1,
-    "Rules": "DÃ©faussez la premiÃ¨re carte de votre deck. DÃ©faussez tous les Personnages adverses en jeu qui ont plus en Force.",
+    "Rules": "Défaussez la première carte de votre deck. Défaussez tous les Personnages adverses en jeu qui ont plus en Force.",
     "Combo": "",
-    "Quote": "Il a gagnÃ© son duel contre McNuggets. En mÃªme temps, câ€™Ã©tait pas compliquÃ©, McNuggets Ã©tait aveugle."
+    "Quote": "Il a gagné son duel contre McNuggets. En même temps, c’était pas compliqué, McNuggets était aveugle."
   },
   {
     "Index": 100112,
@@ -1951,9 +1951,9 @@
     "Effigy": "Laink",
     "Force": 2,
     "Cost": 1,
-    "Rules": "(Permanent) DÃ©faussez ce Personnage Ã  la place de nâ€™importe quel autre qui devait Ãªtre dÃ©faussÃ©.",
-    "Combo": "Si vous avez un Policier dans votre dÃ©fausse, posez-le au-dessus de votre deck.",
-    "Quote": "â€œPartir en intervention le ventre vide, câ€™est irresponsable, voire carrÃ©ment dangereux !â€"
+    "Rules": "(Permanent) Défaussez ce Personnage à la place de n’importe quel autre qui devait être défaussé.",
+    "Combo": "Si vous avez un Policier dans votre défausse, posez-le au-dessus de votre deck.",
+    "Quote": "“Partir en intervention le ventre vide, c’est irresponsable, voire carrément dangereux !”"
   },
   {
     "Index": 100113,
@@ -1969,9 +1969,9 @@
     "Effigy": "Terracid",
     "Force": 2,
     "Cost": 1,
-    "Rules": "(Permanent) DÃ©faussez ce Personnage Ã  la place de nâ€™importe quel autre qui devait Ãªtre dÃ©faussÃ©.",
-    "Combo": "Si vous avez un Policier dans votre dÃ©fausse, posez-le au-dessus de votre deck.",
-    "Quote": "â€œMon bon monsieur, votre femme qui accouche, câ€™est pas mon problÃ¨me. Ici, câ€™est une place rÃ©servÃ©e.â€"
+    "Rules": "(Permanent) Défaussez ce Personnage à la place de n’importe quel autre qui devait être défaussé.",
+    "Combo": "Si vous avez un Policier dans votre défausse, posez-le au-dessus de votre deck.",
+    "Quote": "“Mon bon monsieur, votre femme qui accouche, c’est pas mon problème. Ici, c’est une place réservée.”"
   },
   {
     "Index": 100114,
@@ -1987,9 +1987,9 @@
     "Effigy": "Laink",
     "Force": 3,
     "Cost": 1,
-    "Rules": "(Permanent) Si plus dâ€™un Terrain est scorÃ© dans le tour, tous vos Personnages ont +1 en Force pour le tour.",
+    "Rules": "(Permanent) Si plus d’un Terrain est scoré dans le tour, tous vos Personnages ont +1 en Force pour le tour.",
     "Combo": "",
-    "Quote": "Il n'a absolument pas le temps de rÃ©parer sa douche, il a raid tous les soirs !"
+    "Quote": "Il n'a absolument pas le temps de réparer sa douche, il a raid tous les soirs !"
   },
   {
     "Index": 100115,
@@ -2005,9 +2005,9 @@
     "Effigy": "Laink",
     "Force": 2,
     "Cost": 0,
-    "Rules": "DÃ©placez un autre Personnage dâ€™un Terrain vers un autre.",
+    "Rules": "Déplacez un autre Personnage d’un Terrain vers un autre.",
     "Combo": "",
-    "Quote": "â€œOUH OUH AAAAH AH OUH caca OUUUUUH !â€"
+    "Quote": "“OUH OUH AAAAH AH OUH caca OUUUUUH !”"
   },
   {
     "Index": 100116,
@@ -2023,9 +2023,9 @@
     "Effigy": "Terracid",
     "Force": 4,
     "Cost": 2,
-    "Rules": "Regardez les 3 premiÃ¨res cartes de votre deck. Piochez-en une, jouez-en une gratuitement et remettez la derniÃ¨re sur le deck.",
+    "Rules": "Regardez les 3 premières cartes de votre deck. Piochez-en une, jouez-en une gratuitement et remettez la dernière sur le deck.",
     "Combo": "",
-    "Quote": "La seule enquÃªte quâ€™il nâ€™a pas encore rÃ©solue, câ€™est celle du fantÃ´me Ã  la kÃ©kette tordue."
+    "Quote": "La seule enquête qu’il n’a pas encore résolue, c’est celle du fantôme à la kékette tordue."
   },
   {
     "Index": 100117,
@@ -2042,8 +2042,8 @@
     "Force": 2,
     "Cost": 1,
     "Rules": "Scorez un Terrain.",
-    "Combo": "(Permanent) Cette carte a +1 en Force pour chacun de vos Personnages sur le mÃªme Terrain.",
-    "Quote": "Il aurait proposÃ© Ã  la production de jeter les candidats Ã©liminÃ©s dans une cage aux lions."
+    "Combo": "(Permanent) Cette carte a +1 en Force pour chacun de vos Personnages sur le même Terrain.",
+    "Quote": "Il aurait proposé à la production de jeter les candidats éliminés dans une cage aux lions."
   },
   {
     "Index": 100118,
@@ -2059,9 +2059,9 @@
     "Effigy": "Guest",
     "Force": 5,
     "Cost": 2,
-    "Rules": "Votre adversaire dÃ©fausse depuis sa main jusquâ€™Ã  ce quâ€™il ait moins de cartes en main que vous.",
+    "Rules": "Votre adversaire défausse depuis sa main jusqu’à ce qu’il ait moins de cartes en main que vous.",
     "Combo": "",
-    "Quote": "Il a dÃ©pensÃ© le PIB de la Guyane mais au moins sa tenue est trÃ¨s jolie !"
+    "Quote": "Il a dépensé le PIB de la Guyane mais au moins sa tenue est très jolie !"
   },
   {
     "Index": 100119,
@@ -2077,15 +2077,15 @@
     "Effigy": "Guest",
     "Force": 3,
     "Cost": 0,
-    "Rules": "Votre adversaire dÃ©fausse la carte du dessus de son deck.",
-    "Combo": "Votre adversaire dÃ©fausse la carte du dessus de son deck.",
-    "Quote": "Cela fait maintenant 30 jours quâ€™il est coincÃ© dans les backrooms, mais apparemment il sâ€™y sent bien."
+    "Rules": "Votre adversaire défausse la carte du dessus de son deck.",
+    "Combo": "Votre adversaire défausse la carte du dessus de son deck.",
+    "Quote": "Cela fait maintenant 30 jours qu’il est coincé dans les backrooms, mais apparemment il s’y sent bien."
   },
   {
     "Index": 100120,
     "Number": "120",
     "Title": "BRETONNE BIGOUDENE",
-    "Artist": "MaÃ«l Lohbrunner",
+    "Artist": "Maël Lohbrunner",
     "CardType": "Effigy",
     "SeasonId": "S01",
     "TexturePath": "cards/Origins/textures/120_BRETONNE BIGOUDENE.jpg",
@@ -2095,15 +2095,15 @@
     "Effigy": "Laink",
     "Force": 3,
     "Cost": 1,
-    "Rules": "Si vous avez exactement 3 ou 5 cartes en main, rÃ©cupÃ©rez les 2 cartes du dessus de votre dÃ©fausse.",
+    "Rules": "Si vous avez exactement 3 ou 5 cartes en main, récupérez les 2 cartes du dessus de votre défausse.",
     "Combo": "",
-    "Quote": "Ã‡a fait 3 jours quâ€™elle pÃ©dale aprÃ¨s celui qui a osÃ© voler sa recette de crÃªpes aux huÃ®tres."
+    "Quote": "Ça fait 3 jours qu’elle pédale après celui qui a osé voler sa recette de crêpes aux huîtres."
   },
   {
     "Index": 100121,
     "Number": "121",
     "Title": "ROI",
-    "Artist": "MaÃ«l Lohbrunner",
+    "Artist": "Maël Lohbrunner",
     "CardType": "Effigy",
     "SeasonId": "S01",
     "TexturePath": "cards/Origins/textures/121_ROI.jpg",
@@ -2113,15 +2113,15 @@
     "Effigy": "Terracid",
     "Force": 4,
     "Cost": 2,
-    "Rules": "(Permanent) Au moment de scorer, vous pouvez jouer gratuitement une carte sur le Terrain scorÃ© sans en appliquer les effets.",
+    "Rules": "(Permanent) Au moment de scorer, vous pouvez jouer gratuitement une carte sur le Terrain scoré sans en appliquer les effets.",
     "Combo": "",
-    "Quote": "On espÃ¨re pour lui quâ€™il gardera sa tÃªte, malgrÃ© lâ€™impÃ´t quâ€™il augmente chaque annÃ©e."
+    "Quote": "On espère pour lui qu’il gardera sa tête, malgré l’impôt qu’il augmente chaque année."
   },
   {
     "Index": 100122,
     "Number": "122",
     "Title": "HUGO DÉLIRE",
-    "Artist": "MaÃ«l Lohbrunner",
+    "Artist": "Maël Lohbrunner",
     "CardType": "Effigy",
     "SeasonId": "S01",
     "TexturePath": "cards/Origins/textures/122_HUGO DÉLIRE.jpg",
@@ -2133,13 +2133,13 @@
     "Cost": 1,
     "Rules": "(Permanent) Vos autres Personnages qui ne sont ni Terracid ni Laink triplent leur Force.",
     "Combo": "",
-    "Quote": "Le seul cowboy de la ville qui monte un Ã¢ne et arrive quand mÃªme Ã  braquer des banques."
+    "Quote": "Le seul cowboy de la ville qui monte un âne et arrive quand même à braquer des banques."
   },
   {
     "Index": 100123,
     "Number": "123",
     "Title": "XARI",
-    "Artist": "MaÃ«l Lohbrunner",
+    "Artist": "Maël Lohbrunner",
     "CardType": "Effigy",
     "SeasonId": "S01",
     "TexturePath": "cards/Origins/textures/123_XARI.jpg",
@@ -2149,9 +2149,9 @@
     "Effigy": "Guest",
     "Force": 2,
     "Cost": 1,
-    "Rules": "(Permanent) Si vous devez dÃ©fausser exactement 2 cartes dâ€™un coup, vous nâ€™en dÃ©faussez quâ€™une.",
-    "Combo": "Reprenez en main la carte du dessus de votre dÃ©fausse.",
-    "Quote": "Tout le monde lâ€™appelle â€œle fastâ€, mÃªme sa copine, mais peut-Ãªtre pas pour les mÃªmes raisons."
+    "Rules": "(Permanent) Si vous devez défausser exactement 2 cartes d’un coup, vous n’en défaussez qu’une.",
+    "Combo": "Reprenez en main la carte du dessus de votre défausse.",
+    "Quote": "Tout le monde l’appelle “le fast”, même sa copine, mais peut-être pas pour les mêmes raisons."
   },
   {
     "Index": 100124,
@@ -2167,9 +2167,9 @@
     "Effigy": "Laink",
     "Force": 1,
     "Cost": 0,
-    "Rules": "(Permanent) Les Personnages doivent Ãªtre posÃ©s sur le mÃªme Terrain que celui de ce Personnage.",
+    "Rules": "(Permanent) Les Personnages doivent être posés sur le même Terrain que celui de ce Personnage.",
     "Combo": "",
-    "Quote": "â€œSi vous trouvez que mes cheveux sont trÃ¨s longs alors attendez de voir en dessous.â€"
+    "Quote": "“Si vous trouvez que mes cheveux sont très longs alors attendez de voir en dessous.”"
   },
   {
     "Index": 100125,
@@ -2185,9 +2185,9 @@
     "Effigy": "Terracid",
     "Force": 1,
     "Cost": 0,
-    "Rules": "(Permanent) Les Personnages doivent Ãªtre posÃ©s sur le mÃªme Terrain que celui de ce Personnage.",
+    "Rules": "(Permanent) Les Personnages doivent être posés sur le même Terrain que celui de ce Personnage.",
     "Combo": "",
-    "Quote": "â€œOn mâ€™a donnÃ© cette dÃ©licieuse pomme Ã  Gare du Nord, je peux donc la croquer sans risque !â€"
+    "Quote": "“On m’a donné cette délicieuse pomme à Gare du Nord, je peux donc la croquer sans risque !”"
   },
   {
     "Index": 100126,
@@ -2203,9 +2203,9 @@
     "Effigy": "Terracid",
     "Force": 4,
     "Cost": 0,
-    "Rules": "Chaque joueur annonce un chiffre en mÃªme temps. Le plus bas dÃ©fausse autant de cartes. Le plus haut reprend en main autant de cartes de sa dÃ©fausse.",
+    "Rules": "Chaque joueur annonce un chiffre en même temps. Le plus bas défausse autant de cartes. Le plus haut reprend en main autant de cartes de sa défausse.",
     "Combo": "",
-    "Quote": "â€œTu veux claquer de lâ€™escalope et dÃ©givrer le gigot mon mignon ?â€"
+    "Quote": "“Tu veux claquer de l’escalope et dégivrer le gigot mon mignon ?”"
   },
   {
     "Index": 100127,
@@ -2221,9 +2221,9 @@
     "Effigy": "Laink",
     "Force": 4,
     "Cost": 1,
-    "Rules": "Annoncez un chiffre et piochez la premiÃ¨re carte de votre deck. Si câ€™est un Personnage de Force Ã©gale Ã  ce chiffre, mettez-le en jeu gratuitement et recommencez.",
+    "Rules": "Annoncez un chiffre et piochez la première carte de votre deck. Si c’est un Personnage de Force égale à ce chiffre, mettez-le en jeu gratuitement et recommencez.",
     "Combo": "",
-    "Quote": "Elle est trÃ¨s mignonne, mais mÃ©fiez-vous : ses sorts prÃ©fÃ©rÃ©s sont lâ€™abcÃ¨s anal et la varicelle."
+    "Quote": "Elle est très mignonne, mais méfiez-vous : ses sorts préférés sont l’abcès anal et la varicelle."
   },
   {
     "Index": 100128,
@@ -2239,9 +2239,9 @@
     "Effigy": "Random",
     "Force": 2,
     "Cost": 0,
-    "Rules": "Cherchez dans votre deck et choisissez 2 cartes que vous piochez. MÃ©langez ensuite votre deck.",
+    "Rules": "Cherchez dans votre deck et choisissez 2 cartes que vous piochez. Mélangez ensuite votre deck.",
     "Combo": "",
-    "Quote": "\"Jâ€™explorais les catacombes et puis jâ€™ai cramÃ©.\""
+    "Quote": "\"J’explorais les catacombes et puis j’ai cramé.\""
   },
   {
     "Index": 100129,
@@ -2258,8 +2258,8 @@
     "Force": 1,
     "Cost": 0,
     "Rules": "Scorez 1 ou 2 Terrains.",
-    "Combo": "Reprenez en main la carte du dessus de votre dÃ©fausse.",
-    "Quote": "On peut penser quâ€™il est trÃ¨s intelligent, mais sachez quâ€™il a dÃ©jÃ  construit un bateau en bÃ©ton."
+    "Combo": "Reprenez en main la carte du dessus de votre défausse.",
+    "Quote": "On peut penser qu’il est très intelligent, mais sachez qu’il a déjà construit un bateau en béton."
   },
   {
     "Index": 100130,
@@ -2275,15 +2275,15 @@
     "Effigy": "Laink",
     "Force": 3,
     "Cost": 0,
-    "Rules": "(Permanent) DÃ©faussez ce personnage pour reprendre en main les 3 cartes du dessus de votre dÃ©fausse.",
+    "Rules": "(Permanent) Défaussez ce personnage pour reprendre en main les 3 cartes du dessus de votre défausse.",
     "Combo": "",
-    "Quote": "Il voulait Ãªtre charpentier, mais Ã  cause de sa calvitie, il a dÃ» changer de vocation."
+    "Quote": "Il voulait être charpentier, mais à cause de sa calvitie, il a dû changer de vocation."
   },
   {
     "Index": 100131,
     "Number": "131",
     "Title": "CYBERLAINK",
-    "Artist": "LÃ©onard Lam",
+    "Artist": "Léonard Lam",
     "CardType": "Effigy",
     "SeasonId": "S01",
     "TexturePath": "cards/Origins/textures/131_CYBERLAINK.jpg",
@@ -2293,15 +2293,15 @@
     "Effigy": "Laink",
     "Force": 3,
     "Cost": 1,
-    "Rules": "DÃ©faussez un Personnage adverse en jeu dâ€™une Force de 2 maximum.",
+    "Rules": "Défaussez un Personnage adverse en jeu d’une Force de 2 maximum.",
     "Combo": "",
-    "Quote": "Il a fait pipi sur une voiture de la mafia et a dÃ©marrÃ© une guerre de gangs qui dure depuis 10 ans."
+    "Quote": "Il a fait pipi sur une voiture de la mafia et a démarré une guerre de gangs qui dure depuis 10 ans."
   },
   {
     "Index": 100132,
     "Number": "132",
     "Title": "CYBERTERRA",
-    "Artist": "LÃ©onard Lam",
+    "Artist": "Léonard Lam",
     "CardType": "Effigy",
     "SeasonId": "S01",
     "TexturePath": "cards/Origins/textures/132_CYBERTERRA.jpg",
@@ -2311,15 +2311,15 @@
     "Effigy": "Terracid",
     "Force": 3,
     "Cost": 1,
-    "Rules": "DÃ©faussez un Personnage adverse en jeu dâ€™une Force de 2 maximum.",
-    "Combo": "Votre adversaire dÃ©fausse la carte du dessus de son deck.",
-    "Quote": "â€œMoi ? Le cybersexe ? Nâ€™importe quoi, trop nul le cybersexe, je vais jamais au cybersexe, moi.â€"
+    "Rules": "Défaussez un Personnage adverse en jeu d’une Force de 2 maximum.",
+    "Combo": "Votre adversaire défausse la carte du dessus de son deck.",
+    "Quote": "“Moi ? Le cybersexe ? N’importe quoi, trop nul le cybersexe, je vais jamais au cybersexe, moi.”"
   },
   {
     "Index": 100133,
     "Number": "133",
     "Title": "JACQUES FLANTIER",
-    "Artist": "LÃ©onard Lam",
+    "Artist": "Léonard Lam",
     "CardType": "Effigy",
     "SeasonId": "S01",
     "TexturePath": "cards/Origins/textures/133_JACQUES FLANTIER.jpg",
@@ -2329,15 +2329,15 @@
     "Effigy": "Laink",
     "Force": 2,
     "Cost": 0,
-    "Rules": "DÃ©faussez un Personnage adverse en jeu dâ€™une Force de 1 maximum.",
+    "Rules": "Défaussez un Personnage adverse en jeu d’une Force de 1 maximum.",
     "Combo": "",
-    "Quote": "â€œBRANCARDIER ! Jâ€™ai des douleurs dans la nuque, câ€™est trÃ¨s dÃ©sagrÃ©able ! Et jâ€™ai mal au bidou !â€"
+    "Quote": "“BRANCARDIER ! J’ai des douleurs dans la nuque, c’est très désagréable ! Et j’ai mal au bidou !”"
   },
   {
     "Index": 100134,
     "Number": "134",
     "Title": "RICHARD FLANTIER",
-    "Artist": "LÃ©onard Lam",
+    "Artist": "Léonard Lam",
     "CardType": "Effigy",
     "SeasonId": "S01",
     "TexturePath": "cards/Origins/textures/134_RICHARD FLANTIER.jpg",
@@ -2347,15 +2347,15 @@
     "Effigy": "Terracid",
     "Force": 3,
     "Cost": 1,
-    "Rules": "DÃ©faussez un Personnage adverse en jeu dâ€™une Force de 1 maximum.",
+    "Rules": "Défaussez un Personnage adverse en jeu d’une Force de 1 maximum.",
     "Combo": "",
-    "Quote": "HÃ©ros de guerre lÃ©gendaire (il nâ€™a tirÃ© aucune balle et a poussÃ© quelquâ€™un pour survivre)."
+    "Quote": "Héros de guerre légendaire (il n’a tiré aucune balle et a poussé quelqu’un pour survivre)."
   },
   {
     "Index": 100135,
     "Number": "135",
     "Title": "DRESSEUSE",
-    "Artist": "LÃ©onard Lam",
+    "Artist": "Léonard Lam",
     "CardType": "Effigy",
     "SeasonId": "S01",
     "TexturePath": "cards/Origins/textures/135_DRESSEUSE.jpg",
@@ -2365,15 +2365,15 @@
     "Effigy": "Laink",
     "Force": 6,
     "Cost": 3,
-    "Rules": "(Permanent) Quand votre adversaire pioche, il pioche une carte de plus et en dÃ©fausse une.",
+    "Rules": "(Permanent) Quand votre adversaire pioche, il pioche une carte de plus et en défausse une.",
     "Combo": "",
-    "Quote": "Oui, câ€™est un peu comme des combats de chiens sauf que, lÃ , on les garde dans des boules."
+    "Quote": "Oui, c’est un peu comme des combats de chiens sauf que, là, on les garde dans des boules."
   },
   {
     "Index": 100136,
     "Number": "136",
     "Title": "DRESSEUR",
-    "Artist": "LÃ©onard Lam",
+    "Artist": "Léonard Lam",
     "CardType": "Effigy",
     "SeasonId": "S01",
     "TexturePath": "cards/Origins/textures/136_DRESSEUR.jpg",
@@ -2383,9 +2383,9 @@
     "Effigy": "Terracid",
     "Force": 6,
     "Cost": 3,
-    "Rules": "(Permanent) Quand votre adversaire pioche, il pioche une carte de plus et en dÃ©fausse une.",
+    "Rules": "(Permanent) Quand votre adversaire pioche, il pioche une carte de plus et en défausse une.",
     "Combo": "",
-    "Quote": "Meilleur dresseur du monde mais chÃ´meur et pas de parents."
+    "Quote": "Meilleur dresseur du monde mais chômeur et pas de parents."
   },
   {
     "Index": 100137,
@@ -2401,9 +2401,9 @@
     "Effigy": "Laink",
     "Force": 3,
     "Cost": 1,
-    "Rules": "Si vous avez exactement 3 cartes en main, rÃ©cupÃ©rez la carte du dessus de votre dÃ©fausse.",
+    "Rules": "Si vous avez exactement 3 cartes en main, récupérez la carte du dessus de votre défausse.",
     "Combo": "",
-    "Quote": "Pour survivre, il a dÃ» faire des choses horribles, comme boire lâ€™eau du robinet."
+    "Quote": "Pour survivre, il a dû faire des choses horribles, comme boire l’eau du robinet."
   },
   {
     "Index": 100138,
@@ -2419,9 +2419,9 @@
     "Effigy": "Terracid",
     "Force": 3,
     "Cost": 1,
-    "Rules": "Si vous avez exactement 4 cartes en main, rÃ©cupÃ©rez la carte du dessus de votre dÃ©fausse.",
+    "Rules": "Si vous avez exactement 4 cartes en main, récupérez la carte du dessus de votre défausse.",
     "Combo": "",
-    "Quote": "â€œIl me reste seulement 18 boÃ®tes de conserve. Je ne tiendrai jamais la journÃ©e.â€"
+    "Quote": "“Il me reste seulement 18 boîtes de conserve. Je ne tiendrai jamais la journée.”"
   },
   {
     "Index": 100139,
@@ -2437,9 +2437,9 @@
     "Effigy": "Laink",
     "Force": 2,
     "Cost": 0,
-    "Rules": "Annoncez un nombre, puis regardez la premiÃ¨re carte de votre deck. Si elle a cette valeur de Force, mettez-la en jeu gratuitement. Sinon piochez-la.",
+    "Rules": "Annoncez un nombre, puis regardez la première carte de votre deck. Si elle a cette valeur de Force, mettez-la en jeu gratuitement. Sinon piochez-la.",
     "Combo": "",
-    "Quote": "â€œCâ€™est le tout dernier Call Of neuf sous blister ? Je peux vous le reprendre 2â‚¬, si vous voulez.â€"
+    "Quote": "“C’est le tout dernier Call Of neuf sous blister ? Je peux vous le reprendre 2€, si vous voulez.”"
   },
   {
     "Index": 100140,
@@ -2455,9 +2455,9 @@
     "Effigy": "Terracid",
     "Force": 3,
     "Cost": 2,
-    "Rules": "Regardez les 3 premiÃ¨res cartes de votre deck. Piochez-en une, jouez-en une gratuitement et remettez la derniÃ¨re sur le deck.",
+    "Rules": "Regardez les 3 premières cartes de votre deck. Piochez-en une, jouez-en une gratuitement et remettez la dernière sur le deck.",
     "Combo": "",
-    "Quote": "Il a eu sa premiÃ¨re vision avec une tranche de jambon de Bayonne, Ã  lâ€™Ã¢ge de 9 ans."
+    "Quote": "Il a eu sa première vision avec une tranche de jambon de Bayonne, à l’âge de 9 ans."
   },
   {
     "Index": 100141,
@@ -2473,9 +2473,9 @@
     "Effigy": "Laink",
     "Force": 1,
     "Cost": 0,
-    "Rules": "Doublez la Force de tous vos autres Personnages jusquâ€™Ã  la fin de votre tour.",
+    "Rules": "Doublez la Force de tous vos autres Personnages jusqu’à la fin de votre tour.",
     "Combo": "Scorez un Terrain.",
-    "Quote": "Il paraÃ®t que Pinoche a embrassÃ© Giselle sur la bouche prÃ¨s du vieux chÃ¢taignier."
+    "Quote": "Il paraît que Pinoche a embrassé Giselle sur la bouche près du vieux châtaignier."
   },
   {
     "Index": 100142,
@@ -2491,15 +2491,15 @@
     "Effigy": "Terracid",
     "Force": 1,
     "Cost": 0,
-    "Rules": "Doublez la Force de tous vos autres Personnages jusquâ€™Ã  la fin de votre tour.",
+    "Rules": "Doublez la Force de tous vos autres Personnages jusqu’à la fin de votre tour.",
     "Combo": "",
-    "Quote": "Il a jouÃ© avec un vieil obus trouvÃ© prÃ¨s de la riviÃ¨re et depuis il est puni."
+    "Quote": "Il a joué avec un vieil obus trouvé près de la rivière et depuis il est puni."
   },
   {
     "Index": 100143,
     "Number": "143",
     "Title": "PROFESSEUR",
-    "Artist": "MaÃ«l Lohbrunner",
+    "Artist": "Maël Lohbrunner",
     "CardType": "Effigy",
     "SeasonId": "S01",
     "TexturePath": "cards/Origins/textures/143_PROFESSEUR.jpg",
@@ -2511,13 +2511,13 @@
     "Cost": 1,
     "Rules": "(Permanent) Doublez la Force de tous vos Personnages de type Laink.",
     "Combo": "Scorez un Terrain.",
-    "Quote": "Le taux de rÃ©ussite au BAC dans sa classe est de 15 %, et câ€™est dÃ©jÃ  pas mal."
+    "Quote": "Le taux de réussite au BAC dans sa classe est de 15 %, et c’est déjà pas mal."
   },
   {
     "Index": 100144,
     "Number": "144",
     "Title": "PROFESSEUR",
-    "Artist": "MaÃ«l Lohbrunner",
+    "Artist": "Maël Lohbrunner",
     "CardType": "Effigy",
     "SeasonId": "S01",
     "TexturePath": "cards/Origins/textures/144_PROFESSEUR.jpg",
@@ -2529,7 +2529,7 @@
     "Cost": 1,
     "Rules": "(Permanent) Doublez la Force de tous vos Personnages de type Terracid.",
     "Combo": "",
-    "Quote": "La rÃ©ponse est simple : â€œOn ne mange pas avec les doigts.â€"
+    "Quote": "La réponse est simple : “On ne mange pas avec les doigts.”"
   },
   {
     "Index": 100145,
@@ -2545,9 +2545,9 @@
     "Effigy": "Laink",
     "Force": 4,
     "Cost": 1,
-    "Rules": "(Permanent) Doublez la Force de tous vos Personnages sur le mÃªme Terrain que ce Personnage.",
+    "Rules": "(Permanent) Doublez la Force de tous vos Personnages sur le même Terrain que ce Personnage.",
     "Combo": "",
-    "Quote": "Il a ratÃ© son harakiri. Maintenant, il a une sonde urinaire et nettoie les murs du temple."
+    "Quote": "Il a raté son harakiri. Maintenant, il a une sonde urinaire et nettoie les murs du temple."
   },
   {
     "Index": 100146,
@@ -2563,9 +2563,9 @@
     "Effigy": "Terracid",
     "Force": 2,
     "Cost": 0,
-    "Rules": "(Permanent) Divisez par 2 la Force de tous les Personnages adverses sur le mÃªme Terrain que ce Personnage.",
+    "Rules": "(Permanent) Divisez par 2 la Force de tous les Personnages adverses sur le même Terrain que ce Personnage.",
     "Combo": "Scorez un Terrain.",
-    "Quote": "Autrefois grand maÃ®tre de kung-fu, il arnaque aujourdâ€™hui les touristes sur le mont Fuji."
+    "Quote": "Autrefois grand maître de kung-fu, il arnaque aujourd’hui les touristes sur le mont Fuji."
   },
   {
     "Index": 100147,
@@ -2581,9 +2581,9 @@
     "Effigy": "Laink",
     "Force": 1,
     "Cost": 0,
-    "Rules": "Votre prochaine carte Personnage coÃ»te 0 Ã  mettre en jeu ce tour.",
-    "Combo": "Reprenez en main la carte du dessus de votre dÃ©fausse.",
-    "Quote": "Elle a tendance Ã  rÃ¢ler pendant quâ€™elle bosse et Ã  insulter copieusement Martine dans son dos."
+    "Rules": "Votre prochaine carte Personnage coûte 0 à mettre en jeu ce tour.",
+    "Combo": "Reprenez en main la carte du dessus de votre défausse.",
+    "Quote": "Elle a tendance à râler pendant qu’elle bosse et à insulter copieusement Martine dans son dos."
   },
   {
     "Index": 100148,
@@ -2599,9 +2599,9 @@
     "Effigy": "Terracid",
     "Force": 1,
     "Cost": 0,
-    "Rules": "Votre prochaine carte Personnage coÃ»te 0 Ã  mettre en jeu ce tour.",
+    "Rules": "Votre prochaine carte Personnage coûte 0 à mettre en jeu ce tour.",
     "Combo": "Scorez un Terrain.",
-    "Quote": "â€œLes gens sont des porcs. Câ€™est fou ce quâ€™on peut trouver par terre de nos jours.â€"
+    "Quote": "“Les gens sont des porcs. C’est fou ce qu’on peut trouver par terre de nos jours.”"
   },
   {
     "Index": 100149,
@@ -2617,9 +2617,9 @@
     "Effigy": "Laink",
     "Force": 10,
     "Cost": 3,
-    "Rules": "(Permanent) Si vous scorez un Terrain pendant votre tour, dÃ©faussez ce Personnage.",
-    "Combo": "Avec Terracid, vos Personnages coÃ»tent 0 Ã  poser pour le tour.",
-    "Quote": "Câ€™est ici que..."
+    "Rules": "(Permanent) Si vous scorez un Terrain pendant votre tour, défaussez ce Personnage.",
+    "Combo": "Avec Terracid, vos Personnages coûtent 0 à poser pour le tour.",
+    "Quote": "C’est ici que..."
   },
   {
     "Index": 100150,
@@ -2635,9 +2635,9 @@
     "Effigy": "Terracid",
     "Force": 10,
     "Cost": 3,
-    "Rules": "(Permanent) Si vous scorez un Terrain pendant votre tour, dÃ©faussez ce Personnage.",
-    "Combo": "Avec Laink, vos Personnages coÃ»tent 0 Ã  poser pour le tour.",
-    "Quote": "... tout a commencÃ©."
+    "Rules": "(Permanent) Si vous scorez un Terrain pendant votre tour, défaussez ce Personnage.",
+    "Combo": "Avec Laink, vos Personnages coûtent 0 à poser pour le tour.",
+    "Quote": "... tout a commencé."
   },
   {
     "Index": 100151,
@@ -2653,9 +2653,9 @@
     "Effigy": "Laink",
     "Force": 3,
     "Cost": 2,
-    "Rules": "DÃ©faussez la premiÃ¨re carte de votre deck. DÃ©faussez tous les Personnages adverses en jeu qui ont moins en Force.",
-    "Combo": "Jouez une carte Personnage sans payer son coÃ»t.",
-    "Quote": "Câ€™est le premier Ã  avoir avouÃ© quâ€™il y avait assez de place pour tout le monde dans cette ville."
+    "Rules": "Défaussez la première carte de votre deck. Défaussez tous les Personnages adverses en jeu qui ont moins en Force.",
+    "Combo": "Jouez une carte Personnage sans payer son coût.",
+    "Quote": "C’est le premier à avoir avoué qu’il y avait assez de place pour tout le monde dans cette ville."
   },
   {
     "Index": 100152,
@@ -2671,9 +2671,9 @@
     "Effigy": "Terracid",
     "Force": 3,
     "Cost": 1,
-    "Rules": "DÃ©faussez la premiÃ¨re carte de votre deck. DÃ©faussez tous les Personnages adverses en jeu qui ont plus en Force.",
+    "Rules": "Défaussez la première carte de votre deck. Défaussez tous les Personnages adverses en jeu qui ont plus en Force.",
     "Combo": "",
-    "Quote": "Il a gagnÃ© son duel contre McNuggets. En mÃªme temps, câ€™Ã©tait pas compliquÃ©, McNuggets Ã©tait aveugle."
+    "Quote": "Il a gagné son duel contre McNuggets. En même temps, c’était pas compliqué, McNuggets était aveugle."
   },
   {
     "Index": 100153,
@@ -2689,9 +2689,9 @@
     "Effigy": "Laink",
     "Force": 2,
     "Cost": 1,
-    "Rules": "(Permanent) DÃ©faussez ce Personnage Ã  la place de nâ€™importe quel autre qui devait Ãªtre dÃ©faussÃ©.",
-    "Combo": "Si vous avez un Policier dans votre dÃ©fausse, posez-le au-dessus de votre deck.",
-    "Quote": "â€œPartir en intervention le ventre vide, câ€™est irresponsable, voire carrÃ©ment dangereux !â€"
+    "Rules": "(Permanent) Défaussez ce Personnage à la place de n’importe quel autre qui devait être défaussé.",
+    "Combo": "Si vous avez un Policier dans votre défausse, posez-le au-dessus de votre deck.",
+    "Quote": "“Partir en intervention le ventre vide, c’est irresponsable, voire carrément dangereux !”"
   },
   {
     "Index": 100154,
@@ -2707,9 +2707,9 @@
     "Effigy": "Terracid",
     "Force": 2,
     "Cost": 1,
-    "Rules": "(Permanent) DÃ©faussez ce Personnage Ã  la place de nâ€™importe quel autre qui devait Ãªtre dÃ©faussÃ©.",
-    "Combo": "Si vous avez un Policier dans votre dÃ©fausse, posez-le au-dessus de votre deck.",
-    "Quote": "â€œMon bon monsieur, votre femme qui accouche, câ€™est pas mon problÃ¨me. Ici, câ€™est une place rÃ©servÃ©e.â€"
+    "Rules": "(Permanent) Défaussez ce Personnage à la place de n’importe quel autre qui devait être défaussé.",
+    "Combo": "Si vous avez un Policier dans votre défausse, posez-le au-dessus de votre deck.",
+    "Quote": "“Mon bon monsieur, votre femme qui accouche, c’est pas mon problème. Ici, c’est une place réservée.”"
   },
   {
     "Index": 100155,
@@ -2725,9 +2725,9 @@
     "Effigy": "Laink",
     "Force": 2,
     "Cost": 0,
-    "Rules": "Ce tour, si vous perdez le prochain Score, votre adversaire dÃ©fausse 2 cartes de sa main.",
+    "Rules": "Ce tour, si vous perdez le prochain Score, votre adversaire défausse 2 cartes de sa main.",
     "Combo": "",
-    "Quote": "Quand il sâ€™Ã©nerve, il est capable de dÃ©verser plus de sel que toute la mer MÃ©diterranÃ©e."
+    "Quote": "Quand il s’énerve, il est capable de déverser plus de sel que toute la mer Méditerranée."
   },
   {
     "Index": 100156,
@@ -2743,9 +2743,9 @@
     "Effigy": "Terracid",
     "Force": 2,
     "Cost": 0,
-    "Rules": "Ce tour, si vous perdez le prochain Score, votre adversaire dÃ©fausse un de ses Personnages en jeu.",
-    "Combo": "Reprenez en main un Terrain de votre dÃ©fausse.",
-    "Quote": "Quand il rage, il a le pouvoir de faire augmenter en flÃ¨che votre hypertension artÃ©rielle."
+    "Rules": "Ce tour, si vous perdez le prochain Score, votre adversaire défausse un de ses Personnages en jeu.",
+    "Combo": "Reprenez en main un Terrain de votre défausse.",
+    "Quote": "Quand il rage, il a le pouvoir de faire augmenter en flèche votre hypertension artérielle."
   },
   {
     "Index": 100157,
@@ -2761,9 +2761,9 @@
     "Effigy": "Laink",
     "Force": 3,
     "Cost": 0,
-    "Rules": "Vous et votre adversaire dÃ©faussez la premiÃ¨re carte de votre deck. Si la vÃ´tre a plus en Force, rÃ©cupÃ©rez-la en main.",
+    "Rules": "Vous et votre adversaire défaussez la première carte de votre deck. Si la vôtre a plus en Force, récupérez-la en main.",
     "Combo": "",
-    "Quote": "Lâ€™avantage est que, dans sa fromagerie, il peut faire un prout bien odorant en toute discrÃ©tion."
+    "Quote": "L’avantage est que, dans sa fromagerie, il peut faire un prout bien odorant en toute discrétion."
   },
   {
     "Index": 100158,
@@ -2779,7 +2779,7 @@
     "Effigy": "Terracid",
     "Force": 2,
     "Cost": 0,
-    "Rules": "Vous et votre adversaire dÃ©faussez la premiÃ¨re carte de votre deck. Si la vÃ´tre a plus en Force, rÃ©cupÃ©rez-la en main.",
+    "Rules": "Vous et votre adversaire défaussez la première carte de votre deck. Si la vôtre a plus en Force, récupérez-la en main.",
     "Combo": "",
     "Quote": "Jambon, saucisson, terrine, rillettes, mais surtout un excellent boudin qui pue bien comme il faut."
   },
@@ -2797,15 +2797,15 @@
     "Effigy": "Guest",
     "Force": 3,
     "Cost": 0,
-    "Rules": "DÃ©faussez un de vos Personnages en jeu. Votre adversaire dÃ©fausse autant de cartes de son deck que sa valeur en Force.",
+    "Rules": "Défaussez un de vos Personnages en jeu. Votre adversaire défausse autant de cartes de son deck que sa valeur en Force.",
     "Combo": "",
-    "Quote": "Les journaux lâ€™appellent â€œFrench Monsterâ€ ou â€œCelui qui a pris une belle tÃªte par Terracidâ€."
+    "Quote": "Les journaux l’appellent “French Monster” ou “Celui qui a pris une belle tête par Terracid”."
   },
   {
     "Index": 100160,
     "Number": "160",
     "Title": "AMIXEM",
-    "Artist": "LÃ©onard Lam",
+    "Artist": "Léonard Lam",
     "CardType": "Effigy",
     "SeasonId": "S01",
     "TexturePath": "cards/Origins/textures/160_AMIXEM.jpg",
@@ -2817,7 +2817,7 @@
     "Cost": 0,
     "Rules": "Piochez une carte.",
     "Combo": "(Permanent) +2 en Force.",
-    "Quote": "Grand entrepreneur et futur astronaute, mais a tendance Ã  Ã©garer les objets offerts par ses amis."
+    "Quote": "Grand entrepreneur et futur astronaute, mais a tendance à égarer les objets offerts par ses amis."
   },
   {
     "Index": 100161,
@@ -2833,9 +2833,9 @@
     "Effigy": "Laink",
     "Force": 5,
     "Cost": 2,
-    "Rules": "Votre adversaire dÃ©fausse jusquâ€™Ã  ce quâ€™il ait autant de cartes en main que vous.",
+    "Rules": "Votre adversaire défausse jusqu’à ce qu’il ait autant de cartes en main que vous.",
     "Combo": "",
-    "Quote": "On raconte que son navire a coulÃ© dans le sud du Pacifique (Ã  cause du poids de lâ€™or dans la cale)."
+    "Quote": "On raconte que son navire a coulé dans le sud du Pacifique (à cause du poids de l’or dans la cale)."
   },
   {
     "Index": 100162,
@@ -2851,9 +2851,9 @@
     "Effigy": "Terracid",
     "Force": 4,
     "Cost": 1,
-    "Rules": "Votre adversaire dÃ©fausse jusquâ€™Ã  ce quâ€™il ait autant de cartes en main que vous.",
+    "Rules": "Votre adversaire défausse jusqu’à ce qu’il ait autant de cartes en main que vous.",
     "Combo": "",
-    "Quote": "Il aime lâ€™or, le sang, la bagarre, mais aussi lâ€™odeur des croissants chauds de la boulangerie."
+    "Quote": "Il aime l’or, le sang, la bagarre, mais aussi l’odeur des croissants chauds de la boulangerie."
   },
   {
     "Index": 100163,
@@ -2870,8 +2870,8 @@
     "Force": 3,
     "Cost": 1,
     "Rules": "Scorez tous les Terrains en jeu.",
-    "Combo": "Reprenez en main un Terrain de votre dÃ©fausse.",
-    "Quote": "DrÃ´le, musclÃ©, chanteur, a-t-il un dÃ©faut ? Aucun, sauf son furoncle entre les fesses depuis 2014."
+    "Combo": "Reprenez en main un Terrain de votre défausse.",
+    "Quote": "Drôle, musclé, chanteur, a-t-il un défaut ? Aucun, sauf son furoncle entre les fesses depuis 2014."
   },
   {
     "Index": 100164,
@@ -2887,15 +2887,15 @@
     "Effigy": "Random",
     "Force": 2,
     "Cost": 0,
-    "Rules": "Cherchez dans votre deck et choisissez 2 cartes que vous piochez. MÃ©langez ensuite votre deck.",
+    "Rules": "Cherchez dans votre deck et choisissez 2 cartes que vous piochez. Mélangez ensuite votre deck.",
     "Combo": "",
-    "Quote": "\"Jâ€™explorais les catacombes et puis jâ€™ai cramÃ©.\""
+    "Quote": "\"J’explorais les catacombes et puis j’ai cramé.\""
   },
   {
     "Index": 100165,
     "Number": "165",
     "Title": "CT",
-    "Artist": "LÃ©onard Lam",
+    "Artist": "Léonard Lam",
     "CardType": "Effigy",
     "SeasonId": "S01",
     "TexturePath": "cards/Origins/textures/165_CT.jpg",
@@ -2907,13 +2907,13 @@
     "Cost": 2,
     "Rules": "Piochez une carte.",
     "Combo": "",
-    "Quote": "Soldat dâ€™Ã©lite reconnu, il perd cependant tous ses moyens quand un Russe crie dans son micro."
+    "Quote": "Soldat d’élite reconnu, il perd cependant tous ses moyens quand un Russe crie dans son micro."
   },
   {
     "Index": 100166,
     "Number": "166",
     "Title": "TERRO",
-    "Artist": "LÃ©onard Lam",
+    "Artist": "Léonard Lam",
     "CardType": "Effigy",
     "SeasonId": "S01",
     "TexturePath": "cards/Origins/textures/166_TERRO.jpg",
@@ -2925,13 +2925,13 @@
     "Cost": 2,
     "Rules": "Piochez une carte.",
     "Combo": "",
-    "Quote": "â€œIl faut que je maÃ®trise mon nova pomme dâ€™amour comme je maÃ®trise ma vie.â€"
+    "Quote": "“Il faut que je maîtrise mon nova pomme d’amour comme je maîtrise ma vie.”"
   },
   {
     "Index": 100167,
     "Number": "167",
     "Title": "JOUEUR DU GRENIER",
-    "Artist": "LÃ©onard Lam",
+    "Artist": "Léonard Lam",
     "CardType": "Effigy",
     "SeasonId": "S01",
     "TexturePath": "cards/Origins/textures/167_JOUEUR DU GRENIER.jpg",
@@ -2941,15 +2941,15 @@
     "Effigy": "Guest",
     "Force": 3,
     "Cost": 1,
-    "Rules": "DÃ©faussez un Personnage en jeu de votre adversaire d'une Force de 2 maximum et scorez un Terrain.",
-    "Combo": "Votre adversaire dÃ©fausse la carte du dessus de son deck.",
-    "Quote": "Il a Å“uvrÃ© toute sa vie contre lâ€™addiction aux drogues chez les dÃ©veloppeurs de jeux."
+    "Rules": "Défaussez un Personnage en jeu de votre adversaire d'une Force de 2 maximum et scorez un Terrain.",
+    "Combo": "Votre adversaire défausse la carte du dessus de son deck.",
+    "Quote": "Il a œuvré toute sa vie contre l’addiction aux drogues chez les développeurs de jeux."
   },
   {
     "Index": 100168,
     "Number": "168",
     "Title": "SEB",
-    "Artist": "LÃ©onard Lam",
+    "Artist": "Léonard Lam",
     "CardType": "Effigy",
     "SeasonId": "S01",
     "TexturePath": "cards/Origins/textures/168_SEB.jpg",
@@ -2961,7 +2961,7 @@
     "Cost": 2,
     "Rules": "Piochez une carte.",
     "Combo": "(Permanent) +2 en Force.",
-    "Quote": "Autrefois YouTuber Ã©mÃ©rite, Seb vit dÃ©sormais dans la jungle au sein dâ€™une famille de chimpanzÃ©s."
+    "Quote": "Autrefois YouTuber émérite, Seb vit désormais dans la jungle au sein d’une famille de chimpanzés."
   },
   {
     "Index": 100169,
@@ -2977,9 +2977,9 @@
     "Effigy": "Laink",
     "Force": 2,
     "Cost": 0,
-    "Rules": "Annoncez un nombre, puis regardez la premiÃ¨re carte de votre deck. Si elle a cette valeur de Force, mettez-la en jeu gratuitement. Sinon piochez-la.",
+    "Rules": "Annoncez un nombre, puis regardez la première carte de votre deck. Si elle a cette valeur de Force, mettez-la en jeu gratuitement. Sinon piochez-la.",
     "Combo": "",
-    "Quote": "â€œCâ€™est le tout dernier Call Of neuf sous blister ? Je peux vous le reprendre 2â‚¬, si vous voulez.â€"
+    "Quote": "“C’est le tout dernier Call Of neuf sous blister ? Je peux vous le reprendre 2€, si vous voulez.”"
   },
   {
     "Index": 100170,
@@ -2995,9 +2995,9 @@
     "Effigy": "Terracid",
     "Force": 3,
     "Cost": 2,
-    "Rules": "Regardez les 3 premiÃ¨res cartes de votre deck. Piochez-en une, jouez-en une gratuitement et remettez la derniÃ¨re sur le deck.",
+    "Rules": "Regardez les 3 premières cartes de votre deck. Piochez-en une, jouez-en une gratuitement et remettez la dernière sur le deck.",
     "Combo": "",
-    "Quote": "Il a eu sa premiÃ¨re vision avec une tranche de jambon de Bayonne, Ã  lâ€™Ã¢ge de 9 ans."
+    "Quote": "Il a eu sa première vision avec une tranche de jambon de Bayonne, à l’âge de 9 ans."
   },
   {
     "Index": 100171,
@@ -3013,9 +3013,9 @@
     "Effigy": "Laink",
     "Force": 1,
     "Cost": 0,
-    "Rules": "Doublez la Force de tous vos autres Personnages jusquâ€™Ã  la fin de votre tour.",
+    "Rules": "Doublez la Force de tous vos autres Personnages jusqu’à la fin de votre tour.",
     "Combo": "Scorez un Terrain.",
-    "Quote": "Il paraÃ®t que Pinoche a embrassÃ© Giselle sur la bouche prÃ¨s du vieux chÃ¢taignier."
+    "Quote": "Il paraît que Pinoche a embrassé Giselle sur la bouche près du vieux châtaignier."
   },
   {
     "Index": 100172,
@@ -3031,9 +3031,9 @@
     "Effigy": "Terracid",
     "Force": 1,
     "Cost": 0,
-    "Rules": "Doublez la Force de tous vos autres Personnages jusquâ€™Ã  la fin de votre tour.",
+    "Rules": "Doublez la Force de tous vos autres Personnages jusqu’à la fin de votre tour.",
     "Combo": "",
-    "Quote": "Il a jouÃ© avec un vieil obus trouvÃ© prÃ¨s de la riviÃ¨re et depuis il est puni."
+    "Quote": "Il a joué avec un vieil obus trouvé près de la rivière et depuis il est puni."
   },
   {
     "Index": 100173,
@@ -3049,9 +3049,9 @@
     "Effigy": "Laink",
     "Force": 3,
     "Cost": 1,
-    "Rules": "Si vous avez exactement 3 cartes en main, rÃ©cupÃ©rez la carte du dessus de votre dÃ©fausse.",
+    "Rules": "Si vous avez exactement 3 cartes en main, récupérez la carte du dessus de votre défausse.",
     "Combo": "",
-    "Quote": "Pour survivre, il a dÃ» faire des choses horribles, comme boire lâ€™eau du robinet."
+    "Quote": "Pour survivre, il a dû faire des choses horribles, comme boire l’eau du robinet."
   },
   {
     "Index": 100174,
@@ -3067,15 +3067,15 @@
     "Effigy": "Terracid",
     "Force": 3,
     "Cost": 1,
-    "Rules": "Si vous avez exactement 4 cartes en main, rÃ©cupÃ©rez la carte du dessus de votre dÃ©fausse.",
+    "Rules": "Si vous avez exactement 4 cartes en main, récupérez la carte du dessus de votre défausse.",
     "Combo": "",
-    "Quote": "â€œIl me reste seulement 18 boÃ®tes de conserve. Je ne tiendrai jamais la journÃ©e.â€"
+    "Quote": "“Il me reste seulement 18 boîtes de conserve. Je ne tiendrai jamais la journée.”"
   },
   {
     "Index": 100175,
     "Number": "175",
     "Title": "JACQUES FLANTIER",
-    "Artist": "LÃ©onard Lam",
+    "Artist": "Léonard Lam",
     "CardType": "Effigy",
     "SeasonId": "S01",
     "TexturePath": "cards/Origins/textures/175_JACQUES FLANTIER.jpg",
@@ -3085,15 +3085,15 @@
     "Effigy": "Laink",
     "Force": 2,
     "Cost": 0,
-    "Rules": "DÃ©faussez un Personnage adverse en jeu dâ€™une Force de 1 maximum.",
+    "Rules": "Défaussez un Personnage adverse en jeu d’une Force de 1 maximum.",
     "Combo": "",
-    "Quote": "â€œBRANCARDIER ! Jâ€™ai des douleurs dans la nuque, câ€™est trÃ¨s dÃ©sagrÃ©able ! Et jâ€™ai mal au bidou !â€"
+    "Quote": "“BRANCARDIER ! J’ai des douleurs dans la nuque, c’est très désagréable ! Et j’ai mal au bidou !”"
   },
   {
     "Index": 100176,
     "Number": "176",
     "Title": "RICHARD FLANTIER",
-    "Artist": "LÃ©onard Lam",
+    "Artist": "Léonard Lam",
     "CardType": "Effigy",
     "SeasonId": "S01",
     "TexturePath": "cards/Origins/textures/176_RICHARD FLANTIER.jpg",
@@ -3103,9 +3103,9 @@
     "Effigy": "Terracid",
     "Force": 3,
     "Cost": 1,
-    "Rules": "DÃ©faussez un Personnage adverse en jeu dâ€™une Force de 1 maximum.",
+    "Rules": "Défaussez un Personnage adverse en jeu d’une Force de 1 maximum.",
     "Combo": "",
-    "Quote": "HÃ©ros de guerre lÃ©gendaire (il nâ€™a tirÃ© aucune balle et a poussÃ© quelquâ€™un pour survivre)."
+    "Quote": "Héros de guerre légendaire (il n’a tiré aucune balle et a poussé quelqu’un pour survivre)."
   },
   {
     "Index": 100177,
@@ -3121,9 +3121,9 @@
     "Effigy": "Laink",
     "Force": 1,
     "Cost": 0,
-    "Rules": "Votre prochaine carte Personnage coÃ»te 0 Ã  mettre en jeu ce tour.",
-    "Combo": "Reprenez en main la carte du dessus de votre dÃ©fausse.",
-    "Quote": "Elle a tendance Ã  rÃ¢ler pendant quâ€™elle bosse et Ã  insulter copieusement Martine dans son dos."
+    "Rules": "Votre prochaine carte Personnage coûte 0 à mettre en jeu ce tour.",
+    "Combo": "Reprenez en main la carte du dessus de votre défausse.",
+    "Quote": "Elle a tendance à râler pendant qu’elle bosse et à insulter copieusement Martine dans son dos."
   },
   {
     "Index": 100178,
@@ -3139,9 +3139,9 @@
     "Effigy": "Terracid",
     "Force": 1,
     "Cost": 0,
-    "Rules": "Votre prochaine carte Personnage coÃ»te 0 Ã  mettre en jeu ce tour.",
+    "Rules": "Votre prochaine carte Personnage coûte 0 à mettre en jeu ce tour.",
     "Combo": "Scorez un Terrain.",
-    "Quote": "â€œLes gens sont des porcs. Câ€™est fou ce quâ€™on peut trouver par terre de nos jours.â€"
+    "Quote": "“Les gens sont des porcs. C’est fou ce qu’on peut trouver par terre de nos jours.”"
   },
   {
     "Index": 100179,
@@ -3157,9 +3157,9 @@
     "Effigy": "Laink",
     "Force": 10,
     "Cost": 3,
-    "Rules": "(Permanent) Si vous scorez un Terrain pendant votre tour, dÃ©faussez ce Personnage.",
-    "Combo": "Avec Terracid, vos Personnages coÃ»tent 0 Ã  poser pour le tour.",
-    "Quote": "Câ€™est ici que..."
+    "Rules": "(Permanent) Si vous scorez un Terrain pendant votre tour, défaussez ce Personnage.",
+    "Combo": "Avec Terracid, vos Personnages coûtent 0 à poser pour le tour.",
+    "Quote": "C’est ici que..."
   },
   {
     "Index": 100180,
@@ -3175,8 +3175,8 @@
     "Effigy": "Terracid",
     "Force": 10,
     "Cost": 3,
-    "Rules": "(Permanent) Si vous scorez un Terrain pendant votre tour, dÃ©faussez ce Personnage.",
-    "Combo": "Avec Laink, vos Personnages coÃ»tent 0 Ã  poser pour le tour.",
-    "Quote": "... tout a commencÃ©."
+    "Rules": "(Permanent) Si vous scorez un Terrain pendant votre tour, défaussez ce Personnage.",
+    "Combo": "Avec Laink, vos Personnages coûtent 0 à poser pour le tour.",
+    "Quote": "... tout a commencé."
   }
 ]
