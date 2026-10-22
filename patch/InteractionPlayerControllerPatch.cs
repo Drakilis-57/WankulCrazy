@@ -347,20 +347,23 @@ namespace WankulCrazyPlugin.patch
                                     {
                                         child.localPosition = new Vector3(-0.001f, 0.1107f - 0.08f, 0);
                                         child.localRotation = Quaternion.Euler(0, 180, 0);
-                                        child.localScale = new Vector3(0.15f, 0.15f, 0.0001f);
-                                        Dictionary<EItemType, string> texturePaths = GetPackTexturePaths();
+                                        child.localScale = new Vector3(0.26f, 0.15f, 0.0001f);
+                                        Dictionary<EItemType, string> boxPaths = GetBoxTexturePaths();
 
-                                        // Vérifie si le cardPack a une texture associée dans le dictionnaire
-                                        if (texturePaths.TryGetValue(cardPack, out string texturePath))
+                                        EItemType boxType = holdItem != null ? holdItem.GetItemType() : EItemType.None;
+                                        if (boxPaths.TryGetValue(boxType, out string texturePath))
                                         {
-                                            //Plugin.Logger.LogError($"{cardPack} détecté, application d'une nouvelle texture.");
                                             ApplyTextureToChild(child, texturePath);
                                         }
+                                        else if (itemMeshData1 != null && itemMeshData1.material != null)
+                                        {
+                                            var rend = child.GetComponent<Renderer>();
+                                            if (rend != null)
+                                            {
+                                                rend.material = itemMeshData1.material;
+                                            }
+                                        }
 
-                                        // Coordonnées UV pour les coins du rectangle
-                                        Vector2 uvTopLeft = new Vector2(0.029f, 0.509f);       // Haut gauche
-                                        Vector2 uvBottomRight = new Vector2(0.490f, 0.099f);   // Bas droite
-                                        ChangeTextureColorInUVRectangle(child.gameObject, uvTopLeft, uvBottomRight, Color.white);
                                         StartChildAnimation(child);
                                     }
                                     else if (child.name.StartsWith("StaticMesh") || child.name.StartsWith("CardPackStaticMesh"))
@@ -569,6 +572,31 @@ namespace WankulCrazyPlugin.patch
             {
                 Plugin.Logger.LogError("Échec du chargement de la texture.");
             }
+        }
+
+        private static Dictionary<EItemType, string> boxTexturePaths = null;
+
+        private static Dictionary<EItemType, string> GetBoxTexturePaths()
+        {
+            if (boxTexturePaths == null)
+            {
+                boxTexturePaths = new Dictionary<EItemType, string>
+                {
+                    { EItemType.BasicCardBox, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S1.png") },
+                    { EItemType.RareCardBox, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S2.png") },
+                    { EItemType.EpicCardBox, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S3.png") },
+                    { EItemType.LegendaryCardBox, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_HS.png") },
+                    { EItemType.DestinyBasicCardBox, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S1_TauxDrop.png") },
+                    { EItemType.DestinyRareCardBox, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S2_TauxDrop.png") },
+                    { EItemType.DestinyEpicCardBox, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S3_TauxDrop.png") },
+                    { EItemType.DestinyLegendaryCardBox, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_HS_TauxDrop.png") },
+                    { EnumExtensions.SafeParseEItemType("DisplayStellar"), Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S4.png") },
+                    { EnumExtensions.SafeParseEItemType("DisplayStellarTaux"), Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S4_TauxDrop.png") },
+                    { EnumExtensions.SafeParseEItemType("DisplayLegacy"), Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S5.png") },
+                    { EnumExtensions.SafeParseEItemType("DisplayLegacyTaux"), Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S5_TauxDrop.png") },
+                };
+            }
+            return boxTexturePaths;
         }
 
         private static Dictionary<EItemType, string> packTexturePaths = null;

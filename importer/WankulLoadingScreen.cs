@@ -185,7 +185,7 @@ namespace WankulCrazyPlugin.importer
                 }
                 else if (isFoil)
                 {
-                    Plugin.Logger?.LogWarning($"[Foil] Aucun masque trouve pour la carte foil {card.Title} (#{card.Number})");
+                    Plugin.LogDebug($"[Foil] Aucun masque trouve pour la carte foil {card.Title} (#{card.Number})");
                 }
             }
             catch (Exception ex)

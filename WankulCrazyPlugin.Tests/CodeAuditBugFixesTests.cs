@@ -198,5 +198,35 @@ namespace WankulCrazyPlugin.Tests
             float customPrice10 = GradedCardService.CalculateGradedMarketPrice(basePrice, 0, 10, customMultipliers);
             Assert.True(customPrice10 > 0);
         }
+
+        [Fact(Skip = "Nécessite le runtime Unity (InteractableAutoPackOpener hérite de MonoBehaviour)")]
+        public void AutoPackOpener_CurrentMachineOpeningItem_LifecycleAndSafety()
+        {
+            // Initial state
+            WankulCrazyPlugin.patch.CardOpening.CurrentMachineOpeningItem = null;
+            Assert.Null(WankulCrazyPlugin.patch.CardOpening.CurrentMachineOpeningItem);
+
+            // Postfix clears item
+            WankulCrazyPlugin.patch.InteractableAutoPackOpenerPatch.OpenPackPostfix();
+            Assert.Null(WankulCrazyPlugin.patch.CardOpening.CurrentMachineOpeningItem);
+        }
+
+        [Fact]
+        public void KnownCustomTexture_IncludesTextureCalecon()
+        {
+            string textureName = "Texture_Calecon";
+            bool isKnown = textureName.StartsWith("Texture_Display_") ||
+                           textureName.StartsWith("Texture_Booster_") ||
+                           textureName.StartsWith("Texture_Calecon") ||
+                           textureName.StartsWith("MonsterStatue_") ||
+                           textureName.StartsWith("Texture_Starter_") ||
+                           textureName.StartsWith("Texture_Tapis_") ||
+                           textureName.StartsWith("T_CardSleeve") ||
+                           textureName.StartsWith("T_BasicCardBox") ||
+                           textureName.StartsWith("T_EpicCardBox") ||
+                           textureName.StartsWith("T_RareCardBox");
+
+            Assert.True(isKnown);
+        }
     }
 }

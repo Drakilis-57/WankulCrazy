@@ -149,6 +149,19 @@ public class Plugin : BaseUnityPlugin
         );
 
         TryPatch(
+            "InteractableAutoPackOpener.OpenPack",
+            AccessTools.Method(typeof(InteractableAutoPackOpener), "OpenPack"),
+            prefix: AccessTools.Method(typeof(WankulCrazyPlugin.patch.InteractableAutoPackOpenerPatch), nameof(WankulCrazyPlugin.patch.InteractableAutoPackOpenerPatch.OpenPackPrefix)),
+            postfix: AccessTools.Method(typeof(WankulCrazyPlugin.patch.InteractableAutoPackOpenerPatch), nameof(WankulCrazyPlugin.patch.InteractableAutoPackOpenerPatch.OpenPackPostfix))
+        );
+
+        TryPatch(
+            "InteractableAutoPackOpener.OnMouseButtonUp",
+            AccessTools.Method(typeof(InteractableAutoPackOpener), "OnMouseButtonUp"),
+            prefix: AccessTools.Method(typeof(WankulCrazyPlugin.patch.InteractableAutoPackOpenerPatch), nameof(WankulCrazyPlugin.patch.InteractableAutoPackOpenerPatch.OnMouseButtonUpPrefix))
+        );
+
+        TryPatch(
             "CardOpeningSequence.Update (CardOpening)",
             AccessTools.Method(typeof(CardOpeningSequence), "Update"),
             prefix: AccessTools.Method(typeof(CardOpening), "Update")

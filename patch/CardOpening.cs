@@ -20,6 +20,7 @@ namespace WankulCrazyPlugin.patch
         public static HashSet<int> URBoosters = new HashSet<int>();
         public static HashSet<int> RareBoosters = new HashSet<int>();
         public static int boosterSize = 10;
+        public static Item CurrentMachineOpeningItem = null;
         private static readonly int randomGoldBoosterSeedBase = 10;
         private static int randomGoldBoosterSeed = 10;
 
@@ -104,10 +105,11 @@ namespace WankulCrazyPlugin.patch
         /// </summary>
         private static bool DetermineBoosterSize(CardOpeningSequence __instance)
         {
-            Item currentItem = (Item)Plugin.GetPProperty(__instance, "m_CurrentItem");
+            Item currentItem = (Item)Plugin.GetPProperty(__instance, "m_CurrentItem") ?? CurrentMachineOpeningItem;
             if (currentItem == null)
             {
-                return false;
+                boosterSize = 10;
+                return true;
             }
 
             if (currentItem.GetItemType() == EnumExtensions.SafeParseEItemType("BoosterGoldBattle") ||
@@ -307,6 +309,10 @@ namespace WankulCrazyPlugin.patch
             {
                 Plugin.Logger.LogError($"[CardOpening] OpenBooster a echoue : {ex}");
             }
+            finally
+            {
+                CurrentMachineOpeningItem = null;
+            }
         }
 
         private static void OpenBoosterCore(List<CardData> ___m_RolledCardDataList, List<float> ___m_CardValueList, ECollectionPackType ___m_CollectionPackType, Item ___m_CurrentItem, List<CardData> ___m_SecondaryRolledCardDataList, CardOpeningSequence __instance)
@@ -318,15 +324,26 @@ namespace WankulCrazyPlugin.patch
 
             WankulCardsData wankulCardsData = WankulCardsData.Instance;
             wankulCardsData.EnsureInitialized();
-            CheckBoosterSize(__instance);
 
+            Item currentItem = ___m_CurrentItem ?? (Item)Plugin.GetPProperty(__instance, "m_CurrentItem") ?? CurrentMachineOpeningItem;
+            EItemType currentItemType = currentItem != null ? currentItem.GetItemType() : EItemType.None;
+            bool isGold = currentItemType == EnumExtensions.SafeParseEItemType("BoosterGoldBattle") ||
+                          currentItemType == EnumExtensions.SafeParseEItemType("BoosterGoldStellar") ||
+                          currentItemType == EnumExtensions.SafeParseEItemType("BoosterGoldLegacy");
 
+            boosterSize = isGold ? 4 : 10;
+
+            if (__instance != null && __instance.IsActive())
+            {
+                CheckBoosterSize(__instance);
+            }
 
             ___m_CardValueList.Clear();
             ___m_RolledCardDataList.Clear();
             ___m_SecondaryRolledCardDataList.Clear();
             // Sinon nos flags s'ajoutent a ceux du jeu vanilla et les indices sont decales.
-            ((List<bool>)Plugin.GetPProperty(__instance, "m_IsNewlList")).Clear();
+            var isNewList = (List<bool>)Plugin.GetPProperty(__instance, "m_IsNewlList");
+            isNewList?.Clear();
 
             totalExpGained = 0;
 
@@ -339,9 +356,9 @@ namespace WankulCrazyPlugin.patch
                 bool isRare = false;
                 bool isMinUR = false;
                 bool isMinLegendary = false;
-                int hash = ___m_CurrentItem.GetHashCode();
+                int hash = currentItem != null ? currentItem.GetHashCode() : 0;
 
-                if (isMinRare)
+                if (isMinRare && currentItem != null)
                 {
                     if (LegendaryBoosters.Remove(hash))
                     {
@@ -349,14 +366,12 @@ namespace WankulCrazyPlugin.patch
                         isMinUR = false;
                         isMinRare = false;
                     }
-
                     else if (URBoosters.Remove(hash))
                     {
                         isMinLegendary = false;
                         isMinUR = true;
                         isMinRare = false;
                     }
-
                     else if (RareBoosters.Remove(hash))
                     {
                         isMinLegendary = false;
@@ -366,11 +381,8 @@ namespace WankulCrazyPlugin.patch
                     }
                 }
 
-                Item currentItem = (Item)Plugin.GetPProperty(__instance, "m_CurrentItem");
                 WankulCardData wankulCard;
-                if ((currentItem.GetItemType() == EnumExtensions.SafeParseEItemType("BoosterGoldBattle") ||
-                     currentItem.GetItemType() == EnumExtensions.SafeParseEItemType("BoosterGoldStellar") ||
-                     currentItem.GetItemType() == EnumExtensions.SafeParseEItemType("BoosterGoldLegacy")) && boosterSize == 4)
+                if (isGold && boosterSize == 4)
                 {
                     wankulCard = WankulInventory.DropCardGold(___m_CollectionPackType, alreadySelectedCards);
                 }
@@ -449,11 +461,11 @@ namespace WankulCrazyPlugin.patch
                 CardData cd = ___m_RolledCardDataList[k];
                 WankulCardData wk = wankulCardsData.GetFromMonster(cd, true);
                 string cardTitle = wk != null ? wk.Title : "Inconnue";
-                bool isNew = ((List<bool>)Plugin.GetPProperty(__instance, "m_IsNewlList"))[k];
+                bool isNew = isNewList != null && k < isNewList.Count ? isNewList[k] : false;
                 Plugin.LogInfo($"  [Carte {k}] Nom='{cardTitle}' | isFoil={cd?.isFoil} | Type={wk?.GetType().Name} | HasMask={(wk?.SpriteMask != null)} | Prix={___m_CardValueList[k]} | isNew={isNew}");
 
                 // Affecter explicitement les données de la carte sur l'objet 3D correspondant pour garantir son visuel dès le début
-                if (k < __instance.m_Card3dUIList.Count && __instance.m_Card3dUIList[k] != null && __instance.m_Card3dUIList[k].m_CardUI != null)
+                if (__instance != null && __instance.IsActive() && __instance.m_Card3dUIList != null && k < __instance.m_Card3dUIList.Count && __instance.m_Card3dUIList[k] != null && __instance.m_Card3dUIList[k].m_CardUI != null)
                 {
                     try
                     {

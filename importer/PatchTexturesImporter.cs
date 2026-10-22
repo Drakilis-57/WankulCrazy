@@ -49,6 +49,7 @@ namespace WankulCrazyPlugin.importer
                         // Elles sont gérées directement par nos propres hooks (OBJImporter, GetBoxTexturePaths, etc.).
                         bool isKnownCustomTexture = textureName.StartsWith("Texture_Display_") ||
                                                    textureName.StartsWith("Texture_Booster_") ||
+                                                   textureName.StartsWith("Texture_Calecon") ||
                                                    textureName.StartsWith("MonsterStatue_") ||
                                                    textureName.StartsWith("Texture_Starter_") ||
                                                    textureName.StartsWith("Texture_Tapis_") ||
