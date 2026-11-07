@@ -292,15 +292,15 @@ namespace WankulCrazyPlugin.importer
                 UnityEngine.Object.Destroy(texture);
                 return null;
             }
-            texture.wrapMode = TextureWrapMode.Clamp;
+            texture.wrapMode = TextureWrapMode.Clamp; texture.hideFlags |= HideFlags.DontUnloadUnusedAsset;
             return texture;
         }
 
         private static Sprite CreateSprite(Texture2D texture)
         {
             // FullRect : evite la generation d'un mesh de contour (Tight) pour chaque sprite.
-            return Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height),
-                new Vector2(0.5f, 0.5f), 100f, 0, SpriteMeshType.FullRect);
+            Sprite s = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height),
+                new Vector2(0.5f, 0.5f), 100f, 0, SpriteMeshType.FullRect); s.hideFlags |= HideFlags.DontUnloadUnusedAsset; return s;
         }
     }
 }

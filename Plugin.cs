@@ -139,7 +139,7 @@ public class Plugin : BaseUnityPlugin
         TryPatch(
             "CardOpeningSequence.OpenScreen",
             AccessTools.Method(typeof(CardOpeningSequence), "OpenScreen"),
-            prefix: AccessTools.Method(typeof(CardOpening), "OpenScreenPrefix")
+            prefix: AccessTools.Method(typeof(CardOpening), "OpenScreenPrefix")); TryPatch("CardOpeningSequence.ReadyingCardPack", AccessTools.Method(typeof(CardOpeningSequence), "ReadyingCardPack"), postfix: AccessTools.Method(typeof(CardOpening), "ReadyingCardPackPostfix")
         );
 
         TryPatch(
@@ -231,13 +231,19 @@ public class Plugin : BaseUnityPlugin
         TryPatch(
             "RestockManager.GetItemCost",
             AccessTools.Method(typeof(RestockManager), "GetItemCost", new[] { typeof(EItemType) }),
-            postfix: AccessTools.Method(typeof(WankulCrazyPlugin.importer.CustomItemsImporter), "GetItemCostPostfix")
+            prefix: AccessTools.Method(typeof(CustomItemsImporter), "GetItemCostPrefix")
         );
 
         TryPatch(
             "RestockManager.GetItemMarketPrice",
             AccessTools.Method(typeof(RestockManager), "GetItemMarketPrice", new[] { typeof(EItemType) }),
-            postfix: AccessTools.Method(typeof(WankulCrazyPlugin.importer.CustomItemsImporter), "GetItemMarketPricePostfix")
+            prefix: AccessTools.Method(typeof(CustomItemsImporter), "GetItemMarketPricePrefix")
+        );
+
+        TryPatch(
+            "RestockManager.GetItemMarketPriceCustomPercent",
+            AccessTools.Method(typeof(RestockManager), "GetItemMarketPriceCustomPercent", new[] { typeof(EItemType), typeof(float) }),
+            prefix: AccessTools.Method(typeof(CustomItemsImporter), "GetItemMarketPriceCustomPercentPrefix")
         );
 
         TryPatch(
@@ -407,7 +413,7 @@ public class Plugin : BaseUnityPlugin
         TryPatch(
             "Item.SetMesh",
             AccessTools.Method(typeof(Item), "SetMesh"),
-            postfix: AccessTools.Method(typeof(WankulCrazyPlugin.importer.PatchTexturesImporter), "ItemPostfix")
+            postfix: AccessTools.Method(typeof(WankulCrazyPlugin.importer.PatchTexturesImporter), "ItemPostfix")); TryPatch("Item.SetTexture2DArrayMaterialsForMesh", AccessTools.Method(typeof(Item), "SetTexture2DArrayMaterialsForMesh"), postfix: AccessTools.Method(typeof(WankulCrazyPlugin.importer.PatchTexturesImporter), "ItemArrayMaterialPostfix")); TryPatch("Item.SetTexture2DArrayMaterialsForItem", AccessTools.Method(typeof(Item), "SetTexture2DArrayMaterialsForItem"), postfix: AccessTools.Method(typeof(WankulCrazyPlugin.importer.PatchTexturesImporter), "ItemArrayMaterialPostfix")
         );
 
         TryPatch(
@@ -495,15 +501,45 @@ public class Plugin : BaseUnityPlugin
         );
 
         TryPatch(
+            "LoadingScreen.OpenScreen",
+            AccessTools.Method(typeof(LoadingScreen), "OpenScreen"),
+            postfix: AccessTools.Method(typeof(SceneLifecyclePatches), nameof(SceneLifecyclePatches.OpenScreenPostfix))
+        );
+
+        TryPatch(
+            "SaveLoadGameSlotSelectScreen.OnPressLoadGame",
+            AccessTools.Method(typeof(SaveLoadGameSlotSelectScreen), "OnPressLoadGame", new[] { typeof(int) }),
+            prefix: AccessTools.Method(typeof(SceneLifecyclePatches), nameof(SceneLifecyclePatches.OnPressLoadGamePrefix))
+        );
+
+        TryPatch(
             "LoadingScreen.CloseScreen",
             AccessTools.Method(typeof(LoadingScreen), "CloseScreen"),
             prefix: AccessTools.Method(typeof(SceneLifecyclePatches), nameof(SceneLifecyclePatches.CloseScreenPrefix))
         );
 
         TryPatch(
+            "LoadingScreen.FinishLoading",
+            AccessTools.Method(typeof(LoadingScreen), "FinishLoading"),
+            prefix: AccessTools.Method(typeof(SceneLifecyclePatches), nameof(SceneLifecyclePatches.FinishLoadingPrefix))
+        );
+
+        TryPatch(
             "ScreenRatioScaler.Init",
             AccessTools.Method(typeof(ScreenRatioScaler), "Init"),
             prefix: AccessTools.Method(typeof(SceneLifecyclePatches), nameof(SceneLifecyclePatches.ScreenRatioScalerInitPrefix))
+        );
+
+        TryPatch(
+            "UI_PriceTag.SetItemImage",
+            AccessTools.Method(typeof(UI_PriceTag), "SetItemImage", new[] { typeof(EItemType) }),
+            postfix: AccessTools.Method(typeof(WankulCrazyPlugin.patch.PriceTagAtlasPatch), nameof(WankulCrazyPlugin.patch.PriceTagAtlasPatch.SetItemImagePostfix))
+        );
+
+        TryPatch(
+            "PriceTagAtlasMap.GetItemIconIndex",
+            AccessTools.Method(typeof(PriceTagAtlasMap), "GetItemIconIndex", new[] { typeof(int) }),
+            prefix: AccessTools.Method(typeof(WankulCrazyPlugin.patch.PriceTagAtlasPatch), nameof(WankulCrazyPlugin.patch.PriceTagAtlasPatch.GetItemIconIndexPrefix))
         );
 
         TryPatch(

@@ -14,32 +14,32 @@ public static class EnumExtensions
         {
             typeof(EItemType), new Dictionary<int, string>
             {
-                { 125, "BoosterStellar" },
-                { 126, "DisplayStellar" },
-                { 127, "BoosterStellarTaux" },
-                { 128, "DisplayStellarTaux" },
-                { 129, "CaleconStellar" },
-                { 130, "StarterApocalypse" },
-                { 131, "StarterShowtime" },
-                { 132, "TapisS41" },
-                { 133, "TapisS42" },
-                { 134, "ClasseurS4" },
-                { 135, "BoosterGoldBattle" },
-                { 136, "BoosterGoldStellar" },
-                { 139, "BoosterLegacy" },
-                { 140, "DisplayLegacy" },
-                { 141, "BoosterLegacyTaux" },
-                { 142, "DisplayLegacyTaux" },
-                { 143, "BoosterGoldLegacy" }
+                { 200, "BoosterStellar" },
+                { 201, "DisplayStellar" },
+                { 202, "BoosterStellarTaux" },
+                { 203, "DisplayStellarTaux" },
+                { 204, "CaleconStellar" },
+                { 205, "StarterApocalypse" },
+                { 206, "StarterShowtime" },
+                { 207, "TapisS41" },
+                { 208, "TapisS42" },
+                { 209, "ClasseurS4" },
+                { 210, "BoosterGoldBattle" },
+                { 211, "BoosterGoldStellar" },
+                { 212, "BoosterLegacy" },
+                { 213, "DisplayLegacy" },
+                { 214, "BoosterLegacyTaux" },
+                { 215, "DisplayLegacyTaux" },
+                { 216, "BoosterGoldLegacy" }
             }
         },
         {
             typeof(ECollectionPackType), new Dictionary<int, string>
             {
-                { 15, "Stellar" },
-                { 16, "StellarTaux" },
-                { 19, "Legacy" },
-                { 20, "LegacyTaux" }
+                { 30, "Stellar" },
+                { 31, "StellarTaux" },
+                { 32, "Legacy" },
+                { 33, "LegacyTaux" }
             }
         },
         {
@@ -51,15 +51,7 @@ public static class EnumExtensions
         }
     };
 
-    public static readonly Dictionary<Type, Dictionary<int, int>> remappedEnumValues = new Dictionary<Type, Dictionary<int, int>>
-    {
-        {
-            typeof(ECollectionPackType), new Dictionary<int, int>
-            {
-                { 15, 17 }
-            }
-        }
-    };
+    public static readonly Dictionary<Type, Dictionary<int, int>> remappedEnumValues = new Dictionary<Type, Dictionary<int, int>>();
 
     public static bool TryToInt32(object value, out int intVal)
     {

@@ -550,18 +550,23 @@ namespace WankulCrazyPlugin.patch
                 Renderer renderer = child.GetComponent<Renderer>();
                 if (renderer != null)
                 {
-                    // Neutraliser le shader Standard cassé avant toute manipulation
-                    renderer.sharedMaterial = ShaderUtils.EnsureNotBrokenStandard(renderer.sharedMaterial);
-
                     Material sourceMat = renderer.sharedMaterial;
+                    if (ShaderUtils.UsesBrokenStandardShader(sourceMat))
+                    {
+                        sourceMat = WankulCrazyPlugin.importer.PatchTexturesImporter.GetSafe2DBaseMaterial();
+                    }
+                    sourceMat = ShaderUtils.EnsureNotBrokenStandard(sourceMat);
+
                     Material material = ShaderUtils.CreateSafeMaterial(sourceMat);
-                    if (material.HasProperty("_BaseColorMap"))
-                        material.SetTexture("_BaseColorMap", newTexture);
-                    if (material.HasProperty("_BaseMap"))
-                        material.SetTexture("_BaseMap", newTexture);
                     if (material.HasProperty("_MainTex"))
                         material.SetTexture("_MainTex", newTexture);
+                    if (material.HasProperty("_BaseMap"))
+                        material.SetTexture("_BaseMap", newTexture);
+                    if (material.HasProperty("_BaseColorMap"))
+                        material.SetTexture("_BaseColorMap", newTexture);
+                    renderer.sharedMaterial = material;
                     renderer.material = material;
+                    renderer.SetPropertyBlock(null);
                 }
                 else
                 {

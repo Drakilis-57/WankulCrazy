@@ -36,3 +36,5 @@ docu.md
 downloaded_cards/
 local.config.json
 releases/
+tools/**/*.png
+tools/legacy106/

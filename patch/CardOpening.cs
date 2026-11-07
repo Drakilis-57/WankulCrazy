@@ -34,6 +34,77 @@ namespace WankulCrazyPlugin.patch
             }
         }
 
+        public static void ApplyBoosterMaterialToOpeningPack(CardOpeningSequence sequence, Item item)
+        {
+            if (sequence == null) return;
+
+            Material boosterMat = null;
+            if (item != null)
+            {
+                if (item.m_Mesh != null && item.m_Mesh.sharedMaterial != null && !ShaderUtils.UsesBrokenStandardShader(item.m_Mesh.sharedMaterial))
+                {
+                    boosterMat = item.m_Mesh.sharedMaterial;
+                }
+
+                if (boosterMat == null)
+                {
+                    EItemType itemType = item.GetItemType();
+                    var paths = PatchTexturesImporter.GetBoxTexturePaths();
+                    if (paths.TryGetValue(itemType, out string texPath))
+                    {
+                        boosterMat = PatchTexturesImporter.GetOrCreateBoxMaterial(itemType, texPath, item.m_Mesh?.GetComponent<Renderer>());
+                    }
+                }
+            }
+
+            if (boosterMat == null)
+            {
+                boosterMat = PatchTexturesImporter.GetSafe2DBaseMaterial();
+            }
+
+            if (boosterMat == null)
+            {
+                Plugin.Logger.LogWarning("[CardOpening] Aucun matériau de booster trouvé pour l'ouverture.");
+                return;
+            }
+
+            // 1. Appliquer sur m_CardPackMesh (SkinnedMeshRenderer)
+            if (sequence.m_CardPackMesh != null)
+            {
+                sequence.m_CardPackMesh.sharedMaterial = boosterMat;
+                sequence.m_CardPackMesh.material = boosterMat;
+                sequence.m_CardPackMesh.SetPropertyBlock(null);
+            }
+
+            // 2. Appliquer récursivement sur tous les Renderers de m_CardPackAnimator (ex: parties détachables)
+            if (sequence.m_CardPackAnimator != null)
+            {
+                foreach (var r in sequence.m_CardPackAnimator.GetComponentsInChildren<Renderer>(true))
+                {
+                    if (r != null)
+                    {
+                        r.sharedMaterial = boosterMat;
+                        r.material = boosterMat;
+                        r.SetPropertyBlock(null);
+                    }
+                }
+            }
+
+            Plugin.Logger.LogInfo($"[CardOpening] Matériau Wankul '{boosterMat.name}' appliqué avec succès sur le booster d'ouverture !");
+        }
+
+        public static void ReadyingCardPackPostfix(CardOpeningSequence __instance, Item item)
+        {
+            try
+            {
+                ApplyBoosterMaterialToOpeningPack(__instance, item);
+            }
+            catch (Exception ex)
+            {
+                Plugin.Logger.LogError($"[ReadyingCardPackPostfix] Erreur: {ex}");
+            }
+        }
+
         public static void OpenScreenPrefix(CardOpeningSequence __instance, ECollectionPackType collectionPackType, bool isMultiPack)
         {
             try
@@ -130,8 +201,12 @@ namespace WankulCrazyPlugin.patch
         /// S'assure que le nombre d'emplacements 3D (m_Card3dUIList) correspond exactement à la taille du booster.
         /// Ajoute ou supprime des cartes 3D et leurs animations au besoin.
         /// </summary>
+        private static readonly System.Reflection.FieldInfo s_CardBaseScaleListField = HarmonyLib.AccessTools.Field(typeof(CardOpeningSequence), "m_CardBaseScaleList");
+
         private static void EnsureCardSlots(CardOpeningSequence __instance)
         {
+            var baseScaleList = s_CardBaseScaleListField?.GetValue(__instance) as System.Collections.Generic.List<UnityEngine.Vector3>;
+
             if (__instance.m_Card3dUIList.Count < boosterSize)
             {
                 Card3dUISpawner card3dUISpawnerInstance = Card3dUISpawner.m_Instance;
@@ -249,6 +324,23 @@ namespace WankulCrazyPlugin.patch
                     InventoryBase.Destroy(rectTransform.gameObject);
 
                     __instance.m_CardAnimList.RemoveAt(__instance.m_CardAnimList.Count - 1);
+                }
+            }
+
+            // En 1.07+, m_CardBaseScaleList doit impérativement avoir au moins autant d'éléments que m_Card3dUIList
+            if (baseScaleList != null)
+            {
+                while (baseScaleList.Count < __instance.m_Card3dUIList.Count)
+                {
+                    int idx = baseScaleList.Count;
+                    UnityEngine.Vector3 scale = (idx < __instance.m_Card3dUIList.Count && __instance.m_Card3dUIList[idx] != null && __instance.m_Card3dUIList[idx].m_ScaleGrp != null)
+                        ? __instance.m_Card3dUIList[idx].m_ScaleGrp.localScale
+                        : UnityEngine.Vector3.one;
+                    baseScaleList.Add(scale);
+                }
+                while (baseScaleList.Count > __instance.m_Card3dUIList.Count)
+                {
+                    baseScaleList.RemoveAt(baseScaleList.Count - 1);
                 }
             }
         }
@@ -774,6 +866,7 @@ namespace WankulCrazyPlugin.patch
             // State 0 : Initialisation de la séquence
             if (__instance.m_StateIndex == 0)
             {
+                ApplyBoosterMaterialToOpeningPack(__instance, CardOpeningHelpers.GetCurrentItem(__instance));
                 InitOpenSequence.Invoke(__instance, []);
                 __instance.m_StateIndex++;
             }

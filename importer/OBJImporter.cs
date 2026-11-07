@@ -164,6 +164,7 @@ namespace WankulCrazyPlugin.importer
                 if ((UnityEngine.Object)texture2D != (UnityEngine.Object)null)
                 {
                     texture2D.Apply(true, true);
+                    texture2D.hideFlags |= HideFlags.DontUnloadUnusedAsset;
                     OBJImporter.cachedTextures[key] = texture2D;
                 }
             }
@@ -215,6 +216,7 @@ namespace WankulCrazyPlugin.importer
                         Mesh mesh1 = new Mesh();
                         mesh1.CombineMeshes(combine, false);
                         mesh1.name = key;
+                        mesh1.hideFlags |= HideFlags.DontUnloadUnusedAsset;
                         OBJImporter.cachedMeshes[key] = mesh1;
                         OBJImporter.cachedMeshes[key].UploadMeshData(true);
                     }
@@ -364,7 +366,8 @@ namespace WankulCrazyPlugin.importer
 
         private static void ReplaceSpriteLists()
         {
-            if (!(SceneManager.GetActiveScene().name == "Start"))
+            string activeScene = SceneManager.GetActiveScene().name;
+            if (activeScene != "Start" && activeScene != "StartOptimized")
                 return;
             foreach (List<ItemData> spriteList in new List<List<ItemData>>()
       {

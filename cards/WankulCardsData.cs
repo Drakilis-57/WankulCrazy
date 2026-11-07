@@ -22,6 +22,10 @@ namespace WankulCrazyPlugin.cards
                 Plugin.LogInfo("[WankulCardsData] Initialisation des cartes déclenchée par EnsureInitialized.");
                 JsonImporter.ImportJson();
             }
+            else if (UnityEngine.Application.isPlaying && !WankulLoadingScreen.IsLoading && cards[0].Sprite == null)
+            {
+                WankulLoadingScreen.ShowAndStartLoading(cards, null);
+            }
         }
 
 

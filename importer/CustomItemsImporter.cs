@@ -328,6 +328,7 @@ namespace WankulCrazyPlugin.importer
                                 mesh.meshSecondary = source.meshSecondary;
                                 mesh.materialSecondary = source.materialSecondary;
                                 mesh.material = source.material;
+                                mesh.arrayMaterialType = ItemMeshData.ItemShareTexture2DArrayMaterial.None;
                             }
                         }
 
@@ -352,6 +353,33 @@ namespace WankulCrazyPlugin.importer
                                 if (newMat.HasProperty("_BaseMap")) newMat.SetTexture("_BaseMap", texture);
                                 if (newMat.HasProperty("_MainTex")) newMat.SetTexture("_MainTex", texture);
                                 mesh.material = newMat;
+                                EItemType currentType = EnumExtensions.SafeParseEItemType(itemTypeStr);
+                                if (mesh.meshSecondary != null)
+                                {
+                                    if (PatchTexturesImporter.IsBoosterPackType(currentType))
+                                    {
+                                        mesh.materialSecondary = newMat;
+                                    }
+                                }
+                                else
+                                {
+                                    EItemType boosterType = PatchTexturesImporter.GetBoosterTypeForDisplay(currentType);
+                                    if (boosterType != EItemType.None)
+                                    {
+                                        var allBoxPaths = PatchTexturesImporter.GetBoxTexturePaths();
+                                        if (allBoxPaths.TryGetValue(boosterType, out string bPath) && File.Exists(bPath))
+                                        {
+                                            Texture2D bTex = TextureUtils.LoadTexture(bPath);
+                                            Material boosterMat = WankulCrazyPlugin.utils.ShaderUtils.CreateSafeMaterial(mesh.material);
+                                            if (boosterMat.HasProperty("_BaseColorMap")) boosterMat.SetTexture("_BaseColorMap", bTex);
+                                            if (boosterMat.HasProperty("_BaseMap")) boosterMat.SetTexture("_BaseMap", bTex);
+                                            if (boosterMat.HasProperty("_MainTex")) boosterMat.SetTexture("_MainTex", bTex);
+                                            boosterMat.hideFlags |= HideFlags.DontUnloadUnusedAsset;
+                                            mesh.materialSecondary = boosterMat;
+                                        }
+                                    }
+                                }
+                                mesh.arrayMaterialType = ItemMeshData.ItemShareTexture2DArrayMaterial.None;
                             }
                             else Plugin.Logger.LogWarning("Test/custom item texture not found yet: " + texturePath);
                         }
@@ -590,9 +618,13 @@ namespace WankulCrazyPlugin.importer
         {
             if (ItemMeshDataList != null)
             {
+                string typeStr = itemType.ToString();
                 foreach (ItemMeshData customMesh in ItemMeshDataList)
                 {
-                    if (customMesh != null && EnumExtensions.SafeParseEItemType(customMesh.name) == itemType)
+                    if (customMesh != null && (
+                        EnumExtensions.SafeParseEItemType(customMesh.name) == itemType ||
+                        customMesh.name.Equals(typeStr, StringComparison.OrdinalIgnoreCase) ||
+                        customMesh.name.StartsWith(typeStr + "_", StringComparison.OrdinalIgnoreCase)))
                     {
                         __result = customMesh;
                         return false;
@@ -617,13 +649,16 @@ namespace WankulCrazyPlugin.importer
                         ItemMeshData baseBoxMesh = InventoryBase.GetItemMeshData(EItemType.BasicCardBox);
                         if (baseBoxMesh != null)
                         {
+                            EItemType boosterType = PatchTexturesImporter.GetBoosterTypeForDisplay(itemType);
+                            ItemMeshData boosterMesh = boosterType != EItemType.None ? InventoryBase.GetItemMeshData(boosterType) : null;
                             __result = new ItemMeshData
                             {
                                 name = itemType.ToString(),
                                 mesh = baseBoxMesh.mesh,
                                 material = baseBoxMesh.material,
                                 meshSecondary = baseBoxMesh.meshSecondary,
-                                materialSecondary = baseBoxMesh.materialSecondary
+                                materialSecondary = boosterMesh?.material ?? baseBoxMesh.materialSecondary,
+                                arrayMaterialType = ItemMeshData.ItemShareTexture2DArrayMaterial.None
                             };
                             return false;
                         }
@@ -814,7 +849,7 @@ namespace WankulCrazyPlugin.importer
             return result;
         }
 
-        public static void GetItemCostPostfix(EItemType itemType, ref float __result)
+        public static bool GetItemCostPrefix(EItemType itemType, ref float __result)
         {
             var customItem = GetCustomItemData(itemType);
             if (customItem != null)
@@ -835,10 +870,12 @@ namespace WankulCrazyPlugin.importer
                     float boosterCost = RestockManager.GetItemCost(customItem.boxFollowItemPrice);
                     __result = (float)Mathf.RoundToInt((boosterCost * 8f + (boosterCost * 8f) * (percentChange / 100f)) * 100f) / 100f;
                 }
+                return false;
             }
+            return true;
         }
 
-        public static void GetItemMarketPricePostfix(EItemType itemType, ref float __result)
+        public static bool GetItemMarketPricePrefix(EItemType itemType, ref float __result)
         {
             var customItem = GetCustomItemData(itemType);
             if (customItem != null)
@@ -865,7 +902,34 @@ namespace WankulCrazyPlugin.importer
                     float displayMarket = boosterMarket * 8f * avgMargin;
                     __result = (float)Mathf.RoundToInt((displayMarket + displayMarket * (percentChange / 100f)) * 100f) / 100f;
                 }
+                return false;
             }
+            return true;
+        }
+
+        public static bool GetItemMarketPriceCustomPercentPrefix(EItemType itemType, float percent, ref float __result)
+        {
+            var customItem = GetCustomItemData(itemType);
+            if (customItem != null)
+            {
+                float minP = customItem.marketPriceMinPercent > 0 ? customItem.marketPriceMinPercent : 1.2f;
+                float maxP = customItem.marketPriceMaxPercent > 0 ? customItem.marketPriceMaxPercent : 1.8f;
+                float avgMargin = (minP + maxP) * 0.5f;
+
+                if (customItem.boxFollowItemPrice == EItemType.None)
+                {
+                    float baseMarket = customItem.baseCost * avgMargin;
+                    __result = (float)Mathf.RoundToInt((baseMarket + baseMarket * (percent / 100f)) * 100f) / 100f;
+                }
+                else
+                {
+                    float boosterMarket = RestockManager.GetItemMarketPrice(customItem.boxFollowItemPrice);
+                    float displayMarket = boosterMarket * 8f * avgMargin;
+                    __result = (float)Mathf.RoundToInt((displayMarket + displayMarket * (percent / 100f)) * 100f) / 100f;
+                }
+                return false;
+            }
+            return true;
         }
     }
 }

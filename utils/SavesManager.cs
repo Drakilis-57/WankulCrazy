@@ -59,6 +59,493 @@ namespace WankulCrazyPlugin.utils
     }
     public class SavesManager
     {
+        public static void SafeLogInfo(string message)
+        {
+            try
+            {
+                SafeLogInfoInternal(message);
+            }
+            catch
+            {
+                Console.WriteLine("[WankulCrazy] " + message);
+            }
+        }
+
+        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
+        private static void SafeLogInfoInternal(string message)
+        {
+            Plugin.LogInfo(message);
+        }
+
+        public static readonly Dictionary<int, int> LegacyItemTypeMigration = new Dictionary<int, int>
+        {
+            // Anciens IDs pré-1.07 (125..143) -> 200..216
+            { 125, 200 }, // BoosterStellar
+            { 126, 201 }, // DisplayStellar
+            { 127, 202 }, // BoosterStellarTaux
+            { 128, 203 }, // DisplayStellarTaux
+            { 129, 204 }, // CaleconStellar
+            { 130, 205 }, // StarterApocalypse
+            { 131, 206 }, // StarterShowtime
+            { 132, 207 }, // TapisS41
+            { 133, 208 }, // TapisS42
+            { 134, 209 }, // ClasseurS4
+            { 135, 210 }, // BoosterGoldBattle
+            { 136, 211 }, // BoosterGoldStellar
+            { 139, 212 }, // BoosterLegacy
+            { 140, 213 }, // DisplayLegacy
+            { 141, 214 }, // BoosterLegacyTaux
+            { 142, 215 }, // DisplayLegacyTaux
+            { 143, 216 }, // BoosterGoldLegacy
+
+            // Tentative précédente 5000..5016 -> 200..216
+            { 5000, 200 }, // BoosterStellar
+            { 5001, 201 }, // DisplayStellar
+            { 5002, 202 }, // BoosterStellarTaux
+            { 5003, 203 }, // DisplayStellarTaux
+            { 5004, 204 }, // CaleconStellar
+            { 5005, 205 }, // StarterApocalypse
+            { 5006, 206 }, // StarterShowtime
+            { 5007, 207 }, // TapisS41
+            { 5008, 208 }, // TapisS42
+            { 5009, 209 }, // ClasseurS4
+            { 5010, 210 }, // BoosterGoldBattle
+            { 5011, 211 }, // BoosterGoldStellar
+            { 5012, 212 }, // BoosterLegacy
+            { 5013, 213 }, // DisplayLegacy
+            { 5014, 214 }, // BoosterLegacyTaux
+            { 5015, 215 }, // DisplayLegacyTaux
+            { 5016, 216 }  // BoosterGoldLegacy
+        };
+
+        public static readonly Dictionary<int, int> LegacyCollectionPackTypeMigration = new Dictionary<int, int>
+        {
+            // Anciennes valeurs 15..20 -> 30..33
+            { 15, 30 }, // Stellar
+            { 16, 31 }, // StellarTaux
+            { 19, 32 }, // Legacy
+            { 20, 33 }, // LegacyTaux
+
+            // Tentative précédente 100..103 -> 30..33
+            { 100, 30 }, // Stellar
+            { 101, 31 }, // StellarTaux
+            { 102, 32 }, // Legacy
+            { 103, 33 }  // LegacyTaux
+        };
+
+        public static EItemType MigrateItemType(EItemType itemType)
+        {
+            int val = (int)itemType;
+            if (LegacyItemTypeMigration.TryGetValue(val, out int newVal))
+            {
+                return (EItemType)newVal;
+            }
+            return itemType;
+        }
+
+        public static ECollectionPackType MigrateCollectionPackType(ECollectionPackType packType)
+        {
+            int val = (int)packType;
+            if (LegacyCollectionPackTypeMigration.TryGetValue(val, out int newVal))
+            {
+                return (ECollectionPackType)newVal;
+            }
+            return packType;
+        }
+
+        public static void EnsureGameDataListsCapacity(CGameData gameData, int requiredItemCount = 300, int requiredPackCount = 60)
+        {
+            if (gameData == null) return;
+
+            if (gameData.m_CurrentTotalItemCountList != null)
+            {
+                while (gameData.m_CurrentTotalItemCountList.Count < requiredItemCount)
+                    gameData.m_CurrentTotalItemCountList.Add(0);
+            }
+            if (gameData.m_SetItemPriceList != null)
+            {
+                while (gameData.m_SetItemPriceList.Count < requiredItemCount)
+                    gameData.m_SetItemPriceList.Add(0f);
+            }
+            if (gameData.m_AverageItemCostList != null)
+            {
+                while (gameData.m_AverageItemCostList.Count < requiredItemCount)
+                    gameData.m_AverageItemCostList.Add(0f);
+            }
+            if (gameData.m_GeneratedCostPriceList != null)
+            {
+                while (gameData.m_GeneratedCostPriceList.Count < requiredItemCount)
+                    gameData.m_GeneratedCostPriceList.Add(0f);
+            }
+            if (gameData.m_GeneratedMarketPriceList != null)
+            {
+                while (gameData.m_GeneratedMarketPriceList.Count < requiredItemCount)
+                    gameData.m_GeneratedMarketPriceList.Add(0f);
+            }
+            if (gameData.m_ItemPricePercentChangeList != null)
+            {
+                while (gameData.m_ItemPricePercentChangeList.Count < requiredItemCount)
+                    gameData.m_ItemPricePercentChangeList.Add(0f);
+            }
+            if (gameData.m_ItemPricePercentPastChangeList != null)
+            {
+                while (gameData.m_ItemPricePercentPastChangeList.Count < requiredItemCount)
+                {
+                    FloatList fl = new FloatList();
+                    fl.floatDataList = new List<float>();
+                    gameData.m_ItemPricePercentPastChangeList.Add(fl);
+                }
+            }
+            if (gameData.m_StockSoldList != null)
+            {
+                while (gameData.m_StockSoldList.Count < requiredItemCount)
+                    gameData.m_StockSoldList.Add(0);
+            }
+            if (gameData.m_CollectionCardPackCountList != null)
+            {
+                while (gameData.m_CollectionCardPackCountList.Count < requiredPackCount)
+                    gameData.m_CollectionCardPackCountList.Add(0);
+            }
+        }
+
+        public static void EnsurePlayerDataListsCapacity(int requiredItemCount = 300, int requiredPackCount = 60)
+        {
+            try
+            {
+                var method = typeof(SavesManager).GetMethod(nameof(EnsurePlayerDataListsCapacityInternal), BindingFlags.NonPublic | BindingFlags.Static);
+                method?.Invoke(null, new object[] { requiredItemCount, requiredPackCount });
+            }
+            catch
+            {
+                // Dans l'environnement de test unitaire (.NET 8), CPlayerData a des méthodes InternalCall avec non-NULL RVA
+                // qui provoquent un TypeLoadException propre au CLR .NET Core. Ignoré hors runtime Unity Mono.
+            }
+        }
+
+        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
+        private static void EnsurePlayerDataListsCapacityInternal(int requiredItemCount, int requiredPackCount)
+        {
+            if (CPlayerData.m_CurrentTotalItemCountList != null)
+            {
+                while (CPlayerData.m_CurrentTotalItemCountList.Count < requiredItemCount)
+                    CPlayerData.m_CurrentTotalItemCountList.Add(0);
+            }
+            if (CPlayerData.m_SetItemPriceList != null)
+            {
+                while (CPlayerData.m_SetItemPriceList.Count < requiredItemCount)
+                    CPlayerData.m_SetItemPriceList.Add(0f);
+            }
+            if (CPlayerData.m_AverageItemCostList != null)
+            {
+                while (CPlayerData.m_AverageItemCostList.Count < requiredItemCount)
+                    CPlayerData.m_AverageItemCostList.Add(0f);
+            }
+            if (CPlayerData.m_GeneratedCostPriceList != null)
+            {
+                while (CPlayerData.m_GeneratedCostPriceList.Count < requiredItemCount)
+                    CPlayerData.m_GeneratedCostPriceList.Add(0f);
+            }
+            if (CPlayerData.m_GeneratedMarketPriceList != null)
+            {
+                while (CPlayerData.m_GeneratedMarketPriceList.Count < requiredItemCount)
+                    CPlayerData.m_GeneratedMarketPriceList.Add(0f);
+            }
+            if (CPlayerData.m_ItemPricePercentChangeList != null)
+            {
+                while (CPlayerData.m_ItemPricePercentChangeList.Count < requiredItemCount)
+                    CPlayerData.m_ItemPricePercentChangeList.Add(0f);
+            }
+            if (CPlayerData.m_ItemPricePercentPastChangeList != null)
+            {
+                while (CPlayerData.m_ItemPricePercentPastChangeList.Count < requiredItemCount)
+                {
+                    FloatList fl = new FloatList();
+                    fl.floatDataList = new List<float>();
+                    CPlayerData.m_ItemPricePercentPastChangeList.Add(fl);
+                }
+            }
+            if (CPlayerData.m_StockSoldList != null)
+            {
+                while (CPlayerData.m_StockSoldList.Count < requiredItemCount)
+                    CPlayerData.m_StockSoldList.Add(0);
+            }
+            if (CPlayerData.m_CollectionCardPackCountList != null)
+            {
+                while (CPlayerData.m_CollectionCardPackCountList.Count < requiredPackCount)
+                    CPlayerData.m_CollectionCardPackCountList.Add(0);
+            }
+        }
+
+        public static bool MigrateOldSaveData(CGameData gameData = null)
+        {
+            if (gameData == null)
+            {
+                try
+                {
+                    gameData = CSaveLoad.m_SavedGame;
+                }
+                catch
+                {
+                    gameData = null;
+                }
+            }
+
+            bool migratedAny = false;
+
+            if (gameData != null)
+            {
+                // Shelves
+                if (gameData.m_ShelfSaveDataList != null)
+                {
+                    foreach (var shelf in gameData.m_ShelfSaveDataList)
+                    {
+                        if (shelf?.itemTypeAmountList == null) continue;
+                        foreach (var ita in shelf.itemTypeAmountList)
+                        {
+                            if (ita == null) continue;
+                            var migrated = MigrateItemType(ita.itemType);
+                            if (migrated != ita.itemType)
+                            {
+                                ita.itemType = migrated;
+                                migratedAny = true;
+                            }
+                        }
+                    }
+                }
+
+                // Warehouse shelves
+                if (gameData.m_WarehouseShelfSaveDataList != null)
+                {
+                    foreach (var wh in gameData.m_WarehouseShelfSaveDataList)
+                    {
+                        if (wh?.compartmentItemType == null) continue;
+                        for (int i = 0; i < wh.compartmentItemType.Count; i++)
+                        {
+                            var migrated = MigrateItemType(wh.compartmentItemType[i]);
+                            if (migrated != wh.compartmentItemType[i])
+                            {
+                                wh.compartmentItemType[i] = migrated;
+                                migratedAny = true;
+                            }
+                        }
+                    }
+                }
+
+                // Package box items
+                if (gameData.m_PackageBoxItemSaveDataList != null)
+                {
+                    foreach (var box in gameData.m_PackageBoxItemSaveDataList)
+                    {
+                        if (box?.itemTypeAmount == null) continue;
+                        var migrated = MigrateItemType(box.itemTypeAmount.itemType);
+                        if (migrated != box.itemTypeAmount.itemType)
+                        {
+                            box.itemTypeAmount.itemType = migrated;
+                            migratedAny = true;
+                        }
+                    }
+                }
+
+                // CardItemCombiShelf
+                if (gameData.m_CardItemCombiShelfSaveDataList != null)
+                {
+                    foreach (var combi in gameData.m_CardItemCombiShelfSaveDataList)
+                    {
+                        if (combi?.itemTypeAmountList == null) continue;
+                        foreach (var ita in combi.itemTypeAmountList)
+                        {
+                            if (ita == null) continue;
+                            var migrated = MigrateItemType(ita.itemType);
+                            if (migrated != ita.itemType)
+                            {
+                                ita.itemType = migrated;
+                                migratedAny = true;
+                            }
+                        }
+                    }
+                }
+
+                // AutoPackOpener
+                if (gameData.m_AutoPackOpenerSaveDataList != null)
+                {
+                    foreach (var opener in gameData.m_AutoPackOpenerSaveDataList)
+                    {
+                        if (opener?.itemTypeList == null) continue;
+                        for (int i = 0; i < opener.itemTypeList.Count; i++)
+                        {
+                            var migrated = MigrateItemType(opener.itemTypeList[i]);
+                            if (migrated != opener.itemTypeList[i])
+                            {
+                                opener.itemTypeList[i] = migrated;
+                                migratedAny = true;
+                            }
+                        }
+                    }
+                }
+
+                // Workbench
+                if (gameData.m_WorkbenchSaveDataList != null)
+                {
+                    foreach (var wb in gameData.m_WorkbenchSaveDataList)
+                    {
+                        if (wb?.itemTypeList == null) continue;
+                        for (int i = 0; i < wb.itemTypeList.Count; i++)
+                        {
+                            var migrated = MigrateItemType(wb.itemTypeList[i]);
+                            if (migrated != wb.itemTypeList[i])
+                            {
+                                wb.itemTypeList[i] = migrated;
+                                migratedAny = true;
+                            }
+                        }
+                    }
+                }
+
+                // Hold item type
+                if (gameData.m_HoldItemTypeList != null)
+                {
+                    for (int i = 0; i < gameData.m_HoldItemTypeList.Count; i++)
+                    {
+                        var migrated = MigrateItemType(gameData.m_HoldItemTypeList[i]);
+                        if (migrated != gameData.m_HoldItemTypeList[i])
+                        {
+                            gameData.m_HoldItemTypeList[i] = migrated;
+                            migratedAny = true;
+                        }
+                    }
+                }
+
+                // Target buy item
+                if (gameData.m_TargetBuyItemList != null)
+                {
+                    for (int i = 0; i < gameData.m_TargetBuyItemList.Count; i++)
+                    {
+                        var migrated = MigrateItemType(gameData.m_TargetBuyItemList[i]);
+                        if (migrated != gameData.m_TargetBuyItemList[i])
+                        {
+                            gameData.m_TargetBuyItemList[i] = migrated;
+                            migratedAny = true;
+                        }
+                    }
+                }
+
+                // Customers
+                if (gameData.m_CustomerSaveDataList != null)
+                {
+                    foreach (var cust in gameData.m_CustomerSaveDataList)
+                    {
+                        if (cust?.itemInBagList != null)
+                        {
+                            for (int i = 0; i < cust.itemInBagList.Count; i++)
+                            {
+                                var migrated = MigrateItemType(cust.itemInBagList[i]);
+                                if (migrated != cust.itemInBagList[i])
+                                {
+                                    cust.itemInBagList[i] = migrated;
+                                    migratedAny = true;
+                                }
+                            }
+                        }
+                        if (cust?.itemInHandList != null)
+                        {
+                            for (int i = 0; i < cust.itemInHandList.Count; i++)
+                            {
+                                var migrated = MigrateItemType(cust.itemInHandList[i]);
+                                if (migrated != cust.itemInHandList[i])
+                                {
+                                    cust.itemInHandList[i] = migrated;
+                                    migratedAny = true;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // Capacity check and indexed lists migration
+                EnsureGameDataListsCapacity(gameData, 300, 60);
+
+                foreach (var kvp in LegacyItemTypeMigration)
+                {
+                    int oldId = kvp.Key;
+                    int newId = kvp.Value;
+
+                    if (gameData.m_CurrentTotalItemCountList != null && oldId < gameData.m_CurrentTotalItemCountList.Count && gameData.m_CurrentTotalItemCountList[oldId] > 0)
+                    {
+                        gameData.m_CurrentTotalItemCountList[newId] = gameData.m_CurrentTotalItemCountList[oldId];
+                        gameData.m_CurrentTotalItemCountList[oldId] = 0;
+                        migratedAny = true;
+                    }
+
+                    if (gameData.m_SetItemPriceList != null && oldId < gameData.m_SetItemPriceList.Count && gameData.m_SetItemPriceList[oldId] > 0f)
+                    {
+                        gameData.m_SetItemPriceList[newId] = gameData.m_SetItemPriceList[oldId];
+                        gameData.m_SetItemPriceList[oldId] = 0f;
+                        migratedAny = true;
+                    }
+
+                    if (gameData.m_AverageItemCostList != null && oldId < gameData.m_AverageItemCostList.Count && gameData.m_AverageItemCostList[oldId] > 0f)
+                    {
+                        gameData.m_AverageItemCostList[newId] = gameData.m_AverageItemCostList[oldId];
+                        gameData.m_AverageItemCostList[oldId] = 0f;
+                        migratedAny = true;
+                    }
+
+                    if (gameData.m_GeneratedCostPriceList != null && oldId < gameData.m_GeneratedCostPriceList.Count && gameData.m_GeneratedCostPriceList[oldId] > 0f)
+                    {
+                        gameData.m_GeneratedCostPriceList[newId] = gameData.m_GeneratedCostPriceList[oldId];
+                        gameData.m_GeneratedCostPriceList[oldId] = 0f;
+                        migratedAny = true;
+                    }
+
+                    if (gameData.m_GeneratedMarketPriceList != null && oldId < gameData.m_GeneratedMarketPriceList.Count && gameData.m_GeneratedMarketPriceList[oldId] > 0f)
+                    {
+                        gameData.m_GeneratedMarketPriceList[newId] = gameData.m_GeneratedMarketPriceList[oldId];
+                        gameData.m_GeneratedMarketPriceList[oldId] = 0f;
+                        migratedAny = true;
+                    }
+
+                    if (gameData.m_ItemPricePercentChangeList != null && oldId < gameData.m_ItemPricePercentChangeList.Count && gameData.m_ItemPricePercentChangeList[oldId] != 0f)
+                    {
+                        gameData.m_ItemPricePercentChangeList[newId] = gameData.m_ItemPricePercentChangeList[oldId];
+                        gameData.m_ItemPricePercentChangeList[oldId] = 0f;
+                        migratedAny = true;
+                    }
+
+                    if (gameData.m_StockSoldList != null && oldId < gameData.m_StockSoldList.Count && gameData.m_StockSoldList[oldId] > 0)
+                    {
+                        gameData.m_StockSoldList[newId] = gameData.m_StockSoldList[oldId];
+                        gameData.m_StockSoldList[oldId] = 0;
+                        migratedAny = true;
+                    }
+                }
+
+                // Collection pack counts
+                if (gameData.m_CollectionCardPackCountList != null)
+                {
+                    foreach (var kvp in LegacyCollectionPackTypeMigration)
+                    {
+                        int oldPack = kvp.Key;
+                        int newPack = kvp.Value;
+                        if (oldPack < gameData.m_CollectionCardPackCountList.Count && gameData.m_CollectionCardPackCountList[oldPack] > 0)
+                        {
+                            gameData.m_CollectionCardPackCountList[newPack] = gameData.m_CollectionCardPackCountList[oldPack];
+                            gameData.m_CollectionCardPackCountList[oldPack] = 0;
+                            migratedAny = true;
+                        }
+                    }
+                }
+            }
+
+            EnsurePlayerDataListsCapacity(300, 60);
+
+            if (migratedAny)
+            {
+                SafeLogInfo("[Migration] Sauvegarde migrée avec succès : anciens IDs d'items (125..143 et 5000..5016 -> 200..216) et de packs (15..20 et 100..103 -> 30..33) mis à jour.");
+            }
+
+            return migratedAny;
+        }
+
         public static bool DebuggingSave = false;
         public static string SaveVersion = "1.1.0";
         public static void ModSave()
@@ -97,6 +584,15 @@ namespace WankulCrazyPlugin.utils
         {
             SortUI.inited = false;
             WankulCardsData.Instance.EnsureInitialized();
+
+            try
+            {
+                MigrateOldSaveData();
+            }
+            catch (Exception ex)
+            {
+                Plugin.Logger.LogError($"[ModLoad] Erreur lors de la migration de la sauvegarde : {ex.Message}");
+            }
 
             Plugin.LogInfo("Loading cards associations");
             string pluginPath = Plugin.GetPluginPath();

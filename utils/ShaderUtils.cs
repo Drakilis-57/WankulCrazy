@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -41,16 +42,22 @@ namespace WankulCrazyPlugin.utils
 
             if (_cachedFallbackShader == null)
             {
-                // Built-in RP (ou pipeline non reconnu) : NE PAS utiliser "Standard".
-                // Shader.Find("Standard") réussit et isSupported==true même si Unity a
-                // strippé toutes les variantes du shader à la compilation (le jeu de base
-                // ne l'utilise nulle part) -> rendu magenta silencieux au runtime, invisible
-                // depuis le code (pas d'exception, pas de log Unity).
-                // On préfère un shader dont on sait qu'il est réellement compilé dans ce
-                // build car utilisé ailleurs par le jeu (confirmé via MaterialDiagnostics).
-                _cachedFallbackShader = Shader.Find("Unlit/UnlitWithShadowcaster")
-                                        ?? Shader.Find("Sprites/Default") // shader quasi toujours embarqué (UI/2D)
-                                        ?? Shader.Find("Standard");        // dernier recours si vraiment rien d'autre
+                // Chercher d'abord un material 2D standard du jeu (Toony Colors Pro 2) pour récupérer son shader
+                var sampleMat = Resources.FindObjectsOfTypeAll<Material>()
+                    .FirstOrDefault(m => m != null && m.shader != null && 
+                                   (m.name == "MAT_CardPackCommon_Lightweight" || m.name == "MAT_CardBoxInner" || m.name == "MAT_Deckbox1"));
+                if (sampleMat != null && sampleMat.shader != null)
+                {
+                    _cachedFallbackShader = sampleMat.shader;
+                    Plugin.Logger?.LogInfo($"[ShaderUtils] Fallback Lit Shader trouvé depuis '{sampleMat.name}' : {_cachedFallbackShader.name}");
+                }
+                else
+                {
+                    _cachedFallbackShader = Shader.Find("Toony Colors Pro 2/Standard PBS")
+                                         ?? Shader.Find("Toony Colors Pro 2/Hybrid Shader 2")
+                                         ?? Shader.Find("Sprites/Default")
+                                         ?? Shader.Find("Standard");
+                }
             }
 
             if (_cachedFallbackShader == null)
@@ -62,20 +69,21 @@ namespace WankulCrazyPlugin.utils
         }
 
         /// <summary>
-        /// Renvoie true si ce material utilise le shader "Standard" — confirmé, dans ce
-        /// build, comme silencieusement cassé (variantes strippées, rendu magenta) car le
-        /// jeu de base ne l'utilise nulle part ailleurs. À appeler avant de lire/assigner
-        /// des textures sur un material dont on n'est pas sûr de l'origine.
+        /// Renvoie true si ce material utilise le shader "Standard" (cassé/strippé) ou un
+        /// shader Texture2DArray (incompatible avec l'assignation directe d'une Texture2D en 1.07+).
         /// </summary>
         public static bool UsesBrokenStandardShader(Material m)
         {
-            return m != null && m.shader != null && m.shader.name == "Standard";
+            if (m == null || m.shader == null) return false;
+            string shaderName = m.shader.name;
+            return shaderName == "Standard" 
+                || shaderName.IndexOf("Texture2dArray", System.StringComparison.OrdinalIgnoreCase) >= 0
+                || m.HasProperty("_MainTexArray");
         }
 
         /// <summary>
-        /// Si le material passé utilise le shader "Standard" cassé, renvoie un clone avec un
-        /// shader sûr à la place (texture principale préservée si possible). Sinon renvoie
-        /// le material tel quel (pas de clone inutile).
+        /// Si le material passé utilise le shader "Standard" cassé ou un shader Texture2DArray,
+        /// renvoie un clone avec un shader 2D sûr à la place. Sinon renvoie le material tel quel.
         /// </summary>
         public static Material EnsureNotBrokenStandard(Material m)
         {
@@ -84,34 +92,39 @@ namespace WankulCrazyPlugin.utils
                 return m;
             }
 
-            Texture existingTex = m.HasProperty("_MainTex") ? m.GetTexture("_MainTex") : null;
+            bool isArrayShader = m.shader != null && (m.shader.name.IndexOf("Texture2dArray", System.StringComparison.OrdinalIgnoreCase) >= 0 || m.HasProperty("_MainTexArray"));
+            Texture existingTex = (!isArrayShader && m.HasProperty("_MainTex")) ? m.GetTexture("_MainTex") : null;
             Material fixedMat = CreateSafeMaterial(); // ne clone pas m : on change volontairement de shader
             fixedMat.name = m.name + "_FixedShader";
-            if (existingTex != null)
+            if (existingTex is Texture2D)
             {
                 if (fixedMat.HasProperty("_MainTex")) fixedMat.SetTexture("_MainTex", existingTex);
                 if (fixedMat.HasProperty("_BaseColorMap")) fixedMat.SetTexture("_BaseColorMap", existingTex);
                 if (fixedMat.HasProperty("_BaseMap")) fixedMat.SetTexture("_BaseMap", existingTex);
             }
-            Plugin.Logger?.LogWarning($"[ShaderUtils] Material '{m.name}' utilisait le shader 'Standard' (cassé/strippé dans ce build) -> remplacé par '{fixedMat.shader.name}'.");
+            Plugin.Logger?.LogInfo($"[ShaderUtils] Material '{m.name}' utilisait le shader '{m.shader?.name}' -> remplacé par '{fixedMat.shader.name}'.");
             return fixedMat;
         }
 
         /// <summary>
-        /// Construit un Material sûr : clone sourceMaterial si disponible (préserve shader +
-        /// propriétés du pipeline en cours), sinon retombe sur le shader détecté par pipeline.
-        /// Ne JAMAIS faire `new Material(Shader.Find("Standard"))` directement : c'est la cause
-        /// du plein écran magenta en HDRP/URP.
+        /// Construit un Material sûr pour une Texture2D : clone sourceMaterial s'il est compatible 2D,
+        /// sinon retombe sur le shader 2D détecté par pipeline (ex: Unlit/UnlitWithShadowcaster).
+        /// Ne JAMAIS faire `new Material(Shader.Find("Standard"))` directement.
         /// </summary>
         public static Material CreateSafeMaterial(Material sourceMaterial = null)
         {
-            if (sourceMaterial != null)
+            if (sourceMaterial != null && !UsesBrokenStandardShader(sourceMaterial))
             {
                 return new Material(sourceMaterial);
             }
 
             Shader fallback = GetFallbackLitShader();
-            return fallback != null ? new Material(fallback) : new Material(Shader.Find("Standard"));
+            Material mat = fallback != null ? new Material(fallback) : new Material(Shader.Find("Standard"));
+            if (sourceMaterial != null)
+            {
+                mat.name = sourceMaterial.name + "_2D";
+            }
+            return mat;
         }
     }
 }
