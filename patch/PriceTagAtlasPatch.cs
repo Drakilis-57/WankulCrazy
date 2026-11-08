@@ -61,6 +61,43 @@ namespace WankulCrazyPlugin.patch
             return true;
         }
 
+        public static void ReloadAtlas()
+        {
+            string p = Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "PriceTagAtlas.png");
+            if (!File.Exists(p))
+            {
+                Plugin.Logger.LogWarning($"[PriceTagPatch] ReloadAtlas: fichier introuvable: {p}");
+                return;
+            }
+
+            try
+            {
+                byte[] data = File.ReadAllBytes(p);
+                if (s_CustomPriceTagAtlas != null)
+                {
+                    s_CustomPriceTagAtlas.LoadImage(data);
+                    Plugin.Logger.LogInfo($"[PriceTagPatch] PriceTagAtlas_Wankul rechargé en mémoire ({s_CustomPriceTagAtlas.width}x{s_CustomPriceTagAtlas.height}).");
+                }
+                else
+                {
+                    var tex = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+                    if (tex.LoadImage(data))
+                    {
+                        tex.filterMode = FilterMode.Bilinear;
+                        tex.name = "PriceTagAtlas_Wankul";
+                        tex.hideFlags |= HideFlags.DontUnloadUnusedAsset;
+                        UnityEngine.Object.DontDestroyOnLoad(tex);
+                        s_CustomPriceTagAtlas = tex;
+                        Plugin.Logger.LogInfo($"[PriceTagPatch] PriceTagAtlas_Wankul initialisé ({tex.width}x{tex.height}).");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Plugin.Logger.LogError($"[PriceTagPatch] Erreur lors du rechargement de l'atlas: {ex.Message}");
+            }
+        }
+
         public static void EnsureCustomAtlas(Material mat)
         {
             if (mat == null) return;

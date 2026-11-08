@@ -9,12 +9,13 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_ATLAS = os.path.join(ROOT, "tools", "pricetag_atlas_base.png")
 OUT_ATLAS = os.path.join(ROOT, "data", "patchtextures", "shared1", "PriceTagAtlas.png")
 
+WANKUL_ICONS = os.path.join(ROOT, "tools", "wankul_icons")
 SPRITES = os.path.join(ROOT, "data", "sprites")
 CUSTOM_ICONS = os.path.join(ROOT, "data", "customitems", "icons")
 SHARED1 = os.path.join(ROOT, "data", "patchtextures", "shared1")
 
 def find_file(name):
-    for d in [SPRITES, CUSTOM_ICONS, SHARED1]:
+    for d in [WANKUL_ICONS, CUSTOM_ICONS, SHARED1, SPRITES]:
         p = os.path.join(d, name)
         if os.path.exists(p):
             return p
@@ -162,6 +163,12 @@ def main():
     os.makedirs(os.path.dirname(OUT_ATLAS), exist_ok=True)
     atlas.save(OUT_ATLAS)
     print(f"Atlas Wankul sauvegardé ({len(MAPPING)} cellules remplacées) dans: {OUT_ATLAS} ({os.path.getsize(OUT_ATLAS)} octets)")
+
+    game_atlas = r"E:\jeux\TCG Card Shop Simulator\BepInEx\plugins\WankulCrazy\data\patchtextures\shared1\PriceTagAtlas.png"
+    if os.path.exists(os.path.dirname(game_atlas)):
+        import shutil
+        shutil.copy2(OUT_ATLAS, game_atlas)
+        print(f"Atlas Wankul copié avec succès dans le jeu: {game_atlas}")
 
 if __name__ == "__main__":
     main()

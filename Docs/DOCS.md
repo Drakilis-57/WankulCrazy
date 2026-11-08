@@ -235,5 +235,8 @@ La logique actuelle montre clairement une volonté d’ouvrir le système à de 
 
 ## 8. A faire plus tard :
 
-- Il manque les foils pour la Saison 5 (Legacy), pour l'instant hypothèse c'est de cherche sur le site Wankuldex(mais je pense pas).
+- Il manque les foils pour la Saison 5 
+- La plupart des textures et icones ne marchent plus
+- Les visuels des cartes ne s'affichent plus en duels
+-
 

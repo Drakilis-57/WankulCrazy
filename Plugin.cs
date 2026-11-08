@@ -62,6 +62,12 @@ public class Plugin : BaseUnityPlugin
         // Initialisation de l'écran de debug pour intercepter les crashs et blocages
         WankulDebugScreen.Initialize();
 
+        // Initialisation des outils de développement (F8: Inspecteur, F9: Screenshots, F10: Hot-Reload)
+        WankulDevTools.Initialize();
+
+        // Initialisation du pont HTTP local pour l'agent (127.0.0.1:8765)
+        WankulGameBridge.Initialize();
+
         Harmony harmony = new Harmony(PluginInfo.PLUGIN_GUID);
 
         // Helper pour sécuriser chaque patch manuel contre les MethodInfo nulls

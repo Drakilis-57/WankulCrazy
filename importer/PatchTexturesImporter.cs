@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System;
 using HarmonyLib;
+using WankulCrazyPlugin.patch;
 
 namespace WankulCrazyPlugin.importer
 {
@@ -107,6 +108,70 @@ namespace WankulCrazyPlugin.importer
                     Plugin.Logger.LogError($"[PatchTexturesImporter] Erreur lors du remplacement de la texture '{filename}': {ex.Message}");
                 }
             }
+        }
+
+        /// <summary>
+        /// Recharge à chaud (Hot-Reload) l'intégralité des textures du mod sans redémarrer le jeu.
+        /// </summary>
+        public static int ReloadAllTextures()
+        {
+            Plugin.Logger.LogInfo("[HotReload] Rechargement de toutes les textures Wankul...");
+
+            // 1. Nettoyer le cache des matériaux de boîtes
+            cachedBoxMaterials.Clear();
+
+            // 2. Recharger les textures patchées via Resources
+            ReplaceGameTextures("shared1");
+            ReplaceGameTextures("level1");
+
+            // 3. Recharger l'atlas des étiquettes de prix
+            PriceTagAtlasPatch.ReloadAtlas();
+
+            // 4. Mettre à jour tous les UI_PriceTag de la scène active
+            int tagCount = 0;
+            try
+            {
+                var priceTags = Resources.FindObjectsOfTypeAll<UI_PriceTag>();
+                foreach (var tag in priceTags)
+                {
+                    if (tag != null && tag.gameObject != null && tag.gameObject.scene.isLoaded)
+                    {
+                        tag.SetItemImage(tag.GetItemType());
+                        tagCount++;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Plugin.Logger.LogError($"[HotReload] Erreur lors du rafraîchissement des PriceTags: {ex.Message}");
+            }
+
+            // 5. Mettre à jour tous les Item de la scène active
+            int itemCount = 0;
+            try
+            {
+                var items = Resources.FindObjectsOfTypeAll<Item>();
+                var boxPaths = GetBoxTexturePaths();
+                foreach (var item in items)
+                {
+                    if (item != null && item.gameObject != null && item.gameObject.scene.isLoaded)
+                    {
+                        EItemType itemType = item.GetItemType();
+                        if (boxPaths.TryGetValue(itemType, out string texPath))
+                        {
+                            ApplyTextureToItem(item, itemType, texPath);
+                            itemCount++;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Plugin.Logger.LogError($"[HotReload] Erreur lors du rafraîchissement des Items: {ex.Message}");
+            }
+
+            Plugin.Logger.LogInfo($"[HotReload] Rechargement terminé : {tagCount} étiquettes et {itemCount} objets 3D rafraîchis !");
+            return itemCount + tagCount;
         }
 
         private static bool IsKnownOrOptionalTexture(string textureName)
@@ -639,10 +704,17 @@ namespace WankulCrazyPlugin.importer
                 EItemType boosterType = GetBoosterTypeForDisplay(kvp.Key);
                 if (boosterType != EItemType.None && texturePaths.TryGetValue(boosterType, out string boosterPath))
                 {
-                    Material boosterMat = GetOrCreateBoxMaterial(boosterType, boosterPath, null);
-                    if (boosterMat != null)
+                    if (meshData.meshSecondary != null)
                     {
-                        meshData.materialSecondary = boosterMat;
+                        Material boosterMat = GetOrCreateBoxMaterial(boosterType, boosterPath, null);
+                        if (boosterMat != null)
+                        {
+                            meshData.materialSecondary = boosterMat;
+                        }
+                    }
+                    else
+                    {
+                        meshData.materialSecondary = null;
                     }
                 }
                 else if (IsBoosterPackType(kvp.Key))
@@ -814,30 +886,25 @@ namespace WankulCrazyPlugin.importer
             EItemType boosterType = GetBoosterTypeForDisplay(itemType);
             var allBoxPaths = GetBoxTexturePaths();
 
+            renderer.sharedMaterial = targetMaterial;
+            renderer.material = targetMaterial;
+            renderer.materials = new Material[1] { targetMaterial };
+            renderer.SetPropertyBlock(null);
+
             if (boosterType != EItemType.None && allBoxPaths.TryGetValue(boosterType, out string boosterPath))
             {
-                Material boosterMat = GetOrCreateBoxMaterial(boosterType, boosterPath, renderer);
-                Material[] newMats = new Material[2] { targetMaterial, boosterMat };
-                renderer.sharedMaterials = newMats;
-                renderer.materials = newMats;
-                renderer.SetPropertyBlock(null);
-
                 if (item.m_MeshSecondary != null)
                 {
+                    Material boosterMat = GetOrCreateBoxMaterial(boosterType, boosterPath, renderer);
                     Renderer secRenderer = item.m_MeshSecondary.GetComponent<Renderer>();
                     if (secRenderer != null)
                     {
                         secRenderer.sharedMaterial = boosterMat;
                         secRenderer.material = boosterMat;
+                        secRenderer.materials = new Material[1] { boosterMat };
                         secRenderer.SetPropertyBlock(null);
                     }
                 }
-            }
-            else
-            {
-                renderer.sharedMaterial = targetMaterial;
-                renderer.material = targetMaterial;
-                renderer.SetPropertyBlock(null);
             }
 
             // Pour les boosters et les displays disposant d'un mesh secondaire
