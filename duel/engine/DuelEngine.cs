@@ -329,6 +329,20 @@ public sealed class DuelEngine
             Emit(new CharacterMovedSlotEvent(player, targetCard, fromSlotIndex, toSlotIndex));
             CheckCombosAfterPlayOrMove(player, fromSlotIndex);
             CheckCombosAfterPlayOrMove(player, toSlotIndex);
+
+            // Déclenchement des effets de terrain sur déplacement (ex: ROAD TRIP S5)
+            for (int i = 0; i < State.Slots.Count; i++)
+            {
+                var s = State.Slots[i];
+                if (!s.IsEmpty && s.Card != null && s.Card.EffectIds != null &&
+                    s.Card.EffectIds.Contains("terrain_on_move_draw_1"))
+                {
+                    Emit(new EffectTriggeredEvent(player, "terrain_on_move_draw_1", s.Card, i));
+                    DrawCards(player, 1);
+                    if (State.IsGameOver) break;
+                }
+            }
+
             return DuelActionResult.Ok();
         }
 
@@ -403,8 +417,23 @@ public sealed class DuelEngine
 
         CheckCombosAfterPlayOrMove(player, slotIndex);
 
+        // Effets passifs du terrain sur lequel le personnage est joué (ex: TERRADOLLAR / BRASSERIE S5)
+        if (!State.IsGameOver && slot.Card != null && slot.Card.EffectIds != null)
+        {
+            if (slot.Card.EffectIds.Contains("terrain_on_char_played_draw_1"))
+            {
+                Emit(new EffectTriggeredEvent(player, "terrain_on_char_played_draw_1", slot.Card, slotIndex));
+                DrawCards(player, 1);
+            }
+            if (!State.IsGameOver && slot.Card.EffectIds.Contains("terrain_on_char_played_banish_top_1"))
+            {
+                Emit(new EffectTriggeredEvent(player, "terrain_on_char_played_banish_top_1", slot.Card, slotIndex));
+                BanishCardsFromDeck(player, 1);
+            }
+        }
+
         // Exécution des effets de la carte (IEffect)
-        if (cardToPlay.EffectIds != null && cardToPlay.EffectIds.Count > 0)
+        if (!State.IsGameOver && cardToPlay.EffectIds != null && cardToPlay.EffectIds.Count > 0)
         {
             var ctx = new EffectContext(this, player, cardToPlay, slotIndex);
             for (int i = 0; i < cardToPlay.EffectIds.Count; i++)
@@ -532,41 +561,9 @@ public sealed class DuelEngine
 
         Emit(new ScoreResolvedEvent(slotIndex, forceP1, forceP2, winner));
 
-        // Déclenchement des effets de Victoire et Défaite du terrain
-        if (winner.HasValue && !State.IsGameOver && slot.Card != null)
-        {
-            var winPlayer = winner.Value;
-            var losePlayer = winPlayer.Opponent();
-            var tCard = slot.Card;
-
-            if (tCard.EffectIds != null)
-            {
-                for (int i = 0; i < tCard.EffectIds.Count; i++)
-                {
-                    string effId = tCard.EffectIds[i];
-                    if (effId.StartsWith("win_", StringComparison.OrdinalIgnoreCase))
-                    {
-                        var winCtx = new EffectContext(this, winPlayer, tCard, slotIndex);
-                        if (Effects.TryGetEffect(effId, out var winEff) && winEff != null)
-                        {
-                            Emit(new EffectTriggeredEvent(winPlayer, effId, tCard, slotIndex));
-                            winEff.Execute(winCtx);
-                        }
-                    }
-                    else if (effId.StartsWith("lose_", StringComparison.OrdinalIgnoreCase))
-                    {
-                        var loseCtx = new EffectContext(this, losePlayer, tCard, slotIndex);
-                        if (Effects.TryGetEffect(effId, out var loseEff) && loseEff != null)
-                        {
-                            Emit(new EffectTriggeredEvent(losePlayer, effId, tCard, slotIndex));
-                            loseEff.Execute(loseCtx);
-                        }
-                    }
-                }
-            }
-        }
-
-        // Nettoyage : tous les personnages et le terrain vont en défausse
+        // Nettoyage du terrain et des personnages AVANT les effets Gagnant/Perdant :
+        // (1) Permet aux effets Gagnant comme "reprenez 1 carte de votre défausse" de cibler les cartes du terrain,
+        // (2) Empêche les effets en chaîne (ex: win_play_free_score) de re-cibler ce même terrain avant qu'il ne soit vidé.
         var charsP1 = new List<DuelCard>(slot.CharactersP1);
         var charsP2 = new List<DuelCard>(slot.CharactersP2);
         var terrainCard = slot.Card!;
@@ -583,6 +580,41 @@ public sealed class DuelEngine
         if (winner.HasValue && State.GetScore(winner.Value) >= Rules.TerrainsToWin)
         {
             EndGame(winner.Value, GameOverReason.FiveTerrains);
+            return;
+        }
+
+        // Déclenchement des effets de Victoire et Défaite du terrain
+        if (winner.HasValue && !State.IsGameOver && terrainCard != null)
+        {
+            var winPlayer = winner.Value;
+            var losePlayer = winPlayer.Opponent();
+
+            if (terrainCard.EffectIds != null)
+            {
+                for (int i = 0; i < terrainCard.EffectIds.Count; i++)
+                {
+                    string effId = terrainCard.EffectIds[i];
+                    if (effId.StartsWith("win_", StringComparison.OrdinalIgnoreCase))
+                    {
+                        var winCtx = new EffectContext(this, winPlayer, terrainCard, slotIndex);
+                        if (Effects.TryGetEffect(effId, out var winEff) && winEff != null)
+                        {
+                            Emit(new EffectTriggeredEvent(winPlayer, effId, terrainCard, slotIndex));
+                            winEff.Execute(winCtx);
+                        }
+                    }
+                    else if (effId.StartsWith("lose_", StringComparison.OrdinalIgnoreCase))
+                    {
+                        var loseCtx = new EffectContext(this, losePlayer, terrainCard, slotIndex);
+                        if (Effects.TryGetEffect(effId, out var loseEff) && loseEff != null)
+                        {
+                            Emit(new EffectTriggeredEvent(losePlayer, effId, terrainCard, slotIndex));
+                            loseEff.Execute(loseCtx);
+                        }
+                    }
+                    if (State.IsGameOver) break;
+                }
+            }
         }
     }
 

@@ -226,6 +226,9 @@ namespace WankulCrazyPlugin.duel
             return list;
         }
 
+        private static readonly System.Text.RegularExpressions.Regex s_ComboBoostRegex =
+            new System.Text.RegularExpressions.Regex(@"\+?\s?(\d+)\s?(?:points? )?de force", System.Text.RegularExpressions.RegexOptions.Compiled);
+
         public static DuelCard ToDuelCard(WankulCardData cardData)
         {
             if (cardData == null)
@@ -250,7 +253,7 @@ namespace WankulCrazyPlugin.duel
                     string comboText = effigy.Combo.ToLowerInvariant();
                     hasClosingGem = true;
 
-                    var matchBoost = System.Text.RegularExpressions.Regex.Match(comboText, @"\+?\s?(\d+)\s?(?:points? )?de force");
+                    var matchBoost = s_ComboBoostRegex.Match(comboText);
                     if (matchBoost.Success && int.TryParse(matchBoost.Groups[1].Value, out int bonus))
                     {
                         comboEffectIds.Add($"boost_self_{bonus}");

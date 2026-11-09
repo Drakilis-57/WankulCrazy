@@ -55,19 +55,54 @@ TOOLS = [
     },
     {
         "name": "game_dump_mesh",
-        "description": "Exporte le mesh 3D et ses coordonnees UV exactes de l'objet en main vers un fichier .OBJ.",
+        "description": "Exporte le mesh 3D et ses coordonnees UV exactes de l'objet en main (ou par nom) vers un fichier .OBJ, meme si isReadable est false.",
         "inputSchema": {
             "type": "object",
             "properties": {
                 "mesh_name": {"type": "string", "description": "Nom optionnel du mesh a exporter (ex: Cleanser_low). Si omis, prend l'objet en main."}
             }
         }
+    },
+    {
+        "name": "game_dump_texture",
+        "description": "Exporte une texture du jeu en PNG dans BepInEx/plugins/WankulCrazy/texture_dumps/<texture_name>.png via RenderTexture (contourne isReadable == false et les compressions DXT/BC7).",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "texture_name": {"type": "string", "description": "Nom exact de la texture a exporter (ex: T_Cleanser_BaseColor, PriceTagAtlas, T_CardSleeveClear)."}
+            },
+            "required": ["texture_name"]
+        }
+    },
+    {
+        "name": "game_render_item",
+        "description": "Studio Photo 3D isole : instancie temporairement un item ou mesh hors-champ et effectue 4 rendus (Face, 3/4 Iso, Dessus, Dos) assembles en grille 2x2 dans screenshots/preview_<name>.png.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "item_type": {"type": "string", "description": "Type d'item (ex: Deodorant, PlayMat1, DeckBox1, DisplayStellar)."},
+                "mesh_name": {"type": "string", "description": "Nom du mesh 3D si item_type n'est pas utilise (ex: Cleanser_low)."},
+                "size": {"type": "integer", "description": "Taille en pixels de chaque vue de la grille 2x2 (defaut: 512).", "default": 512}
+            }
+        }
+    },
+    {
+        "name": "game_get_logs",
+        "description": "Recupere les 200 derniers messages de log Unity/BepInEx (filtrables par level: Error, Warning, Info et par mot-cle).",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "level": {"type": "string", "description": "Filtre optionnel par niveau : Error, Warning, Info."},
+                "keyword": {"type": "string", "description": "Filtre optionnel par mot-cle dans le message ou la stacktrace."}
+            }
+        }
     }
 ]
 
 def handle_call_tool(params):
+    import urllib.parse
     name = params.get("name")
-    args = params.get("arguments", {})
+    args = params.get("arguments", {}) or {}
 
     if name == "game_status":
         res = request_api("status")
@@ -81,8 +116,39 @@ def handle_call_tool(params):
         res = request_api("screenshot", method="POST")
     elif name == "game_dump_mesh":
         m_name = args.get("mesh_name", "")
-        endpoint = f"dump_mesh?name={m_name}" if m_name else "dump_mesh"
-        res = request_api(endpoint, method="POST")
+        query = f"?name={urllib.parse.quote(str(m_name))}" if m_name else ""
+        res = request_api(f"dump_mesh{query}", method="POST", data={"mesh_name": m_name} if m_name else None)
+    elif name == "game_dump_texture":
+        t_name = args.get("texture_name", "")
+        query = f"?texture_name={urllib.parse.quote(str(t_name))}" if t_name else ""
+        res = request_api(f"dump_texture{query}", method="POST", data={"texture_name": t_name})
+    elif name == "game_render_item":
+        item_type = args.get("item_type", "")
+        mesh_name = args.get("mesh_name", "")
+        size = args.get("size", 512)
+        q_parts = []
+        if item_type:
+            q_parts.append(f"item_type={urllib.parse.quote(str(item_type))}")
+        if mesh_name:
+            q_parts.append(f"mesh_name={urllib.parse.quote(str(mesh_name))}")
+        if size:
+            q_parts.append(f"size={int(size)}")
+        query = ("?" + "&".join(q_parts)) if q_parts else ""
+        res = request_api(
+            f"render_item{query}",
+            method="POST",
+            data={"item_type": item_type, "mesh_name": mesh_name, "size": size}
+        )
+    elif name == "game_get_logs":
+        level = args.get("level", "")
+        keyword = args.get("keyword", "")
+        q_parts = []
+        if level:
+            q_parts.append(f"level={urllib.parse.quote(str(level))}")
+        if keyword:
+            q_parts.append(f"keyword={urllib.parse.quote(str(keyword))}")
+        query = ("?" + "&".join(q_parts)) if q_parts else ""
+        res = request_api(f"logs{query}", method="GET")
     else:
         res = {"error": f"Outil inconnu : {name}"}
 

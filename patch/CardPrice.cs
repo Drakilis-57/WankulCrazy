@@ -285,11 +285,14 @@ namespace WankulCrazyPlugin.patch
             return false;
         }
 
+        [System.ThreadStatic]
+        private static CardData s_ScratchCardData;
+
         public static void Postfix_GetCardMarketPrice_Params(int index, ECardExpansionType expansionType, bool isDestiny, int cardGrade, ref float __result)
         {
             try
             {
-                CardData tempCard = new CardData();
+                CardData tempCard = s_ScratchCardData ??= new CardData();
                 tempCard.monsterType = CPlayerData.GetMonsterTypeFromCardSaveIndex(index, expansionType);
                 int cardAmountPerMonster = CPlayerData.GetCardAmountPerMonsterType(expansionType);
                 int cardAmountNoFoil = CPlayerData.GetCardAmountPerMonsterType(expansionType, includeFoilCount: false);
@@ -365,9 +368,10 @@ namespace WankulCrazyPlugin.patch
             }
 
             __instance.m_Anim.SetBool("HoldingBag", value: true);
-            ((InteractableCashierCounter)Plugin.GetPProperty(__instance, "m_CurrentQueueCashierCounter")).SetPlsaticBagVisibility(isShow: false);
-            ((InteractableCashierCounter)Plugin.GetPProperty(__instance, "m_CurrentQueueCashierCounter")).UpdateCashierCounterState(ECashierCounterState.Idle);
-            ((InteractableCashierCounter)Plugin.GetPProperty(__instance, "m_CurrentQueueCashierCounter")).UpdateCurrentCustomer(null);
+            InteractableCashierCounter cashierCounter = (InteractableCashierCounter)Plugin.GetPProperty(__instance, "m_CurrentQueueCashierCounter");
+            cashierCounter.SetPlsaticBagVisibility(isShow: false);
+            cashierCounter.UpdateCashierCounterState(ECashierCounterState.Idle);
+            cashierCounter.UpdateCurrentCustomer(null);
             float num = 0f;
             int num2 = 0;
             for (int i = 0; i < __instance.m_ItemInBagList.Count; i++)
@@ -411,7 +415,7 @@ namespace WankulCrazyPlugin.patch
 
             __instance.StartCoroutine(DelayRemoveCustomerFromQueue(Random.Range(0.25f, 1f), __instance));
             MethodInfo DetermineShopAction = Plugin.GetCachedMethod(__instance.GetType(), "DetermineShopAction");
-            DetermineShopAction.Invoke(__instance, new object[] { });
+            DetermineShopAction.Invoke(__instance, System.Array.Empty<object>());
             CEventManager.QueueEvent(new CEventPlayer_AddShopExp(__instance.m_ItemInBagList.Count * 4 + Mathf.RoundToInt(num) + num2 / 2 + totalCardExp));
             return false;
         }

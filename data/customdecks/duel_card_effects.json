@@ -576,146 +576,159 @@
   {
     "cardIndex": 500001,
     "effects": [
-      "mill_4"
+      "terrain_on_move_draw_1",
+      "lose_mill_4"
     ]
   },
   {
     "cardIndex": 500002,
     "effects": [
-      "mill_3"
+      "boost_laink_terracid_3",
+      "lose_mill_3"
     ]
   },
   {
     "cardIndex": 500003,
     "effects": [
-      "banish_deck_6"
+      "lose_banish_deck_6"
     ]
   },
   {
     "cardIndex": 500004,
     "effects": [
-      "mill_5"
+      "lose_mill_5"
     ]
   },
   {
     "cardIndex": 500005,
     "effects": [
       "win_draw_1",
-      "mill_3"
+      "lose_mill_3"
     ]
   },
   {
     "cardIndex": 500006,
     "effects": [
-      "mill_4"
+      "terrain_on_char_played_draw_1",
+      "lose_mill_4"
     ]
   },
   {
     "cardIndex": 500007,
     "effects": [
-      "mill_3"
+      "lose_mill_3"
     ]
   },
   {
     "cardIndex": 500008,
     "effects": [
+      "terrain_combo_boost_1",
       "win_mill_2",
-      "mill_4"
+      "lose_mill_4"
     ]
   },
   {
     "cardIndex": 500009,
     "effects": [
-      "mill_3"
+      "terrain_on_char_played_banish_top_1",
+      "lose_mill_3"
     ]
   },
   {
     "cardIndex": 500010,
     "effects": [
-      "mill_4"
+      "lose_mill_4"
     ]
   },
   {
     "cardIndex": 500011,
     "effects": [
-      "mill_3"
+      "win_search_card",
+      "lose_mill_3"
     ]
   },
   {
     "cardIndex": 500012,
     "effects": [
-      "mill_4"
+      "lose_mill_4"
     ]
   },
   {
     "cardIndex": 500013,
     "effects": [
-      "mill_5"
+      "win_play_free",
+      "lose_mill_5"
+    ]
+  },
+  {
+    "cardIndex": 500014,
+    "effects": [
+      "lose_draw_7"
     ]
   },
   {
     "cardIndex": 500015,
     "effects": [
-      "mill_5"
+      "lose_mill_5"
     ]
   },
   {
     "cardIndex": 500016,
     "effects": [
       "win_mill_2",
-      "mill_3"
+      "lose_mill_3"
     ]
   },
   {
     "cardIndex": 500017,
     "effects": [
-      "win_draw_1",
-      "mill_3"
+      "win_draw_2",
+      "lose_mill_3"
     ]
   },
   {
     "cardIndex": 500018,
     "effects": [
-      "mill_4"
+      "lose_mill_4"
     ]
   },
   {
     "cardIndex": 500019,
     "effects": [
-      "mill_3"
+      "lose_mill_3"
     ]
   },
   {
     "cardIndex": 500020,
     "effects": [
       "win_mill_2",
-      "mill_4"
+      "lose_mill_4"
     ]
   },
   {
     "cardIndex": 500021,
     "effects": [
       "win_mill_2",
-      "mill_3"
+      "lose_mill_3"
     ]
   },
   {
     "cardIndex": 500022,
     "effects": [
-      "banish_deck_3"
+      "lose_banish_deck_3"
     ]
   },
   {
     "cardIndex": 500023,
     "effects": [
-      "mill_4"
+      "lose_mill_4"
     ]
   },
   {
     "cardIndex": 500024,
     "effects": [
       "win_draw_1",
-      "mill_3"
+      "lose_mill_3"
     ]
   },
   {
@@ -728,32 +741,32 @@
   {
     "cardIndex": 500026,
     "effects": [
-      "mill_5"
+      "lose_mill_5"
     ]
   },
   {
     "cardIndex": 500027,
     "effects": [
-      "banish_deck_4"
+      "lose_banish_deck_4"
     ]
   },
   {
     "cardIndex": 500028,
     "effects": [
-      "mill_5"
+      "lose_mill_5"
     ]
   },
   {
     "cardIndex": 500029,
     "effects": [
-      "mill_3"
+      "lose_mill_3"
     ]
   },
   {
     "cardIndex": 500030,
     "effects": [
       "win_mill_2",
-      "mill_4"
+      "lose_mill_4"
     ]
   },
   {

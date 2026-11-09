@@ -52,54 +52,114 @@ public sealed class TerrainSlot
     public IReadOnlyList<DuelCard> GetCharacters(PlayerId player) =>
         player == PlayerId.Player1 ? CharactersP1 : CharactersP2;
 
+    private static bool HasEffect(IReadOnlyList<string>? effects, string target)
+    {
+        if (effects == null) return false;
+        int count = effects.Count;
+        for (int i = 0; i < count; i++)
+        {
+            if (string.Equals(effects[i], target, StringComparison.Ordinal))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static bool TryParseBoostSelf(string eff, out int boostVal)
+    {
+        const string Prefix = "boost_self_";
+        boostVal = 0;
+        if (eff == null || eff.Length <= Prefix.Length || !eff.StartsWith(Prefix, StringComparison.Ordinal))
+        {
+            return false;
+        }
+
+        int result = 0;
+        for (int i = Prefix.Length; i < eff.Length; i++)
+        {
+            char ch = eff[i];
+            if (ch < '0' || ch > '9')
+            {
+                return false;
+            }
+            result = (result * 10) + (ch - '0');
+        }
+        boostVal = result;
+        return true;
+    }
+
     public int GetForce(PlayerId player)
     {
         var chars = GetCharacters(player);
-        int total = 0;
-        bool isMoria = Card != null && Card.EffectIds != null && Card.EffectIds.Contains("boost_laink_20");
-        bool isPortal = Card != null && Card.EffectIds != null && Card.EffectIds.Contains("boost_terracid_20");
+        int charCount = chars.Count;
+        if (charCount == 0)
+        {
+            return 0;
+        }
 
-        for (int i = 0; i < chars.Count; i++)
+        int total = 0;
+        var terrainEffects = Card?.EffectIds;
+        bool isMoria = HasEffect(terrainEffects, "boost_laink_20");
+        bool isPortal = HasEffect(terrainEffects, "boost_terracid_20");
+        bool isBureaux3 = HasEffect(terrainEffects, "boost_laink_terracid_3");
+        bool isBureaux30 = HasEffect(terrainEffects, "boost_laink_terracid_30");
+        bool isCuisine1 = HasEffect(terrainEffects, "terrain_combo_boost_1");
+        bool isCuisine10 = HasEffect(terrainEffects, "terrain_combo_boost_10");
+
+        for (int i = 0; i < charCount; i++)
         {
             var c = chars[i];
             int charForce = c.Force;
-            if (isMoria && string.Equals(c.Effigy, "Laink", StringComparison.OrdinalIgnoreCase))
+            bool isLaink = string.Equals(c.Effigy, "Laink", StringComparison.OrdinalIgnoreCase);
+            bool isTerracid = string.Equals(c.Effigy, "Terracid", StringComparison.OrdinalIgnoreCase);
+
+            if (isMoria && isLaink)
             {
                 charForce += 20;
             }
-            else if (isPortal && string.Equals(c.Effigy, "Terracid", StringComparison.OrdinalIgnoreCase))
+            else if (isPortal && isTerracid)
             {
                 charForce += 20;
+            }
+
+            if (isLaink || isTerracid)
+            {
+                if (isBureaux3) charForce += 3;
+                if (isBureaux30) charForce += 30;
             }
 
             if (c.EffectIds != null)
             {
-                for (int j = 0; j < c.EffectIds.Count; j++)
+                int effCount = c.EffectIds.Count;
+                for (int j = 0; j < effCount; j++)
                 {
-                    string eff = c.EffectIds[j];
-                    if (eff.StartsWith("boost_self_"))
+                    if (TryParseBoostSelf(c.EffectIds[j], out int boostVal))
                     {
-                        if (int.TryParse(eff.Substring("boost_self_".Length), out int boostVal))
-                        {
-                            charForce += boostVal;
-                        }
+                        charForce += boostVal;
                     }
                 }
             }
 
-            if (ComboEvaluator.IsComboActive(chars, i) && c.ComboEffectIds != null)
+            bool comboActiveRight = ComboEvaluator.IsComboActive(chars, i);
+            bool comboActiveLeft = (i + 1 < charCount) && ComboEvaluator.IsComboActive(chars, i + 1);
+
+            if (comboActiveRight && c.ComboEffectIds != null)
             {
-                for (int j = 0; j < c.ComboEffectIds.Count; j++)
+                int comboCount = c.ComboEffectIds.Count;
+                for (int j = 0; j < comboCount; j++)
                 {
-                    string eff = c.ComboEffectIds[j];
-                    if (eff.StartsWith("boost_self_"))
+                    if (TryParseBoostSelf(c.ComboEffectIds[j], out int boostVal))
                     {
-                        if (int.TryParse(eff.Substring("boost_self_".Length), out int boostVal))
-                        {
-                            charForce += boostVal;
-                        }
+                        charForce += boostVal;
                     }
                 }
+            }
+
+            if (comboActiveRight || comboActiveLeft)
+            {
+                if (isCuisine1) charForce += 1;
+                if (isCuisine10) charForce += 10;
             }
 
             total += charForce;

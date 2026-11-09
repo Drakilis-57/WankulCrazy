@@ -20,6 +20,126 @@ namespace WankulCrazyPlugin.patch
 
         private static Transform cachedEnvironmentGrpTransform;
 
+        private static readonly FieldInfo s_HoldItemListField = AccessTools.Field(typeof(InteractionPlayerController), "m_HoldItemList");
+        private static readonly FieldInfo s_InputTooltipListDisplayField = AccessTools.Field(typeof(InteractionPlayerController), "m_InputTooltipListDisplay");
+        private static readonly FieldInfo s_OpenCardBoxMeshFilterField = AccessTools.Field(typeof(InteractionPlayerController), "m_OpenCardBoxMeshFilter");
+        private static readonly FieldInfo s_OpenCardBoxMeshField = AccessTools.Field(typeof(InteractionPlayerController), "m_OpenCardBoxMesh");
+        private static readonly FieldInfo s_OpenCardBoxInnerMeshField = AccessTools.Field(typeof(InteractionPlayerController), "m_OpenCardBoxInnerMesh");
+        private static readonly FieldInfo s_OpenCardBoxSpawnCardPackPosListField = AccessTools.Field(typeof(InteractionPlayerController), "m_OpenCardBoxSpawnCardPackPosList");
+        private static readonly FieldInfo s_HoldCardPackPosListField = AccessTools.Field(typeof(InteractionPlayerController), "m_HoldCardPackPosList");
+        private static readonly FieldInfo s_IsOpeningCardBoxField = AccessTools.Field(typeof(InteractionPlayerController), "m_IsOpeningCardBox");
+
+        private static readonly MethodInfo s_CanOpenPackMethod = AccessTools.Method(typeof(InteractionPlayerController), "CanOpenPack");
+        private static readonly MethodInfo s_RemoveHoldItemMethod = AccessTools.Method(typeof(InteractionPlayerController), "RemoveHoldItem");
+        private static readonly MethodInfo s_CanOpenCardBoxMethod = AccessTools.Method(typeof(InteractionPlayerController), "CanOpenCardBox");
+        private static readonly MethodInfo s_CardBoxToCardPackMethod = AccessTools.Method(typeof(InteractionPlayerController), "CardBoxToCardPack");
+        private static readonly MethodInfo s_RemoveToolTipMethod = AccessTools.Method(typeof(InteractionPlayerController), "RemoveToolTip");
+
+        private static HashSet<EItemType> s_OpenablePacks;
+        private static HashSet<EItemType> s_OpenableCardBoxes;
+        private static Dictionary<EItemType, EItemType> s_BoxToPackMap;
+
+        private static readonly Vector3[] s_PackPositions = new Vector3[]
+        {
+            new Vector3(-0.05f, 0.1f - 0.08f, 0),
+            new Vector3(0.05f, 0.1f - 0.08f, 0),
+            new Vector3(-0.05f, 0.096f - 0.08f, 0),
+            new Vector3(0.05f, 0.096f - 0.08f, 0),
+            new Vector3(-0.05f, 0.092f - 0.08f, 0),
+            new Vector3(0.05f, 0.092f - 0.08f, 0),
+            new Vector3(-0.05f, 0.088f - 0.08f, 0),
+            new Vector3(0.05f, 0.088f - 0.08f, 0),
+            new Vector3(-0.05f, 0.084f - 0.08f, 0),
+            new Vector3(0.05f, 0.084f - 0.08f, 0),
+            new Vector3(-0.05f, 0.08f - 0.08f, 0),
+            new Vector3(0.05f, 0.08f - 0.08f, 0),
+            new Vector3(-0.05f, 0.076f - 0.08f, 0),
+            new Vector3(0.05f, 0.076f - 0.08f, 0),
+            new Vector3(-0.05f, 0.072f - 0.08f, 0),
+            new Vector3(0.05f, 0.072f - 0.08f, 0),
+            new Vector3(-0.05f, 0.068f - 0.08f, 0),
+            new Vector3(0.05f, 0.068f - 0.08f, 0),
+            new Vector3(-0.05f, 0.064f - 0.08f, 0),
+            new Vector3(0.05f, 0.064f - 0.08f, 0),
+            new Vector3(-0.05f, 0.060f - 0.08f, 0),
+            new Vector3(0.05f, 0.060f - 0.08f, 0),
+            new Vector3(-0.05f, 0.056f - 0.08f, 0),
+            new Vector3(0.05f, 0.056f - 0.08f, 0),
+        };
+
+        private static void EnsurePackAndBoxLookupsInitialized()
+        {
+            if (s_OpenablePacks != null && s_OpenableCardBoxes != null && s_BoxToPackMap != null)
+                return;
+
+            EItemType displayStellar = EnumExtensions.SafeParseEItemType("DisplayStellar");
+            EItemType displayStellarTaux = EnumExtensions.SafeParseEItemType("DisplayStellarTaux");
+            EItemType boosterStellar = EnumExtensions.SafeParseEItemType("BoosterStellar");
+            EItemType boosterStellarTaux = EnumExtensions.SafeParseEItemType("BoosterStellarTaux");
+            EItemType displayLegacy = EnumExtensions.SafeParseEItemType("DisplayLegacy");
+            EItemType displayLegacyTaux = EnumExtensions.SafeParseEItemType("DisplayLegacyTaux");
+            EItemType boosterLegacy = EnumExtensions.SafeParseEItemType("BoosterLegacy");
+            EItemType boosterLegacyTaux = EnumExtensions.SafeParseEItemType("BoosterLegacyTaux");
+            EItemType boosterGoldBattle = EnumExtensions.SafeParseEItemType("BoosterGoldBattle");
+            EItemType boosterGoldStellar = EnumExtensions.SafeParseEItemType("BoosterGoldStellar");
+            EItemType boosterGoldLegacy = EnumExtensions.SafeParseEItemType("BoosterGoldLegacy");
+
+            s_OpenablePacks = new HashSet<EItemType>
+            {
+                EItemType.BasicCardPack,
+                EItemType.RareCardPack,
+                EItemType.EpicCardPack,
+                EItemType.LegendaryCardPack,
+                EItemType.DestinyBasicCardPack,
+                EItemType.DestinyRareCardPack,
+                EItemType.DestinyEpicCardPack,
+                EItemType.DestinyLegendaryCardPack,
+                EItemType.GhostPack,
+                EItemType.MegabotPack,
+                EItemType.FantasyRPGPack,
+                EItemType.CatJobPack,
+                boosterStellar,
+                boosterStellarTaux,
+                boosterLegacy,
+                boosterLegacyTaux,
+                boosterGoldBattle,
+                boosterGoldStellar,
+                boosterGoldLegacy
+            };
+
+            s_OpenableCardBoxes = new HashSet<EItemType>
+            {
+                EItemType.BasicCardBox,
+                EItemType.RareCardBox,
+                EItemType.EpicCardBox,
+                EItemType.LegendaryCardBox,
+                EItemType.DestinyBasicCardBox,
+                EItemType.DestinyRareCardBox,
+                EItemType.DestinyEpicCardBox,
+                EItemType.DestinyLegendaryCardBox,
+                displayStellar,
+                displayStellarTaux,
+                displayLegacy,
+                displayLegacyTaux
+            };
+
+            s_BoxToPackMap = new Dictionary<EItemType, EItemType>
+            {
+                { EItemType.BasicCardBox, EItemType.BasicCardPack },
+                { EItemType.RareCardBox, EItemType.RareCardPack },
+                { EItemType.EpicCardBox, EItemType.EpicCardPack },
+                { EItemType.LegendaryCardBox, EItemType.LegendaryCardPack },
+                { EItemType.DestinyBasicCardBox, EItemType.DestinyBasicCardPack },
+                { EItemType.DestinyRareCardBox, EItemType.DestinyRareCardPack },
+                { EItemType.DestinyEpicCardBox, EItemType.DestinyEpicCardPack },
+                { EItemType.DestinyLegendaryCardBox, EItemType.DestinyLegendaryCardPack },
+                { displayStellar, boosterStellar },
+                { displayStellarTaux, boosterStellarTaux },
+                { displayLegacy, boosterLegacy },
+                { displayLegacyTaux, boosterLegacyTaux }
+            };
+        }
+
         [HarmonyPatch(typeof(InteractionPlayerController), "Awake")]
         [HarmonyPostfix]
         public static void AwakePostfix(InteractionPlayerController __instance)
@@ -52,30 +172,21 @@ namespace WankulCrazyPlugin.patch
 
                 __instance.m_HoldCardPackPosList.Add(newPackPos.transform);
             }
-
-            // Position final des packs
-            for (int i = 0; i < __instance.m_HoldCardPackPosList.Count; i++)
-            {
-                Transform packTransform = __instance.m_HoldCardPackPosList[i];
-            }
         }
 
         public static bool CanOpenPack(ref bool __result, InteractionPlayerController __instance)
         {
+            EnsurePackAndBoxLookupsInitialized();
             bool result = false;
-            EItemType boosterStellar = EnumExtensions.SafeParseEItemType("BoosterStellar");
-            EItemType boosterStellarTaux = EnumExtensions.SafeParseEItemType("BoosterStellarTaux");
-            EItemType boosterLegacy = EnumExtensions.SafeParseEItemType("BoosterLegacy");
-            EItemType boosterLegacyTaux = EnumExtensions.SafeParseEItemType("BoosterLegacyTaux");
-            EItemType BoosterGoldBattle = EnumExtensions.SafeParseEItemType("BoosterGoldBattle");
-            EItemType BoosterGoldStellar = EnumExtensions.SafeParseEItemType("BoosterGoldStellar");
-            EItemType BoosterGoldLegacy = EnumExtensions.SafeParseEItemType("BoosterGoldLegacy");
 
-            List<Item> m_HoldItemList = (List<Item>)AccessTools.Field(typeof(InteractionPlayerController), "m_HoldItemList").GetValue(__instance);
-            if (m_HoldItemList.Count > 0)
+            List<Item> m_HoldItemList = (List<Item>)s_HoldItemListField.GetValue(__instance);
+            if (m_HoldItemList != null && m_HoldItemList.Count > 0)
             {
                 Item item = m_HoldItemList[0];
-                result = item.GetItemType() == EItemType.BasicCardPack || item.GetItemType() == EItemType.RareCardPack || item.GetItemType() == EItemType.EpicCardPack || item.GetItemType() == EItemType.LegendaryCardPack || item.GetItemType() == EItemType.DestinyBasicCardPack || item.GetItemType() == EItemType.DestinyRareCardPack || item.GetItemType() == EItemType.DestinyEpicCardPack || item.GetItemType() == EItemType.DestinyLegendaryCardPack || item.GetItemType() == EItemType.GhostPack || item.GetItemType() == EItemType.MegabotPack || item.GetItemType() == EItemType.FantasyRPGPack || item.GetItemType() == EItemType.CatJobPack || item.GetItemType() == boosterStellar || item.GetItemType() == boosterStellarTaux || item.GetItemType() == boosterLegacy || item.GetItemType() == boosterLegacyTaux || item.GetItemType() == BoosterGoldBattle || item.GetItemType() == BoosterGoldStellar || item.GetItemType() == BoosterGoldLegacy;
+                if (item != null)
+                {
+                    result = s_OpenablePacks.Contains(item.GetItemType());
+                }
             }
             __result = result;
             return false;
@@ -83,17 +194,17 @@ namespace WankulCrazyPlugin.patch
 
         public static bool CanOpenCardBox(ref bool __result, InteractionPlayerController __instance)
         {
+            EnsurePackAndBoxLookupsInitialized();
             bool result = false;
-            EItemType displayStellar = EnumExtensions.SafeParseEItemType("DisplayStellar");
-            EItemType displayStellarTaux = EnumExtensions.SafeParseEItemType("DisplayStellarTaux");
-            EItemType displayLegacy = EnumExtensions.SafeParseEItemType("DisplayLegacy");
-            EItemType displayLegacyTaux = EnumExtensions.SafeParseEItemType("DisplayLegacyTaux");
 
-            List<Item> m_HoldItemList = (List<Item>)AccessTools.Field(typeof(InteractionPlayerController), "m_HoldItemList").GetValue(__instance);
-            if (m_HoldItemList.Count > 0)
+            List<Item> m_HoldItemList = (List<Item>)s_HoldItemListField.GetValue(__instance);
+            if (m_HoldItemList != null && m_HoldItemList.Count > 0)
             {
                 Item item = m_HoldItemList[0];
-                result = item.GetItemType() == EItemType.BasicCardBox || item.GetItemType() == EItemType.RareCardBox || item.GetItemType() == EItemType.EpicCardBox || item.GetItemType() == EItemType.LegendaryCardBox || item.GetItemType() == EItemType.DestinyBasicCardBox || item.GetItemType() == EItemType.DestinyRareCardBox || item.GetItemType() == EItemType.DestinyEpicCardBox || item.GetItemType() == EItemType.DestinyLegendaryCardBox || item.GetItemType() == displayStellar || item.GetItemType() == displayStellarTaux || item.GetItemType() == displayLegacy || item.GetItemType() == displayLegacyTaux;
+                if (item != null)
+                {
+                    result = s_OpenableCardBoxes.Contains(item.GetItemType());
+                }
             }
             __result = result;
             return false;
@@ -101,42 +212,11 @@ namespace WankulCrazyPlugin.patch
 
         public static bool CardBoxToCardPack(EItemType cardBoxItemType, ref EItemType __result)
         {
-            // Récupère les valeurs dynamiques
-            EItemType displayStellar = EnumExtensions.SafeParseEItemType("DisplayStellar");
-            EItemType displayStellarTaux = EnumExtensions.SafeParseEItemType("DisplayStellarTaux");
-            EItemType boosterStellar = EnumExtensions.SafeParseEItemType("BoosterStellar");
-            EItemType boosterStellarTaux = EnumExtensions.SafeParseEItemType("BoosterStellarTaux");
-            EItemType displayLegacy = EnumExtensions.SafeParseEItemType("DisplayLegacy");
-            EItemType displayLegacyTaux = EnumExtensions.SafeParseEItemType("DisplayLegacyTaux");
-            EItemType boosterLegacy = EnumExtensions.SafeParseEItemType("BoosterLegacy");
-            EItemType boosterLegacyTaux = EnumExtensions.SafeParseEItemType("BoosterLegacyTaux");
-
-            if (cardBoxItemType == EItemType.BasicCardBox)
-                __result = EItemType.BasicCardPack;
-            else if (cardBoxItemType == EItemType.RareCardBox)
-                __result = EItemType.RareCardPack;
-            else if (cardBoxItemType == EItemType.EpicCardBox)
-                __result = EItemType.EpicCardPack;
-            else if (cardBoxItemType == EItemType.LegendaryCardBox)
-                __result = EItemType.LegendaryCardPack;
-            else if (cardBoxItemType == EItemType.DestinyBasicCardBox)
-                __result = EItemType.DestinyBasicCardPack;
-            else if (cardBoxItemType == EItemType.DestinyRareCardBox)
-                __result = EItemType.DestinyRareCardPack;
-            else if (cardBoxItemType == EItemType.DestinyEpicCardBox)
-                __result = EItemType.DestinyEpicCardPack;
-            else if (cardBoxItemType == EItemType.DestinyLegendaryCardBox)
-                __result = EItemType.DestinyLegendaryCardPack;
-            else if (cardBoxItemType == displayStellar)
-                __result = boosterStellar;
-            else if (cardBoxItemType == displayStellarTaux)
-                __result = boosterStellarTaux;
-            else if (cardBoxItemType == displayLegacy)
-                __result = boosterLegacy;
-            else if (cardBoxItemType == displayLegacyTaux)
-                __result = boosterLegacyTaux;
-            else
+            EnsurePackAndBoxLookupsInitialized();
+            if (!s_BoxToPackMap.TryGetValue(cardBoxItemType, out __result))
+            {
                 __result = EItemType.None;
+            }
 
             return false;
         }
@@ -144,10 +224,8 @@ namespace WankulCrazyPlugin.patch
         // Nouvelle méthode RemoveToolTip
         public static void RemoveToolTip(EGameAction action)
         {
-            var inputTooltipListDisplayField = AccessTools.Field(typeof(InteractionPlayerController), "m_InputTooltipListDisplay");
-            var inputTooltipListDisplay = inputTooltipListDisplayField.GetValue(CSingleton<InteractionPlayerController>.Instance) as InputTooltipListDisplay;
-
-            inputTooltipListDisplay.RemoveTooltip(action);
+            var inputTooltipListDisplay = s_InputTooltipListDisplayField?.GetValue(CSingleton<InteractionPlayerController>.Instance) as InputTooltipListDisplay;
+            inputTooltipListDisplay?.RemoveTooltip(action);
         }
 
         // Nouvelle méthode EvaluateOpenCardPack
@@ -159,15 +237,13 @@ namespace WankulCrazyPlugin.patch
                 return false;
             }
 
-            List<Item> m_HoldItemList = (List<Item>)Plugin.GetPProperty(__instance, "m_HoldItemList");
-            var canOpenPackMethod = AccessTools.Method(__instance.GetType(), "CanOpenPack");
-            bool canOpenPack = (bool)canOpenPackMethod.Invoke(__instance, null);
+            List<Item> m_HoldItemList = (List<Item>)s_HoldItemListField.GetValue(__instance);
+            bool canOpenPack = (bool)s_CanOpenPackMethod.Invoke(__instance, Array.Empty<object>());
 
             if (canOpenPack)
             {
                 Item holdItem = m_HoldItemList[0];
-                var removeHoldItemMethod = AccessTools.Method(__instance.GetType(), "RemoveHoldItem");
-                removeHoldItemMethod.Invoke(__instance, new object[] { holdItem });
+                s_RemoveHoldItemMethod.Invoke(__instance, new object[] { holdItem });
 
                 CSingleton<CardOpeningSequence>.Instance.ReadyingCardPack(holdItem);
 
@@ -176,42 +252,34 @@ namespace WankulCrazyPlugin.patch
             }
             else
             {
-                var canOpenCardBoxMethod = AccessTools.Method(__instance.GetType(), "CanOpenCardBox");
-                bool canOpenCardBox = (bool)canOpenCardBoxMethod.Invoke(__instance, null);
+                bool canOpenCardBox = (bool)s_CanOpenCardBoxMethod.Invoke(__instance, Array.Empty<object>());
                 if (!canOpenCardBox)
                 {
                     return false;
                 }
 
-                Plugin.SetPProperty(__instance, "m_IsOpeningCardBox", true);
+                s_IsOpeningCardBoxField.SetValue(__instance, true);
                 Item holdItem = m_HoldItemList[0];
-                EItemType cardPack = (EItemType)AccessTools.Method(__instance.GetType(), "CardBoxToCardPack").Invoke(__instance, new object[] { holdItem.GetItemType() });
+                EItemType cardPack = (EItemType)s_CardBoxToCardPackMethod.Invoke(__instance, new object[] { holdItem.GetItemType() });
 
                 ItemMeshData itemMeshData1 = InventoryBase.GetItemMeshData(holdItem.GetItemType());
 
-                var openCardBoxMeshFilterField = AccessTools.Field(__instance.GetType(), "m_OpenCardBoxMeshFilter");
-                var openCardBoxMeshField = AccessTools.Field(__instance.GetType(), "m_OpenCardBoxMesh");
-
-                var openCardBoxMeshFilter = openCardBoxMeshFilterField.GetValue(__instance) as MeshFilter;
-                var openCardBoxMesh = openCardBoxMeshField.GetValue(__instance) as MeshRenderer;
+                var openCardBoxMeshFilter = s_OpenCardBoxMeshFilterField.GetValue(__instance) as MeshFilter;
+                var openCardBoxMesh = s_OpenCardBoxMeshField.GetValue(__instance) as MeshRenderer;
 
                 openCardBoxMeshFilter.mesh = itemMeshData1.mesh;
                 openCardBoxMesh.material = itemMeshData1.material;
                 holdItem.gameObject.SetActive(false);
                 m_HoldItemList.Clear();
                 CPlayerData.m_HoldItemTypeList.Clear();
-                AccessTools.Method(typeof(InteractionPlayerController), "RemoveToolTip").Invoke(null, new object[] { EGameAction.OpenCardBox });
+                s_RemoveToolTipMethod.Invoke(null, new object[] { EGameAction.OpenCardBox });
                 SoundManager.PlayAudio("SFX_OpenCardBox", 0.6f);
 
-                var openCardBoxInnerMeshField = AccessTools.Field(__instance.GetType(), "m_OpenCardBoxInnerMesh");
-                var openCardBoxInnerMesh = openCardBoxInnerMeshField.GetValue(__instance) as Animation;
+                var openCardBoxInnerMesh = s_OpenCardBoxInnerMeshField.GetValue(__instance) as Animation;
                 openCardBoxInnerMesh.gameObject.SetActive(true);
 
-                var openCardBoxSpawnCardPackPosListField = AccessTools.Field(__instance.GetType(), "m_OpenCardBoxSpawnCardPackPosList");
-                var openCardBoxSpawnCardPackPosList = openCardBoxSpawnCardPackPosListField.GetValue(__instance) as List<Transform>;
-
-                var holdCardPackPosListField = AccessTools.Field(__instance.GetType(), "m_HoldCardPackPosList");
-                var holdCardPackPosList = holdCardPackPosListField.GetValue(__instance) as List<Transform>;
+                var openCardBoxSpawnCardPackPosList = s_OpenCardBoxSpawnCardPackPosListField.GetValue(__instance) as List<Transform>;
+                var holdCardPackPosList = s_HoldCardPackPosListField.GetValue(__instance) as List<Transform>;
 
                 if (m_HoldItemList.Count < 24)
                 {
@@ -266,11 +334,6 @@ namespace WankulCrazyPlugin.patch
                     }
                 }
 
-                for (int i = 0; i < openCardBoxSpawnCardPackPosList.Count; i++)
-                {
-                    Transform item = openCardBoxSpawnCardPackPosList[i];
-                }
-
                 if (__instance.m_HoldCardPackPosList.Count < 24)
                 {
                     // Récupérer le dernier élément valide pour baser les éléments fictifs
@@ -292,65 +355,43 @@ namespace WankulCrazyPlugin.patch
                     }
                 }
 
+                ItemMeshData itemMeshData2 = InventoryBase.GetItemMeshData(cardPack);
+                Dictionary<EItemType, string> boxPaths = GetBoxTexturePaths();
+                Dictionary<EItemType, string> packPaths = GetPackTexturePaths();
+                EItemType boxType = holdItem != null ? holdItem.GetItemType() : EItemType.None;
+                Quaternion spawnPackLocalRot = Quaternion.Euler(270, 0, 0);
+                Quaternion cardBoxStaticLocalRot = Quaternion.Euler(0, 180, 0);
+                Quaternion staticMeshLocalRot = Quaternion.Euler(90, 180, 0);
+
                 for (int index = 0; index < openCardBoxSpawnCardPackPosList.Count; ++index)
                 {
                     if (index < m_HoldItemList.Count)
                     {
-                        ItemMeshData itemMeshData2 = InventoryBase.GetItemMeshData(cardPack);
                         Item obj = ItemSpawnManager.GetItem(openCardBoxSpawnCardPackPosList[index]);
                         if (obj != null)
                         {
                             Transform cardBoxInnerMesh = __instance.m_HoldCardPackPosList[index].Find("CardBoxInnerMesh");
                             if (cardBoxInnerMesh != null)
                             {
-                                Vector3[] packPositions = new Vector3[]
-                                {
-                                    new Vector3(-0.05f, 0.1f - 0.08f, 0),
-                                    new Vector3(0.05f, 0.1f - 0.08f, 0),
-                                    new Vector3(-0.05f, 0.096f - 0.08f, 0),
-                                    new Vector3(0.05f, 0.096f - 0.08f, 0),
-                                    new Vector3(-0.05f, 0.092f - 0.08f, 0),
-                                    new Vector3(0.05f, 0.092f - 0.08f, 0),
-                                    new Vector3(-0.05f, 0.088f - 0.08f, 0),
-                                    new Vector3(0.05f, 0.088f - 0.08f, 0),
-                                    new Vector3(-0.05f, 0.084f - 0.08f, 0),
-                                    new Vector3(0.05f, 0.084f - 0.08f, 0),
-                                    new Vector3(-0.05f, 0.08f - 0.08f, 0),
-                                    new Vector3(0.05f, 0.08f - 0.08f, 0),
-                                    new Vector3(-0.05f, 0.076f - 0.08f, 0),
-                                    new Vector3(0.05f, 0.076f - 0.08f, 0),
-                                    new Vector3(-0.05f, 0.072f - 0.08f, 0),
-                                    new Vector3(0.05f, 0.072f - 0.08f, 0),
-                                    new Vector3(-0.05f, 0.068f - 0.08f, 0),
-                                    new Vector3(0.05f, 0.068f - 0.08f, 0),
-                                    new Vector3(-0.05f, 0.064f - 0.08f, 0),
-                                    new Vector3(0.05f, 0.064f - 0.08f, 0),
-                                    new Vector3(-0.05f, 0.060f - 0.08f, 0),
-                                    new Vector3(0.05f, 0.060f - 0.08f, 0),
-                                    new Vector3(-0.05f, 0.056f - 0.08f, 0),
-                                    new Vector3(0.05f, 0.056f - 0.08f, 0),
-                                };
                                 int packIndex = 0;
                                 foreach (Transform child in cardBoxInnerMesh)
                                 {
                                     if (child.name.StartsWith("SpawnCardPackPosLoc"))
                                     {
-                                        if (packIndex < packPositions.Length)
+                                        if (packIndex < s_PackPositions.Length)
                                         {
-                                            child.localPosition = packPositions[packIndex];
-                                            child.localRotation = Quaternion.Euler(270, 0, 0);
-                                            child.localScale = new Vector3(1f, 1f, 1f);
+                                            child.localPosition = s_PackPositions[packIndex];
+                                            child.localRotation = spawnPackLocalRot;
+                                            child.localScale = Vector3.one;
                                             packIndex++;
                                         }
                                     }
                                     else if (child.name.StartsWith("CardBoxStaticMesh"))
                                     {
                                         child.localPosition = new Vector3(-0.001f, 0.1107f - 0.08f, 0);
-                                        child.localRotation = Quaternion.Euler(0, 180, 0);
+                                        child.localRotation = cardBoxStaticLocalRot;
                                         child.localScale = new Vector3(0.26f, 0.15f, 0.0001f);
-                                        Dictionary<EItemType, string> boxPaths = GetBoxTexturePaths();
 
-                                        EItemType boxType = holdItem != null ? holdItem.GetItemType() : EItemType.None;
                                         if (boxPaths.TryGetValue(boxType, out string texturePath))
                                         {
                                             ApplyTextureToChild(child, texturePath);
@@ -371,13 +412,12 @@ namespace WankulCrazyPlugin.patch
                                         if (child.name.StartsWith("StaticMesh"))
                                         {
                                             child.localPosition = new Vector3(-0.001f, 0.08f - 0.08f, 0);
-                                            child.localRotation = Quaternion.Euler(90, 180, 0);
+                                            child.localRotation = staticMeshLocalRot;
                                             child.localScale = new Vector3(0.15f, 0.15f, 0.15f);
                                         }
-                                        Dictionary<EItemType, string> texturePaths = GetPackTexturePaths();
 
                                         // Vérifie si le cardPack a une texture associée dans le dictionnaire
-                                        if (texturePaths.TryGetValue(cardPack, out string texturePath))
+                                        if (packPaths.TryGetValue(cardPack, out string texturePath))
                                         {
                                             ApplyTextureToChild(child, texturePath);
                                         }
@@ -395,8 +435,6 @@ namespace WankulCrazyPlugin.patch
                             m_HoldItemList[index] = obj; // Remplacer l'élément fictif par le véritable objet
                             CPlayerData.m_HoldItemTypeList.Add(obj.GetItemType());
 
-                            var delayLerpMethod = AccessTools.Method(__instance.GetType(), "DelayLerpSpawnedCardPackToHand");
-                            var enumerator = (IEnumerator)delayLerpMethod.Invoke(__instance, new object[] { index, (float)(1.25 + 0.05 * index), obj, holdCardPackPosList[index], holdItem });
                             DelayLerpSpawnedCardPackToHandPostfix(__instance, index, (1.25f + 0.05f * (float)index), obj, holdCardPackPosList[index], holdItem);
                         }
                     }
@@ -413,9 +451,7 @@ namespace WankulCrazyPlugin.patch
 
         private static IEnumerator HandleDelayLerpSpawnedCardPackToHand(InteractionPlayerController __instance, int index, float waitTime, Item item, Transform targetTransform, Item cardBoxItem)
         {
-            var innerMeshField = AccessTools.Field(__instance.GetType(), "m_OpenCardBoxInnerMesh");
-            var m_OpenCardBoxInnerMesh = innerMeshField.GetValue(__instance) as Animation;
-            var isOpeningField = AccessTools.Field(__instance.GetType(), "m_IsOpeningCardBox");
+            var m_OpenCardBoxInnerMesh = s_OpenCardBoxInnerMeshField.GetValue(__instance) as Animation;
 
             yield return new WaitForSeconds(waitTime);
             item.SmoothLerpToTransform(targetTransform, targetTransform);
@@ -428,7 +464,7 @@ namespace WankulCrazyPlugin.patch
                 {
                     m_OpenCardBoxInnerMesh.gameObject.SetActive(false);
                 }
-                isOpeningField.SetValue(__instance, false);
+                s_IsOpeningCardBoxField.SetValue(__instance, false);
             }
         }
 

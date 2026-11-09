@@ -916,6 +916,17 @@ public sealed class EffectRegistry
         Register(new MillSelfEffect("lose_mill_6", 6));
 
         Register(new DiscardCardsEffect("lose_discard_2", 2));
+
+        // Legacy S5 Registrations
+        Register(new BanishDeckEffect("lose_banish_deck_6", 6));
+        Register(new DrawCardsEffect("lose_draw_7", 7));
+        Register(new MarkerEffect("boost_laink_terracid_3"));
+        Register(new MarkerEffect("boost_laink_terracid_30"));
+        Register(new MarkerEffect("terrain_combo_boost_1"));
+        Register(new MarkerEffect("terrain_combo_boost_10"));
+        Register(new MarkerEffect("terrain_on_char_played_draw_1"));
+        Register(new MarkerEffect("terrain_on_char_played_banish_top_1"));
+        Register(new MarkerEffect("terrain_on_move_draw_1"));
     }
 
     public void Register(IEffect effect)
@@ -937,9 +948,7 @@ public sealed class BanishDeckTopEffect : IEffect
     public BanishDeckTopEffect(string effectId, int amount) { EffectId = effectId; Amount = amount; }
     public DuelActionResult Execute(EffectContext context)
     {
-        for(int i = 0; i < Amount; i++) {
-            context.Engine.State.PopTopDeckCard(context.Player);
-        }
+        context.Engine.BanishCardsFromDeck(context.Player, Amount);
         return DuelActionResult.Ok();
     }
 }

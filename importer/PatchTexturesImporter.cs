@@ -11,6 +11,8 @@ namespace WankulCrazyPlugin.importer
     internal class PatchTexturesImporter
     {
         private static readonly List<Texture2D> s_PersistentTextures = new List<Texture2D>();
+        private static readonly Dictionary<string, Texture2D> s_DiskTextureCache = new Dictionary<string, Texture2D>(StringComparer.OrdinalIgnoreCase);
+
         public static void ReplaceGameTextures(string textureLevel)
         {
             string texturesPath = Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", textureLevel);
@@ -21,42 +23,57 @@ namespace WankulCrazyPlugin.importer
 
             s_PersistentTextures.RemoveAll(t => t == null);
             List<string> filenames = GetFileNames(texturesPath);
+            if (filenames.Count == 0)
+            {
+                return;
+            }
+
+            // Indexer toutes les Texture2D chargées en une seule passe (évite ~80 appels à FindObjectsOfTypeAll par scène)
+            Texture2D[] allLoadedTextures = Resources.FindObjectsOfTypeAll<Texture2D>();
+            var texturesByName = new Dictionary<string, List<Texture2D>>(allLoadedTextures.Length, StringComparer.Ordinal);
+            for (int i = 0; i < allLoadedTextures.Length; i++)
+            {
+                Texture2D tex = allLoadedTextures[i];
+                if (tex == null) continue;
+                string texName = tex.name;
+                if (string.IsNullOrEmpty(texName)) continue;
+                if (!texturesByName.TryGetValue(texName, out List<Texture2D> list))
+                {
+                    list = new List<Texture2D>(1);
+                    texturesByName[texName] = list;
+                }
+                list.Add(tex);
+            }
+
+            Material[] cachedMaterialsForPass = null;
+            List<Texture2D> targetTextures = new List<Texture2D>(4);
 
             foreach (string filename in filenames)
             {
                 try
                 {
                     string textureName = Path.GetFileNameWithoutExtension(filename);
-                    List<Texture2D> targetTextures = new List<Texture2D>();
+                    targetTextures.Clear();
 
                     if (textureName.Equals("Billboard", StringComparison.OrdinalIgnoreCase))
                     {
-                        var matched = Resources.FindObjectsOfTypeAll<Texture2D>()
-                            .Where(t => t != null && (t.name == "Billboard" || t.name == "Billboard_albedo" || t.name == "Billboard_second"))
-                            .ToList();
-                        targetTextures.AddRange(matched);
+                        AddMatchingTextures(texturesByName, "Billboard", targetTextures);
+                        AddMatchingTextures(texturesByName, "Billboard_albedo", targetTextures);
+                        AddMatchingTextures(texturesByName, "Billboard_second", targetTextures);
                     }
                     else if (textureName.Equals("T_3dCardModel", StringComparison.OrdinalIgnoreCase))
                     {
-                        var matched = Resources.FindObjectsOfTypeAll<Texture2D>()
-                            .Where(t => t != null && (t.name == "T_3dCardModel" || t.name == "CardFrontIconOnly"))
-                            .ToList();
-                        targetTextures.AddRange(matched);
+                        AddMatchingTextures(texturesByName, "T_3dCardModel", targetTextures);
+                        AddMatchingTextures(texturesByName, "CardFrontIconOnly", targetTextures);
                     }
                     else if (textureName.Equals("CardBack", StringComparison.OrdinalIgnoreCase))
                     {
-                        var matched = Resources.FindObjectsOfTypeAll<Texture2D>()
-                            .Where(t => t != null && (t.name == "CardBack" || t.name == "T_CardBackMesh"))
-                            .ToList();
-                        targetTextures.AddRange(matched);
+                        AddMatchingTextures(texturesByName, "CardBack", targetTextures);
+                        AddMatchingTextures(texturesByName, "T_CardBackMesh", targetTextures);
                     }
-                    else
+                    else if (texturesByName.TryGetValue(textureName, out List<Texture2D> matched) && matched.Count > 0)
                     {
-                        Texture targetTexture = Resources.FindObjectsOfTypeAll<Texture>().FirstOrDefault(t => t.name == textureName);
-                        if (targetTexture is Texture2D targetTexture2D)
-                        {
-                            targetTextures.Add(targetTexture2D);
-                        }
+                        targetTextures.Add(matched[0]);
                     }
 
                     if (targetTextures.Count > 0)
@@ -71,9 +88,10 @@ namespace WankulCrazyPlugin.importer
                         bool keepAlive = false;
                         try
                         {
-                            foreach (Texture2D targetTexture2D in targetTextures)
+                            for (int i = 0; i < targetTextures.Count; i++)
                             {
-                                Texture2D result = ReplaceTexture(targetTexture2D, newTexture);
+                                Texture2D targetTexture2D = targetTextures[i];
+                                Texture2D result = ReplaceTexture(targetTexture2D, newTexture, ref cachedMaterialsForPass);
                                 if (result == newTexture)
                                 {
                                     keepAlive = true;
@@ -110,6 +128,14 @@ namespace WankulCrazyPlugin.importer
             }
         }
 
+        private static void AddMatchingTextures(Dictionary<string, List<Texture2D>> index, string key, List<Texture2D> destination)
+        {
+            if (index.TryGetValue(key, out List<Texture2D> matched))
+            {
+                destination.AddRange(matched);
+            }
+        }
+
         /// <summary>
         /// Recharge à chaud (Hot-Reload) l'intégralité des textures du mod sans redémarrer le jeu.
         /// </summary>
@@ -117,8 +143,9 @@ namespace WankulCrazyPlugin.importer
         {
             Plugin.Logger.LogInfo("[HotReload] Rechargement de toutes les textures Wankul...");
 
-            // 1. Nettoyer le cache des matériaux de boîtes
+            // 1. Nettoyer le cache des matériaux de boîtes et le cache disque
             cachedBoxMaterials.Clear();
+            s_DiskTextureCache.Clear();
 
             // 2. Recharger les textures patchées via Resources
             ReplaceGameTextures("shared1");
@@ -243,7 +270,7 @@ namespace WankulCrazyPlugin.importer
             return false;
         }
 
-        private static int ApplyDirectMaterialReplacement(Texture2D original, Texture2D replacement)
+        private static int ApplyDirectMaterialReplacement(Texture2D original, Texture2D replacement, Material[] materials = null)
         {
             if (original == null || replacement == null)
             {
@@ -255,7 +282,10 @@ namespace WankulCrazyPlugin.importer
             replacement.mipMapBias = -0.5f;
 
             int affectedCount = 0;
-            Material[] materials = Resources.FindObjectsOfTypeAll<Material>();
+            if (materials == null)
+            {
+                materials = Resources.FindObjectsOfTypeAll<Material>();
+            }
             foreach (Material mat in materials)
             {
                 if (mat == null)
@@ -330,6 +360,12 @@ namespace WankulCrazyPlugin.importer
 
         public static Texture2D ReplaceTexture(Texture2D original, Texture2D replacement)
         {
+            Material[] cachedMaterials = null;
+            return ReplaceTexture(original, replacement, ref cachedMaterials);
+        }
+
+        private static Texture2D ReplaceTexture(Texture2D original, Texture2D replacement, ref Material[] cachedMaterials)
+        {
             if (original == null)
             {
                 return replacement;
@@ -342,8 +378,6 @@ namespace WankulCrazyPlugin.importer
             // Cas spécial : original est vide → on en recrée une
             if (original.width == 0 && original.height == 0)
             {
-                //Plugin.Logger.LogWarning("Texture originale vide (0x0). Création d'une nouvelle texture.");
-
                 Texture2D newTexture = new Texture2D(replacement.width, replacement.height, replacement.format, replacement.mipmapCount > 1);
                 newTexture.name = replacement.name + "_Generated";
 
@@ -367,7 +401,11 @@ namespace WankulCrazyPlugin.importer
                     replacement.name = original.name + "_Replaced";
                 }
 
-                int replacedCount = ApplyDirectMaterialReplacement(original, replacement);
+                if (cachedMaterials == null)
+                {
+                    cachedMaterials = Resources.FindObjectsOfTypeAll<Material>();
+                }
+                int replacedCount = ApplyDirectMaterialReplacement(original, replacement, cachedMaterials);
                 Plugin.Logger.LogInfo($"[PatchTexturesImporter] Remplacement par référence directe pour '{original.name}' ({original.width}x{original.height} -> {replacement.width}x{replacement.height}) sur {replacedCount} matériau(x).");
                 RegisterPersistentTexture(replacement);
                 return replacement;
@@ -428,7 +466,11 @@ namespace WankulCrazyPlugin.importer
             {
                 replacement.name = original.name + "_Replaced";
             }
-            int fallbackCount = ApplyDirectMaterialReplacement(original, replacement);
+            if (cachedMaterials == null)
+            {
+                cachedMaterials = Resources.FindObjectsOfTypeAll<Material>();
+            }
+            int fallbackCount = ApplyDirectMaterialReplacement(original, replacement, cachedMaterials);
             Plugin.Logger.LogInfo($"[PatchTexturesImporter] Fallback référence directe appliqué pour '{original.name}' sur {fallbackCount} matériau(x).");
             RegisterPersistentTexture(replacement);
             return replacement;
@@ -781,6 +823,14 @@ namespace WankulCrazyPlugin.importer
 
         private static Texture2D LoadTexture(string path)
         {
+            if (string.IsNullOrEmpty(path))
+            {
+                return null;
+            }
+            if (s_DiskTextureCache.TryGetValue(path, out Texture2D cachedTex) && cachedTex != null)
+            {
+                return cachedTex;
+            }
             if (!File.Exists(path))
             {
                 return null;
@@ -789,7 +839,9 @@ namespace WankulCrazyPlugin.importer
             Texture2D tex = new Texture2D(2, 2, TextureFormat.RGBA32, false);
             if (tex.LoadImage(fileData))
             {
-                tex.Apply(); tex.hideFlags |= HideFlags.DontUnloadUnusedAsset;
+                tex.Apply();
+                tex.hideFlags |= HideFlags.DontUnloadUnusedAsset;
+                s_DiskTextureCache[path] = tex;
                 return tex;
             }
             return null;
@@ -852,8 +904,6 @@ namespace WankulCrazyPlugin.importer
             if (newMat.HasProperty("_BaseColorMap"))
                 newMat.SetTexture("_BaseColorMap", texture);
 
-
-
             newMat.hideFlags |= HideFlags.DontUnloadUnusedAsset;
             cachedBoxMaterials[itemType] = newMat;
             return newMat;
@@ -872,10 +922,6 @@ namespace WankulCrazyPlugin.importer
                 return;
             }
 
-
-
-
-
             // On passe le renderer pour que GetOrCreateBoxMaterial puisse cloner son material
             Material targetMaterial = GetOrCreateBoxMaterial(itemType, texturePath, renderer);
             if (targetMaterial == null)
@@ -883,29 +929,11 @@ namespace WankulCrazyPlugin.importer
                 return;
             }
 
-            EItemType boosterType = GetBoosterTypeForDisplay(itemType);
-            var allBoxPaths = GetBoxTexturePaths();
-
-            renderer.sharedMaterial = targetMaterial;
-            renderer.material = targetMaterial;
-            renderer.materials = new Material[1] { targetMaterial };
-            renderer.SetPropertyBlock(null);
-
-            if (boosterType != EItemType.None && allBoxPaths.TryGetValue(boosterType, out string boosterPath))
+            if (renderer.sharedMaterial != targetMaterial)
             {
-                if (item.m_MeshSecondary != null)
-                {
-                    Material boosterMat = GetOrCreateBoxMaterial(boosterType, boosterPath, renderer);
-                    Renderer secRenderer = item.m_MeshSecondary.GetComponent<Renderer>();
-                    if (secRenderer != null)
-                    {
-                        secRenderer.sharedMaterial = boosterMat;
-                        secRenderer.material = boosterMat;
-                        secRenderer.materials = new Material[1] { boosterMat };
-                        secRenderer.SetPropertyBlock(null);
-                    }
-                }
+                renderer.sharedMaterial = targetMaterial;
             }
+            renderer.SetPropertyBlock(null);
 
             // Pour les boosters et les displays disposant d'un mesh secondaire
             if (item.m_MeshSecondary != null)
@@ -913,12 +941,17 @@ namespace WankulCrazyPlugin.importer
                 Renderer secondaryRenderer = item.m_MeshSecondary.GetComponent<Renderer>();
                 if (secondaryRenderer != null)
                 {
-                    if (boosterType != EItemType.None && allBoxPaths.TryGetValue(boosterType, out string boosterPath2))
+                    EItemType boosterType = GetBoosterTypeForDisplay(itemType);
+                    var allBoxPaths = GetBoxTexturePaths();
+                    if (boosterType != EItemType.None && allBoxPaths.TryGetValue(boosterType, out string boosterPath))
                     {
-                        Material boosterMat = GetOrCreateBoxMaterial(boosterType, boosterPath2, secondaryRenderer);
-                        if (boosterMat != null && secondaryRenderer.sharedMaterial != boosterMat)
+                        Material boosterMat = GetOrCreateBoxMaterial(boosterType, boosterPath, secondaryRenderer);
+                        if (boosterMat != null)
                         {
-                            secondaryRenderer.sharedMaterial = boosterMat;
+                            if (secondaryRenderer.sharedMaterial != boosterMat)
+                            {
+                                secondaryRenderer.sharedMaterial = boosterMat;
+                            }
                             secondaryRenderer.SetPropertyBlock(null);
                         }
                     }
@@ -927,52 +960,74 @@ namespace WankulCrazyPlugin.importer
                         if (secondaryRenderer.sharedMaterial != targetMaterial)
                         {
                             secondaryRenderer.sharedMaterial = targetMaterial;
-                            secondaryRenderer.SetPropertyBlock(null);
                         }
+                        secondaryRenderer.SetPropertyBlock(null);
                     }
                 }
             }
         }
 
+        private static Dictionary<EItemType, EItemType> s_DisplayToBoosterMap;
+        private static HashSet<EItemType> s_BoosterPackTypes;
+
+        private static void EnsureBoosterTypeCaches()
+        {
+            if (s_DisplayToBoosterMap != null && s_BoosterPackTypes != null)
+            {
+                return;
+            }
+
+            EItemType boosterStellar = EnumExtensions.SafeParseEItemType("BoosterStellar");
+            EItemType boosterStellarTaux = EnumExtensions.SafeParseEItemType("BoosterStellarTaux");
+            EItemType boosterLegacy = EnumExtensions.SafeParseEItemType("BoosterLegacy");
+            EItemType boosterLegacyTaux = EnumExtensions.SafeParseEItemType("BoosterLegacyTaux");
+
+            s_DisplayToBoosterMap = new Dictionary<EItemType, EItemType>(12)
+            {
+                { EItemType.BasicCardBox, EItemType.BasicCardPack },
+                { EItemType.RareCardBox, EItemType.RareCardPack },
+                { EItemType.EpicCardBox, EItemType.EpicCardPack },
+                { EItemType.LegendaryCardBox, EItemType.LegendaryCardPack },
+                { EItemType.DestinyBasicCardBox, EItemType.DestinyBasicCardPack },
+                { EItemType.DestinyRareCardBox, EItemType.DestinyRareCardPack },
+                { EItemType.DestinyEpicCardBox, EItemType.DestinyEpicCardPack },
+                { EItemType.DestinyLegendaryCardBox, EItemType.DestinyLegendaryCardPack },
+                { EnumExtensions.SafeParseEItemType("DisplayStellar"), boosterStellar },
+                { EnumExtensions.SafeParseEItemType("DisplayStellarTaux"), boosterStellarTaux },
+                { EnumExtensions.SafeParseEItemType("DisplayLegacy"), boosterLegacy },
+                { EnumExtensions.SafeParseEItemType("DisplayLegacyTaux"), boosterLegacyTaux }
+            };
+
+            s_BoosterPackTypes = new HashSet<EItemType>
+            {
+                EItemType.BasicCardPack,
+                EItemType.RareCardPack,
+                EItemType.EpicCardPack,
+                EItemType.LegendaryCardPack,
+                EItemType.DestinyBasicCardPack,
+                EItemType.DestinyRareCardPack,
+                EItemType.DestinyEpicCardPack,
+                EItemType.DestinyLegendaryCardPack,
+                boosterStellar,
+                boosterStellarTaux,
+                boosterLegacy,
+                boosterLegacyTaux,
+                EnumExtensions.SafeParseEItemType("BoosterGoldBattle"),
+                EnumExtensions.SafeParseEItemType("BoosterGoldStellar"),
+                EnumExtensions.SafeParseEItemType("BoosterGoldLegacy")
+            };
+        }
+
         public static EItemType GetBoosterTypeForDisplay(EItemType displayType)
         {
-            EItemType displayStellar = EnumExtensions.SafeParseEItemType("DisplayStellar");
-            EItemType displayStellarTaux = EnumExtensions.SafeParseEItemType("DisplayStellarTaux");
-            EItemType displayLegacy = EnumExtensions.SafeParseEItemType("DisplayLegacy");
-            EItemType displayLegacyTaux = EnumExtensions.SafeParseEItemType("DisplayLegacyTaux");
-
-            if (displayType == EItemType.BasicCardBox) return EItemType.BasicCardPack;
-            if (displayType == EItemType.RareCardBox) return EItemType.RareCardPack;
-            if (displayType == EItemType.EpicCardBox) return EItemType.EpicCardPack;
-            if (displayType == EItemType.LegendaryCardBox) return EItemType.LegendaryCardPack;
-            if (displayType == EItemType.DestinyBasicCardBox) return EItemType.DestinyBasicCardPack;
-            if (displayType == EItemType.DestinyRareCardBox) return EItemType.DestinyRareCardPack;
-            if (displayType == EItemType.DestinyEpicCardBox) return EItemType.DestinyEpicCardPack;
-            if (displayType == EItemType.DestinyLegendaryCardBox) return EItemType.DestinyLegendaryCardPack;
-            if (displayType == displayStellar) return EnumExtensions.SafeParseEItemType("BoosterStellar");
-            if (displayType == displayStellarTaux) return EnumExtensions.SafeParseEItemType("BoosterStellarTaux");
-            if (displayType == displayLegacy) return EnumExtensions.SafeParseEItemType("BoosterLegacy");
-            if (displayType == displayLegacyTaux) return EnumExtensions.SafeParseEItemType("BoosterLegacyTaux");
-            return EItemType.None;
+            EnsureBoosterTypeCaches();
+            return s_DisplayToBoosterMap.TryGetValue(displayType, out EItemType boosterType) ? boosterType : EItemType.None;
         }
 
         public static bool IsBoosterPackType(EItemType itemType)
         {
-            return itemType == EItemType.BasicCardPack ||
-                   itemType == EItemType.RareCardPack ||
-                   itemType == EItemType.EpicCardPack ||
-                   itemType == EItemType.LegendaryCardPack ||
-                   itemType == EItemType.DestinyBasicCardPack ||
-                   itemType == EItemType.DestinyRareCardPack ||
-                   itemType == EItemType.DestinyEpicCardPack ||
-                   itemType == EItemType.DestinyLegendaryCardPack ||
-                   itemType == EnumExtensions.SafeParseEItemType("BoosterStellar") ||
-                   itemType == EnumExtensions.SafeParseEItemType("BoosterStellarTaux") ||
-                   itemType == EnumExtensions.SafeParseEItemType("BoosterLegacy") ||
-                   itemType == EnumExtensions.SafeParseEItemType("BoosterLegacyTaux") ||
-                   itemType == EnumExtensions.SafeParseEItemType("BoosterGoldBattle") ||
-                   itemType == EnumExtensions.SafeParseEItemType("BoosterGoldStellar") ||
-                   itemType == EnumExtensions.SafeParseEItemType("BoosterGoldLegacy");
+            EnsureBoosterTypeCaches();
+            return s_BoosterPackTypes.Contains(itemType);
         }
     }
 }
