@@ -19,7 +19,7 @@ def request_api(endpoint, method="GET", data=None):
             req.data = body
             req.add_header("Content-Type", "application/json; charset=utf-8")
         
-        with urllib.request.urlopen(req, timeout=5) as res:
+        with urllib.request.urlopen(req, timeout=30) as res:
             resp_body = res.read().decode("utf-8")
             return json.loads(resp_body)
     except urllib.error.URLError as ex:

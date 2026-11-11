@@ -151,8 +151,9 @@ namespace WankulCrazyPlugin.importer
             ReplaceGameTextures("shared1");
             ReplaceGameTextures("level1");
 
-            // 3. Recharger l'atlas des étiquettes de prix
+            // 3. Recharger l'atlas des étiquettes de prix et les matériaux ItemMeshData
             PriceTagAtlasPatch.ReloadAtlas();
+            ApplyCustomItemMeshMaterials();
 
             // 4. Mettre à jour tous les UI_PriceTag de la scène active
             int tagCount = 0;
@@ -618,6 +619,10 @@ namespace WankulCrazyPlugin.importer
                     { EItemType.DeckBox4, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "T_DeckBox4.png") },
                     { EItemType.BinderBook, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "T_BinderBook.png") },
                     { EItemType.BinderBookPremium, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "T_BinderBookAllStar.png") },
+                    { EItemType.D20DiceBox, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "T_D20Dice.png") },
+                    { EItemType.D20DiceBox2, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "T_D20Dice 2.png") },
+                    { EItemType.D20DiceBox3, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "T_D20Dice 3.png") },
+                    { EItemType.D20DiceBox4, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "T_D20Dice 4.png") },
                     { EItemType.Toy_PiggyA, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "T_PiggyA.png") },
                     { EItemType.Toy_PiggyB, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "T_PiggyB.png") },
                     { EItemType.Toy_PiggyC, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "T_PiggyC.png") },
@@ -684,9 +689,9 @@ namespace WankulCrazyPlugin.importer
                     { EItemType.Manga10, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "T_Manga_10.png") },
                     { EItemType.Manga11, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "T_Manga_11.png") },
                     { EItemType.Manga12, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "T_Manga_12.png") },
-                    { EnumExtensions.SafeParseEItemType("BoosterGoldBattle"), Path.Combine(Plugin.GetPluginPath(), "data", "customitems", "textures", "Texture_Booster_Gold.png") },
-                    { EnumExtensions.SafeParseEItemType("BoosterGoldStellar"), Path.Combine(Plugin.GetPluginPath(), "data", "customitems", "textures", "Texture_Booster_Gold.png") },
-                    { EnumExtensions.SafeParseEItemType("BoosterGoldLegacy"), Path.Combine(Plugin.GetPluginPath(), "data", "customitems", "textures", "Texture_Booster_Gold.png") },
+                    { EnumExtensions.SafeParseEItemType("BoosterGoldBattle"), Path.Combine(Plugin.GetPluginPath(), "data", "customitems", "textures", "Texture_BoosterGold.png") },
+                    { EnumExtensions.SafeParseEItemType("BoosterGoldStellar"), Path.Combine(Plugin.GetPluginPath(), "data", "customitems", "textures", "Texture_BoosterGold.png") },
+                    { EnumExtensions.SafeParseEItemType("BoosterGoldLegacy"), Path.Combine(Plugin.GetPluginPath(), "data", "customitems", "textures", "Texture_BoosterGold.png") },
                     { EnumExtensions.SafeParseEItemType("StarterShowtime"), Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Starter_Showtime.png") },
                     { EnumExtensions.SafeParseEItemType("StarterApocalypse"), Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Starter_Apocalypse.png") },
 
@@ -779,15 +784,22 @@ namespace WankulCrazyPlugin.importer
                     {
                         Material mat = GetOrCreateBoxMaterial(cType, cPath, null);
                         if (mat != null) customMesh.material = mat;
-                        EItemType bType = GetBoosterTypeForDisplay(cType);
-                        if (bType != EItemType.None && texturePaths.TryGetValue(bType, out string bPath))
+                        if (customMesh.meshSecondary != null)
                         {
-                            Material bMat = GetOrCreateBoxMaterial(bType, bPath, null);
-                            if (bMat != null) customMesh.materialSecondary = bMat;
+                            EItemType bType = GetBoosterTypeForDisplay(cType);
+                            if (bType != EItemType.None && texturePaths.TryGetValue(bType, out string bPath))
+                            {
+                                Material bMat = GetOrCreateBoxMaterial(bType, bPath, null);
+                                if (bMat != null) customMesh.materialSecondary = bMat;
+                            }
+                            else if (IsBoosterPackType(cType))
+                            {
+                                customMesh.materialSecondary = mat;
+                            }
                         }
-                        else if (IsBoosterPackType(cType))
+                        else
                         {
-                            customMesh.materialSecondary = mat;
+                            customMesh.materialSecondary = null;
                         }
                         customMesh.arrayMaterialType = ItemMeshData.ItemShareTexture2DArrayMaterial.None;
                         updatedCount++;
@@ -839,6 +851,11 @@ namespace WankulCrazyPlugin.importer
             Texture2D tex = new Texture2D(2, 2, TextureFormat.RGBA32, false);
             if (tex.LoadImage(fileData))
             {
+                tex.wrapMode = TextureWrapMode.Clamp;
+                if (Path.GetFileNameWithoutExtension(path).StartsWith("T_D20Dice", StringComparison.OrdinalIgnoreCase))
+                {
+                    tex.filterMode = FilterMode.Point;
+                }
                 tex.Apply();
                 tex.hideFlags |= HideFlags.DontUnloadUnusedAsset;
                 s_DiskTextureCache[path] = tex;
@@ -929,7 +946,12 @@ namespace WankulCrazyPlugin.importer
                 return;
             }
 
-            if (renderer.sharedMaterial != targetMaterial)
+            MeshFilter mf = item.m_MeshFilter;
+            if (mf != null && mf.sharedMesh != null && mf.sharedMesh.subMeshCount == 1 && renderer.sharedMaterials != null && renderer.sharedMaterials.Length > 1)
+            {
+                renderer.sharedMaterials = new Material[] { targetMaterial };
+            }
+            else if (renderer.sharedMaterial != targetMaterial)
             {
                 renderer.sharedMaterial = targetMaterial;
             }

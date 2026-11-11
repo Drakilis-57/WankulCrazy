@@ -98,6 +98,7 @@ namespace WankulCrazyPlugin.patch
                 EItemType.MegabotPack,
                 EItemType.FantasyRPGPack,
                 EItemType.CatJobPack,
+                EItemType.AscensionCardPack,
                 boosterStellar,
                 boosterStellarTaux,
                 boosterLegacy,
@@ -117,6 +118,7 @@ namespace WankulCrazyPlugin.patch
                 EItemType.DestinyRareCardBox,
                 EItemType.DestinyEpicCardBox,
                 EItemType.DestinyLegendaryCardBox,
+                EItemType.AscensionCardBox,
                 displayStellar,
                 displayStellarTaux,
                 displayLegacy,
@@ -133,6 +135,7 @@ namespace WankulCrazyPlugin.patch
                 { EItemType.DestinyRareCardBox, EItemType.DestinyRareCardPack },
                 { EItemType.DestinyEpicCardBox, EItemType.DestinyEpicCardPack },
                 { EItemType.DestinyLegendaryCardBox, EItemType.DestinyLegendaryCardPack },
+                { EItemType.AscensionCardBox, EItemType.AscensionCardPack },
                 { displayStellar, boosterStellar },
                 { displayStellarTaux, boosterStellarTaux },
                 { displayLegacy, boosterLegacy },
@@ -189,6 +192,13 @@ namespace WankulCrazyPlugin.patch
                 }
             }
             __result = result;
+            return false;
+        }
+
+        public static bool IsCardPackType(EItemType itemType, ref bool __result)
+        {
+            EnsurePackAndBoxLookupsInitialized();
+            __result = s_OpenablePacks.Contains(itemType);
             return false;
         }
 

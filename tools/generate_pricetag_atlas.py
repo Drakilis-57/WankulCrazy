@@ -15,7 +15,7 @@ CUSTOM_ICONS = os.path.join(ROOT, "data", "customitems", "icons")
 SHARED1 = os.path.join(ROOT, "data", "patchtextures", "shared1")
 
 def find_file(name):
-    for d in [WANKUL_ICONS, CUSTOM_ICONS, SHARED1, SPRITES]:
+    for d in [SPRITES, CUSTOM_ICONS, WANKUL_ICONS, SHARED1]:
         p = os.path.join(d, name)
         if os.path.exists(p):
             return p
@@ -44,10 +44,10 @@ MAPPING = {
     49: ("Icon_Cleanser.png", 8),
 
     # Deckboxes (cases 50 à 53)
-    50: (("T_DeckBox.png", "Icon_DeckBox1.png"), 8),
-    51: (("T_DeckBox2.png", "Icon_DeckBox2.png"), 8),
-    52: (("T_DeckBox3.png", "Icon_DeckBox3.png"), 8),
-    53: (("T_DeckBox4.png", "Icon_DeckBox4.png"), 8),
+    50: ("Icon_DeckBox1.png", 8),
+    51: ("Icon_DeckBox2.png", 8),
+    52: ("Icon_DeckBox3.png", 8),
+    53: ("Icon_DeckBox4.png", 8),
 
     # Classeurs
     54: ("Icon_ItemCollectionBook.png", 8),
@@ -70,12 +70,12 @@ MAPPING = {
     88: ("Icon_PreconWindDestiny.png", 8),
 
     # Sleeves vanilla (paquets - cases 89 à 94)
-    89: (("T_CardSleeveClear.png", "Icon_CardSleeveClear.png"), 8),
-    90: (("T_CardSleeveTetramon.png", "Icon_CardSleeveTetramon.png"), 8),
-    91: (("T_CardSleeveFire.png", "Icon_CardSleeveFire.png"), 8),
-    92: (("T_CardSleeveEarth.png", "Icon_CardSleeveEarth.png"), 8),
-    93: (("T_CardSleeveWater.png", "Icon_CardSleeveWater.png"), 8),
-    94: (("T_CardSleeveWind.png", "Icon_CardSleeveWind.png"), 8),
+    89: ("Icon_CardSleeveClear.png", 8),
+    90: ("Icon_CardSleeveTetramon.png", 8),
+    91: ("Icon_CardSleeveFire.png", 8),
+    92: ("Icon_CardSleeveEarth.png", 8),
+    93: ("Icon_CardSleeveWater.png", 8),
+    94: ("Icon_CardSleeveWind.png", 8),
 
     # Tapis de jeu (Playmats) 1 à 14
     95: ("Icon_Playmat1.png", 8),
@@ -182,7 +182,10 @@ def prepare_deckbox_icon(im, sprite_path):
             ))
         return trim_uniform_border(front)
 
-    # Cas Icon_DeckBox*.png : nettoyer les éventuelles bandes parasites haut/bas et conserver le ratio
+    # Cas Icon_DeckBox*.png : les rendus 3D dédiés sont déjà cadrés proprement
+    if fname.startswith("icon_deckbox"):
+        return trim_uniform_border(im)
+
     im = trim_uniform_border(im)
     cw, ch = im.size
     if cw > 0 and ch > 0:
@@ -205,6 +208,10 @@ def prepare_sleeve_icon(im, sprite_path):
     im = trim_uniform_border(im)
     w, h = im.size
 
+    if fname.startswith("icon_cardsleeve"):
+        # Les icônes dédiées (data/sprites/Icon_CardSleeve*.png) sont déjà des blisters 3D orientés à l'endroit
+        return im
+
     if fname.startswith("t_cardsleeve"):
         # Dans les textures T_CardSleeve*.png, le sachet complet (languette + illustration)
         # occupe l'îlot UV principal. Si la texture est un atlas carré contenant verso + recto,
@@ -225,10 +232,7 @@ def prepare_sleeve_icon(im, sprite_path):
             im = im.rotate(180, expand=True)
         return trim_uniform_border(im)
 
-    # Cas Icon_CardSleeve*.png : vérifier aussi que la languette n'est pas en bas
-    if _is_sleeve_header_at_bottom(im):
-        im = im.rotate(180, expand=True)
-    return trim_uniform_border(im)
+    return im
 
 
 def _is_sleeve_header_at_bottom(im):

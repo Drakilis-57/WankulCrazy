@@ -407,6 +407,121 @@ namespace WankulCrazyPlugin.patch
             }
         }
 
+        private static bool IsWankulCardEligibleForFoil(WankulCardData wankulCard)
+        {
+            if (wankulCard is EffigyCardData effigyCard)
+            {
+                var rarityData = RaritiesManager.GetRarity(effigyCard.RarityId);
+                if (rarityData != null && rarityData.IsEligibleForFoil)
+                {
+                    return true;
+                }
+                if (effigyCard.Rarity >= Rarity.UR1)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Génère les cartes d'un booster pour la machine à ouverture automatique (InteractableAutoPackOpener)
+        /// dans une liste locale isolée, sans modifier l'état ni les listes de l'ouverture manuelle en cours.
+        /// </summary>
+        public static bool GetPackContentCardDataListPrefix(ECollectionPackType collectionPackType, ref List<CardData> __result)
+        {
+            try
+            {
+                if (SavesManager.DebuggingSave)
+                {
+                    __result = new List<CardData>();
+                    return false;
+                }
+
+                WankulCardsData wankulCardsData = WankulCardsData.Instance;
+                wankulCardsData.EnsureInitialized();
+
+                Item currentItem = CurrentMachineOpeningItem;
+                EItemType currentItemType = currentItem != null ? currentItem.GetItemType() : EItemType.None;
+                bool isGold = currentItemType == EnumExtensions.SafeParseEItemType("BoosterGoldBattle") ||
+                              currentItemType == EnumExtensions.SafeParseEItemType("BoosterGoldStellar") ||
+                              currentItemType == EnumExtensions.SafeParseEItemType("BoosterGoldLegacy");
+
+                int packCardCount = isGold ? 4 : 10;
+                List<CardData> rolledCards = new List<CardData>(packCardCount);
+                List<WankulCardData> alreadySelectedCards = new List<WankulCardData>(packCardCount);
+
+                for (int i = 0; i < packCardCount; i++)
+                {
+                    bool isTerrain = i == 0;
+                    bool isMinRare = i == packCardCount - 1;
+                    bool isRare = false;
+                    bool isMinUR = false;
+                    bool isMinLegendary = false;
+                    int hash = currentItem != null ? currentItem.GetHashCode() : 0;
+
+                    if (isMinRare && currentItem != null)
+                    {
+                        if (LegendaryBoosters.Remove(hash))
+                        {
+                            isMinLegendary = true;
+                            isMinUR = false;
+                            isMinRare = false;
+                        }
+                        else if (URBoosters.Remove(hash))
+                        {
+                            isMinLegendary = false;
+                            isMinUR = true;
+                            isMinRare = false;
+                        }
+                        else if (RareBoosters.Remove(hash))
+                        {
+                            isMinLegendary = false;
+                            isMinUR = false;
+                            isMinRare = false;
+                            isRare = true;
+                        }
+                    }
+
+                    WankulCardData wankulCard = isGold
+                        ? WankulInventory.DropCardGold(collectionPackType, alreadySelectedCards)
+                        : WankulInventory.DropCard(collectionPackType, alreadySelectedCards, isTerrain, isMinRare, isMinUR, isMinLegendary, isRare);
+
+                    if (wankulCard == null)
+                    {
+                        Plugin.Logger.LogError("[CardOpening] (AutoPackOpener) wankulCard was null after drop, falling back to GetAJETER()");
+                        wankulCard = WankulCardsData.GetAJETER();
+                    }
+
+                    CardData associatedCard = wankulCardsData.GetCardDataFromWankulCardData(wankulCard);
+                    if (associatedCard == null)
+                    {
+                        associatedCard = wankulCardsData.GetUnassciatedCardData();
+                        wankulCardsData.SetFromMonster(associatedCard, wankulCard);
+                    }
+
+                    associatedCard.isChampionCard = false;
+                    associatedCard.isFoil = IsWankulCardEligibleForFoil(wankulCard);
+                    associatedCard.isNew = WankulInventory.isNewWankulCard(wankulCard);
+
+                    rolledCards.Add(associatedCard);
+                }
+
+                __result = rolledCards;
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Plugin.Logger.LogError($"[CardOpening] GetPackContentCardDataListPrefix error: {ex}");
+                __result = new List<CardData>();
+                return false;
+            }
+            finally
+            {
+                CurrentMachineOpeningItem = null;
+            }
+        }
+
         private static void OpenBoosterCore(List<CardData> ___m_RolledCardDataList, List<float> ___m_CardValueList, ECollectionPackType ___m_CollectionPackType, Item ___m_CurrentItem, List<CardData> ___m_SecondaryRolledCardDataList, CardOpeningSequence __instance)
         {
             if (SavesManager.DebuggingSave)
@@ -417,7 +532,7 @@ namespace WankulCrazyPlugin.patch
             WankulCardsData wankulCardsData = WankulCardsData.Instance;
             wankulCardsData.EnsureInitialized();
 
-            Item currentItem = ___m_CurrentItem ?? (Item)Plugin.GetPProperty(__instance, "m_CurrentItem") ?? CurrentMachineOpeningItem;
+            Item currentItem = CurrentMachineOpeningItem ?? ___m_CurrentItem ?? (Item)Plugin.GetPProperty(__instance, "m_CurrentItem");
             EItemType currentItemType = currentItem != null ? currentItem.GetItemType() : EItemType.None;
             bool isGold = currentItemType == EnumExtensions.SafeParseEItemType("BoosterGoldBattle") ||
                           currentItemType == EnumExtensions.SafeParseEItemType("BoosterGoldStellar") ||
@@ -494,34 +609,12 @@ namespace WankulCrazyPlugin.patch
                 if (associatedCard == null)
                 {
                     associatedCard = wankulCardsData.GetUnassciatedCardData();
-                    ___m_RolledCardDataList.Add(associatedCard);
-
-                    associatedCard.isFoil = false;
-                    associatedCard.isChampionCard = false;
-
-                    // Vérification de la rareté pour décider si la carte est foil
-                    if (wankulCard is EffigyCardData)
-                    {
-                        EffigyCardData effigyCard = (EffigyCardData)wankulCard;
-
-                        // On vérifie le IsEligibleForFoil du manager, fallback sur Rarity >= UR1
-                        var rarityData = RaritiesManager.GetRarity(effigyCard.RarityId);
-                        if (rarityData != null && rarityData.IsEligibleForFoil)
-                        {
-                            associatedCard.isFoil = true;
-                        }
-                        else if (effigyCard.Rarity >= Rarity.UR1)
-                        {
-                            associatedCard.isFoil = true;
-                        }
-                    }
-
                     wankulCardsData.SetFromMonster(associatedCard, wankulCard);
                 }
-                else
-                {
-                    ___m_RolledCardDataList.Add(associatedCard);
-                }
+
+                associatedCard.isChampionCard = false;
+                associatedCard.isFoil = IsWankulCardEligibleForFoil(wankulCard);
+                ___m_RolledCardDataList.Add(associatedCard);
 
                 if (WankulInventory.isNewWankulCard(wankulCard))
                 {

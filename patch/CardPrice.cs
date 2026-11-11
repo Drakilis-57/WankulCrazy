@@ -12,33 +12,41 @@ namespace WankulCrazyPlugin.patch
     [System.Serializable]
     public class CardPrice
     {
+        private static readonly Dictionary<string, float> SeasonPriceFactors = new Dictionary<string, float>(System.StringComparer.OrdinalIgnoreCase)
+        {
+            { "S01", 1.0f },
+            { "S02", 1.25f },
+            { "S03", 1.5f },
+            { "S04", 1.75f },
+            { "S05", 2.0f },
+            { "HS", 2.25f },
+        };
+
+        /// <summary>
+        /// Retourne le facteur multiplicatif de prix selon la saison de la carte (via SeasonId, avec repli sur 1.0).
+        /// </summary>
+        public static float GetSeasonPriceFactor(WankulCardData wankulCardData)
+        {
+            if (wankulCardData == null)
+            {
+                return 1f;
+            }
+
+            string seasonId = wankulCardData.SeasonId;
+            if (!string.IsNullOrEmpty(seasonId) && SeasonPriceFactors.TryGetValue(seasonId, out float factor))
+            {
+                return factor;
+            }
+
+            return 1f;
+        }
 
         public static float generateMarketPrice(WankulCardData wankulCardData)
         {
             // Augmenter la plage de variation aléatoire entre -2% et +2%
             float variation = UnityEngine.Random.Range(-0.02f, 0.02f);
 
-            float priceFactor = 1f;
-            if (wankulCardData.Season == Season.S01)
-            {
-                priceFactor = 1f;
-            }
-            else if (wankulCardData.Season == Season.S02)
-            {
-                priceFactor = 1.25f;
-            }
-            else if (wankulCardData.Season == Season.S03)
-            {
-                priceFactor = 1.5f;
-            }
-            else if (wankulCardData.Season == Season.S04)
-            {
-                priceFactor = 1.75f;
-            }
-            else if (wankulCardData.Season == Season.HS)
-            {
-                priceFactor = 2f;
-            }
+            float priceFactor = GetSeasonPriceFactor(wankulCardData);
 
             // Calculer le prix maximum en fonction du segment de la carte
             float priceRangeMax;

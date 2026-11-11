@@ -237,10 +237,26 @@ namespace WankulCrazyPlugin.importer
             Plugin.LogInfo("Meshes cached at start");
         }
 
+        private static readonly Dictionary<string, string> s_MeshNameAliases = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            { "DiceBox_low", "DiceBox" }
+        };
+
         private static Mesh GetCachedMesh(string name)
         {
-            Mesh mesh;
-            return OBJImporter.cachedMeshes.TryGetValue(name, out mesh) ? mesh : (Mesh)null;
+            if (string.IsNullOrEmpty(name))
+            {
+                return null;
+            }
+            if (OBJImporter.cachedMeshes.TryGetValue(name, out Mesh mesh))
+            {
+                return mesh;
+            }
+            if (s_MeshNameAliases.TryGetValue(name, out string alias) && OBJImporter.cachedMeshes.TryGetValue(alias, out mesh))
+            {
+                return mesh;
+            }
+            return null;
         }
 
         public static void DoReplace()

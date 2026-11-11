@@ -17,6 +17,50 @@ namespace WankulCrazyPlugin.importer
         public static List<RestockData> RestockDataList;
         private static bool isImported = false;
 
+        // Décale les licences Taux+ vanilla pour qu'aucun booster/display Taux+ ne se débloque avant la fin des saisons normales (Display Legacy (8) au Niv 31).
+        private static readonly Dictionary<(EItemType ItemType, bool IsBigBox), int> VanillaTauxLevelOverrides =
+            new Dictionary<(EItemType ItemType, bool IsBigBox), int>
+            {
+                { (EItemType.DestinyBasicCardPack, false), 32 },
+                { (EItemType.DestinyBasicCardPack, true), 34 },
+                { (EItemType.DestinyBasicCardBox, false), 36 },
+                { (EItemType.DestinyBasicCardBox, true), 38 },
+                { (EItemType.DestinyRareCardPack, false), 39 },
+                { (EItemType.DestinyRareCardPack, true), 41 },
+                { (EItemType.DestinyRareCardBox, false), 43 },
+                { (EItemType.DestinyRareCardBox, true), 45 },
+                { (EItemType.DestinyEpicCardPack, false), 46 },
+                { (EItemType.DestinyEpicCardPack, true), 49 },
+                { (EItemType.DestinyEpicCardBox, false), 51 },
+                { (EItemType.DestinyEpicCardBox, true), 54 },
+                { (EItemType.DestinyLegendaryCardPack, false), 56 },
+                { (EItemType.DestinyLegendaryCardPack, true), 60 },
+                { (EItemType.DestinyLegendaryCardBox, false), 65 },
+                { (EItemType.DestinyLegendaryCardBox, true), 70 },
+            };
+
+        /// <summary>
+        /// Met à jour en place les niveaux requis des licences Taux+ vanilla pour qu'elles démarrent après toutes les saisons normales.
+        /// </summary>
+        public static int ApplyVanillaTauxLevelOverrides(IList<RestockData> restockDataList)
+        {
+            if (restockDataList == null) return 0;
+
+            int updatedCount = 0;
+            for (int i = 0; i < restockDataList.Count; i++)
+            {
+                var entry = restockDataList[i];
+                if (entry == null) continue;
+
+                if (VanillaTauxLevelOverrides.TryGetValue((entry.itemType, entry.isBigBox), out int targetLevel))
+                {
+                    entry.licenseShopLevelRequired = targetLevel;
+                    updatedCount++;
+                }
+            }
+            return updatedCount;
+        }
+
         public static void ImportCustomItems()
         {
             if (isImported) return;
@@ -89,6 +133,13 @@ namespace WankulCrazyPlugin.importer
                 {
                     so.m_RestockDataList.AddRange(tauxRestockItems);
                 }
+            }
+
+            // 2.c Recaler les Taux+ vanilla pour qu'ils commencent au Niv 32 (après l'intégralité des saisons normales)
+            if (so.m_RestockDataList != null)
+            {
+                int updatedTauxCount = ApplyVanillaTauxLevelOverrides(so.m_RestockDataList);
+                Plugin.LogInfo($"[CustomItemsImporter] Niveaux Taux+ vanilla recalés sur {updatedTauxCount} licence(s) (>= Niv 32).");
             }
 
             // 3. Positionnement dans les catégories du shop (m_ShownItemType, m_ShownAccessoryItemType, m_ShownFigurineItemType)
@@ -360,24 +411,31 @@ namespace WankulCrazyPlugin.importer
                                     {
                                         mesh.materialSecondary = newMat;
                                     }
+                                    else
+                                    {
+                                        EItemType boosterType = PatchTexturesImporter.GetBoosterTypeForDisplay(currentType);
+                                        if (boosterType != EItemType.None)
+                                        {
+                                            var allBoxPaths = PatchTexturesImporter.GetBoxTexturePaths();
+                                            if (allBoxPaths.TryGetValue(boosterType, out string bPath) && File.Exists(bPath))
+                                            {
+                                                Texture2D bTex = TextureUtils.LoadTexture(bPath);
+                                                Material boosterMat = WankulCrazyPlugin.utils.ShaderUtils.CreateSafeMaterial(mesh.material);
+                                                if (boosterMat.HasProperty("_BaseColorMap")) boosterMat.SetTexture("_BaseColorMap", bTex);
+                                                if (boosterMat.HasProperty("_BaseMap")) boosterMat.SetTexture("_BaseMap", bTex);
+                                                if (boosterMat.HasProperty("_MainTex")) boosterMat.SetTexture("_MainTex", bTex);
+                                                boosterMat.hideFlags |= HideFlags.DontUnloadUnusedAsset;
+                                                mesh.materialSecondary = boosterMat;
+                                            }
+                                        }
+                                    }
                                 }
                                 else
                                 {
-                                    EItemType boosterType = PatchTexturesImporter.GetBoosterTypeForDisplay(currentType);
-                                    if (boosterType != EItemType.None)
-                                    {
-                                        var allBoxPaths = PatchTexturesImporter.GetBoxTexturePaths();
-                                        if (allBoxPaths.TryGetValue(boosterType, out string bPath) && File.Exists(bPath))
-                                        {
-                                            Texture2D bTex = TextureUtils.LoadTexture(bPath);
-                                            Material boosterMat = WankulCrazyPlugin.utils.ShaderUtils.CreateSafeMaterial(mesh.material);
-                                            if (boosterMat.HasProperty("_BaseColorMap")) boosterMat.SetTexture("_BaseColorMap", bTex);
-                                            if (boosterMat.HasProperty("_BaseMap")) boosterMat.SetTexture("_BaseMap", bTex);
-                                            if (boosterMat.HasProperty("_MainTex")) boosterMat.SetTexture("_MainTex", bTex);
-                                            boosterMat.hideFlags |= HideFlags.DontUnloadUnusedAsset;
-                                            mesh.materialSecondary = boosterMat;
-                                        }
-                                    }
+                                    // Un mesh 1.07 sans meshSecondary (1 seul submesh) ne doit jamais recevoir
+                                    // materialSecondary : sinon Item.SetMesh met 2 materiaux sur m_Mesh et Unity
+                                    // redessine la face avec la texture booster par-dessus celle du display.
+                                    mesh.materialSecondary = null;
                                 }
                                 mesh.arrayMaterialType = ItemMeshData.ItemShareTexture2DArrayMaterial.None;
                             }
@@ -538,6 +596,40 @@ namespace WankulCrazyPlugin.importer
                 Plugin.LogInfo($"[CustomItemsImporter] Added {s4Accessories.Count} accessories to m_ShownAccessoryItemType.");
             }
 
+            // Enregistrement des boosters custom dans m_CardPackItemTypeList (utilisé par les employés pour remplir l'AutoPackOpener)
+            if (so.m_CardPackItemTypeList != null)
+            {
+                var customCardPacks = new List<EItemType> { boosterStellar, boosterStellarTaux, boosterLegacy, boosterLegacyTaux };
+                foreach (var packType in customCardPacks)
+                {
+                    if (!so.m_CardPackItemTypeList.Contains(packType))
+                    {
+                        so.m_CardPackItemTypeList.Add(packType);
+                    }
+                }
+                Plugin.LogInfo($"[CustomItemsImporter] Synced custom packs to m_CardPackItemTypeList (total: {so.m_CardPackItemTypeList.Count}).");
+
+                // Synchronise également tous les employés déjà instanciés en scène
+                try
+                {
+                    if (CSingleton<WorkerManager>.Instance != null)
+                    {
+                        var workers = WorkerManager.GetWorkerList();
+                        if (workers != null)
+                        {
+                            for (int i = 0; i < workers.Count; i++)
+                            {
+                                WankulCrazyPlugin.patch.InteractableAutoPackOpenerPatch.SyncWorkerCardPackLists(workers[i]);
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Plugin.Logger.LogWarning($"[CustomItemsImporter] Worker pack list sync skipped: {ex.Message}");
+                }
+            }
+
             // Affichage exhaustif des listes pour debug immédiat dans la console
             Plugin.LogInfo("=== [SHOP DEBUG: m_ShownItemType (Boosters)] ===");
             if (so.m_ShownItemType != null)
@@ -657,7 +749,7 @@ namespace WankulCrazyPlugin.importer
                                 mesh = baseBoxMesh.mesh,
                                 material = baseBoxMesh.material,
                                 meshSecondary = baseBoxMesh.meshSecondary,
-                                materialSecondary = boosterMesh?.material ?? baseBoxMesh.materialSecondary,
+                                materialSecondary = baseBoxMesh.meshSecondary != null ? (boosterMesh?.material ?? baseBoxMesh.materialSecondary) : null,
                                 arrayMaterialType = ItemMeshData.ItemShareTexture2DArrayMaterial.None
                             };
                             return false;

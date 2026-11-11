@@ -228,5 +228,65 @@ namespace WankulCrazyPlugin.Tests
 
             Assert.True(isKnown);
         }
+
+        [Fact]
+        public void GradedAlbum_PaginationAndClamping_HandlesEmptyAndBoundaries()
+        {
+            Assert.Equal(1, GradedCardService.ComputeMaxPages(0));
+            Assert.Equal(1, GradedCardService.ComputeMaxPages(12));
+            Assert.Equal(2, GradedCardService.ComputeMaxPages(13));
+            Assert.Equal(3, GradedCardService.ComputeMaxPages(25));
+
+            Assert.Equal(1, GradedCardService.ClampPageIndex(0, 3));
+            Assert.Equal(2, GradedCardService.ClampPageIndex(2, 3));
+            Assert.Equal(3, GradedCardService.ClampPageIndex(5, 3));
+
+            Assert.Equal(10, GradedCardService.ClampGrade(14));
+            Assert.Equal(9, GradedCardService.ClampGrade(9));
+
+            Assert.Equal(2, GradedCardService.ClampSortMethodIndex(-1));
+            Assert.Equal(2, GradedCardService.ClampSortMethodIndex(6));
+            Assert.Equal(1, GradedCardService.ClampSortMethodIndex(1));
+
+            for (int btnIdx = 0; btnIdx <= GradedCardService.MaxSortButtonIndex; btnIdx++)
+            {
+                SortType sort = GradedCardService.ButtonIndexToSortType(btnIdx);
+                Assert.Equal(btnIdx, GradedCardService.SortTypeToButtonIndex(sort));
+            }
+        }
+
+        [Fact]
+        public void GradedAlbum_SortGradedEntries_SortsCorrectlyForAllModes()
+        {
+            Assert.Empty(GradedCardService.SortGradedEntries(null, SortType.Price));
+            Assert.Empty(GradedCardService.SortGradedEntries(Array.Empty<GradedAlbumEntry>(), SortType.Number));
+
+            var entries = new List<GradedAlbumEntry>
+            {
+                // idx 0: S02 #10, rareté 2 (R), 45€, Grade 7, cardKey=200 (singleton)
+                new GradedAlbumEntry(inventoryIndex: 0, cardKey: 200, seasonOrder: 1, cardNumber: 10, rarityOrder: 2, marketPrice: 45f, grade: 7),
+                // idx 1: S01 #5, rareté 7 (LO), 320€, Grade 10, cardKey=100 (doublon)
+                new GradedAlbumEntry(inventoryIndex: 1, cardKey: 100, seasonOrder: 0, cardNumber: 5, rarityOrder: 7, marketPrice: 320f, grade: 10),
+                // idx 2: S01 #5, rareté 7 (LO), 150€, Grade 8, cardKey=100 (doublon)
+                new GradedAlbumEntry(inventoryIndex: 2, cardKey: 100, seasonOrder: 0, cardNumber: 5, rarityOrder: 7, marketPrice: 150f, grade: 8),
+                // idx 3: S03 #1, rareté 4 (UR2), 500€, Grade 9, cardKey=300 (singleton)
+                new GradedAlbumEntry(inventoryIndex: 3, cardKey: 300, seasonOrder: 2, cardNumber: 1, rarityOrder: 4, marketPrice: 500f, grade: 9)
+            };
+
+            // Prix: 500€ (3), 320€ (1), 150€ (2), 45€ (0)
+            Assert.Equal(new List<int> { 3, 1, 2, 0 }, GradedCardService.SortGradedEntries(entries, SortType.Price));
+
+            // Note (Grade): 10 (1), 9 (3), 8 (2), 7 (0)
+            Assert.Equal(new List<int> { 1, 3, 2, 0 }, GradedCardService.SortGradedEntries(entries, SortType.Amount));
+
+            // Numéro de carte (Saison asc, puis Num asc, puis Grade desc): S01#5 G10 (1), S01#5 G8 (2), S02#10 (0), S03#1 (3)
+            Assert.Equal(new List<int> { 1, 2, 0, 3 }, GradedCardService.SortGradedEntries(entries, SortType.Number));
+
+            // Rareté: 7 G10 (1), 7 G8 (2), 4 (3), 2 (0)
+            Assert.Equal(new List<int> { 1, 2, 3, 0 }, GradedCardService.SortGradedEntries(entries, SortType.Rarity));
+
+            // Doublon: les 2 copies de cardKey=100 en premier (320€ puis 150€), suivies des singletons par prix desc (500€, 45€)
+            Assert.Equal(new List<int> { 1, 2, 3, 0 }, GradedCardService.SortGradedEntries(entries, SortType.Double));
+        }
     }
 }

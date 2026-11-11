@@ -820,11 +820,10 @@ namespace WankulCrazyPlugin.importer
 
                 // Lire tous les streams utilisés depuis le GPU
                 Dictionary<int, byte[]> streamBytes = new Dictionary<int, byte[]>();
-                foreach (var kvp in streamStrides)
+                foreach (int streamIndex in new List<int>(streamStrides.Keys))
                 {
-                    int streamIndex = kvp.Key;
                     int expectedStride = mesh.GetVertexBufferStride(streamIndex);
-                    if (expectedStride <= 0) expectedStride = kvp.Value;
+                    if (expectedStride <= 0) expectedStride = streamStrides[streamIndex];
                     streamStrides[streamIndex] = expectedStride;
 
                     using (GraphicsBuffer vb = mesh.GetVertexBuffer(streamIndex))

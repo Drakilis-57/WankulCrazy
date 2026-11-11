@@ -155,6 +155,12 @@ public class Plugin : BaseUnityPlugin
         );
 
         TryPatch(
+            "CardOpeningSequence.GetPackContentCardDataList",
+            AccessTools.Method(typeof(CardOpeningSequence), "GetPackContentCardDataList"),
+            prefix: AccessTools.Method(typeof(CardOpening), nameof(CardOpening.GetPackContentCardDataListPrefix))
+        );
+
+        TryPatch(
             "InteractableAutoPackOpener.OpenPack",
             AccessTools.Method(typeof(InteractableAutoPackOpener), "OpenPack"),
             prefix: AccessTools.Method(typeof(WankulCrazyPlugin.patch.InteractableAutoPackOpenerPatch), nameof(WankulCrazyPlugin.patch.InteractableAutoPackOpenerPatch.OpenPackPrefix)),
@@ -165,6 +171,30 @@ public class Plugin : BaseUnityPlugin
             "InteractableAutoPackOpener.OnMouseButtonUp",
             AccessTools.Method(typeof(InteractableAutoPackOpener), "OnMouseButtonUp"),
             prefix: AccessTools.Method(typeof(WankulCrazyPlugin.patch.InteractableAutoPackOpenerPatch), nameof(WankulCrazyPlugin.patch.InteractableAutoPackOpenerPatch.OnMouseButtonUpPrefix))
+        );
+
+        TryPatch(
+            "ShowCardObtainedPage.ShowCardObtained",
+            AccessTools.Method(typeof(ShowCardObtainedPage), "ShowCardObtained"),
+            postfix: AccessTools.Method(typeof(WankulCrazyPlugin.patch.InteractableAutoPackOpenerPatch), nameof(WankulCrazyPlugin.patch.InteractableAutoPackOpenerPatch.ShowCardObtainedPostfix))
+        );
+
+        TryPatch(
+            "Worker.InitializeCharacter",
+            AccessTools.Method(typeof(Worker), "InitializeCharacter"),
+            postfix: AccessTools.Method(typeof(WankulCrazyPlugin.patch.InteractableAutoPackOpenerPatch), nameof(WankulCrazyPlugin.patch.InteractableAutoPackOpenerPatch.SyncWorkerCardPackLists))
+        );
+
+        TryPatch(
+            "Worker.LoadWorkerSaveData",
+            AccessTools.Method(typeof(Worker), "LoadWorkerSaveData"),
+            postfix: AccessTools.Method(typeof(WankulCrazyPlugin.patch.InteractableAutoPackOpenerPatch), nameof(WankulCrazyPlugin.patch.InteractableAutoPackOpenerPatch.SyncWorkerCardPackLists))
+        );
+
+        TryPatch(
+            "WorkerSetPackOpenerTypeOptionScreen.OpenScreen",
+            AccessTools.Method(typeof(WorkerSetPackOpenerTypeOptionScreen), "OpenScreen"),
+            prefix: AccessTools.Method(typeof(WankulCrazyPlugin.patch.InteractableAutoPackOpenerPatch), nameof(WankulCrazyPlugin.patch.InteractableAutoPackOpenerPatch.WorkerSetPackOpenerTypeOptionScreenOpenPrefix))
         );
 
         TryPatch(
@@ -402,6 +432,12 @@ public class Plugin : BaseUnityPlugin
             "InteractionPlayerController.CanOpenPack",
             AccessTools.Method(typeof(InteractionPlayerController), "CanOpenPack"),
             prefix: AccessTools.Method(typeof(WankulCrazyPlugin.patch.InteractionPlayerControllerPatch), "CanOpenPack")
+        );
+
+        TryPatch(
+            "InteractionPlayerController.IsCardPackType",
+            AccessTools.Method(typeof(InteractionPlayerController), "IsCardPackType"),
+            prefix: AccessTools.Method(typeof(WankulCrazyPlugin.patch.InteractionPlayerControllerPatch), "IsCardPackType")
         );
 
         TryPatch(
