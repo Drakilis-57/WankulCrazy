@@ -1,14 +1,94 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json.Linq;
 using Xunit;
+using Xunit.Abstractions;
+using Xunit.Sdk;
 
 namespace WankulCrazyPlugin.Tests
 {
+    /// <summary>
+    /// Marks a test that depends on local-only binary/PNG assets excluded by .gitignore.
+    /// Runs locally when assets exist and skips explicitly in CI or clean checkouts.
+    /// </summary>
+    [XunitTestCaseDiscoverer("WankulCrazyPlugin.Tests.LocalAssetFactDiscoverer", "WankulCrazyPlugin.Tests")]
+    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
+    public sealed class LocalAssetFactAttribute : FactAttribute
+    {
+    }
+
+    public sealed class LocalAssetFactDiscoverer : FactDiscoverer
+    {
+        public LocalAssetFactDiscoverer(IMessageSink diagnosticMessageSink)
+            : base(diagnosticMessageSink)
+        {
+        }
+
+        protected override IXunitTestCase CreateTestCase(
+            ITestFrameworkDiscoveryOptions discoveryOptions,
+            ITestMethod testMethod,
+            IAttributeInfo factAttribute)
+        {
+            return new LocalAssetFactTestCase(
+                DiagnosticMessageSink,
+                discoveryOptions.MethodDisplayOrDefault(),
+                discoveryOptions.MethodDisplayOptionsOrDefault(),
+                testMethod);
+        }
+    }
+
+    public sealed class LocalAssetFactTestCase : XunitTestCase
+    {
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [Obsolete("Called by the de-serializer; should only be called by deriving classes for de-serialization purposes")]
+        public LocalAssetFactTestCase()
+        {
+        }
+
+        public LocalAssetFactTestCase(
+            IMessageSink diagnosticMessageSink,
+            TestMethodDisplay defaultMethodDisplay,
+            TestMethodDisplayOptions defaultMethodDisplayOptions,
+            ITestMethod testMethod,
+            object[]? testMethodArguments = null)
+            : base(diagnosticMessageSink, defaultMethodDisplay, defaultMethodDisplayOptions, testMethod, testMethodArguments)
+        {
+        }
+
+        protected override string GetSkipReason(IAttributeInfo factAttribute)
+        {
+            return CustomAssetIntegrityTests.GetLocalAssetsSkipReason() ?? base.GetSkipReason(factAttribute);
+        }
+    }
+
     public class CustomAssetIntegrityTests
     {
+        internal static string? GetLocalAssetsSkipReason()
+        {
+            if (string.Equals(Environment.GetEnvironmentVariable("CI"), "true", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(Environment.GetEnvironmentVariable("GITHUB_ACTIONS"), "true", StringComparison.OrdinalIgnoreCase))
+            {
+                return "Local PNG/texture assets are excluded by .gitignore and absent in CI.";
+            }
+
+            string rootPath = GetProjectRootPath();
+            bool hasAnyAssetDir =
+                Directory.Exists(Path.Combine(rootPath, "data", "customitems", "icons"))
+                || Directory.Exists(Path.Combine(rootPath, "data", "customitems", "textures"))
+                || Directory.Exists(Path.Combine(rootPath, "data", "patchtextures"));
+
+            if (!hasAnyAssetDir)
+            {
+                return "Local PNG/texture asset directories are absent (excluded by .gitignore).";
+            }
+
+            return null;
+        }
+
         private static string GetProjectRootPath()
         {
             string? rootPath = AppDomain.CurrentDomain.BaseDirectory;
@@ -23,7 +103,68 @@ namespace WankulCrazyPlugin.Tests
             return rootPath;
         }
 
+        private static List<(string SourcePath, string TargetPath)> ExtractPatchTexturePngReferences(string rootPath)
+        {
+            string[] sourceRelativePaths = new[]
+            {
+                Path.Combine("importer", "PatchTexturesImporter.cs"),
+                Path.Combine("patch", "InteractionPlayerControllerPatch.cs")
+            };
+
+            // Regex matches: Path.Combine(Plugin.GetPluginPath(), "data", ... )
+            Regex pathCombineRegex = new Regex(
+                @"Path\.Combine\s*\(\s*Plugin\.GetPluginPath\(\)\s*,\s*(""data""[^)]+)\)",
+                RegexOptions.Compiled);
+
+            Regex stringLiteralRegex = new Regex(@"""([^""]+)""", RegexOptions.Compiled);
+            var references = new List<(string SourcePath, string TargetPath)>();
+
+            foreach (string relSourcePath in sourceRelativePaths)
+            {
+                string fullSourcePath = Path.Combine(rootPath, relSourcePath);
+                Assert.True(File.Exists(fullSourcePath), $"Source file not found at: {fullSourcePath}");
+
+                string code = File.ReadAllText(fullSourcePath);
+                MatchCollection matches = pathCombineRegex.Matches(code);
+
+                foreach (Match match in matches)
+                {
+                    string argsBlock = match.Groups[1].Value;
+                    MatchCollection stringMatches = stringLiteralRegex.Matches(argsBlock);
+
+                    var pathSegments = new List<string>();
+                    foreach (Match strMatch in stringMatches)
+                    {
+                        pathSegments.Add(strMatch.Groups[1].Value);
+                    }
+
+                    if (pathSegments.Count == 0) continue;
+
+                    string lastSegment = pathSegments[pathSegments.Count - 1];
+                    if (!lastSegment.EndsWith(".png", StringComparison.OrdinalIgnoreCase))
+                    {
+                        continue;
+                    }
+
+                    string targetFilePath = Path.Combine(rootPath, Path.Combine(pathSegments.ToArray()));
+                    references.Add((relSourcePath, targetFilePath));
+                }
+            }
+
+            return references;
+        }
+
         [Fact]
+        public void PatchTextures_CodeReferences_ExtractsValidPngPaths()
+        {
+            string rootPath = GetProjectRootPath();
+            var references = ExtractPatchTexturePngReferences(rootPath);
+
+            Assert.NotEmpty(references);
+            Assert.All(references, r => Assert.EndsWith(".png", r.TargetPath, StringComparison.OrdinalIgnoreCase));
+        }
+
+        [LocalAssetFact]
         public void CustomItems_ItemDataList_AllIconsExist()
         {
             string rootPath = GetProjectRootPath();
@@ -58,7 +199,7 @@ namespace WankulCrazyPlugin.Tests
                 $"Missing icon files for custom items:\n{string.Join("\n", missingIcons)}");
         }
 
-        [Fact]
+        [LocalAssetFact]
         public void CustomItems_ItemMeshDataList_AllTexturesExist()
         {
             string rootPath = GetProjectRootPath();
@@ -96,65 +237,19 @@ namespace WankulCrazyPlugin.Tests
                 $"Missing texture files for mesh entries:\n{string.Join("\n", missingTextures)}");
         }
 
-        [Fact]
+        [LocalAssetFact]
         public void PatchTextures_CodeReferences_AllPngLiteralsExist()
         {
             string rootPath = GetProjectRootPath();
+            var references = ExtractPatchTexturePngReferences(rootPath);
 
-            string[] sourceRelativePaths = new[]
-            {
-                Path.Combine("importer", "PatchTexturesImporter.cs"),
-                Path.Combine("patch", "InteractionPlayerControllerPatch.cs")
-            };
+            Assert.True(references.Count > 0, "No Path.Combine PNG literal references were extracted.");
 
-            // Regex matches: Path.Combine(Plugin.GetPluginPath(), "data", ... )
-            Regex pathCombineRegex = new Regex(
-                @"Path\.Combine\s*\(\s*Plugin\.GetPluginPath\(\)\s*,\s*(""data""[^)]+)\)",
-                RegexOptions.Compiled);
+            var missingFiles = references
+                .Where(r => !File.Exists(r.TargetPath))
+                .Select(r => $"{r.SourcePath} references missing file: '{r.TargetPath}'")
+                .ToList();
 
-            Regex stringLiteralRegex = new Regex(@"""([^""]+)""", RegexOptions.Compiled);
-
-            var missingFiles = new List<string>();
-            int testedPathCount = 0;
-
-            foreach (string relSourcePath in sourceRelativePaths)
-            {
-                string fullSourcePath = Path.Combine(rootPath, relSourcePath);
-                Assert.True(File.Exists(fullSourcePath), $"Source file not found at: {fullSourcePath}");
-
-                string code = File.ReadAllText(fullSourcePath);
-                MatchCollection matches = pathCombineRegex.Matches(code);
-
-                foreach (Match match in matches)
-                {
-                    string argsBlock = match.Groups[1].Value;
-                    MatchCollection stringMatches = stringLiteralRegex.Matches(argsBlock);
-
-                    var pathSegments = new List<string>();
-                    foreach (Match strMatch in stringMatches)
-                    {
-                        pathSegments.Add(strMatch.Groups[1].Value);
-                    }
-
-                    if (pathSegments.Count == 0) continue;
-
-                    string lastSegment = pathSegments[pathSegments.Count - 1];
-                    if (!lastSegment.EndsWith(".png", StringComparison.OrdinalIgnoreCase))
-                    {
-                        continue;
-                    }
-
-                    testedPathCount++;
-                    string targetFilePath = Path.Combine(rootPath, Path.Combine(pathSegments.ToArray()));
-
-                    if (!File.Exists(targetFilePath))
-                    {
-                        missingFiles.Add($"{relSourcePath} references missing file: '{targetFilePath}'");
-                    }
-                }
-            }
-
-            Assert.True(testedPathCount > 0, "No Path.Combine PNG literal references were extracted.");
             Assert.True(missingFiles.Count == 0,
                 $"Missing PNG assets referenced in source code:\n{string.Join("\n", missingFiles)}");
         }
