@@ -38,12 +38,16 @@ public class JsonImporter
         {
             try
             {
-                string jsonContent = File.ReadAllText(legacyPath, System.Text.Encoding.UTF8);
-                JToken token = JToken.Parse(jsonContent);
-                List<WankulCardData> cards = DeserializeToken(token);
-                foreach (var card in cards)
+                using (var stream = new FileStream(legacyPath, FileMode.Open, FileAccess.Read, FileShare.Read))
+                using (var streamReader = new StreamReader(stream, System.Text.Encoding.UTF8))
+                using (var jsonReader = new JsonTextReader(streamReader))
                 {
-                    RegisterCard(card);
+                    JToken token = JToken.ReadFrom(jsonReader);
+                    List<WankulCardData> cards = DeserializeToken(token);
+                    foreach (var card in cards)
+                    {
+                        RegisterCard(card);
+                    }
                 }
             }
             catch (Exception ex)
@@ -62,12 +66,16 @@ public class JsonImporter
             {
                 try
                 {
-                    string jsonContent = File.ReadAllText(filePath, System.Text.Encoding.UTF8);
-                    JToken token = JToken.Parse(jsonContent);
-                    List<WankulCardData> cards = DeserializeToken(token);
-                    foreach (var card in cards)
+                    using (var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
+                    using (var streamReader = new StreamReader(stream, System.Text.Encoding.UTF8))
+                    using (var jsonReader = new JsonTextReader(streamReader))
                     {
-                        RegisterCard(card);
+                        JToken token = JToken.ReadFrom(jsonReader);
+                        List<WankulCardData> cards = DeserializeToken(token);
+                        foreach (var card in cards)
+                        {
+                            RegisterCard(card);
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -233,20 +241,21 @@ public class JsonImporter
 
         // Fallback synchrone pour les tests unitaires headless
         string pluginPath = Plugin.GetPluginPath();
+        WankulLoadingScreen.EnsureFileIndexInitialized(pluginPath);
         foreach (var card in cardsData.cards)
         {
             if (!string.IsNullOrEmpty(card.TexturePath))
             {
-                string texturepath = Path.Combine(pluginPath, "data", card.TexturePath);
+                string texturepath = WankulLoadingScreen.ResolveExistingPath(Path.Combine(pluginPath, "data", card.TexturePath));
                 string texturepathmask = WankulLoadingScreen.ResolveMaskPath(card, pluginPath);
 
                 try
                 {
-                    Texture2D texture = LoadTexture(texturepath);
+                    Texture2D texture = texturepath != null ? LoadTexture(texturepath) : null;
                     Texture2D texturemask = null;
 
                     bool isFoil = WankulLoadingScreen.IsCardFoil(card);
-                    if (texturepathmask != null && File.Exists(texturepathmask))
+                    if (texturepathmask != null)
                     {
                         texturemask = LoadTexture(texturepathmask);
                     }
@@ -255,7 +264,7 @@ public class JsonImporter
                     {
                         card.Texture = texture;
                     }
-                    else
+                    else if (texturepath != null)
                     {
                         Plugin.Logger?.LogError("Failed to load texture: " + texturepath);
                     }
@@ -264,7 +273,7 @@ public class JsonImporter
                     {
                         card.TextureMask = texturemask;
                     }
-                    else if (texturepathmask != null && File.Exists(texturepathmask))
+                    else if (texturepathmask != null)
                     {
                         Plugin.Logger?.LogError("Failed to load texture mask: " + texturepathmask);
                     }
@@ -273,25 +282,27 @@ public class JsonImporter
                         Plugin.LogDebug($"[Foil] Aucun masque trouve pour la carte foil {card.Title} (#{card.Number})");
                     }
 
-                    Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
+                    Sprite sprite = texture != null ? Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), 100f, 0, SpriteMeshType.FullRect) : null;
                     Sprite spritemask = null;
 
                     if (texturemask != null)
                     {
-                        spritemask = Sprite.Create(texturemask, new Rect(0, 0, texturemask.width, texturemask.height), new Vector2(0.5f, 0.5f));
+                        spritemask = Sprite.Create(texturemask, new Rect(0, 0, texturemask.width, texturemask.height), new Vector2(0.5f, 0.5f), 100f, 0, SpriteMeshType.FullRect);
                     }
 
                     if (sprite != null)
                     {
+                        sprite.hideFlags |= HideFlags.DontUnloadUnusedAsset;
                         card.Sprite = sprite;
                     }
-                    else
+                    else if (texture != null)
                     {
                         Plugin.Logger?.LogError("Failed to create sprite: " + texturepath);
                     }
 
                     if (spritemask != null)
                     {
+                        spritemask.hideFlags |= HideFlags.DontUnloadUnusedAsset;
                         card.SpriteMask = spritemask;
                     }
                     else if (texturemask != null)
@@ -309,17 +320,20 @@ public class JsonImporter
 
     private static Texture2D LoadTexture(string path)
     {
-        if (!System.IO.File.Exists(path))
+        string resolved = WankulLoadingScreen.ResolveExistingPath(path);
+        if (resolved == null)
         {
             return null;
         }
-        byte[] bytes = System.IO.File.ReadAllBytes(path);
+        byte[] bytes = System.IO.File.ReadAllBytes(resolved);
         Texture2D texture = new Texture2D(2, 2, TextureFormat.RGBA32, false);
-        if (texture.LoadImage(bytes))
+        if (texture.LoadImage(bytes, true))
         {
             texture.wrapMode = TextureWrapMode.Clamp;
+            texture.hideFlags |= HideFlags.DontUnloadUnusedAsset;
             return texture;
         }
+        UnityEngine.Object.Destroy(texture);
         return null;
     }
 }

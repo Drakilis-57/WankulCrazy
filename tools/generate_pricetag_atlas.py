@@ -51,7 +51,28 @@ MAPPING = {
 
     # Classeurs
     54: ("Icon_ItemCollectionBook.png", 8),
-    75: ("Icon_PremiumCollectionBook.png", 8),
+    80: ("Icon_PremiumCollectionBook.png", 8),
+
+    # Figurines / Peluches (Toy_*)
+    59: ("Icon_PiggyA.png", 8),
+    60: ("Icon_GolemA.png", 8),
+    61: ("Icon_StarfishA.png", 8),
+    62: ("Icon_BatA.png", 8),
+    65: ("Icon_Toy_PiggyB.png", 8),
+    66: ("Icon_Toy_PiggyC.png", 8),
+    67: ("Icon_Toy_PiggyD.png", 8),
+    68: ("Icon_Toy_GolemB.png", 8),
+    69: ("Icon_Toy_GolemC.png", 8),
+    70: ("Icon_Toy_GolemD.png", 8),
+    71: ("Icon_Toy_StarfishB.png", 8),
+    72: ("Icon_Toy_StarfishC.png", 8),
+    73: ("Icon_Toy_StarfishD.png", 8),
+    74: ("Icon_Toy_BatB.png", 8),
+    75: ("Icon_Toy_BatC.png", 8),
+    76: ("Icon_Toy_BatD.png", 8),
+    77: ("Icon_Toy_Beetle.png", 8),
+    78: ("Icon_Toy_FoxB.png", 8),
+    79: ("Icon_Toy_ToonZ.png", 8),
 
     # Dés D20
     55: ("Icon_D20DiceBox.png", 8),
@@ -269,6 +290,8 @@ def paste_centered(atlas, sprite_path, cell_idx, padding=8):
     # Traitement spécifique par plage de cellules (Mission 3)
     if 50 <= cell_idx <= 53:
         im = prepare_deckbox_icon(im, sprite_path)
+    elif 59 <= cell_idx <= 80:
+        im = trim_uniform_border(im)
     elif 89 <= cell_idx <= 94:
         im = prepare_sleeve_icon(im, sprite_path)
 

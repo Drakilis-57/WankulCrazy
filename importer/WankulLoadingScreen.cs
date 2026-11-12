@@ -1,13 +1,43 @@
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 using WankulCrazyPlugin.cards;
 
 namespace WankulCrazyPlugin.importer
 {
+    /// <summary>
+    /// Payload transféré du producteur I/O d'arrière-plan vers le consommateur (main thread Unity).
+    /// Regroupe de manière atomique la carte, sa texture principale et son masque foil éventuel.
+    /// </summary>
+    internal sealed class CardTexturePayload
+    {
+        public WankulCardData Card;
+        public string TexturePath;
+        public byte[] TextureBytes;
+        public string MaskPath;
+        public byte[] MaskBytes;
+        public bool HasTextureError;
+        public string ErrorMessage;
+
+        public void Reset()
+        {
+            Card = null;
+            TexturePath = null;
+            TextureBytes = null;
+            MaskPath = null;
+            MaskBytes = null;
+            HasTextureError = false;
+            ErrorMessage = null;
+        }
+    }
+
     public class WankulLoadingScreen : MonoBehaviour
     {
         private static WankulLoadingScreen _instance;
@@ -19,10 +49,66 @@ namespace WankulCrazyPlugin.importer
         /// A utiliser pour bloquer l'ouverture de boosters / de l'album.</summary>
         public static bool IsLoading { get; private set; }
 
-        // Budget de temps par frame (ms) : plus fluide qu'un nombre d'images fixe.
+        // Budget de temps par frame (ms) pour garantir la fluidité UGUI du main thread Unity.
         private const float FrameBudgetMs = 12f;
-        // Une carte qui met plus longtemps que ca est loggee.
+        // Une carte dont le traitement dépasse ce seuil est loggée en avertissement.
         private const long SlowCardMs = 250;
+        // Capacité bornée du buffer producteur/consommateur (limite l'empreinte RAM à ~3-5 Mo en moyenne tout en évitant la famine).
+        private const int BoundedQueueCapacity = 32;
+        // Nombre de threads I/O parallèles pour saturer le débit disque sans bloquer le thread principal.
+        private const int MaxIoWorkers = 3;
+
+        // Gestion de l'annulation (changement de scène, destruction du composant, fermeture)
+        private CancellationTokenSource _cts;
+        private BlockingCollection<CardTexturePayload> _queue;
+
+        #region Pool de Payloads (Réduction GC)
+
+        private static readonly ConcurrentQueue<CardTexturePayload> _payloadPool = new ConcurrentQueue<CardTexturePayload>();
+
+        private static CardTexturePayload RentPayload()
+        {
+            if (_payloadPool.TryDequeue(out var payload))
+            {
+                return payload;
+            }
+            return new CardTexturePayload();
+        }
+
+        private static void ReturnPayload(CardTexturePayload payload)
+        {
+            if (payload == null) return;
+            payload.Reset();
+            if (_payloadPool.Count < 64)
+            {
+                _payloadPool.Enqueue(payload);
+            }
+        }
+
+        #endregion
+
+        #region Cache d'Index de Fichiers (Élimination des 10 000 syscalls File.Exists)
+
+        /// <summary>
+        /// Initialise l'index des fichiers de data/ en mémoire une seule fois via WankulFileIndex.
+        /// Insensible à la casse et aux séparateurs '/' ou '\'.
+        /// </summary>
+        public static void EnsureFileIndexInitialized(string pluginPath) => WankulFileIndex.EnsureInitialized(pluginPath);
+
+        /// <summary>
+        /// Invalide le cache d'index de fichiers (utile lors d'ajouts dynamiques de fichiers).
+        /// </summary>
+        public static void InvalidateFileIndex() => WankulFileIndex.Invalidate();
+
+        public static string ResolveExistingPath(string path) => WankulFileIndex.ResolveExistingPath(path);
+
+        public static string ResolveMaskPath(WankulCardData card, string pluginPath) => WankulFileIndex.ResolveMaskPath(card, pluginPath);
+
+        public static bool IsCardFoil(WankulCardData card) => WankulFileIndex.IsCardFoil(card);
+
+        #endregion
+
+        #region Point d'Entrée & Cycle de Vie MonoBehaviour
 
         public static void ShowAndStartLoading(List<WankulCardData> cards, Action onComplete)
         {
@@ -50,8 +136,45 @@ namespace WankulCrazyPlugin.importer
 
         private void OnDestroy()
         {
+            CleanupResources();
             IsLoading = false;
             if (_instance == this) _instance = null;
+        }
+
+        private void CleanupResources()
+        {
+            try
+            {
+                if (_cts != null && !_cts.IsCancellationRequested)
+                {
+                    _cts.Cancel();
+                }
+            }
+            catch { }
+
+            if (_queue != null)
+            {
+                try
+                {
+                    while (_queue.TryTake(out var p))
+                    {
+                        ReturnPayload(p);
+                    }
+                    _queue.Dispose();
+                }
+                catch { }
+                _queue = null;
+            }
+
+            if (_cts != null)
+            {
+                try
+                {
+                    _cts.Dispose();
+                }
+                catch { }
+                _cts = null;
+            }
         }
 
         private void CreateUI()
@@ -82,6 +205,169 @@ namespace WankulCrazyPlugin.importer
             _canvas.enabled = false;
         }
 
+        #endregion
+
+        #region Pipeline Asynchrone Producer / Consumer
+
+        /// <summary>
+        /// Producteur multi-thread exécuté en arrière-plan sur le ThreadPool (Task.Run).
+        /// Indexe data/ puis lit en parallèle les octets bruts PNG/JPG sans bloquer le main thread Unity.
+        /// BoundedQueueCapacity borne la mémoire vive occupée par les tampons en attente.
+        /// </summary>
+        private static void ProduceCardPayloads(
+            List<WankulCardData> cards,
+            string pluginPath,
+            BlockingCollection<CardTexturePayload> queue,
+            CancellationToken ct)
+        {
+            try
+            {
+                EnsureFileIndexInitialized(pluginPath);
+
+                int total = cards.Count;
+                if (total == 0) return;
+
+                int sharedCursor = -1;
+                int workerCount = Math.Min(MaxIoWorkers, Math.Max(1, Math.Min(total, Environment.ProcessorCount / 2)));
+
+                if (workerCount <= 1)
+                {
+                    ProducerWorkerLoop(cards, pluginPath, queue, ref sharedCursor, ct);
+                }
+                else
+                {
+                    var workers = new Task[workerCount];
+                    for (int w = 0; w < workerCount; w++)
+                    {
+                        workers[w] = Task.Run(() => ProducerWorkerLoop(cards, pluginPath, queue, ref sharedCursor, ct), CancellationToken.None);
+                    }
+                    Task.WaitAll(workers);
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                // Arrêt propre en cas de cancellation (changement de scène, destruction)
+            }
+            catch (AggregateException aex)
+            {
+                bool allCanceled = true;
+                foreach (var inner in aex.Flatten().InnerExceptions)
+                {
+                    if (!(inner is OperationCanceledException))
+                    {
+                        allCanceled = false;
+                        break;
+                    }
+                }
+                if (!allCanceled)
+                {
+                    Plugin.Logger?.LogError($"[WankulLoadingScreen] Producer task error: {aex.InnerException?.Message ?? aex.Message}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Plugin.Logger?.LogError($"[WankulLoadingScreen] Producer task fatal error: {ex.Message}");
+            }
+            finally
+            {
+                try
+                {
+                    queue.CompleteAdding();
+                }
+                catch { }
+            }
+        }
+
+        private static void ProducerWorkerLoop(
+            List<WankulCardData> cards,
+            string pluginPath,
+            BlockingCollection<CardTexturePayload> queue,
+            ref int sharedCursor,
+            CancellationToken ct)
+        {
+            int count = cards.Count;
+            while (!ct.IsCancellationRequested)
+            {
+                int i = Interlocked.Increment(ref sharedCursor);
+                if (i >= count) break;
+
+                var card = cards[i];
+                var payload = RentPayload();
+                bool enqueued = false;
+
+                try
+                {
+                    payload.Card = card;
+
+                    // Si la carte a déjà sa texture et son sprite prêts (ex: second passage), passer rapidement
+                    if (card.Texture != null && card.Sprite != null && (!IsCardFoil(card) || card.TextureMask != null))
+                    {
+                        payload.TexturePath = card.TexturePath;
+                        queue.Add(payload, ct);
+                        enqueued = true;
+                        continue;
+                    }
+
+                    if (string.IsNullOrEmpty(card.TexturePath))
+                    {
+                        queue.Add(payload, ct);
+                        enqueued = true;
+                        continue;
+                    }
+
+                    // Résolution O(1) via l'index en mémoire (0 syscall disque)
+                    string texturePath = ResolveExistingPath(Path.Combine(pluginPath, "data", card.TexturePath));
+                    payload.TexturePath = texturePath;
+
+                    string maskPath = ResolveMaskPath(card, pluginPath);
+                    payload.MaskPath = maskPath;
+
+                    // Lecture disque I/O en tâche d'arrière-plan
+                    if (texturePath != null)
+                    {
+                        try
+                        {
+                            payload.TextureBytes = File.ReadAllBytes(texturePath);
+                        }
+                        catch (Exception ex)
+                        {
+                            payload.HasTextureError = true;
+                            payload.ErrorMessage = $"Error reading texture file {texturePath}: {ex.Message}";
+                        }
+                    }
+
+                    // Lecture du masque foil en tâche d'arrière-plan
+                    if (maskPath != null && !ct.IsCancellationRequested)
+                    {
+                        try
+                        {
+                            payload.MaskBytes = File.ReadAllBytes(maskPath);
+                        }
+                        catch (Exception ex)
+                        {
+                            Plugin.Logger?.LogWarning($"[WankulLoadingScreen] Error reading mask {maskPath}: {ex.Message}");
+                        }
+                    }
+
+                    // Ajout bloquant dans la collection bornée (backpressure automatique si le buffer est plein)
+                    queue.Add(payload, ct);
+                    enqueued = true;
+                }
+                finally
+                {
+                    if (!enqueued)
+                    {
+                        ReturnPayload(payload);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Coroutine consommatrice sur le thread principal d'Unity.
+        /// Dépile les octets déjà en mémoire, appelle Texture2D.LoadImage(markNonReadable: true) et Sprite.Create,
+        /// puis met à jour la barre de progression de manière fluide à chaque frame.
+        /// </summary>
         private IEnumerator LoadCardsCoroutine(List<WankulCardData> cards, Action onComplete)
         {
             if (cards == null || cards.Count == 0)
@@ -97,210 +383,231 @@ namespace WankulCrazyPlugin.importer
             yield return null;
 
             string pluginPath = Plugin.GetPluginPath();
+
             int total = cards.Count;
             int loaded = 0;
             int missing = 0;
             int failed = 0;
-            var totalWatch = System.Diagnostics.Stopwatch.StartNew();
-            var frameWatch = System.Diagnostics.Stopwatch.StartNew();
+            int lastUiLoaded = -1;
 
-            for (int i = 0; i < total; i++)
+            _cts = new CancellationTokenSource();
+            var ct = _cts.Token;
+            _queue = new BlockingCollection<CardTexturePayload>(BoundedQueueCapacity);
+
+            // Démarrage du pool de producteurs I/O sur le ThreadPool (inclut l'indexation hors main thread)
+            Task.Run(() => ProduceCardPayloads(cards, pluginPath, _queue, ct), ct);
+
+            var totalWatch = Stopwatch.StartNew();
+            var frameWatch = Stopwatch.StartNew();
+
+            while (!ct.IsCancellationRequested && (!_queue.IsCompleted || _queue.Count > 0))
             {
-                var cardWatch = System.Diagnostics.Stopwatch.StartNew();
-                LoadCardTextures(cards[i], pluginPath, ref missing, ref failed);
-                if (cardWatch.ElapsedMilliseconds > SlowCardMs)
+                if (this == null || !gameObject.activeInHierarchy)
                 {
-                    Plugin.Logger?.LogWarning($"[WankulLoadingScreen] Carte lente ({cardWatch.ElapsedMilliseconds} ms) : {cards[i].Title} ({cards[i].TexturePath})");
+                    // L'objet Unity a été détruit (changement de scène ou arrêt)
+                    CleanupResources();
+                    yield break;
                 }
 
-                loaded++;
-
-                if (frameWatch.ElapsedMilliseconds >= FrameBudgetMs || loaded == total)
+                // Dépiler tout ce qui est prêt dans le budget de la frame courante (12 ms)
+                while (!ct.IsCancellationRequested &&
+                       frameWatch.Elapsed.TotalMilliseconds < FrameBudgetMs &&
+                       _queue.TryTake(out CardTexturePayload payload))
                 {
-                    float progress = (float)loaded / total;
+                    long cardStartTicks = frameWatch.ElapsedTicks;
+                    ProcessCardPayload(payload, ref missing, ref failed);
+                    double cardMs = (frameWatch.ElapsedTicks - cardStartTicks) * 1000.0 / Stopwatch.Frequency;
+
+                    if (cardMs > SlowCardMs && payload.Card != null)
+                    {
+                        Plugin.Logger?.LogWarning($"[WankulLoadingScreen] Carte lente ({cardMs:F1} ms) : {payload.Card.Title} ({payload.Card.TexturePath})");
+                    }
+
+                    ReturnPayload(payload);
+                    loaded++;
+                }
+
+                // Mettre à jour l'UI à chaque frame où au moins une carte a progressé (progression 100% fluide)
+                if (loaded != lastUiLoaded)
+                {
+                    lastUiLoaded = loaded;
+                    float progress = total > 0 ? (float)loaded / total : 1f;
                     _progressBarFill.fillAmount = progress;
                     _statusText.text = $"Chargement des cartes : {loaded} / {total} ({(int)(progress * 100)}%)";
+                }
+
+                if (!ct.IsCancellationRequested && (!_queue.IsCompleted || _queue.Count > 0))
+                {
                     yield return null;
                     frameWatch.Restart();
                 }
             }
 
-            Plugin.LogInfo($"[WankulLoadingScreen] {total} cartes traitees en {totalWatch.ElapsedMilliseconds} ms ({missing} sans fichier texture, {failed} en echec).");
-            if (missing > 0)
+            if (ct.IsCancellationRequested)
             {
-                Plugin.Logger?.LogWarning($"[WankulLoadingScreen] {missing} carte(s) ont un TexturePath introuvable dans data/.");
+                Plugin.Logger?.LogWarning("[WankulLoadingScreen] Chargement interrompu (changement de scene ou destruction).");
+            }
+            else
+            {
+                Plugin.LogInfo($"[WankulLoadingScreen] {total} cartes traitees en {totalWatch.ElapsedMilliseconds} ms ({missing} sans fichier texture, {failed} en echec).");
+                if (missing > 0)
+                {
+                    Plugin.Logger?.LogWarning($"[WankulLoadingScreen] {missing} carte(s) ont un TexturePath introuvable dans data/.");
+                }
+
+                _statusText.text = "Chargement termine !";
+                yield return new WaitForSecondsRealtime(0.2f);
             }
 
-            _statusText.text = "Chargement termine !";
-            yield return new WaitForSeconds(0.3f);
+            CleanupResources();
 
-            _canvas.enabled = false;
+            if (_canvas != null) _canvas.enabled = false;
             IsLoading = false;
             onComplete?.Invoke();
         }
 
-        private static void LoadCardTextures(WankulCardData card, string pluginPath, ref int missing, ref int failed)
+        /// <summary>
+        /// Traite un payload sur le main thread Unity : création de Texture2D et Sprite.
+        /// Synchronise de manière atomique la texture principale et le masque foil pour éviter tout décalage.
+        /// </summary>
+        private static void ProcessCardPayload(CardTexturePayload payload, ref int missing, ref int failed)
         {
+            if (payload == null || payload.Card == null) return;
+            var card = payload.Card;
+
             if (string.IsNullOrEmpty(card.TexturePath)) return;
 
-            string texturePath = ResolveExistingPath(Path.Combine(pluginPath, "data", card.TexturePath));
-            string maskPath = ResolveMaskPath(card, pluginPath);
-
-            try
+            // 1. Texture principale
+            if (card.Texture == null || card.Sprite == null)
             {
-                if (texturePath != null)
+                if (payload.HasTextureError || payload.TextureBytes == null)
                 {
-                    Texture2D texture = LoadTexture(texturePath);
-                    if (texture != null)
+                    if (payload.TexturePath == null)
                     {
-                        card.Texture = texture;
-                        card.Sprite = CreateSprite(texture);
+                        missing++;
+                        Plugin.LogDebug($"Texture introuvable : {card.TexturePath}");
                     }
                     else
                     {
                         failed++;
-                        Plugin.Logger?.LogWarning($"Texture illisible : {card.TexturePath}");
+                        if (!string.IsNullOrEmpty(payload.ErrorMessage))
+                        {
+                            Plugin.Logger?.LogWarning($"[WankulLoadingScreen] {payload.ErrorMessage}");
+                        }
                     }
                 }
                 else
                 {
-                    missing++;
-                    Plugin.LogDebug($"Texture introuvable : {Path.Combine(pluginPath, "data", card.TexturePath)}");
-                }
-
-                // Le masque est optionnel : son absence est normale.
-                bool isFoil = IsCardFoil(card);
-                if (maskPath != null)
-                {
-                    Texture2D mask = LoadTexture(maskPath);
-                    if (mask != null)
+                    try
                     {
+                        Texture2D texture = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+                        // markNonReadable : true libère la mémoire CPU dès l'envoi sur GPU (~2x moins de RAM).
+                        if (texture.LoadImage(payload.TextureBytes, true))
+                        {
+                            texture.wrapMode = TextureWrapMode.Clamp;
+                            texture.hideFlags |= HideFlags.DontUnloadUnusedAsset;
+                            card.Texture = texture;
+                            card.Sprite = CreateSprite(texture);
+                        }
+                        else
+                        {
+                            failed++;
+                            UnityEngine.Object.Destroy(texture);
+                            Plugin.Logger?.LogWarning($"Texture illisible (LoadImage failed) : {card.TexturePath}");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        failed++;
+                        Plugin.Logger?.LogWarning($"Texture load exception for {card.TexturePath}: {ex.Message}");
+                    }
+                }
+            }
+
+            // 2. Masque Foil (strictement synchronisé avec la carte principale)
+            bool isFoil = IsCardFoil(card);
+            if (payload.MaskBytes != null && (card.TextureMask == null || card.SpriteMask == null))
+            {
+                try
+                {
+                    Texture2D mask = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+                    if (mask.LoadImage(payload.MaskBytes, true))
+                    {
+                        mask.wrapMode = TextureWrapMode.Clamp;
+                        mask.hideFlags |= HideFlags.DontUnloadUnusedAsset;
                         card.TextureMask = mask;
                         card.SpriteMask = CreateSprite(mask);
                     }
-                    else if (isFoil)
+                    else
                     {
-                        Plugin.Logger?.LogWarning($"[Foil] Le masque a echoue au chargement pour la carte foil {card.Title} (#{card.Number}): {maskPath}");
+                        UnityEngine.Object.Destroy(mask);
+                        if (isFoil)
+                        {
+                            Plugin.Logger?.LogWarning($"[Foil] Le masque a echoue au chargement pour la carte foil {card.Title} (#{card.Number}): {payload.MaskPath}");
+                        }
                     }
                 }
-                else if (isFoil)
+                catch (Exception ex)
+                {
+                    if (isFoil)
+                    {
+                        Plugin.Logger?.LogWarning($"[Foil] Exception lors du chargement du masque pour {card.Title}: {ex.Message}");
+                    }
+                }
+            }
+            else if (isFoil && card.TextureMask == null)
+            {
+                if (payload.MaskPath != null)
+                {
+                    Plugin.Logger?.LogWarning($"[Foil] Le masque a echoue au chargement pour la carte foil {card.Title} (#{card.Number}): {payload.MaskPath}");
+                }
+                else
                 {
                     Plugin.LogDebug($"[Foil] Aucun masque trouve pour la carte foil {card.Title} (#{card.Number})");
                 }
             }
+        }
+
+        #endregion
+
+        #region Helpers de Création Directe (Compatibilité & Fallback)
+
+        public static Texture2D LoadTexture(string path)
+        {
+            if (string.IsNullOrEmpty(path)) return null;
+            string resolved = ResolveExistingPath(path);
+            if (resolved == null) return null;
+
+            try
+            {
+                byte[] bytes = File.ReadAllBytes(resolved);
+                Texture2D texture = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+                if (!texture.LoadImage(bytes, true))
+                {
+                    UnityEngine.Object.Destroy(texture);
+                    return null;
+                }
+                texture.wrapMode = TextureWrapMode.Clamp;
+                texture.hideFlags |= HideFlags.DontUnloadUnusedAsset;
+                return texture;
+            }
             catch (Exception ex)
             {
-                failed++;
-                Plugin.Logger?.LogWarning($"Texture load failed for {card.TexturePath}: {ex.Message}");
-            }
-        }
-
-        public static bool IsCardFoil(WankulCardData card)
-        {
-            if (card is EffigyCardData effigyCard)
-            {
-                var rarityData = RaritiesManager.GetRarity(effigyCard.RarityId);
-                if ((rarityData != null && rarityData.IsEligibleForFoil) || effigyCard.Rarity >= Rarity.UR1)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        public static string ResolveMaskPath(WankulCardData card, string pluginPath)
-        {
-            if (string.IsNullOrEmpty(card.TexturePath)) return null;
-
-            // 1. Chemin direct relatif (data/masks/<TexturePath>)
-            string directPath = Path.Combine(pluginPath, "data/masks", card.TexturePath);
-            string resolvedDirect = ResolveExistingPath(directPath);
-            if (resolvedDirect != null) return resolvedDirect;
-
-            // 2. Résolution dynamique selon la saison dans data/masks/textures/{prefix}_{card.Number}.png
-            int num = card.NumberInt;
-            if (num > 0)
-            {
-                string season = !string.IsNullOrEmpty(card.SeasonId) ? card.SeasonId : "";
-                string texturePath = card.TexturePath.Replace('\\', '/');
-
-                int? prefix = null;
-                if (season == "S01" || texturePath.Contains("Origins/"))
-                {
-                    prefix = 150 + (num - 151); // 151 -> 150_151.png, 180 -> 179_180.png
-                }
-                else if (season == "S02" || texturePath.Contains("Campus/"))
-                {
-                    prefix = 305 + (num - 126); // 126 -> 305_126.png, 155 -> 334_155.png
-                }
-                else if (season == "S03" || texturePath.Contains("Battle/"))
-                {
-                    prefix = 516 + (num - 151); // 151 -> 516_151.png, 180 -> 545_180.png
-                }
-                else if (season == "S04" || texturePath.Contains("Stellar/"))
-                {
-                    prefix = 696 + (num - 151); // 151 -> 696_151.png, 180 -> 725_180.png
-                }
-
-                if (prefix.HasValue && prefix.Value >= 0)
-                {
-                    string seasonMaskPath = Path.Combine(pluginPath, "data/masks/textures", $"{prefix.Value}_{card.Number}.png");
-                    string resolvedSeason = ResolveExistingPath(seasonMaskPath);
-                    if (resolvedSeason != null) return resolvedSeason;
-                }
-
-                // Fallback générique : {num-1}_{num}.png
-                string fallbackIdPath = Path.Combine(pluginPath, "data/masks/textures", $"{num - 1}_{card.Number}.png");
-                string resolvedFallback = ResolveExistingPath(fallbackIdPath);
-                if (resolvedFallback != null) return resolvedFallback;
-            }
-
-            return null;
-        }
-
-        public static string ResolveExistingPath(string path)
-        {
-            if (File.Exists(path)) return path;
-
-            string ext = Path.GetExtension(path);
-            if (string.IsNullOrEmpty(ext)) return null;
-
-            if (ext.Equals(".png", StringComparison.OrdinalIgnoreCase))
-            {
-                string altJpg = Path.ChangeExtension(path, ".jpg");
-                if (File.Exists(altJpg)) return altJpg;
-
-                string altJpeg = Path.ChangeExtension(path, ".jpeg");
-                if (File.Exists(altJpeg)) return altJpeg;
-            }
-            else if (ext.Equals(".jpg", StringComparison.OrdinalIgnoreCase) || ext.Equals(".jpeg", StringComparison.OrdinalIgnoreCase))
-            {
-                string altPng = Path.ChangeExtension(path, ".png");
-                if (File.Exists(altPng)) return altPng;
-            }
-
-            return null;
-        }
-
-        private static Texture2D LoadTexture(string path)
-        {
-            byte[] bytes = File.ReadAllBytes(path);
-            Texture2D texture = new Texture2D(2, 2, TextureFormat.RGBA32, false);
-            // markNonReadable : la copie CPU est liberee, ~2x moins de RAM. Ces textures ne sont jamais relues par GetPixels.
-            if (!texture.LoadImage(bytes, true))
-            {
-                UnityEngine.Object.Destroy(texture);
+                Plugin.Logger?.LogWarning($"[WankulLoadingScreen] LoadTexture failed for {path}: {ex.Message}");
                 return null;
             }
-            texture.wrapMode = TextureWrapMode.Clamp; texture.hideFlags |= HideFlags.DontUnloadUnusedAsset;
-            return texture;
         }
 
-        private static Sprite CreateSprite(Texture2D texture)
+        public static Sprite CreateSprite(Texture2D texture)
         {
-            // FullRect : evite la generation d'un mesh de contour (Tight) pour chaque sprite.
+            if (texture == null) return null;
+            // FullRect évite la génération d'un maillage de contour polygonal serré (Tight)
             Sprite s = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height),
-                new Vector2(0.5f, 0.5f), 100f, 0, SpriteMeshType.FullRect); s.hideFlags |= HideFlags.DontUnloadUnusedAsset; return s;
+                new Vector2(0.5f, 0.5f), 100f, 0, SpriteMeshType.FullRect);
+            s.hideFlags |= HideFlags.DontUnloadUnusedAsset;
+            return s;
         }
+
+        #endregion
     }
 }

@@ -57,16 +57,24 @@ public class Plugin : BaseUnityPlugin
         // Plugin startup logic
         Logger = base.Logger;
         IsDebug = Config.Bind("Debug", "EnableVerboseLogs", false, "Activer les logs detailles (Debug/Info)").Value;
-        Logger.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is loaded! (VerboseLogs: {IsDebug})");
+        bool enableDevTools = Config.Bind("Debug", "EnableDevTools", false, "Activer les outils de developpement en jeu (F8: Inspecteur, F9: Capture d'ecran, F10: Hot-Reload)").Value;
+        bool enableGameBridge = Config.Bind("Debug", "EnableGameBridge", false, "Activer le pont HTTP local de debug (127.0.0.1:8765)").Value;
+        Logger.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is loaded! (VerboseLogs: {IsDebug}, DevTools: {enableDevTools}, GameBridge: {enableGameBridge})");
 
         // Initialisation de l'écran de debug pour intercepter les crashs et blocages
         WankulDebugScreen.Initialize();
 
         // Initialisation des outils de développement (F8: Inspecteur, F9: Screenshots, F10: Hot-Reload)
-        WankulDevTools.Initialize();
+        if (enableDevTools)
+        {
+            WankulDevTools.Initialize();
+        }
 
         // Initialisation du pont HTTP local pour l'agent (127.0.0.1:8765)
-        WankulGameBridge.Initialize();
+        if (enableGameBridge)
+        {
+            WankulGameBridge.Initialize();
+        }
 
         Harmony harmony = new Harmony(PluginInfo.PLUGIN_GUID);
 

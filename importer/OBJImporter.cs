@@ -25,8 +25,8 @@ namespace WankulCrazyPlugin.importer
         private static Image[] image_list = new Image[0];
         public static Dictionary<string, string> filePaths_obj = new Dictionary<string, string>((IEqualityComparer<string>)StringComparer.OrdinalIgnoreCase);
         public static Dictionary<string, string> filePaths_tex = new Dictionary<string, string>((IEqualityComparer<string>)StringComparer.OrdinalIgnoreCase);
-        private static Dictionary<string, Texture2D> cachedTextures = new Dictionary<string, Texture2D>();
-        private static Dictionary<string, Mesh> cachedMeshes = new Dictionary<string, Mesh>();
+        private static Dictionary<string, Texture2D> cachedTextures = new Dictionary<string, Texture2D>(StringComparer.OrdinalIgnoreCase);
+        private static Dictionary<string, Mesh> cachedMeshes = new Dictionary<string, Mesh>(StringComparer.OrdinalIgnoreCase);
         public static GameObject tempmesh = null;
 
         private static Dictionary<string, Mesh> vanilla_podium_meshes = new Dictionary<string, Mesh>();
@@ -472,10 +472,29 @@ namespace WankulCrazyPlugin.importer
                         }
                     }
                     Texture2D cachedTexture = GetCachedTexture(icon.name);
+                    if (cachedTexture == null && icon.name.StartsWith("Icon_Toy_", StringComparison.OrdinalIgnoreCase))
+                    {
+                        cachedTexture = GetCachedTexture("Icon_" + icon.name.Substring("Icon_Toy_".Length));
+                    }
+                    if (cachedTexture == null && Enum.IsDefined(typeof(EItemType), index))
+                    {
+                        string enumName = ((EItemType)index).ToString();
+                        cachedTexture = GetCachedTexture("Icon_" + enumName)
+                            ?? (enumName.StartsWith("Toy_", StringComparison.OrdinalIgnoreCase)
+                                ? GetCachedTexture("Icon_" + enumName.Substring(4))
+                                : null);
+                    }
+
                     if ((UnityEngine.Object)cachedTexture != (UnityEngine.Object)null)
                     {
                         Sprite sprite = OBJImporter.TextureToSprite(cachedTexture);
+                        sprite.name = icon.name;
+                        sprite.hideFlags |= HideFlags.DontUnloadUnusedAsset;
                         spriteList[index].icon = sprite;
+                    }
+                    else if (Enum.IsDefined(typeof(EItemType), index) && ((EItemType)index).ToString().StartsWith("Toy_", StringComparison.OrdinalIgnoreCase))
+                    {
+                        Plugin.Logger?.LogWarning($"[OBJImporter] Icone non trouvee pour {(EItemType)index} (name='{spriteList[index].name}', icon.name='{icon.name}')");
                     }
                 }
             }
