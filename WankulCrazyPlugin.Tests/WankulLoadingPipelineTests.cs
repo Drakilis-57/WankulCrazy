@@ -10,6 +10,7 @@ using Xunit;
 
 namespace WankulCrazyPlugin.Tests
 {
+    [Collection("StaticStateTests")]
     public class WankulLoadingPipelineTests
     {
         [Fact]
@@ -53,6 +54,11 @@ namespace WankulCrazyPlugin.Tests
                 string nonExistent = Path.Combine(tempDir, "data", "cards", "Origins", "999_Introuvable.png");
                 string resolvedNone = WankulFileIndex.ResolveExistingPath(nonExistent);
                 Assert.Null(resolvedNone);
+
+                // 5. Test robustesse SafeLogWarning sur chemin invalide (headless / sans MonoBehaviour chargé)
+                WankulFileIndex.Invalidate();
+                WankulFileIndex.EnsureInitialized("\0invalid_path");
+                Assert.Null(WankulFileIndex.ResolveExistingPath(nonExistent));
             }
             finally
             {

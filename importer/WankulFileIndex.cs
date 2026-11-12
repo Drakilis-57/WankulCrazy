@@ -15,10 +15,15 @@ namespace WankulCrazyPlugin.importer
         private static readonly object _lock = new object();
         private static Dictionary<string, string> _fileIndex;
 
-        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
         private static void SafeLogWarning(string msg)
         {
-            try { Plugin.Logger?.LogWarning(msg); } catch { }
+            try { LogWarningCore(msg); } catch { }
+        }
+
+        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
+        private static void LogWarningCore(string msg)
+        {
+            Plugin.Logger?.LogWarning(msg);
         }
 
         /// <summary>
@@ -37,16 +42,17 @@ namespace WankulCrazyPlugin.importer
                     string dataDir = Path.Combine(pluginPath, "data");
                     if (Directory.Exists(dataDir))
                     {
-                        string rootedDataDir = Path.GetFullPath(dataDir).Replace('/', '\\').TrimEnd('\\');
-                        foreach (string file in Directory.EnumerateFiles(rootedDataDir, "*.*", SearchOption.AllDirectories))
+                        string fullDataDir = Path.GetFullPath(dataDir);
+                        string normDataDir = NormalizePathKey(fullDataDir);
+                        foreach (string file in Directory.EnumerateFiles(fullDataDir, "*", SearchOption.AllDirectories))
                         {
                             string normFull = NormalizePathKey(file);
                             index[normFull] = file;
 
                             // Indexation également en chemin relatif pour supporter les lookups relatifs
-                            if (file.Length > rootedDataDir.Length && file.StartsWith(rootedDataDir, StringComparison.OrdinalIgnoreCase))
+                            if (normFull.Length > normDataDir.Length && normFull.StartsWith(normDataDir, StringComparison.OrdinalIgnoreCase))
                             {
-                                string rel = file.Substring(rootedDataDir.Length).TrimStart('\\', '/');
+                                string rel = normFull.Substring(normDataDir.Length).TrimStart('\\', '/');
                                 string relKey = NormalizePathKey(rel);
                                 index[relKey] = file;
 
@@ -80,11 +86,12 @@ namespace WankulCrazyPlugin.importer
             if (string.IsNullOrEmpty(path)) return string.Empty;
             try
             {
-                if (Path.IsPathRooted(path))
+                string osPath = path.Replace('\\', Path.DirectorySeparatorChar).Replace('/', Path.DirectorySeparatorChar);
+                if (Path.IsPathRooted(osPath))
                 {
-                    return Path.GetFullPath(path).Replace('/', '\\').TrimEnd('\\');
+                    osPath = Path.GetFullPath(osPath);
                 }
-                return path.Replace('/', '\\').TrimEnd('\\');
+                return osPath.Replace('/', '\\').TrimEnd('\\');
             }
             catch
             {
