@@ -63,3 +63,5 @@ Tanks for contributing :
 - Karilla for helping on code
 - Hurtem for retexturing assets
 
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/Drakilis-57/WankulCrazy)
+
