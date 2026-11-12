@@ -20,29 +20,51 @@ namespace WankulCrazyPlugin.duel
         private static Dictionary<string, WankulCardData> _cardsByIdCache;
         private static Dictionary<int, List<string>> _effectsByIndexCache;
 
-        private static void EnsureIndexBuilt()
+        /// <summary>
+        /// Initialise ou enrichit manuellement le cache de cartes (utile pour injecter directement le pool en jeu ou dans les tests).
+        /// </summary>
+        public static void SetCardsPool(IEnumerable<WankulCardData> pool)
         {
-            if (_cardsByIdCache != null && _cardsByIdCache.Count > 0) return;
-
-            System.Collections.Generic.List<WankulCardData> allCards = null;
-            try {
-                var type = System.Type.GetType("WankulCrazyPlugin.cards.WankulCardsData, WankulCrazyPlugin");
-                if (type != null) {
-                    var propInst = type.GetProperty("Instance", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
-                    var inst = propInst?.GetValue(null);
-                    if (inst != null) {
-                        var propCards = type.GetProperty("cards", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
-                        allCards = propCards?.GetValue(inst) as System.Collections.Generic.List<WankulCardData>;
-                    }
-                }
-            } catch { }
-            if (allCards == null || allCards.Count == 0) return;
-
+            if (pool == null) return;
             if (_cardsByIdCache == null)
             {
                 _cardsByIdCache = new Dictionary<string, WankulCardData>(StringComparer.OrdinalIgnoreCase);
             }
 
+            foreach (var c in pool)
+            {
+                if (c == null) continue;
+
+                if (!string.IsNullOrEmpty(c.Number) && !_cardsByIdCache.ContainsKey(c.Number))
+                {
+                    _cardsByIdCache[c.Number] = c;
+                }
+
+                string idxStr = c.Index.ToString();
+                if (!_cardsByIdCache.ContainsKey(idxStr))
+                {
+                    _cardsByIdCache[idxStr] = c;
+                }
+
+                if (!string.IsNullOrEmpty(c.Title))
+                {
+                    if (!_cardsByIdCache.ContainsKey(c.Title))
+                    {
+                        _cardsByIdCache[c.Title] = c;
+                    }
+
+                    string fixedTitle = FixMojibake(c.Title);
+                    if (!string.IsNullOrEmpty(fixedTitle) && !_cardsByIdCache.ContainsKey(fixedTitle))
+                    {
+                        _cardsByIdCache[fixedTitle] = c;
+                    }
+                }
+            }
+        }
+
+        private static void LoadCardEffectsCache()
+        {
+            if (_effectsByIndexCache != null) return;
             _effectsByIndexCache = new Dictionary<int, List<string>>();
             string effectsPath = "data/customdecks/duel_card_effects.json";
 
@@ -80,26 +102,40 @@ namespace WankulCrazyPlugin.duel
                     System.Console.WriteLine("Error loading duel_card_effects.json: " + ex);
                 }
             }
+        }
 
-            for (int i = 0; i < allCards.Count; i++)
+        private static void EnsureIndexBuilt()
+        {
+            LoadCardEffectsCache();
+
+            if (_cardsByIdCache != null && _cardsByIdCache.Count > 0) return;
+
+            try
             {
-                var c = allCards[i];
-                if (c == null) continue;
+                TryInitializeFromWankulCardsData();
+            }
+            catch { }
+        }
 
-                if (!string.IsNullOrEmpty(c.Number) && !_cardsByIdCache.ContainsKey(c.Number))
+        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
+        private static void TryInitializeFromWankulCardsData()
+        {
+            // Résolution via l'assembly exécutant pour éviter le chargement prématuré de MonoBehaviour en mode test headless
+            var type = typeof(CardAdapter).Assembly.GetType("WankulCrazyPlugin.cards.WankulCardsData");
+            if (type != null)
+            {
+                var ensureMethod = type.GetMethod("EnsureInitialized", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+                var propInst = type.GetProperty("Instance", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
+                var inst = propInst?.GetValue(null);
+                if (inst != null)
                 {
-                    _cardsByIdCache[c.Number] = c;
-                }
-
-                string idxStr = c.Index.ToString();
-                if (!_cardsByIdCache.ContainsKey(idxStr))
-                {
-                    _cardsByIdCache[idxStr] = c;
-                }
-
-                if (!string.IsNullOrEmpty(c.Title) && !_cardsByIdCache.ContainsKey(c.Title))
-                {
-                    _cardsByIdCache[c.Title] = c;
+                    ensureMethod?.Invoke(inst, null);
+                    var propCards = type.GetProperty("cards", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+                    var cards = propCards?.GetValue(inst) as IEnumerable<WankulCardData>;
+                    if (cards != null)
+                    {
+                        SetCardsPool(cards);
+                    }
                 }
             }
         }
@@ -131,7 +167,25 @@ namespace WankulCrazyPlugin.duel
             {
                 return s;
             }
+
+            if (data.Texture is Texture2D tex)
+            {
+                try
+                {
+                    var sprite = CreateSpriteFromTexture(tex);
+                    data.Sprite = sprite;
+                    return sprite;
+                }
+                catch { }
+            }
+
             return null;
+        }
+
+        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
+        private static Sprite CreateSpriteFromTexture(Texture2D tex)
+        {
+            return Sprite.Create(tex, new Rect(0f, 0f, tex.width, tex.height), new Vector2(0.5f, 0.5f), 100f);
         }
         /// <summary>
         /// Répare le mojibake (caractères UTF-8 français mal décodés comme 'FRANÃƒâ€¡AIS' ou 'FRANÃ‡AIS' -> 'FRANÇAIS').

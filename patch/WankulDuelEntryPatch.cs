@@ -28,7 +28,9 @@ namespace WankulCrazyPlugin.patch
                 Plugin.Logger.LogInfo("[WankulDuelEntryPatch] SetPlayTablePostfix : Interception et préparation du duel Wankul TCG.");
 
                 // 1. Préparation du deck du joueur et de l'adversaire (decks légaux 50 cartes : 10 terrains, 35 persos, 5 scoreurs)
+                WankulCardsData.Instance.EnsureInitialized();
                 var wankulPool = WankulCardsData.Instance?.cards;
+                CardAdapter.SetCardsPool(wankulPool);
                 var playerDeck = CardAdapter.BuildLegalDeck(wankulPool, "Joueur");
                 var opponentDeck = CardAdapter.BuildLegalDeck(wankulPool, "Adversaire");
 

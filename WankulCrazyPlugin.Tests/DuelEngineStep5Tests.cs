@@ -6,6 +6,7 @@ using Xunit;
 
 namespace WankulCrazyPlugin.Tests;
 
+[Collection("StaticStateTests")]
 public class DuelEngineStep5Tests
 {
     [Fact]
@@ -93,5 +94,38 @@ public class DuelEngineStep5Tests
     {
         string result = CardAdapter.FixMojibake(input);
         Assert.Equal(expected, result);
+    }
+
+    [Fact]
+    public void CardAdapter_GetWankulCard_And_SpriteFallback_ResolvesProperly()
+    {
+        var testCardData = new EffigyCardData
+        {
+            Index = 999991,
+            Number = "WTEST01",
+            Title = "HÃ©ros de Test",
+            CardType = CardType.Effigy,
+            Force = 80
+        };
+
+        CardAdapter.SetCardsPool(new List<WankulCardData> { testCardData });
+
+        // Résolution par Number
+        var duelCardByNumber = new DuelCard("WTEST01", "Héros de Test", CardKind.Character);
+        var resolvedByNumber = CardAdapter.GetWankulCard(duelCardByNumber);
+        Assert.NotNull(resolvedByNumber);
+        Assert.Equal("WTEST01", resolvedByNumber.Number);
+
+        // Résolution par Index
+        var duelCardByIndex = new DuelCard("999991", "Autre Nom", CardKind.Character);
+        var resolvedByIndex = CardAdapter.GetWankulCard(duelCardByIndex);
+        Assert.NotNull(resolvedByIndex);
+        Assert.Equal(999991, resolvedByIndex.Index);
+
+        // Résolution par Nom avec Mojibake réparé
+        var duelCardByName = new DuelCard("unknown_id", "Héros de Test", CardKind.Character);
+        var resolvedByName = CardAdapter.GetWankulCard(duelCardByName);
+        Assert.NotNull(resolvedByName);
+        Assert.Equal("WTEST01", resolvedByName.Number);
     }
 }
