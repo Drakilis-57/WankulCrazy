@@ -1,10 +1,10 @@
 # Données JSON de la carte et importation
 
 > **Fichiers sources pertinents**
-> * [WankulCrazyPlugin.Tests/LegacyCardsRarityValidationTests.cs](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/WankulCrazyPlugin.Tests/LegacyCardsRarityValidationTests.cs)
-> * [data/cards/Legacy/legacy.json](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/data/cards/Legacy/legacy.json)
-> * [data/rarities.json](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/data/rarities.json)
-> * [importer/JsonImporter.cs](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/importer/JsonImporter.cs)
+> * [WankulCrazyPlugin.Tests/LegacyCardsRarityValidationTests.cs](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/WankulCrazyPlugin.Tests/LegacyCardsRarityValidationTests.cs)
+> * [data/cards/Legacy/legacy.json](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/data/cards/Legacy/legacy.json)
+> * [data/rarities.json](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/data/rarities.json)
+> * [importer/JsonImporter.cs](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/importer/JsonImporter.cs)
 
 Le but de cette page est de documenter la mise en œuvre technique de l'analyse des données de carte, les stratégies de désérialisation JSON, les structures de schéma héritées et la résolution des chemins d'actifs gérées par `JsonImporter` et les composants associés dans la base de code WankulCrazy.
 
@@ -128,7 +128,7 @@ Sources : `importer/JsonImporter.cs:22-78`, `data/cards/Legacy/legacy.json:1-17
 
 ## 4. Résolution du chemin des sprites, des masques et des textures
 
-Actifs de texture référencés par les définitions de cartes (tels que les champs `TexturePath` spécifiant des chemins comme `cards/Legacy/textures/001_ROAD TRIP.png` [data/cards/Legacy/textures/001_ROAD L9](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/data/cards/Legacy/textures/001_ROAD TRIP.png#L9-L9)
+Actifs de texture référencés par les définitions de cartes (tels que les champs `TexturePath` spécifiant des chemins comme `cards/Legacy/textures/001_ROAD TRIP.png` [data/cards/Legacy/textures/001_ROAD L9](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/data/cards/Legacy/textures/001_ROAD TRIP.png#L9-L9)
 
 ) sont résolus par rapport au répertoire d'installation du plugin de base.
 

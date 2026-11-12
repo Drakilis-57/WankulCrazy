@@ -1,9 +1,9 @@
 # Inventaire et Persistance
 
 > **Fichiers sources pertinents**
-> * [inventaire/WankulInventory.cs](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/inventory/WankulInventory.cs)
-> * [patch/Inventory.cs](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/patch/Inventory.cs)
-> * [utils/SavesManager.cs](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/utils/SavesManager.cs)
+> * [inventaire/WankulInventory.cs](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/inventory/WankulInventory.cs)
+> * [patch/Inventory.cs](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/patch/Inventory.cs)
+> * [utils/SavesManager.cs](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/utils/SavesManager.cs)
 
 ## Objectif et portée
 
@@ -18,13 +18,13 @@ Pour une répartition complète des composants enfants, reportez-vous aux pages 
 
 ## 4.1.Gestion des stocks et pipelines de dépôt
 
-La propriété des cartes et l'inventaire de collection sont gérés via la classe singleton `WankulInventory` [inventory/WankulInventory.cs L12-L14](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/inventory/WankulInventory.cs#L12-L14)
+La propriété des cartes et l'inventaire de collection sont gérés via la classe singleton `WankulInventory` [inventory/WankulInventory.cs L12-L14](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/inventory/WankulInventory.cs#L12-L14)
 
-Les interactions d'exécution telles que l'ajout ou la suppression de cartes acquises s'interfacent directement avec les méthodes `WankulInventory` via des wrappers de correctifs [patch/Inventory.cs L8-L32](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/patch/Inventory.cs#L8-L32)
+Les interactions d'exécution telles que l'ajout ou la suppression de cartes acquises s'interfacent directement avec les méthodes `WankulInventory` via des wrappers de correctifs [patch/Inventory.cs L8-L32](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/patch/Inventory.cs#L8-L32)
 
-Drop mechanics evaluate pack types using `ConvertPackTypeToSeason` [inventory/WankulInventory.cs L30-L51](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/inventory/WankulInventory.cs#L30-L51)
+Drop mechanics evaluate pack types using `ConvertPackTypeToSeason` [inventory/WankulInventory.cs L30-L51](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/inventory/WankulInventory.cs#L30-L51)
 
-et exécutez des algorithmes probabilistes pondérés dans `DropCard` [inventory/WankulInventory.cs L53-L154](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/inventory/WankulInventory.cs#L53-L154)
+et exécutez des algorithmes probabilistes pondérés dans `DropCard` [inventory/WankulInventory.cs L53-L154](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/inventory/WankulInventory.cs#L53-L154)
 
  pour remplir le contenu des boosters, en tenant compte des raretés, des contraintes saisonnières, et du filtrage des doublons.
 
@@ -62,9 +62,9 @@ subgraph subGraph2 ["Drop Pipeline"]
 end
 ```
 
-Sources : [inventaire/WankulInventory.cs L12-L154](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/inventory/WankulInventory.cs#L12-L154)
+Sources : [inventaire/WankulInventory.cs L12-L154](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/inventory/WankulInventory.cs#L12-L154)
 
- [patch/Inventory.cs L8-L32](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/patch/Inventory.cs#L8-L32)
+ [patch/Inventory.cs L8-L32](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/patch/Inventory.cs#L8-L32)
 
 Pour des détails techniques approfondis, voir [WankulInventory et Mécaniques de Drop](WankulInventory-et-Mécaniques-de-Drop).
 
@@ -72,13 +72,13 @@ Pour des détails techniques approfondis, voir [WankulInventory et Mécaniques d
 
 ## 4.2.Gestion de la persistance et des sauvegardes
 
-La persistance est gérée par `SavesManager` [utils/SavesManager.cs L63-L404](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/utils/SavesManager.cs#L63-L404)
+La persistance est gérée par `SavesManager` [utils/SavesManager.cs L63-L404](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/utils/SavesManager.cs#L63-L404)
 
- qui lit et écrit des fichiers de sauvegarde JSON structurés liés aux emplacements de sauvegarde de jeu actifs [utils/SavesManager.cs L73-L77](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/utils/SavesManager.cs#L73-L77)
+ qui lit et écrit des fichiers de sauvegarde JSON structurés liés aux emplacements de sauvegarde de jeu actifs [utils/SavesManager.cs L561-L564](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/utils/SavesManager.cs#L561-L564)
 
-Le schéma de sérialisation est encapsulé par les classes `Save` et `OldSave` [utils/SavesManager.cs L16-L62](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/utils/SavesManager.cs#L16-L62)
+Le schéma de sérialisation est encapsulé par les classes `Save` et `OldSave` [utils/SavesManager.cs L16-L62](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/utils/SavesManager.cs#L16-L62)
 
- supporting automated data migration, version checking against `SaveVersion` [utils/SavesManager.cs L66](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/utils/SavesManager.cs#L66-L66)
+ supporting automated data migration, version checking against `SaveVersion` [utils/SavesManager.cs L66](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/utils/SavesManager.cs#L553-L553)
 
 et déboguer les états de sauvegarde.
 
@@ -111,6 +111,6 @@ subgraph subGraph0 ["Save Operations"]
 end
 ```
 
-Sources : [utils/SavesManager.cs L63-L169](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/utils/SavesManager.cs#L63-L169)
+Sources : [utils/SavesManager.cs L63-L169](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/utils/SavesManager.cs#L63-L169)
 
 Pour des détails techniques approfondis, voir [Système de Sauvegarde](Système-de-Sauvegarde).

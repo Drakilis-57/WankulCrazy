@@ -26,4 +26,7 @@
 - [Suite de Tests](Suite-de-Tests)
 - [Gouvernance du Projet et Modèles de Problèmes](Gouvernance-du-Projet-et-Modèles-de-Problèmes)
 - [Glossaire](Glossaire)
+- [Duel Wankul TCG](Duel-Wankul-TCG)
+- [Pont de Jeu HTTP et Outils de Développement](Pont-de-Jeu-HTTP-et-Outils-de-Développement)
+- [Compatibilité v1.07 et Pack Opener](Compatibilité-v1.07-et-Pack-Opener)
 

@@ -1,13 +1,13 @@
 # Aperçu
 
 > **Fichiers sources pertinents**
-> * [.github/ISSUE_TEMPLATE/BUG-REPORT.yml](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/.github/ISSUE_TEMPLATE/BUG-REPORT.yml)
-> * [Docs/DOCS.md](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/Docs/DOCS.md?plain=1)
-> * [INSTALL.txt](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/INSTALL.txt)
-> * [Plugin.cs](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/Plugin.cs)
-> * [PluginInfo.cs](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/PluginInfo.cs)
-> * [README.md](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/README.md?plain=1)
-> * [libs/Assembly-CSharp.dll](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/libs/Assembly-CSharp.dll)
+> * [.github/ISSUE_TEMPLATE/BUG-REPORT.yml](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/.github/ISSUE_TEMPLATE/BUG-REPORT.yml)
+> * [Docs/DOCS.md](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/Docs/DOCS.md?plain=1)
+> * [INSTALL.txt](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/INSTALL.txt)
+> * [Plugin.cs](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/Plugin.cs)
+> * [PluginInfo.cs](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/PluginInfo.cs)
+> * [README.md](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/README.md?plain=1)
+> * [libs/Assembly-CSharp.dll](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/libs/Assembly-CSharp.dll)
 
 ## Objectif et portée
 
@@ -88,3 +88,5 @@ Alors que le démarrage et l'installation de base sont traités dans les pages e
 *Sources : [Plugin.cs:1-644]*, *[Docs/DOCS.md:1-282]*
 
 Bonjour , je suis le déclencheur d'action
+
+* **Nouvelles pages** : [Duel Wankul TCG](Duel-Wankul-TCG), [Pont de Jeu HTTP et Outils de Développement](Pont-de-Jeu-HTTP-et-Outils-de-Développement), [Compatibilité v1.07 et Pack Opener](Compatibilité-v1.07-et-Pack-Opener).

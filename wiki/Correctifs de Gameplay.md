@@ -1,9 +1,9 @@
 # Correctifs de gameplay
 
 > **Fichiers sources pertinents**
-> * [patch/CardOpening.cs](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/patch/CardOpening.cs)
-> * [patch/InteractionPlayerControllerPatch.cs](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/patch/InteractionPlayerControllerPatch.cs)
-> * [patch/ReplacingCards.cs](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/patch/ReplacingCards.cs)
+> * [patch/CardOpening.cs](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/patch/CardOpening.cs)
+> * [patch/InteractionPlayerControllerPatch.cs](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/patch/InteractionPlayerControllerPatch.cs)
+> * [patch/ReplacingCards.cs](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/patch/ReplacingCards.cs)
 
 La couche Gameplay Patches constitue le principal intercepteur d’exécution de `WankulCrazy`.Construite sur Harmony (`HarmonyLib`), cette couche s'intègre aux systèmes natifs de TCG Card Shop Simulator pour rediriger la visualisation des cartes, les flux de travail d'ouverture des boosters, les capacités d'inventaire des joueurs, les contraintes d'interaction et les modèles de tarification économiques.En interceptant les hooks de cycle de vie, des méthodes telles que `CardUI.SetCardUI` [patch/ReplacingCards.cs:18-78] et `InteractionPlayerController.Awake` [patch/InteractionPlayerControllerPatch.cs:23-61] sont réutilisées pour gérer les entités Wankul personnalisées sans altérer de manière permanente l'assemblage de jeu sous-jacent.
 
@@ -14,11 +14,11 @@ Cette page parente fournit un résumé de haut niveau des sous-systèmes de game
 * Rendu de carte et remplacement de l'interface utilisateur : voir [Rendu de carte et remplacement de l'interface utilisateur](Rendu-des-Cartes-et-Remplacement-UI)
 * Économie : tarification et échanges : voir [Économie : tarification et échanges](Économie-Prix-et-Échanges)
 
-Sources : [patch/CardOpening.cs L1-L48](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/patch/CardOpening.cs#L1-L48)
+Sources : [patch/CardOpening.cs L1-L48](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/patch/CardOpening.cs#L1-L48)
 
- [patch/ReplacingCards.cs L1-L78](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/patch/ReplacingCards.cs#L1-L78)
+ [patch/ReplacingCards.cs L2-L141](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/patch/ReplacingCards.cs#L2-L141)
 
- [patch/InteractionPlayerControllerPatch.cs L1-L61](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/patch/InteractionPlayerControllerPatch.cs#L1-L61)
+ [patch/InteractionPlayerControllerPatch.cs L1-L61](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/patch/InteractionPlayerControllerPatch.cs#L1-L61)
 
 ---
 
@@ -69,11 +69,11 @@ subgraph subGraph0 ["Native Game Loop"]
 end
 ```
 
-Sources : [patch/CardOpening.cs L26-L47](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/patch/CardOpening.cs#L26-L47)
+Sources : [patch/CardOpening.cs L26-L47](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/patch/CardOpening.cs#L26-L47)
 
- [patch/ReplacingCards.cs L18-L78](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/patch/ReplacingCards.cs#L18-L78)
+ [patch/ReplacingCards.cs L18-L78](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/patch/ReplacingCards.cs#L18-L78)
 
- [patch/InteractionPlayerControllerPatch.cs L63-L101](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/patch/InteractionPlayerControllerPatch.cs#L63-L101)
+ [patch/InteractionPlayerControllerPatch.cs L180-L195](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/patch/InteractionPlayerControllerPatch.cs#L180-L195)
 
 ---
 
@@ -83,7 +83,7 @@ La couche d'ouverture de carte gère la machine à états et la pile visuelle pe
 
 Pour plus de détails sur l'implémentation des transitions d'état, des listes d'animation personnalisées et des utilitaires d'assistance, voir [Séquence d'ouverture de carte](Séquence-d'Ouverture-de-Carte).
 
-Sources : [patch/CardOpening.cs L16-L152](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/patch/CardOpening.cs#L16-L152)
+Sources : [patch/CardOpening.cs L16-L229](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/patch/CardOpening.cs#L16-L229)
 
 ---
 
@@ -93,7 +93,7 @@ Les interactions des joueurs, telles que la conservation des packs, l'évaluatio
 
 Pour des informations détaillées sur le remplacement de maillage, les coroutines de spawn lerp, et les routines de mappage d'objets, voir [Interaction des joueurs et boîtes de cartes](Interaction-Joueur-et-Boîtes-de-Cartes).
 
-Sources : [patch/InteractionPlayerControllerPatch.cs L16-L120](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/patch/InteractionPlayerControllerPatch.cs#L16-L120)
+Sources : [patch/InteractionPlayerControllerPatch.cs L16-L120](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/patch/InteractionPlayerControllerPatch.cs#L16-L120)
 
 ---
 
@@ -103,7 +103,7 @@ Pour transformer complètement la présentation visuelle des cartes, `ReplacingC
 
 Pour plus de détails sur les pages de classeur, le tri des extensions d'interface utilisateur, les interfaces d'atelier et le remplacement d'affiches, voir [Rendu de carte et remplacement de l'interface utilisateur](Rendu-des-Cartes-et-Remplacement-UI).
 
-Sources: [patch/ReplacingCards.cs L1-L179](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/patch/ReplacingCards.cs#L1-L179)
+Sources: [patch/ReplacingCards.cs L1-L179](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/patch/ReplacingCards.cs#L1-L179)
 
 ---
 
@@ -113,4 +113,4 @@ Les correctifs économiques gèrent l'historique d'évaluation des cartes, les a
 
 Pour les spécifications techniques complètes sur la logique de tarification, les modifications `CheckPriceUI` et les hooks de persistance des données des joueurs, voir [Économie : tarification et échanges](Économie-Prix-et-Échanges).
 
-Sources : [patch/ReplacingCards.cs L1-L179](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/patch/ReplacingCards.cs#L1-L179)
+Sources : [patch/ReplacingCards.cs L1-L179](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/patch/ReplacingCards.cs#L1-L179)

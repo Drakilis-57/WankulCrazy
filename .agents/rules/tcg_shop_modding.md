@@ -62,12 +62,12 @@ trigger: always_on
 
 ## 13. Duel Wankul TCG (moteur indépendant)
 
-- Plan d'exécution : `Docs/implementation.md`. Règles du jeu : `Docs/TCG_Wankul.md`. Les lire avant toute modification touchant au duel.
+- Règles du jeu : `Docs/TCG_Wankul.md`. Design UI : `Docs/design.md`. Les lire avant toute modification touchant au duel. (`Docs/implementation.md` n'existe plus.)
 - Le moteur de règles (`duel/engine/`) est en C# pur : aucun `using UnityEngine`, aucune référence à `PlayTableGame`, `PlayCardSet`, `CardData`, `Plugin` ou Harmony.
 - Le moteur émet des événements ; la vue (`duel/view/`) s'y abonne. Le moteur ne connaît jamais la vue.
 - Un seul état fait foi (`DuelState`). Ne jamais dupliquer l'état dans des listes vanilla.
 - Ne pas ajouter ni réactiver de patch Harmony sur `PlayTableGame` / `PlayCardSet` sans accord explicite de l'utilisateur. Si un patch semble nécessaire, s'arrêter et demander.
-- Travailler une étape à la fois (voir `Docs/implementation.md` §5) : lire, proposer un plan, attendre validation, coder, lancer `dotnet test`, résumer le diff.
+- Travailler une étape à la fois : lire, proposer un plan, attendre validation, coder, lancer `dotnet test`, résumer le diff.
 - Ne jamais inventer une règle de jeu : en cas de doute, la lister comme question ouverte pour l'utilisateur.
 - Aléatoire via `IRandom` injecté, jamais `UnityEngine.Random` dans le moteur.
 - Pas de commit sauf demande explicite.

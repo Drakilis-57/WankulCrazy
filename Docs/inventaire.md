@@ -11,10 +11,12 @@ Ce document récapitule l'ensemble des cartes recensées dans le projet, classé
 | **S01** | **Origins** | 150 | 30 | 0 | **180** | Base officielle |
 | **S02** | **Campus** | 130 | 25 | 0 | **155** | Base officielle |
 | **S03** | **Battle** | 150 | 30 | 0 | **180** | Base officielle |
-| **S04** | **Stellar** | 150 | 30 | 0 | **180** | Prévue (Boosters & Énums câblés) |
-| **S05** | **Legacy** | 155 | 30 | 0 | **185** | Nouvelle Saison |
-| **HS** | **Hors-Série** | 76 | 0 | 2 | **78** | Packs spéciaux / promos |
-| **TOTAL** | | **911** | **145** | **2** | **1058** | |
+| **S04** | **Stellar** | 150 | 30 | 0 | **180** | Intégrée (cartes, boosters, displays, Taux, accessoires) |
+| **S05** | **Legacy** | 155 | 30 | 0 | **185** | Intégrée (dont 10 cartes DUO) |
+| **HS** | **Hors-Série** | 0 | 0 | 2 | **2** | Seules les 2 cartes spéciales sont dans `data/cards/Specials/` |
+| **TOTAL** | | **735** | **145** | **2** | **882** | |
+
+> Comptages vérifiés sur `data/cards/**/*.json`. Les 76 promos HS (SPCAR, SPJV, PGW23…) listées précédemment n'ont aucune donnée JSON dans le dépôt ; leurs raretés existent seulement dans `cards/Rarities.cs`.
 
 ---
 
@@ -65,6 +67,14 @@ Ce document récapitule l'ensemble des cartes recensées dans le projet, classé
 ### 4. Saison 4 : Stellar (`S04`) — 180 Cartes
 * **Terrains** : 30 cartes
 * **Personnages / Effigies** : 150 cartes
+  * **Commune (`C`)** : 50
+  * **Peu Commune (`UC`)** : 50
+  * **Rare (`R`)** : 20
+  * **Ultra Rare 1 (`UR1`)** : 10
+  * **Ultra Rare 2 (`UR2`)** : 8
+  * **Légendaire Bronze (`LB`)** : 6
+  * **Légendaire Argent (`LA`)** : 4
+  * **Légendaire Or (`LO`)** : 2
 * *Boosters & items associés déjà référencés :* Booster Stellar, Booster Stellar Taux +, Display Stellar, Booster Gold Stellar, Boxers/Caleçons, Tapis, Classeurs.
 
 ---
@@ -72,23 +82,20 @@ Ce document récapitule l'ensemble des cartes recensées dans le projet, classé
 ### 5. Saison 5 : Legacy (`S05`) — 185 Cartes
 * **Terrains** : 30 cartes
 * **Personnages / Effigies** : 155 cartes
+* **Personnages / Effigies par rareté** :
+  * **Commune (`C`)** : 50
+  * **Peu Commune (`UC`)** : 45
+  * **Rare (`R`)** : 20
+  * **Ultra Rare 1 (`UR1`)** : 10
+  * **Ultra Rare 2 (`UR2`)** : 8
+  * **Légendaire Bronze (`LB`)** : 6
+  * **Légendaire Argent (`LA`)** : 4
+  * **Légendaire Or (`LO`)** : 2
+  * **Duo (`DUO`)** : 10
 * *Exemple de carte :* GÉODEVINEUR (Terracid · C#46)
 
 ---
 
-### 6. Hors-Série (`HS`) — 78 Cartes
-Série promotionnelle et événementielle :
+### 6. Hors-Série (`HS`) — 2 Cartes (données du dépôt)
 * **Cartes Spéciales** : 2 (`TICKET D'OR !!!`, `À JETER`)
-* **Personnages / Promos** : 76 cartes
-  * **SPCAR** (Starter Pack Carrières) : 8
-  * **SPJV** (Starter Pack Jeux Vidéo) : 8
-  * **PGW23** (Paris Games Week 2023) : 4
-  * **SPLEG** (Starter Pack Légendes) : 3
-  * **NOEL23** (Noël 2023) : 1
-  * **PGW24** (Paris Games Week 2024) : 1
-  * **SPCIV** (Starter Pack Civilisations) : 1
-  * **SPPOP** (Starter Pack Pop Culture) : 1
-  * **SPTV** (Starter Pack TV) : 1
-  * **ED** (Édition Spéciale) : 1
-  * **EG** (Édition Gold) : 1
-  * **GP** (Gemmes Pack) : 1
+* Les raretés promo (SPCAR, SPJV, PGW23, SPLEG, NOEL23, PGW24, SPCIV, SPPOP, SPTV, ED, EG, GP) sont déclarées dans `cards/Rarities.cs`, mais aucune carte correspondante n'existe dans `data/cards/`.

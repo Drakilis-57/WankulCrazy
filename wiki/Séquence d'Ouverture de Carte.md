@@ -1,10 +1,10 @@
 # Séquence d'ouverture de la carte
 
 > **Fichiers sources pertinents**
-> * [patch/AnimationOpeningDisplay.cs](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/patch/AnimationOpeningDisplay.cs)
-> * [patch/CardOpening.cs](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/patch/CardOpening.cs)
-> * [patch/CardOpeningHelpers.cs](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/patch/CardOpeningHelpers.cs)
-> * [utils/AnimationCopier.cs](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/utils/AnimationCopier.cs)
+> * [patch/AnimationOpeningDisplay.cs](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/patch/AnimationOpeningDisplay.cs)
+> * [patch/CardOpening.cs](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/patch/CardOpening.cs)
+> * [patch/CardOpeningHelpers.cs](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/patch/CardOpeningHelpers.cs)
+> * [utils/AnimationCopier.cs](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/utils/AnimationCopier.cs)
 
 ## Objectif et portée
 
@@ -16,13 +16,13 @@ Sources : `patch/CardOpening.cs:1-152`, `patch/CardOpeningHelpers.cs:1-125`, `p
 
 ## 1. State Machine & Booster Sizes
 
-Le processus d'ouverture de la carte est régi par la machine à états Vanilla `CardOpeningSequence`.`CardOpening` s'intègre aux transitions d'état pour remplacer les tailles de booster en fonction du type d'article ouvert et vide l'expérience de la boutique lorsque l'index d'état `11` est atteint [patch/CardOpening.cs L26-L34](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/patch/CardOpening.cs#L26-L34)
+Le processus d'ouverture de la carte est régi par la machine à états Vanilla `CardOpeningSequence`.`CardOpening` s'intègre aux transitions d'état pour remplacer les tailles de booster en fonction du type d'article ouvert et vide l'expérience de la boutique lorsque l'index d'état `11` est atteint [patch/CardOpening.cs L27-L35](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/patch/CardOpening.cs#L27-L35)
 
 ### Détermination de la taille du booster
 
 Lorsqu'un écran de rappel s'ouvre, `OpenScreenPrefix` appelle `CheckBoosterSize`, qui évalue le type d'élément actuel (`BoosterGoldBattle` ou `BoosterGoldStellar`) pour définir `boosterSize` sur `4`, par défaut sur `10` pour les packs standard [patch/CardOpening.cs
 
-NaN-NaN](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/patch/CardOpening.cs#LNaN-LNaN)
+NaN-NaN](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/patch/CardOpening.cs#LNaN-LNaN)
 
 ```mermaid
 flowchart TD
@@ -48,13 +48,13 @@ Sources : `patch/CardOpening.cs:26-123`
 
 ## 2. Card Stack Rendering & Visual Hygiene
 
-Pour optimiser le rendu et appliquer une superposition visuelle appropriée lors du retournement de la carte, `ShowCardStack` isole la carte active et la carte immédiatement suivante (`activeIndex + 1`), désactivant tous les autres GameObjects de la carte (`SetActive(false)`) [patch/CardOpening.csL58-L70](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/patch/CardOpening.cs#L58-L70)
+Pour optimiser le rendu et appliquer une superposition visuelle appropriée lors du retournement de la carte, `ShowCardStack` isole la carte active et la carte immédiatement suivante (`activeIndex + 1`), désactivant tous les autres GameObjects de la carte (`SetActive(false)`) [patch/CardOpening.csL130-L142](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/patch/CardOpening.cs#L130-L142)
 
 ### Z-Index et hiérarchie du canevas
 
-Parce que l'interface utilisateur de Unity s'appuie sur l'ordre des index de fratrie (sibling index) dans un `CanvasWorldspace` pour déterminer la priorité de rendu (le dernier enfant s'affiche au-dessus), `ShowCardStack` force la carte d'arrière-plan et la carte active dans le bon ordre en utilisant `SetAsLastSibling()` [patch/CardOpening.cs L72-L83](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/patch/CardOpening.cs#L72-L83)
+Parce que l'interface utilisateur de Unity s'appuie sur l'ordre des index de fratrie (sibling index) dans un `CanvasWorldspace` pour déterminer la priorité de rendu (le dernier enfant s'affiche au-dessus), `ShowCardStack` force la carte d'arrière-plan et la carte active dans le bon ordre en utilisant `SetAsLastSibling()` [patch/CardOpening.cs L144-L155](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/patch/CardOpening.cs#L144-L155)
 
-Enfin, il nettoie les attributs de feuille, les shaders scintillants et les statistiques vanille sur les cartes actives et à venir à l'aide de `ReplacingCards.CleanCardVisuals` [patch/CardOpening.cs L85-L100](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/patch/CardOpening.cs#L85-L100).
+Enfin, il nettoie les attributs de feuille, les shaders scintillants et les statistiques vanille sur les cartes actives et à venir à l'aide de `ReplacingCards.CleanCardVisuals` [patch/CardOpening.cs L157-L172](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/patch/CardOpening.cs#L157-L172).
 
 ```mermaid
 flowchart TD
@@ -83,16 +83,16 @@ Sources : `patch/CardOpening.cs:58-100`
 
 ## 3. Couche d'accès CardOpeningHelpers
 
-Étant donné que `CardOpeningSequence` encapsule son état dans des champs privés, `CardOpeningHelpers` agit comme un pont statique exposant les getters et setters typés via `Plugin.GetPProperty` et `Plugin.SetPProperty` [patch/CardOpeningHelpers.csL1-L125](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/patch/CardOpeningHelpers.cs#L1-L125)
+Étant donné que `CardOpeningSequence` encapsule son état dans des champs privés, `CardOpeningHelpers` agit comme un pont statique exposant les getters et setters typés via `Plugin.GetPProperty` et `Plugin.SetPProperty` [patch/CardOpeningHelpers.csL1-L125](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/patch/CardOpeningHelpers.cs#L1-L125)
 
 |Catégorie |Méthodes d'assistance |Cible de propriété sous-jacente |
 | --- | --- | --- |
-| **Flags** | `GetIsScreenActive`, `SetIsScreenActive` | `m_IsScreenActive` [patch/CardOpeningHelpers.cs L14-L17](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/patch/CardOpeningHelpers.cs#L14-L17) |
-|**Drapeaux** |`GetIsAutoFire`, `SetIsAutoFire` |`m_IsAutoFire` [patch/CardOpeningHelpers.cs L34-L37](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/patch/CardOpeningHelpers.cs#L34-L37) |
-| **Timers** | `GetSlider`, `SetSlider` | `m_Slider` [patch/CardOpeningHelpers.cs L54-L57](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/patch/CardOpeningHelpers.cs#L54-L57) |
-| **Indexes** | `GetCurrentOpenedCardIndex`, `SetCurrentOpenedCardIndex` | `m_CurrentOpenedCardIndex` [patch/CardOpeningHelpers.cs L82-L85](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/patch/CardOpeningHelpers.cs#L82-L85) |
-|**Listes** |`GetRolledCardDataList` |`m_RolledCardDataList` [patch/CardOpeningHelpers.cs L115-L117](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/patch/CardOpeningHelpers.cs#L115-L117) |
-| **Item** | `GetCurrentItem`, `SetCurrentItem` | `m_CurrentItem` [patch/CardOpeningHelpers.cs L120-L123](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/patch/CardOpeningHelpers.cs#L120-L123) |
+| **Flags** | `GetIsScreenActive`, `SetIsScreenActive` | `m_IsScreenActive` [patch/CardOpeningHelpers.cs L14-L17](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/patch/CardOpeningHelpers.cs#L14-L17) |
+|**Drapeaux** |`GetIsAutoFire`, `SetIsAutoFire` |`m_IsAutoFire` [patch/CardOpeningHelpers.cs L34-L37](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/patch/CardOpeningHelpers.cs#L34-L37) |
+| **Timers** | `GetSlider`, `SetSlider` | `m_Slider` [patch/CardOpeningHelpers.cs L54-L57](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/patch/CardOpeningHelpers.cs#L54-L57) |
+| **Indexes** | `GetCurrentOpenedCardIndex`, `SetCurrentOpenedCardIndex` | `m_CurrentOpenedCardIndex` [patch/CardOpeningHelpers.cs L82-L85](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/patch/CardOpeningHelpers.cs#L82-L85) |
+|**Listes** |`GetRolledCardDataList` |`m_RolledCardDataList` [patch/CardOpeningHelpers.cs L115-L117](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/patch/CardOpeningHelpers.cs#L115-L117) |
+| **Item** | `GetCurrentItem`, `SetCurrentItem` | `m_CurrentItem` [patch/CardOpeningHelpers.cs L120-L123](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/patch/CardOpeningHelpers.cs#L120-L123) |
 
 Sources: `patch/CardOpeningHelpers.cs:1-125`
 
@@ -102,11 +102,11 @@ Sources: `patch/CardOpeningHelpers.cs:1-125`
 
 Les visuels de déballage des cartes sont orchestrés par `AnimationOpeningDisplay` et pris en charge par `AnimationCopier` [patch/AnimationOpeningDisplay.cs
 
-NaN-NaN](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/patch/AnimationOpeningDisplay.cs#LNaN-LNaN)
+NaN-NaN](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/patch/AnimationOpeningDisplay.cs#LNaN-LNaN)
 
 ### Boucle d'affichage de la coroutine
 
-`AnimationOpeningDisplay` exécute une coroutine `AnimateChild` qui interpole (lerps) la transformation d'une carte d'une position et rotation de départ (`Quaternion.Euler(90, 180, 0)`) vers une position et rotation de fin (`Quaternion.Euler(180, 180, 0)`) sur une durée de `1.5` secondes [patch/AnimationOpeningDisplay.cs L8-L31](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/patch/AnimationOpeningDisplay.cs#L8-L31)
+`AnimationOpeningDisplay` exécute une coroutine `AnimateChild` qui interpole (lerps) la transformation d'une carte d'une position et rotation de départ (`Quaternion.Euler(90, 180, 0)`) vers une position et rotation de fin (`Quaternion.Euler(180, 180, 0)`) sur une durée de `1.5` secondes [patch/AnimationOpeningDisplay.cs L8-L31](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/patch/AnimationOpeningDisplay.cs#L8-L31)
 
 ```mermaid
 flowchart TD
@@ -130,6 +130,6 @@ Sources : `patch/AnimationOpeningDisplay.cs:1-38`
 
 ### Clonage d'animations
 
-`AnimationCopier` fournit des routines d'assistance pour extraire les données `AnimationClip` d'une source `GameObject` et les injecter dans le composant `Animation` d'une cible `GameObject` [utils/AnimationCopier.csL1-L55](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/utils/AnimationCopier.cs#L1-L55)
+`AnimationCopier` fournit des routines d'assistance pour extraire les données `AnimationClip` d'une source `GameObject` et les injecter dans le composant `Animation` d'une cible `GameObject` [utils/AnimationCopier.csL1-L55](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/utils/AnimationCopier.cs#L1-L55)
 
 Sources : `utils/AnimationCopier.cs:1-55`

@@ -1,17 +1,17 @@
 # Suite de tests
 
 > **Fichiers sources pertinents**
-> * [WankulCrazyPlugin.Tests/DocsFeaturesVerificationTests.cs](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/WankulCrazyPlugin.Tests/DocsFeaturesVerificationTests.cs)
-> * [WankulCrazyPlugin.Tests/DynamicSeasonsAndRaritiesTests.cs](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/WankulCrazyPlugin.Tests/DynamicSeasonsAndRaritiesTests.cs)
-> * [WankulCrazyPlugin.Tests/EnumExtensionsTests.cs](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/WankulCrazyPlugin.Tests/EnumExtensionsTests.cs)
-> * [WankulCrazyPlugin.Tests/IndexAndExpansionTests.cs](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/WankulCrazyPlugin.Tests/IndexAndExpansionTests.cs)
-> * [WankulCrazyPlugin.Tests/InitializationTests.cs](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/WankulCrazyPlugin.Tests/InitializationTests.cs)
-> * [WankulCrazyPlugin.Tests/InspectBinder.cs](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/WankulCrazyPlugin.Tests/InspectBinder.cs)
-> * [WankulCrazyPlugin.Tests/SeasonTestAndCustomPacksTests.cs](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/WankulCrazyPlugin.Tests/SeasonTestAndCustomPacksTests.cs)
-> * [WankulCrazyPlugin.Tests/StaticStateTestCollection.cs](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/WankulCrazyPlugin.Tests/StaticStateTestCollection.cs)
-> * [WankulCrazyPlugin.Tests/TryGetComponentBenchmark.cs](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/WankulCrazyPlugin.Tests/TryGetComponentBenchmark.cs)
-> * [WankulCrazyPlugin.Tests/WankulCrazyPlugin.Tests.csproj](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/WankulCrazyPlugin.Tests/WankulCrazyPlugin.Tests.csproj)
-> * [cards/EffigyCardData.cs](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/cards/EffigyCardData.cs)
+> * [WankulCrazyPlugin.Tests/DocsFeaturesVerificationTests.cs](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/WankulCrazyPlugin.Tests/DocsFeaturesVerificationTests.cs)
+> * [WankulCrazyPlugin.Tests/DynamicSeasonsAndRaritiesTests.cs](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/WankulCrazyPlugin.Tests/DynamicSeasonsAndRaritiesTests.cs)
+> * [WankulCrazyPlugin.Tests/EnumExtensionsTests.cs](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/WankulCrazyPlugin.Tests/EnumExtensionsTests.cs)
+> * [WankulCrazyPlugin.Tests/IndexAndExpansionTests.cs](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/WankulCrazyPlugin.Tests/IndexAndExpansionTests.cs)
+> * [WankulCrazyPlugin.Tests/InitializationTests.cs](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/WankulCrazyPlugin.Tests/InitializationTests.cs)
+> * [WankulCrazyPlugin.Tests/InspectBinder.cs](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/WankulCrazyPlugin.Tests/InspectBinder.cs)
+> * [WankulCrazyPlugin.Tests/SeasonTestAndCustomPacksTests.cs](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/WankulCrazyPlugin.Tests/SeasonTestAndCustomPacksTests.cs)
+> * [WankulCrazyPlugin.Tests/StaticStateTestCollection.cs](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/WankulCrazyPlugin.Tests/StaticStateTestCollection.cs)
+> * [WankulCrazyPlugin.Tests/TryGetComponentBenchmark.cs](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/WankulCrazyPlugin.Tests/TryGetComponentBenchmark.cs)
+> * [WankulCrazyPlugin.Tests/WankulCrazyPlugin.Tests.csproj](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/WankulCrazyPlugin.Tests/WankulCrazyPlugin.Tests.csproj)
+> * [cards/EffigyCardData.cs](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/cards/EffigyCardData.cs)
 
 La suite de tests valide les modèles de données de cartes, la gestion dynamique des saisons et raretés, la désérialisation de jetons JSON, les analyseurs d'objets personnalisés, le parsing d'énumérations sécurisé, l'inspection IL via Mono.Cecil, et les benchmarks de performances. Le projet de test est configuré comme un assemblage de test xUnit autonome ciblant `.NET 8.0` [WankulCrazyPlugin.Tests/WankulCrazyPlugin.Tests.csproj:1-13] et repose sur les paquets NuGet incluant `xunit`, `Mono.Cecil`, et `UnityEngine.Modules` [WankulCrazyPlugin.Tests/WankulCrazyPlugin.Tests.csproj:15-22].
 
@@ -38,7 +38,7 @@ sub_TestProj --> sub_Unity
 sub_TestProj --> sub_GameDll
 ```
 
-Sources : [WankulCrazyPlugin.Tests/WankulCrazyPlugin.Tests.csprojL1-L35](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/WankulCrazyPlugin.Tests/WankulCrazyPlugin.Tests.csproj#L1-L35)
+Sources : [WankulCrazyPlugin.Tests/WankulCrazyPlugin.Tests.csprojL1-L35](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/WankulCrazyPlugin.Tests/WankulCrazyPlugin.Tests.csproj#L1-L35)
 
 ---
 
@@ -57,7 +57,7 @@ sub_ColDef --> sub_StaticCol
 sub_StaticCol --> sub_Tests
 ```
 
-Sources : [WankulCrazyPlugin.Tests/StaticStateTestCollection.cs L1-L9](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/WankulCrazyPlugin.Tests/StaticStateTestCollection.cs#L1-L9)
+Sources : [WankulCrazyPlugin.Tests/StaticStateTestCollection.cs L1-L9](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/WankulCrazyPlugin.Tests/StaticStateTestCollection.cs#L1-L9)
 
 ---
 
@@ -92,7 +92,7 @@ sub_Cards --> sub_Terrain
 sub_Cards --> sub_Special
 ```
 
-Sources : `[WankulCrazyPlugin.Tests/SeasonTestAndCustomPacksTests.cs:34-95]`, `[WankulCrazyPlugin.Tests/DocsFeaturesVerificationTests.cs:15-128]`, `[WankulCrazyPlugin.Tests/DynamicSeasonsAndRaritiesTests.cs:15-120]`, `[WankulCrazyPlugin.Tests/IndexAndExpansionTests.cs:13-25]`, [WankulCrazyPlugin.Tests/InitializationTests.csL14-L51](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/WankulCrazyPlugin.Tests/InitializationTests.cs#L14-L51)
+Sources : `[WankulCrazyPlugin.Tests/SeasonTestAndCustomPacksTests.cs:34-95]`, `[WankulCrazyPlugin.Tests/DocsFeaturesVerificationTests.cs:15-128]`, `[WankulCrazyPlugin.Tests/DynamicSeasonsAndRaritiesTests.cs:15-120]`, `[WankulCrazyPlugin.Tests/IndexAndExpansionTests.cs:13-25]`, [WankulCrazyPlugin.Tests/InitializationTests.csL14-L51](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/WankulCrazyPlugin.Tests/InitializationTests.cs#L14-L51)
 
 ---
 
@@ -113,7 +113,7 @@ sub_EnumTest --> sub_PackCheck
 sub_EnumTest --> sub_ParseCheck
 ```
 
-Sources : `[WankulCrazyPlugin.Tests/SeasonTestAndCustomPacksTests.cs:81-96]`, [WankulCrazyPlugin.Tests/EnumExtensionsTests.cs L1-L77](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/WankulCrazyPlugin.Tests/EnumExtensionsTests.cs#L1-L77)
+Sources : `[WankulCrazyPlugin.Tests/SeasonTestAndCustomPacksTests.cs:81-96]`, [WankulCrazyPlugin.Tests/EnumExtensionsTests.cs L1-L77](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/WankulCrazyPlugin.Tests/EnumExtensionsTests.cs#L1-L77)
 
 ---
 
@@ -136,7 +136,7 @@ sub_RestockScreen --> sub_EvalSorting
 sub_EvalSorting --> sub_Output
 ```
 
-Sources : [WankulCrazyPlugin.Tests/InspectBinder.cs L1-L38](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/WankulCrazyPlugin.Tests/InspectBinder.cs#L1-L38)
+Sources : [WankulCrazyPlugin.Tests/InspectBinder.cs L1-L38](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/WankulCrazyPlugin.Tests/InspectBinder.cs#L1-L38)
 
 ---
 
@@ -157,4 +157,9 @@ sub_GC --> sub_TryGet
 sub_GC --> sub_Get
 ```
 
-Sources : [WankulCrazyPlugin.Tests/TryGetComponentBenchmark.cs L1-L27](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/WankulCrazyPlugin.Tests/TryGetComponentBenchmark.cs#L1-L27)
+Sources : [WankulCrazyPlugin.Tests/TryGetComponentBenchmark.cs L1-L27](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/WankulCrazyPlugin.Tests/TryGetComponentBenchmark.cs#L1-L27)
+
+## 7. Tests du duel et de la v1.07
+- Moteur de duel : `DuelEngineStep1..7Tests`, `DuelSeason1..5EffectsTests`, `DuelComboTests`, `DuelCardEffectsValidationTests`, `BottomDeckTests`, `WankulBoardStateTests`, `WankulDuelEffectsTests`.
+- Assets et régressions : `CustomAssetIntegrityTests` (les vérifications de PNG locaux sont `Skip` en CI), `CodeAuditBugFixesTests`, `LegacyCardsRarityValidationTests`.
+- Voir [Duel Wankul TCG](Duel-Wankul-TCG).

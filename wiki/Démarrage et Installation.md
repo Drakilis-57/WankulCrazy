@@ -1,11 +1,11 @@
 # Mise en route et installation
 
 > **Fichiers sources pertinents**
-> * [.agents/rules/tcg_shop_modding.md](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/.agents/rules/tcg_shop_modding.md?plain=1)
-> * [Docs/DOCS.md](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/Docs/DOCS.md?plain=1)
-> * [INSTALL.txt](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/INSTALL.txt)
-> * [LICENCE.txt](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/LICENCE.txt)
-> * [README.md](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/README.md?plain=1)
+> * [.agents/rules/tcg_shop_modding.md](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/.agents/rules/tcg_shop_modding.md?plain=1)
+> * [Docs/DOCS.md](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/Docs/DOCS.md?plain=1)
+> * [INSTALL.txt](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/INSTALL.txt)
+> * [LICENCE.txt](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/LICENCE.txt)
+> * [README.md](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/README.md?plain=1)
 
 ## Objectif et portée
 

@@ -1,9 +1,9 @@
 # WankulInventaire et mécanique des dépôts
 
 > **Fichiers sources pertinents**
-> * [inventory/WankulInventory.cs](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/inventory/WankulInventory.cs)
-> * [patch/Inventory.cs](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/patch/Inventory.cs)
-> * [utils/RandomUtils.cs](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/utils/RandomUtils.cs)
+> * [inventory/WankulInventory.cs](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/inventory/WankulInventory.cs)
+> * [patch/Inventory.cs](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/patch/Inventory.cs)
+> * [utils/RandomUtils.cs](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/utils/RandomUtils.cs)
 
 ## Objectif et portée
 

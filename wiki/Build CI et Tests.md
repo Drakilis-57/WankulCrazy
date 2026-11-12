@@ -1,20 +1,20 @@
 # Build, CI et tests
 
 > **Fichiers sources pertinents**
-> * [.github/workflows/build.yml](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/.github/workflows/build.yml)
-> * [WankulCrazyPlugin.Tests/StringExtensionsTests.cs](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/WankulCrazyPlugin.Tests/StringExtensionsTests.cs)
-> * [WankulCrazyPlugin.csproj](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/WankulCrazyPlugin.csproj)
-> * [WankulCrazyPlugin.sln](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/WankulCrazyPlugin.sln)
+> * [.github/workflows/build.yml](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/.github/workflows/build.yml)
+> * [WankulCrazyPlugin.Tests/StringExtensionsTests.cs](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/WankulCrazyPlugin.Tests/StringExtensionsTests.cs)
+> * [WankulCrazyPlugin.csproj](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/WankulCrazyPlugin.csproj)
+> * [WankulCrazyPlugin.sln](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/WankulCrazyPlugin.sln)
 
 ## Objectif et portée
 
 Cette page fournit une présentation générale des pipelines de build, des workflows d'intégration continue, des cadres de tests automatisés et des outils de gouvernance de projet qui prennent en charge la base de code `WankulCrazyPlugin`.La chaîne d'outils compile le mod BepInEx, résout les assemblys de dépendances du jeu, exécute les suites de tests `xUnit` et automatise le packaging via GitHub Actions.Les détails détaillés de la mise en œuvre sont conservés dans les pages enfants liées ci-dessous.
 
-Sources : [WankulCrazyPlugin.csproj L1-L84](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/WankulCrazyPlugin.csproj#L1-L84)
+Sources : [WankulCrazyPlugin.csproj L1-L84](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/WankulCrazyPlugin.csproj#L1-L84)
 
- [.github/workflows/build.yml L1-L33](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/.github/workflows/build.yml#L1-L33)
+ [.github/workflows/build.yml L1-L33](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/.github/workflows/build.yml#L1-L33)
 
- [WankulCrazyPlugin.sln L1-L66](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/WankulCrazyPlugin.sln#L1-L66)
+ [WankulCrazyPlugin.sln L1-L66](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/WankulCrazyPlugin.sln#L1-L66)
 
 ---
 
@@ -26,25 +26,25 @@ Les builds et déploiements locaux sont assistés par des scripts d'assistance e
 
 Pour tous les détails sur les configurations de projet, les assemblages de référence, les scripts de build locaux, et la configuration CI, voir [Système de Build et Dépendances](Système-de-Build-et-Dépendances).
 
-Sources : [WankulCrazyPlugin.csproj L1-L84](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/WankulCrazyPlugin.csproj#L1-L84)
+Sources : [WankulCrazyPlugin.csproj L1-L84](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/WankulCrazyPlugin.csproj#L1-L84)
 
- [.github/workflows/build.yml L1-L33](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/.github/workflows/build.yml#L1-L33)
+ [.github/workflows/build.yml L1-L33](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/.github/workflows/build.yml#L1-L33)
 
- [WankulCrazyPlugin.sln L1-L66](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/WankulCrazyPlugin.sln#L1-L66)
+ [WankulCrazyPlugin.sln L1-L66](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/WankulCrazyPlugin.sln#L1-L66)
 
 ---
 
 ## 6.2 Suite de tests
 
-La vérification automatisée est implémentée via le projet `WankulCrazyPlugin.Tests` intégré à la solution principale [WankulCrazyPlugin.sln:8-9].La suite de tests utilise `xUnit` pour valider les utilitaires de manipulation de chaînes (tels que `StringExtensionsTests.cs`) [WankulCrazyPlugin.Tests/StringExtensionsTests.StringExtensionsTests.csL1-L39](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/WankulCrazyPlugin.Tests/StringExtensionsTests.StringExtensionsTests.cs#L1-L39)
+La vérification automatisée est implémentée via le projet `WankulCrazyPlugin.Tests` intégré à la solution principale [WankulCrazyPlugin.sln:8-9].La suite de tests utilise `xUnit` pour valider les utilitaires de manipulation de chaînes (tels que `StringExtensionsTests.cs`) [WankulCrazyPlugin.Tests/StringExtensionsTests.csL1-L39](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/WankulCrazyPlugin.Tests/StringExtensionsTests.cs#L1-L39)
 
 Structures de données JSON, routines d'analyse sécurisée d'énumération, critères de rareté et invariants de documentation.Les tests avancés utilisent également `Mono.Cecil` pour les routines d'inspection et de référence IL.
 
 Pour plus de détails sur la couverture des tests, les structures de test et les règles de validation, voir [Suite de Tests](Suite-de-Tests).
 
-Sources : [WankulCrazyPlugin.sln L8-L9](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/WankulCrazyPlugin.sln#L8-L9)
+Sources : [WankulCrazyPlugin.sln L8-L9](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/WankulCrazyPlugin.sln#L8-L9)
 
- [WankulCrazyPlugin.Tests/StringExtensionsTests.cs L1-L39](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/WankulCrazyPlugin.Tests/StringExtensionsTests.cs#L1-L39)
+ [WankulCrazyPlugin.Tests/StringExtensionsTests.cs L1-L39](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/WankulCrazyPlugin.Tests/StringExtensionsTests.cs#L1-L39)
 
 ---
 
@@ -54,7 +54,7 @@ L'organisation du projet comprend des modèles de problèmes pour les rapports d
 
 Pour plus de détails sur les flux de travail de contribution, les schémas de gestion des versions et les modèles de gouvernance, voir [Gouvernance du Projet et Modèles de Problèmes](Gouvernance-du-Projet-et-Modèles-de-Problèmes).
 
-Sources : [WankulCrazyPlugin.csproj L69-L75](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/WankulCrazyPlugin.csproj#L69-L75)
+Sources : [WankulCrazyPlugin.csproj L69-L75](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/WankulCrazyPlugin.csproj#L69-L75)
 
 ---
 
@@ -102,10 +102,13 @@ subgraph subGraph0 ["Solution Space"]
 end
 ```
 
-Sources : [WankulCrazyPlugin.csproj L1-L84](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/WankulCrazyPlugin.csproj#L1-L84)
+Sources : [WankulCrazyPlugin.csproj L1-L84](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/WankulCrazyPlugin.csproj#L1-L84)
 
- [.github/workflows/build.yml L1-L33](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/.github/workflows/build.yml#L1-L33)
+ [.github/workflows/build.yml L1-L33](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/.github/workflows/build.yml#L1-L33)
 
- [WankulCrazyPlugin.sln L1-L66](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/WankulCrazyPlugin.sln#L1-L66)
+ [WankulCrazyPlugin.sln L1-L66](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/WankulCrazyPlugin.sln#L1-L66)
 
- [WankulCrazyPlugin.Tests/StringExtensionsTests.cs L1-L39](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/WankulCrazyPlugin.Tests/StringExtensionsTests.cs#L1-L39)
+ [WankulCrazyPlugin.Tests/StringExtensionsTests.cs L1-L39](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/WankulCrazyPlugin.Tests/StringExtensionsTests.cs#L1-L39)
+
+## Notes récentes
+Les tests dépendant de PNG locaux sont ignorés en CI (`[Fact(Skip = ...)]`) tout en validant les chemins. `build.ps1` a été adapté (compression du build).

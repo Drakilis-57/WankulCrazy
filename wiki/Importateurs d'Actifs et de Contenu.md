@@ -1,9 +1,9 @@
 # Importateurs d'actifs et de contenu
 
 > **Fichiers sources pertinents**
-> * [importer/CustomItemsImporter.cs](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/importer/CustomItemsImporter.cs)
-> * [importer/OBJImporter.cs](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/importer/OBJImporter.cs)
-> * [importer/WankulLoadingScreen.cs](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/importer/WankulLoadingScreen.cs)
+> * [importer/CustomItemsImporter.cs](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/importer/CustomItemsImporter.cs)
+> * [importer/OBJImporter.cs](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/importer/OBJImporter.cs)
+> * [importer/WankulLoadingScreen.cs](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/importer/WankulLoadingScreen.cs)
 
 Présentation des pipelines d'importation qui injectent des éléments personnalisés, des maillages, des textures et une interface utilisateur de chargement.
 
@@ -34,9 +34,9 @@ Sources : `importer/CustomItemsImporter.cs:20-98`, `importer/OBJImporter.cs:109
 
 Pour plus de détails, voir [Objets Personnalisés et Enregistrement Boutique](Objets-Personnalisés-et-Enregistrement-Boutique).
 
-Le `CustomItemsImporter` gère le chargement des définitions d'éléments personnalisés, les données de réapprovisionnement et les liaisons de maillage à partir des schémas JSON situés dans `data/customitems/`.Il s'interface directement avec `InventoryBase` pour injecter des articles et des options de réapprovisionnement dans la base de données d'articles en stock du jeu (`m_StockItemData_SO`) [importer/CustomItemsImporter.cs L20-L25](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/importer/CustomItemsImporter.cs#L20-L25)
+Le `CustomItemsImporter` gère le chargement des définitions d'éléments personnalisés, les données de réapprovisionnement et les liaisons de maillage à partir des schémas JSON situés dans `data/customitems/`.Il s'interface directement avec `InventoryBase` pour injecter des articles et des options de réapprovisionnement dans la base de données d'articles en stock du jeu (`m_StockItemData_SO`) [importer/CustomItemsImporter.cs L64-L69](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/importer/CustomItemsImporter.cs#L64-L69)
 
-Il gère la déduplication et positionne les variantes personnalisées normales et `Taux` dans les catégories de boutique appropriées et les emplacements de réapprovisionnement [importer/CustomItemsImporter.cs L31-L95](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/importer/CustomItemsImporter.cs#L31-L95)
+Il gère la déduplication et positionne les variantes personnalisées normales et `Taux` dans les catégories de boutique appropriées et les emplacements de réapprovisionnement [importer/CustomItemsImporter.cs L75-L146](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/importer/CustomItemsImporter.cs#L75-L146)
 
 Sources : `importer/CustomItemsImporter.cs:13-98`
 
@@ -44,9 +44,9 @@ Sources : `importer/CustomItemsImporter.cs:13-98`
 
 Pour plus de détails, voir [Remplacement de Maillage Texture et Sprite](Remplacement-de-Maillage-Texture-et-Sprite).
 
-L'utilitaire `OBJImporter` analyse `data/meshes/`, `data/sprites/` et `data/names/` pour charger et mettre en cache les maillages et textures 3D `.obj` personnalisés au démarrage [importer/OBJImporter.csL18-L156](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/importer/OBJImporter.cs#L18-L156)
+L'utilitaire `OBJImporter` analyse `data/meshes/`, `data/sprites/` et `data/names/` pour charger et mettre en cache les maillages et textures 3D `.obj` personnalisés au démarrage [importer/OBJImporter.csL18-L156](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/importer/OBJImporter.cs#L18-L156)
 
-Il gère des dictionnaires de recherche et des structures de secours pour les maillages et les textures de podium, permettant de remplacer dynamiquement les actifs visuels Vanilla par des modèles et des sprites Wankul personnalisés [importer/OBJImporter.cs L26-L95](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/importer/OBJImporter.cs#L26-L95)
+Il gère des dictionnaires de recherche et des structures de secours pour les maillages et les textures de podium, permettant de remplacer dynamiquement les actifs visuels Vanilla par des modèles et des sprites Wankul personnalisés [importer/OBJImporter.cs L26-L95](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/importer/OBJImporter.cs#L26-L95)
 
 Sources : `importer/OBJImporter.cs:18-156`
 
@@ -54,9 +54,9 @@ Sources : `importer/OBJImporter.cs:18-156`
 
 Pour plus de détails, voir [Écran de Chargement et UI de Débogage](Écran-de-Chargement-et-UI-de-Débogage).
 
-Le `WankulLoadingScreen` fournit un système de chargement de coroutine budgétisé par image (`LoadCardsCoroutine`) qui traite progressivement les textures de carte sans perdre d'images [importer/WankulLoadingScreen.csL11-L140](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/importer/WankulLoadingScreen.cs#L11-L140)
+Le `WankulLoadingScreen` fournit un système de chargement de coroutine budgétisé par image (`LoadCardsCoroutine`) qui traite progressivement les textures de carte sans perdre d'images [importer/WankulLoadingScreen.csL11-L140](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/importer/WankulLoadingScreen.cs#L11-L140)
 
-Il gère un canevas d'interface utilisateur personnalisé créé via `WankulUiKit`, suit la progression du chargement et signale les cartes lentes ou les ressources manquantes tout en bloquant les entrées de jeu lors du chargement initial des ressources [importer/WankulLoadingScreen.csL57-L140](https://github.com/Drakilis-57/WankulCrazy/blob/57b1f5ed/importer/WankulLoadingScreen.cs#L57-L140)
+Il gère un canevas d'interface utilisateur personnalisé créé via `WankulUiKit`, suit la progression du chargement et signale les cartes lentes ou les ressources manquantes tout en bloquant les entrées de jeu lors du chargement initial des ressources [importer/WankulLoadingScreen.csL57-L140](https://github.com/Drakilis-57/WankulCrazy/blob/cb15ceb/importer/WankulLoadingScreen.cs#L57-L140)
 
 Sources : `importer/WankulLoadingScreen.cs:11-140`
 
@@ -80,3 +80,9 @@ NextCard --> Complete["Toutes cartes chargées -> HideAndDestroy()"]
 ```
 
 Sources : `importer/WankulLoadingScreen.cs:27-167`
+
+## 5.4 Ajouts récents
+- `PatchTexturesImporter` : gestion des textures convertis v1.07 et rechargement à chaud.
+- `CustomItemsImporter` : synchronisation des prix custom et décalage des licences Taux+.
+- `WankulGameBridge` / `WankulDevTools` : voir [Pont de Jeu HTTP et Outils de Développement](Pont-de-Jeu-HTTP-et-Outils-de-Développement).
+- `PriceTagAtlasPatch` : étiquettes de rayon custom, voir [Compatibilité v1.07 et Pack Opener](Compatibilité-v1.07-et-Pack-Opener).
