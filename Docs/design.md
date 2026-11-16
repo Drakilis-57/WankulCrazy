@@ -1,9 +1,9 @@
 # Spécifications & Design UI : Duel Wankul TCG & WankulDebugScreen
 
 Document de référence pour l'architecture visuelle, l'expérience utilisateur (UX), les composants d'interface (UI) et les chartes graphiques de :
-1. **L'écran de Duel Wankul TCG (DuelView2D / WankulDuelUI)**
-2. **L'écran d'erreur et de rapport de crash (WankulDebugScreen)**
-3. **Le Design System partagé (WankulUiKit)**
+1. **L'interface Full 3D du Duel Wankul TCG (`DuelView3D` / `DuelBoard3D` / `DuelCard3dManager`)**
+2. **L'écran d'erreur et de rapport de crash (`WankulDebugScreen`)**
+3. **Le Design System partagé (`WankulUiKit`)**
 
 ---
 
@@ -31,82 +31,46 @@ Document de référence pour l'architecture visuelle, l'expérience utilisateur 
 
 ---
 
-## 2. Écran de Duel Wankul TCG (`DuelView2D`)
+## 2. Vue Full 3D du Duel Wankul TCG (`DuelView3D`)
 
-### 2.1 Disposition Spatiale (Layout 1920x1080)
+### 2.1 Architecture 3D sur `PlayTableGame`
 
-L'écran est structuré en 3 bandes horizontales distinctes assurant une lecture de haut en bas :
+Le duel se déroule intégralement sur la table 3D physique de la boutique (`PlayTableGame`), laissant visibles les tapis de jeu personnalisés, les deckbox, le décor du magasin et le client assis en face. Aucun panneau opaque ne recouvre la scène.
 
 ```
-+-----------------------------------------------------------------------------------------+
-| [ TOP BAR ]  Score: JOUEUR 0/5 - ADVERSAIRE 0/5  |  Tour 1  |  Phase  |     [ Quitter ] |
-+-----------------------------------------------------------------------------------------+
-| [ MESSAGE BANNER ] "Sélectionnez un Terrain pour jouer votre carte..."                 |
-+-----------------------------------------------------------------------------------------+
-|                                    ZONE DU PLATEAU                                      |
-|                                                                                         |
-|   +-----------------------+   +-----------------------+   +-----------------------+     |
-|   | SLOT 1 : ADVERSAIRE   |   | SLOT 2 : ADVERSAIRE   |   | SLOT 3 : ADVERSAIRE   |     |
-|   | Persos adverses       |   | Persos adverses       |   | Persos adverses       |     |
-|   | Force: 0              |   | Force: 120            |   | Force: 0              |     |
-|   +-----------------------+   +-----------------------+   +-----------------------+     |
-|   | [ILLUST] TERRAIN 1    |   | [ILLUST] TERRAIN 2    |   | [ILLUST] TERRAIN 3    |     |
-|   | "La Ferme"            |   | "La Plage"            |   | "Le Bar"              |     |
-|   | Statut: Actif         |   | Statut: INACTIF (90°) |   | Statut: Validé P1     |     |
-|   +-----------------------+   +-----------------------+   +-----------------------+     |
-|   | SLOT 1 : VOS PERSOS   |   | SLOT 2 : VOS PERSOS   |   | SLOT 3 : VOS PERSOS   |     |
-|   | Persos alliés         |   | Persos alliés         |   | Persos alliés         |     |
-|   | Force: 80             |   | Force: 0              |   | Force: 150            |     |
-|   +-----------------------+   +-----------------------+   +-----------------------+     |
-|                                                                                         |
-+-----------------------------------------------------------------------------------------+
-| [ MAIN DU JOUEUR (HAND) ]                                         [ BOUTON FIN DE TOUR ]|
-| [Carte 1] [Carte 2] [Carte 3] [Carte 4] [Carte 5] ...             | FIN DU TOUR        ||
-| (Survol: grossissement & tooltip info)                            | ► Passer           ||
-+-----------------------------------------------------------------------------------------+
+   [ HUD Supérieur léger ]   VOUS : ★ 0 / 5   |   TOUR 1 — À VOUS   |   ADV : ★ 0 / 5
+   -----------------------------------------------------------------------------------
+                             [ Main Adversaire (3D face cachée) ]
+   [Pioche IA]   +--------------+   +--------------+   +--------------+   [Défausse IA]
+                 | SLOT 1 (3D)  |   | SLOT 2 (3D)  |   | SLOT 3 (3D)  |
+                 |  Persos J2   |   |  Persos J2   |   |  Persos J2   |
+                 |  [TERRAIN]   |   | [TERRAIN 90°]|   |   [LIBRE]    |
+                 |  Persos J1   |   |  Persos J1   |   |  Persos J1   |
+   [Défausse J1] +--------------+   +--------------+   +--------------+   [Pioche J1]
+                        [ Main Joueur (éventail 3D relevé vers caméra) ]
+   [Mini Journal]                                             [Fin de tour / Abandon]
 ```
 
-### 2.2 Composants & Interactions du Duel
+### 2.2 Composants 3D & Interactions
 
-#### A. Le Bandeau Supérieur (`TopBar`)
-- **Position** : `anchorMin: (0, 0.88)`, `anchorMax: (1, 1.0)`.
-- **Informations affichées** :
-  - Identifiants de match et score sous format course aux points : `WANKUL TCG | JOUEUR : X / 5 — ADVERSAIRE : Y / 5`.
-  - Indicateur de Tour courant et joueur actif (`VOTRE TOUR` / `TOUR DE L'ADVERSAIRE`).
-  - Bouton `Quitter` sécurisé (rouge sombre avec outline clair) ancré à droite pour abandonner la partie proprement sans bloquer l'état du jeu.
+#### A. Cartes 3D Physiques (`DuelCard3dManager`)
+- Utilise les objets natifs du jeu (`InteractableCard3d` + `Card3dUIGroup` via `Card3dUISpawner` & `ShelfManager`) avec les textures Wankul HD et matériaux Foil appliqués via `ReplacingCards`.
+- Raycast isolé sur le layer `Ignore Raycast` (`DuelCardHitBox`) via `Physics.RaycastNonAlloc` afin de ne jamais entrer en conflit avec le contrôleur vanilla.
+- Animations par interpolation exponentielle (`TickAnimations`) : envol depuis la pioche 3D, rotation fluide vers l'état incliné **90°** (Terrain en attente) ou redressé **0°** (Terrain actif), élévation au survol et à la sélection.
+- Piles 3D dynamiques sur le tapis pour la pioche et la défausse (la carte au sommet de la défausse affiche son illustration).
 
-#### B. Les 3 Colonnes de Terrains (`BoardArea` & `Slot_0..2`)
-- **Dimensions & Ancrages** : Zone centrale occupant `Y: 0.32` à `0.86`, divisée en 3 colonnes égales de 33.3% chacune.
-- **Section Haute (Adversaire)** :
-  - En-tête rouge clair : `ADVERSAIRE` + indicateur dynamique de force cumulée `Force: XXX`.
-  - Liste textuelle/icônes des cartes Personnages posées par l'adversaire sur ce terrain.
-- **Section Centrale (Carte Terrain)** :
-  - Fond sombre texturé recevant la texture réelle de la carte Terrain Wankul (`_slotTerrainImages`).
-  - **Rotation dynamique** : Si le terrain est déclaré **Inactif** par les règles de jeu, l'illustration pivote à **90°** (`transform.localEulerAngles = new Vector3(0, 0, 90)`), mimant la pose couchée physique.
-  - Cartouche de titre supérieur (`TitlePanel`) pour nommer explicitement le lieu (ex: "La Forêt", "Terrain Neutre").
-  - Pastille d'état inférieur (`StatusPanel`) indiquant la situation du lieu (Ex: "Contesté", "Inactif", "Capturé").
-- **Section Basse (Vos Personnages)** :
-  - En-tête bleu clair : `VOS PERSOS` + indicateur dynamique de force cumulée `Force: XXX`.
-  - Liste des personnages déployés par le joueur et leurs éventuels bonus d'effets.
-- **Retour Interactif (Sélection & Ciblage)** :
-  - Dès qu'une carte jouable est sélectionnée en main, les slots légaux s'illuminent via un outline vert fluo pulsant (`#33F266`, distance `(4, -4)`).
-  - Un clic sur un slot valide déclenche l'action moteur correspondante (`PlayTerrainAction` ou `PlayCharacterAction`).
+#### B. Plateau & Ancrages World-Space (`DuelBoard3D`)
+- Calcul du repère relatif à `m_PlayCardSetPlayer` / `m_PlayCardSetEnemy` (compatible Side A et Side B de toute table).
+- Nettoyage automatique des anciens icônes d'éléments Tetramon (`m_PlayCardElemAtkAnimList`, `m_EvoVFXList`) à l'ouverture, restaurés à la fermeture.
+- 3 emplacements de Terrains dotés de colliders 3D et de badges **World-Space Canvas** intégrés directement sur le tapis : Force J1/J2 en temps réel, statut du Terrain (`LIBRE`, `EN ATTENTE (90°)`, `ACTIF`), pastilles `★ COMBO ★` et halos de ciblage vert (`#33F266`) / cyan / or (`#FFE080`).
 
-#### C. La Main du Joueur (`BottomArea` & `HandContainer`)
-- **Position** : `Y: 0.02` à `0.30`.
-- **Organisation** : `HorizontalLayoutGroup` avec alignement centré, distribution flexible des cartes de la main.
-- **Comportement Carte en Main** :
-  - Affichage de la carte (Texture Wankul HD avec ratio carte respecté).
-  - Badge indiquant le Coût, le Type (Terrain / Personnage) et la Force de base.
-  - **État Hover (Survol)** : Élévation en Y (+20px) et mise en avant visuelle (`transform.SetAsLastSibling`).
-  - **État Sélectionné** : Cadre doré pulsant, affichage du message d'aide central invitant à cliquer sur l'un des 3 terrains cibles.
-  - Un second clic sur la même carte désélectionne la carte et éteint les halos de ciblage des slots.
-
-#### D. Le Bouton de Fin de Tour (`EndTurnBtn`)
-- **Position** : Ancré en bas à droite (`X: 0.84` à `0.985`, `Y: 0.20` à `0.80` de la `BottomArea`).
-- **Aspect** : Pavé bordeaux profond (`#B32E38`), outline or chaud (`#FFE080`).
-- **Texte** : `FIN DU TOUR \n ► Passer`.
-- **Verrouillage** : Grisé et non-interactif pendant le tour adverse ou la résolution d'actions/animations AI.
+#### C. Interactions & Caméra Plongeante (`DuelView3D`)
+- **Double mode d'interaction** :
+  - *Clic-Clic* : cliquer une carte en main l'élève ; cliquer un slot 3D valide l'y joue.
+  - *Drag & Drop 3D* : maintenir le clic et déplacer au-delà de 10px soulève la carte au-dessus du tapis et permet de la déposer directement sur le slot voulu.
+- **Inspecteur HD (Clic droit)** : cliquer droit sur n'importe quelle carte visible (main J1 ou plateau) ouvre son rendu agrandi avec ses règles complètes (Force, Coût, Effigie, Gemmes Combo, Effet).
+- **Caméra dynamique** : vue plongeante conservée (`FOV 44°` par défaut), réglable librement à la molette (`30°` à `50°`), avec recentrage et zoom temporaire (`34°`) vers le slot contesté lors d'un `ScoreResolvedEvent` (`ScoreClashBar`).
+- **HUD périphérique léger** : barre supérieure semi-transparente, bouton `FIN DE TOUR`, `Abandonner`, mini journal bas-gauche, modales `PlayerChoiceRequiredEvent` et sélection directe de slot 3D sur `PlayerSlotChoiceRequiredEvent`.
 
 ### 2.3 Système d'Animations & Effets Visuels (VFX)
 
@@ -171,8 +135,8 @@ L'écran est structuré en 3 bandes horizontales distinctes assurant une lecture
 |       | "NullReferenceException: Object reference not set to an instance..."   |       |
 |       +-------------------------------------------------------------------------+       |
 |       | [CADRE STACKTRACE SOMBRE]                                               |       |
-|       | at WankulCrazyPlugin.duel.DuelView2D.RefreshView () [0x00045]           |       |
-|       | at WankulCrazyPlugin.duel.WankulDuelController.Update () [0x00012]      |       |
+|       | at WankulCrazyPlugin.duel.DuelView3D.RefreshAllVisuals () [0x00045]      |       |
+|       | at WankulCrazyPlugin.duel.DuelBoard3D.UpdateBoardVisuals () [0x00012]   |       |
 |       | [... tronqué si > 2500 chars : utiliser "Copier l'erreur"]             |       |
 |       |                                                                         |       |
 |       +-------------------------------------------------------------------------+       |

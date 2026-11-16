@@ -112,10 +112,11 @@ public class DuelEngineStep1Tests
     }
 
     [Fact]
-    public void DrawCards_WhenDeckHasOneCardLeft_DrawsLastCardThenTriggersDeckOut()
+    public void DrawCards_WhenDeckHasOneCardLeft_DrawsLastCardAndContinuesWhileHandNotEmpty()
     {
-        // Précision demandée : s'il reste 1 carte et qu'on doit en piocher 2,
-        // la dernière carte est bien ajoutée en main, puis DeckOut et victoire de l'adversaire.
+        // Règle : s'il reste 1 carte et qu'on doit en piocher 2,
+        // la dernière carte est ajoutée en main, DeckExhaustedEvent est émis,
+        // mais la partie ne se termine par DeckOut que lorsque pioche ET main sont vides.
         var rng = new DeterministicRandom(0);
         var rules = new DuelRules(startingHandSize: 0, cardsDrawnPerTurn: 2);
         var engine = new DuelEngine(rng, rules);
@@ -134,17 +135,21 @@ public class DuelEngineStep1Tests
         Assert.Single(engine.State.HandP1);
         Assert.Empty(engine.State.DeckP1);
 
-        // Partie terminée par DeckOut avec P2 comme gagnant
+        Assert.Contains(events, e => e is DeckExhaustedEvent exhausted && exhausted.Player == PlayerId.Player1);
+        // La main n'est pas vide -> pas encore de défaite par DeckOut !
+        Assert.False(engine.State.IsGameOver);
+
+        // Une fois la main également vidée (avec pioche vide), DeckOut se déclenche immédiatement
+        engine.DiscardFromHand(PlayerId.Player1, 1);
+        Assert.Empty(engine.State.HandP1);
         Assert.True(engine.State.IsGameOver);
         Assert.Equal(PlayerId.Player2, engine.State.Winner);
         Assert.Equal(GameOverReason.DeckOut, engine.State.GameOverReason);
-
-        Assert.Contains(events, e => e is DeckExhaustedEvent exhausted && exhausted.Player == PlayerId.Player1);
         Assert.Contains(events, e => e is DuelEndedEvent ended && ended.Winner == PlayerId.Player2 && ended.Reason == GameOverReason.DeckOut);
     }
 
     [Fact]
-    public void DrawCards_WhenDeckEmpty_EndsImmediatelyWithDeckOut()
+    public void DrawCards_WhenDeckEmptyAndHandEmpty_EndsImmediatelyWithDeckOut()
     {
         var rng = new DeterministicRandom(0);
         var rules = new DuelRules(startingHandSize: 0, cardsDrawnPerTurn: 2);

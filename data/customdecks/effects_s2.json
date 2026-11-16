@@ -1,0 +1,2032 @@
+[
+  {
+    "cardIndex": 200001,
+    "costOverride": null,
+    "onPlay": [
+      "move_character"
+    ],
+    "combo": [],
+    "passive": [],
+    "sub": [],
+    "win": [
+      "win_take_discard_1"
+    ],
+    "lose": [
+      "lose_banish_deck_3"
+    ]
+  },
+  {
+    "cardIndex": 200002,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [],
+    "passive": [],
+    "sub": [],
+    "win": [
+      "win_play_free_score"
+    ],
+    "lose": [
+      "lose_mill_3"
+    ]
+  },
+  {
+    "cardIndex": 200003,
+    "costOverride": null,
+    "onPlay": [
+      "both_take_discard_until_hand_5"
+    ],
+    "combo": [],
+    "passive": [],
+    "sub": [],
+    "win": [
+      "win_draw_until_odd"
+    ],
+    "lose": [
+      "lose_mill_4"
+    ]
+  },
+  {
+    "cardIndex": 200004,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [],
+    "passive": [
+      "passive_terrain_banish_instead_of_discard"
+    ],
+    "sub": [],
+    "win": [],
+    "lose": [
+      "lose_mill_5"
+    ]
+  },
+  {
+    "cardIndex": 200005,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [],
+    "passive": [],
+    "sub": [],
+    "win": [
+      "win_take_discard_min_force"
+    ],
+    "lose": [
+      "lose_mill_max_force"
+    ]
+  },
+  {
+    "cardIndex": 200006,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [],
+    "passive": [
+      "passive_terrain_on_sub_take_discard_2"
+    ],
+    "sub": [],
+    "win": [],
+    "lose": [
+      "lose_mill_3"
+    ]
+  },
+  {
+    "cardIndex": 200007,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [],
+    "passive": [],
+    "sub": [],
+    "win": [
+      "win_play_free"
+    ],
+    "lose": [
+      "lose_mill_4"
+    ]
+  },
+  {
+    "cardIndex": 200008,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [],
+    "passive": [
+      "passive_terrain_disable_sub"
+    ],
+    "sub": [],
+    "win": [],
+    "lose": [
+      "lose_discard_3"
+    ]
+  },
+  {
+    "cardIndex": 200009,
+    "costOverride": null,
+    "onPlay": [
+      "both_play_top_discard_char_no_effects"
+    ],
+    "combo": [],
+    "passive": [],
+    "sub": [],
+    "win": [
+      "win_banish_deck_2"
+    ],
+    "lose": [
+      "lose_banish_deck_4"
+    ]
+  },
+  {
+    "cardIndex": 200010,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [],
+    "passive": [],
+    "sub": [],
+    "win": [
+      "win_copy_effect"
+    ],
+    "lose": [
+      "lose_mill_4"
+    ]
+  },
+  {
+    "cardIndex": 200011,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [],
+    "passive": [
+      "passive_terrain_autoscore_min_5_chars"
+    ],
+    "sub": [],
+    "win": [
+      "win_take_discard_1"
+    ],
+    "lose": [
+      "lose_mill_3"
+    ]
+  },
+  {
+    "cardIndex": 200012,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [],
+    "passive": [
+      "passive_terrain_autoscore_only"
+    ],
+    "sub": [],
+    "win": [
+      "win_draw_or_put_under_deck"
+    ],
+    "lose": [
+      "lose_mill_3"
+    ]
+  },
+  {
+    "cardIndex": 200013,
+    "costOverride": null,
+    "onPlay": [
+      "discard_most_hand_1_tie_2"
+    ],
+    "combo": [],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": [
+      "lose_discard_char_in_play"
+    ]
+  },
+  {
+    "cardIndex": 200014,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [],
+    "passive": [
+      "terrain_on_char_played_draw_1"
+    ],
+    "sub": [],
+    "win": [],
+    "lose": [
+      "lose_mill_max_force"
+    ]
+  },
+  {
+    "cardIndex": 200015,
+    "costOverride": null,
+    "onPlay": [
+      "draw_both_1"
+    ],
+    "combo": [],
+    "passive": [
+      "terrain_on_terrain_played_draw_1"
+    ],
+    "sub": [],
+    "win": [
+      "win_shuffle_terrains"
+    ],
+    "lose": [
+      "lose_mill_3"
+    ]
+  },
+  {
+    "cardIndex": 200016,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [],
+    "passive": [],
+    "sub": [],
+    "win": [
+      "win_shuffle_hand_draw_5"
+    ],
+    "lose": [
+      "lose_banish_deck_hand_4"
+    ]
+  },
+  {
+    "cardIndex": 200017,
+    "costOverride": null,
+    "onPlay": [
+      "set_aside_top_3"
+    ],
+    "combo": [],
+    "passive": [],
+    "sub": [],
+    "win": [
+      "take_setaside_all"
+    ],
+    "lose": [
+      "banish_setaside_all"
+    ]
+  },
+  {
+    "cardIndex": 200018,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [],
+    "passive": [
+      "passive_terrain_daltonisme"
+    ],
+    "sub": [],
+    "win": [],
+    "lose": [
+      "lose_mill_3"
+    ]
+  },
+  {
+    "cardIndex": 200019,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [],
+    "passive": [
+      "passive_terrain_discard_hand_mills_instead"
+    ],
+    "sub": [],
+    "win": [],
+    "lose": [
+      "lose_mill_5"
+    ]
+  },
+  {
+    "cardIndex": 200020,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [],
+    "passive": [],
+    "sub": [],
+    "win": [
+      "win_put_under_deck"
+    ],
+    "lose": [
+      "lose_mill_5_minus_drawn"
+    ]
+  },
+  {
+    "cardIndex": 200021,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [],
+    "passive": [],
+    "sub": [],
+    "win": [
+      "win_search_card"
+    ],
+    "lose": [
+      "lose_mill_3"
+    ]
+  },
+  {
+    "cardIndex": 200022,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [],
+    "passive": [
+      "passive_terrain_boost_all_1"
+    ],
+    "sub": [],
+    "win": [
+      "win_take_discard_2"
+    ],
+    "lose": [
+      "lose_banish_discard_5"
+    ]
+  },
+  {
+    "cardIndex": 200023,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [],
+    "passive": [
+      "passive_terrain_most_hand_boost_1"
+    ],
+    "sub": [],
+    "win": [],
+    "lose": [
+      "lose_mill_4"
+    ]
+  },
+  {
+    "cardIndex": 200024,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [],
+    "passive": [
+      "passive_terrain_must_play_second_or_discard"
+    ],
+    "sub": [],
+    "win": [],
+    "lose": [
+      "lose_banish_hand_draw"
+    ]
+  },
+  {
+    "cardIndex": 200025,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [],
+    "passive": [
+      "passive_terrain_stillwater"
+    ],
+    "sub": [],
+    "win": [],
+    "lose": [
+      "lose_mill_3"
+    ]
+  },
+  {
+    "cardIndex": 200026,
+    "costOverride": null,
+    "onPlay": [
+      "draw_2"
+    ],
+    "combo": [
+      "return_discard_to_bottom_deck_2"
+    ],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200027,
+    "costOverride": null,
+    "onPlay": [
+      "return_top_discard_to_deck_3"
+    ],
+    "combo": [],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200028,
+    "costOverride": null,
+    "onPlay": [
+      "discard_opp_char_force3"
+    ],
+    "combo": [],
+    "passive": [
+      "passive_unique_name_on_slot"
+    ],
+    "sub": [
+      "sub_play_on_opp_score"
+    ],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200029,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [],
+    "passive": [
+      "passive_on_lose_opp_banish_top_deck_1"
+    ],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200030,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [],
+    "passive": [
+      "passive_on_lose_opp_banish_top_deck_1"
+    ],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200031,
+    "costOverride": null,
+    "onPlay": [
+      "opp_choice_take_discard_1_or_opp_discard_1"
+    ],
+    "combo": [],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200032,
+    "costOverride": null,
+    "onPlay": [
+      "search_deck_name_chien_2"
+    ],
+    "combo": [],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200033,
+    "costOverride": null,
+    "onPlay": [
+      "score_any_terrain"
+    ],
+    "combo": [],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200034,
+    "costOverride": null,
+    "onPlay": [
+      "look_top_deck_1",
+      "score_any_terrain"
+    ],
+    "combo": [],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200035,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [
+      "look_opp_hand",
+      "steal_opp_hand_card_play_and_banish_self"
+    ],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200036,
+    "costOverride": null,
+    "onPlay": [
+      "play_opp_discard_cost_le_1_no_effects"
+    ],
+    "combo": [],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200037,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [
+      "return_discard_to_bottom_deck_1"
+    ],
+    "passive": [
+      "passive_on_opp_combo_return_discard_bottom_1"
+    ],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200038,
+    "costOverride": null,
+    "onPlay": [
+      "discard_opp_char_if_higher_force"
+    ],
+    "combo": [],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200039,
+    "costOverride": null,
+    "onPlay": [
+      "take_bottom_discard_2_if_strongest"
+    ],
+    "combo": [],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200040,
+    "costOverride": null,
+    "onPlay": [
+      "opp_discard_hand_1_if_highest_cost"
+    ],
+    "combo": [],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200041,
+    "costOverride": null,
+    "onPlay": [
+      "opp_choice_take_discard_2_or_discard_strongest"
+    ],
+    "combo": [],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200042,
+    "costOverride": null,
+    "onPlay": [
+      "opp_choice_take_discard_2_or_play_free_no_effects"
+    ],
+    "combo": [],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200043,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [],
+    "passive": [],
+    "sub": [
+      "sub_play_on_opp_orange_combo"
+    ],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200044,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [],
+    "passive": [],
+    "sub": [
+      "sub_play_on_opp_violet_combo"
+    ],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200045,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [
+      "passive_copy_left_force"
+    ],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200046,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [
+      "passive_copy_left_force"
+    ],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200047,
+    "costOverride": null,
+    "onPlay": [
+      "search_deck_name_viking_1"
+    ],
+    "combo": [
+      "boost_self_3"
+    ],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200048,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200049,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [],
+    "passive": [],
+    "sub": [
+      "sub_banish_on_opp_take_discard"
+    ],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200050,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [],
+    "passive": [],
+    "sub": [
+      "sub_banish_on_opp_effect_draw"
+    ],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200051,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [],
+    "passive": [
+      "passive_on_score_move_right"
+    ],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200052,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [
+      "put_discard_card_on_top"
+    ],
+    "passive": [
+      "passive_on_score_move_left"
+    ],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200053,
+    "costOverride": null,
+    "onPlay": [
+      "set_char_force_0_turn"
+    ],
+    "combo": [
+      "draw_until_character"
+    ],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200054,
+    "costOverride": null,
+    "onPlay": [
+      "discard_opp_char_force_lt_self"
+    ],
+    "combo": [],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200055,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [
+      "score_terrain_without_marseillais"
+    ],
+    "passive": [
+      "passive_autoscore_threshold_13"
+    ],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200056,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [
+      "score_terrain_without_marseillais"
+    ],
+    "passive": [
+      "passive_autoscore_threshold_9"
+    ],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200057,
+    "costOverride": null,
+    "onPlay": [
+      "swap_two_terrains"
+    ],
+    "combo": [],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200058,
+    "costOverride": null,
+    "onPlay": [
+      "swap_two_terrains"
+    ],
+    "combo": [
+      "score_any_terrain"
+    ],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200059,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [],
+    "passive": [
+      "passive_on_opp_play_char_cycle_1"
+    ],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200060,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [],
+    "passive": [
+      "passive_end_draw_sacrifice_draw_2"
+    ],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200061,
+    "costOverride": null,
+    "onPlay": [
+      "banish_terrain_and_chars"
+    ],
+    "combo": [],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200062,
+    "costOverride": null,
+    "onPlay": [
+      "banish_any_char_force_lt_self"
+    ],
+    "combo": [
+      "discard_any_char_force2"
+    ],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200063,
+    "costOverride": null,
+    "onPlay": [
+      "banish_any_char_force_lt_self"
+    ],
+    "combo": [],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200064,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [
+      "passive_add_force_to_right_terrain"
+    ],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200065,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [
+      "passive_add_force_to_left_terrain"
+    ],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200066,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [
+      "passive_discard_hand_banish_discard_instead"
+    ],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200067,
+    "costOverride": null,
+    "onPlay": [
+      "score_any_terrain"
+    ],
+    "combo": [],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200068,
+    "costOverride": null,
+    "onPlay": [
+      "guess_force_draw_play_or_discard"
+    ],
+    "combo": [],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200069,
+    "costOverride": null,
+    "onPlay": [
+      "guess_force_draw_play_or_discard"
+    ],
+    "combo": [],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200070,
+    "costOverride": null,
+    "onPlay": [
+      "bounce_opp_char_1"
+    ],
+    "combo": [],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200071,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [
+      "bounce_all_opp_chars_on_slot"
+    ],
+    "passive": [
+      "passive_opp_chars_minus_1"
+    ],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200072,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [],
+    "passive": [
+      "passive_force_per_5_discard_1"
+    ],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200073,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [
+      "passive_ignore_terrain_special_effects"
+    ],
+    "passive": [
+      "passive_force_per_5_discard_1"
+    ],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200074,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [],
+    "passive": [
+      "passive_once_turn_if_alone_discard_to_bottom_deck"
+    ],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200075,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [
+      "discard_opp_char_force_gt_self"
+    ],
+    "passive": [
+      "passive_once_turn_if_alone_discard_to_bottom_deck"
+    ],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200076,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [],
+    "passive": [],
+    "sub": [
+      "sub_play_on_opp_score"
+    ],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200077,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [],
+    "passive": [],
+    "sub": [
+      "sub_play_on_opp_score"
+    ],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200078,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [
+      "win_recover_discarded_char_1"
+    ],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200079,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [],
+    "passive": [
+      "passive_sacrifice_to_recover_discarded_hand"
+    ],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200080,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [
+      "passive_once_turn_search_deck_to_top"
+    ],
+    "passive": [
+      "passive_opp_discard_random"
+    ],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200081,
+    "costOverride": null,
+    "onPlay": [
+      "draw_per_completed_combo"
+    ],
+    "combo": [],
+    "passive": [
+      "passive_force_per_completed_combo_1"
+    ],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200082,
+    "costOverride": null,
+    "onPlay": [
+      "cancel_char_effect_turn"
+    ],
+    "combo": [],
+    "passive": [],
+    "sub": [
+      "sub_play_on_opp_play_char"
+    ],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200083,
+    "costOverride": null,
+    "onPlay": [
+      "cancel_char_combo_turn"
+    ],
+    "combo": [],
+    "passive": [],
+    "sub": [
+      "sub_play_on_opp_play_char"
+    ],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200084,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [],
+    "passive": [
+      "passive_double_force_if_carlito"
+    ],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200085,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [
+      "passive_mcfly_carlito_indestructible"
+    ],
+    "passive": [
+      "passive_double_force_if_mcfly"
+    ],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200086,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [],
+    "passive": [
+      "passive_double_force_if_single_opp_char"
+    ],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200087,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [
+      "score_current_terrain"
+    ],
+    "passive": [
+      "passive_double_force_if_single_opp_char"
+    ],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200088,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [],
+    "passive": [
+      "passive_halve_losing_effect",
+      "passive_unique_in_play"
+    ],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200089,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [],
+    "passive": [
+      "passive_halve_opp_winning_effect",
+      "passive_unique_in_play"
+    ],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200090,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [
+      "score_all_winning_terrains"
+    ],
+    "passive": [
+      "passive_double_force_per_copy"
+    ],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200091,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [
+      "score_all_winning_terrains"
+    ],
+    "passive": [
+      "passive_double_force_per_copy"
+    ],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200092,
+    "costOverride": null,
+    "onPlay": [
+      "score_any_terrain"
+    ],
+    "combo": [
+      "passive_on_opp_combo_mill_1"
+    ],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200093,
+    "costOverride": null,
+    "onPlay": [
+      "mill_3"
+    ],
+    "combo": [],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200094,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [],
+    "passive": [
+      "passive_own_chars_plus_1",
+      "passive_unique_trophy"
+    ],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200095,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [
+      "discard_opp_chars_sum_force_4"
+    ],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200096,
+    "costOverride": null,
+    "onPlay": [
+      "score_any_terrain"
+    ],
+    "combo": [
+      "discard_opp_chars_sum_force_3"
+    ],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200097,
+    "costOverride": null,
+    "onPlay": [
+      "mill_2"
+    ],
+    "combo": [
+      "debuff_char_force_2_turn"
+    ],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200098,
+    "costOverride": null,
+    "onPlay": [
+      "mill_2"
+    ],
+    "combo": [
+      "debuff_char_force_2_turn"
+    ],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200099,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [
+      "steal_opp_char_while_on_slot"
+    ],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200100,
+    "costOverride": null,
+    "onPlay": [
+      "move_character"
+    ],
+    "combo": [],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200101,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [
+      "search_and_banish_opp_deck_1"
+    ],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200102,
+    "costOverride": null,
+    "onPlay": [
+      "score_any_terrain_no_sub"
+    ],
+    "combo": [],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200103,
+    "costOverride": null,
+    "onPlay": [
+      "draw_2"
+    ],
+    "combo": [
+      "shuffle_discard_scorer_to_deck"
+    ],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200104,
+    "costOverride": null,
+    "onPlay": [
+      "opp_draw_1"
+    ],
+    "combo": [
+      "score_any_terrain"
+    ],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200105,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [],
+    "passive": [
+      "passive_on_leave_play_mill_2"
+    ],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200106,
+    "costOverride": null,
+    "onPlay": [
+      "mill_opp_top_discard_force"
+    ],
+    "combo": [],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200107,
+    "costOverride": null,
+    "onPlay": [
+      "draw_top_discard_force"
+    ],
+    "combo": [
+      "passive_sacrifice_cancel_sub"
+    ],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200108,
+    "costOverride": null,
+    "onPlay": [
+      "score_any_terrain"
+    ],
+    "combo": [],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200109,
+    "costOverride": null,
+    "onPlay": [
+      "score_any_terrain"
+    ],
+    "combo": [
+      "passive_discarded_opp_char_banished"
+    ],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200110,
+    "costOverride": null,
+    "onPlay": [
+      "score_any_terrain_if_win_put_under_deck"
+    ],
+    "combo": [
+      "opp_discard_sub_card"
+    ],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200111,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [],
+    "passive": [
+      "passive_force_per_opp_completed_combo_1"
+    ],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200112,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [],
+    "passive": [
+      "passive_on_score_reveal_top_even_add_else_sub"
+    ],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200113,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [],
+    "passive": [
+      "passive_on_score_reveal_top_odd_add_else_sub"
+    ],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200114,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [],
+    "passive": [
+      "passive_boost_4_if_only_guest"
+    ],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200115,
+    "costOverride": null,
+    "onPlay": [
+      "hide_hand_card_copy_force_on_score"
+    ],
+    "combo": [],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200116,
+    "costOverride": null,
+    "onPlay": [
+      "look_top_deck_3"
+    ],
+    "combo": [
+      "look_opp_top_deck_3"
+    ],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200117,
+    "costOverride": null,
+    "onPlay": [
+      "mill_opp_per_incomplete_combo"
+    ],
+    "combo": [
+      "copy_char_onplay_effect"
+    ],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200118,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [
+      "copy_cost_0_char_onplay_effect"
+    ],
+    "passive": [
+      "passive_copy_right_force"
+    ],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200119,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [
+      "copy_cost_0_char_onplay_effect"
+    ],
+    "passive": [
+      "passive_copy_left_force"
+    ],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200120,
+    "costOverride": null,
+    "onPlay": [
+      "discard_opp_chars_up_to_2_force_lt_self"
+    ],
+    "combo": [],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200121,
+    "costOverride": null,
+    "onPlay": [
+      "banish_opp_chars_up_to_2_force_gt_self"
+    ],
+    "combo": [],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200122,
+    "costOverride": null,
+    "onPlay": [
+      "take_top_discard_2_per_homonym_duo"
+    ],
+    "combo": [],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200123,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [
+      "put_top_discard_2_under_deck_per_homonym_duo"
+    ],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200124,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [
+      "passive_on_opp_play_char_cycle_hand"
+    ],
+    "passive": [
+      "passive_on_opp_combo_discard_random_1"
+    ],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200125,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [
+      "passive_on_opp_play_char_cycle_hand"
+    ],
+    "passive": [
+      "passive_on_opp_combo_discard_random_1"
+    ],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200126,
+    "costOverride": null,
+    "onPlay": [
+      "swap_two_terrains"
+    ],
+    "combo": [],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200127,
+    "costOverride": null,
+    "onPlay": [
+      "swap_two_terrains"
+    ],
+    "combo": [
+      "score_any_terrain"
+    ],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200128,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [],
+    "passive": [
+      "passive_double_force_if_carlito"
+    ],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200129,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [
+      "passive_mcfly_carlito_indestructible"
+    ],
+    "passive": [
+      "passive_double_force_if_mcfly"
+    ],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200130,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [],
+    "passive": [
+      "passive_double_force_if_single_opp_char"
+    ],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200131,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [
+      "score_current_terrain"
+    ],
+    "passive": [
+      "passive_double_force_if_single_opp_char"
+    ],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200132,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [],
+    "passive": [
+      "passive_on_opp_play_char_cycle_1"
+    ],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200133,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [],
+    "passive": [
+      "passive_end_draw_sacrifice_draw_2"
+    ],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200134,
+    "costOverride": null,
+    "onPlay": [
+      "banish_terrain_and_chars"
+    ],
+    "combo": [],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200135,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [
+      "score_all_winning_terrains"
+    ],
+    "passive": [
+      "passive_double_force_per_copy"
+    ],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200136,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [
+      "score_all_winning_terrains"
+    ],
+    "passive": [
+      "passive_double_force_per_copy"
+    ],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200137,
+    "costOverride": null,
+    "onPlay": [
+      "score_any_terrain"
+    ],
+    "combo": [
+      "passive_on_opp_combo_mill_1"
+    ],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200138,
+    "costOverride": null,
+    "onPlay": [
+      "mill_3"
+    ],
+    "combo": [],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200139,
+    "costOverride": null,
+    "onPlay": [
+      "banish_any_char_force_lt_self"
+    ],
+    "combo": [
+      "discard_any_char_force2"
+    ],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200140,
+    "costOverride": null,
+    "onPlay": [
+      "banish_any_char_force_lt_self"
+    ],
+    "combo": [],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200141,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [
+      "passive_add_force_to_right_terrain"
+    ],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200142,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [
+      "passive_add_force_to_left_terrain"
+    ],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200143,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [],
+    "passive": [
+      "passive_own_chars_plus_1",
+      "passive_unique_trophy"
+    ],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200144,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [
+      "discard_opp_chars_sum_force_4"
+    ],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200145,
+    "costOverride": null,
+    "onPlay": [
+      "score_any_terrain"
+    ],
+    "combo": [
+      "discard_opp_chars_sum_force_3"
+    ],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200146,
+    "costOverride": null,
+    "onPlay": [
+      "mill_2"
+    ],
+    "combo": [
+      "debuff_char_force_2_turn"
+    ],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200147,
+    "costOverride": null,
+    "onPlay": [
+      "mill_2"
+    ],
+    "combo": [
+      "debuff_char_force_2_turn"
+    ],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200148,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [
+      "steal_opp_char_while_on_slot"
+    ],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200149,
+    "costOverride": null,
+    "onPlay": [
+      "move_character"
+    ],
+    "combo": [],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200150,
+    "costOverride": null,
+    "onPlay": [
+      "discard_opp_chars_up_to_2_force_lt_self"
+    ],
+    "combo": [],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200151,
+    "costOverride": null,
+    "onPlay": [
+      "banish_opp_chars_up_to_2_force_gt_self"
+    ],
+    "combo": [],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200152,
+    "costOverride": null,
+    "onPlay": [
+      "take_top_discard_2_per_homonym_duo"
+    ],
+    "combo": [],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200153,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [
+      "put_top_discard_2_under_deck_per_homonym_duo"
+    ],
+    "passive": [],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200154,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [
+      "passive_on_opp_play_char_cycle_hand"
+    ],
+    "passive": [
+      "passive_on_opp_combo_discard_random_1"
+    ],
+    "sub": [],
+    "win": [],
+    "lose": []
+  },
+  {
+    "cardIndex": 200155,
+    "costOverride": null,
+    "onPlay": [],
+    "combo": [
+      "passive_on_opp_play_char_cycle_hand"
+    ],
+    "passive": [
+      "passive_on_opp_combo_discard_random_1"
+    ],
+    "sub": [],
+    "win": [],
+    "lose": []
+  }
+]

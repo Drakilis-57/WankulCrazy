@@ -49,7 +49,7 @@ public sealed class DuelRules
         int maxCharactersPerTurn = 4,
         int maxTerrainsOnBoard = 3,
         int minTerrainsThreshold = 1,
-        int autoScoreForceThreshold = 110)
+        int autoScoreForceThreshold = 11)
     {
         StartingHandSize = startingHandSize;
         MaxHandSize = maxHandSize;

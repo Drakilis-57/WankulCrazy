@@ -1,5 +1,8 @@
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text.Json;
 using WankulCrazy.Duel.Engine;
 using Xunit;
 
@@ -120,7 +123,7 @@ public class DuelSeason1EffectsTests
     public void Camionneur_DiscardsHighestForceCharacterFromOpponentSlot()
     {
         var rng = new NoShuffleRandom();
-        var rules = new DuelRules(startingHandSize: 0, cardsDrawnPerTurn: 0);
+        var rules = new DuelRules(startingHandSize: 0, cardsDrawnPerTurn: 0, autoScoreForceThreshold: 110);
         var engine = new DuelEngine(rng, rules);
 
         var deckP1 = new[] { new DuelCard("P1_1", "P1 Card", CardKind.Character) };
@@ -229,7 +232,12 @@ public class DuelSeason1EffectsTests
         var rules = new DuelRules(startingHandSize: 0, cardsDrawnPerTurn: 0);
         var engine = new DuelEngine(rng, rules);
 
-        var deckP1 = new[] { new DuelCard("P1_1", "P1 Card", CardKind.Character) };
+        var deckP1 = new[] {
+            new DuelCard("P1_1", "P1 Card 1", CardKind.Character),
+            new DuelCard("P1_2", "P1 Card 2", CardKind.Character),
+            new DuelCard("P1_3", "P1 Card 3", CardKind.Character),
+            new DuelCard("P1_4", "P1 Card 4", CardKind.Character),
+        };
         var deckP2 = new[] {
             new DuelCard("P2_1", "P2 Card 1", CardKind.Character),
             new DuelCard("P2_2", "P2 Card 2", CardKind.Character),
@@ -250,13 +258,110 @@ public class DuelSeason1EffectsTests
 
         engine.ResolveScore(0);
 
-        var effectContext = new EffectContext(engine, PlayerId.Player1, terrain, 0);
-        bool found = engine.Effects.TryGetEffect("mill_opp_3", out var eff);
-        Assert.True(found);
+        Assert.Contains(events, e => e is EffectTriggeredEvent effEvt && effEvt.EffectId == "win_mill_3");
+        Assert.True(engine.Effects.TryGetEffect("mill_opp_3", out var eff));
         Assert.NotNull(eff);
-        eff!.Execute(effectContext);
 
         Assert.Single(engine.State.GetDeck(PlayerId.Player2));
         Assert.Equal(3, engine.State.GetDiscard(PlayerId.Player2).Count);
+    }
+
+    private static string FindRepoRoot()
+    {
+        var dir = new DirectoryInfo(AppContext.BaseDirectory);
+        while (dir != null && !File.Exists(Path.Combine(dir.FullName, "data", "customdecks", "effects_s1.json")))
+        {
+            dir = dir.Parent;
+        }
+        Assert.NotNull(dir);
+        return dir!.FullName;
+    }
+
+    [Fact]
+    public void EffectsS1Json_ContainsAll180OriginsCards_WithValidSchema()
+    {
+        string path = Path.Combine(FindRepoRoot(), "data", "customdecks", "effects_s1.json");
+        using var doc = JsonDocument.Parse(File.ReadAllText(path));
+        Assert.Equal(JsonValueKind.Array, doc.RootElement.ValueKind);
+
+        var entries = doc.RootElement.EnumerateArray().ToList();
+        Assert.Equal(180, entries.Count);
+
+        var byIndex = new Dictionary<int, JsonElement>();
+        foreach (var entry in entries)
+        {
+            int idx = entry.GetProperty("cardIndex").GetInt32();
+            byIndex[idx] = entry;
+            Assert.True(entry.TryGetProperty("costOverride", out _));
+            Assert.Equal(JsonValueKind.Array, entry.GetProperty("onPlay").ValueKind);
+            Assert.Equal(JsonValueKind.Array, entry.GetProperty("combo").ValueKind);
+            Assert.Equal(JsonValueKind.Array, entry.GetProperty("passive").ValueKind);
+            Assert.Equal(JsonValueKind.Array, entry.GetProperty("sub").ValueKind);
+            Assert.Equal(JsonValueKind.Array, entry.GetProperty("win").ValueKind);
+            Assert.Equal(JsonValueKind.Array, entry.GetProperty("lose").ValueKind);
+        }
+
+        for (int i = 100001; i <= 100180; i++)
+        {
+            Assert.True(byIndex.ContainsKey(i), $"Missing cardIndex {i}");
+        }
+
+        // Vérifier quelques cartes clés d'Origins
+        Assert.Equal(new[] { "both_discard_hand_1" }, byIndex[100001].GetProperty("onPlay").EnumerateArray().Select(x => x.GetString()).ToArray());
+        Assert.Equal(new[] { "lose_mill_5" }, byIndex[100001].GetProperty("lose").EnumerateArray().Select(x => x.GetString()).ToArray());
+
+        Assert.Equal(new[] { "passive_boost_terracid_1" }, byIndex[100002].GetProperty("passive").EnumerateArray().Select(x => x.GetString()).ToArray());
+        Assert.Equal(new[] { "discard_opp_char_force3" }, byIndex[100033].GetProperty("onPlay").EnumerateArray().Select(x => x.GetString()).ToArray());
+
+        // Infecté & Pilote d'Avion ne doivent plus avoir discard_opp_hand_1
+        Assert.Equal(new[] { "passive_start_turn_infecte" }, byIndex[100043].GetProperty("passive").EnumerateArray().Select(x => x.GetString()).ToArray());
+        Assert.Empty(byIndex[100043].GetProperty("onPlay").EnumerateArray());
+        Assert.Equal(new[] { "move_character" }, byIndex[100061].GetProperty("onPlay").EnumerateArray().Select(x => x.GetString()).ToArray());
+
+        Assert.Equal(new[] { "passive_cost_opp_plus_1" }, byIndex[100064].GetProperty("passive").EnumerateArray().Select(x => x.GetString()).ToArray());
+        Assert.Equal(new[] { "discard_any_char_force2" }, byIndex[100064].GetProperty("combo").EnumerateArray().Select(x => x.GetString()).ToArray());
+        Assert.Equal(new[] { "passive_combo_return_top_discard_once_turn" }, byIndex[100065].GetProperty("passive").EnumerateArray().Select(x => x.GetString()).ToArray());
+        Assert.Equal(new[] { "take_discard_terrain_1" }, byIndex[100065].GetProperty("combo").EnumerateArray().Select(x => x.GetString()).ToArray());
+        Assert.Equal(new[] { "discard_opp_char_force2", "score_current_terrain" }, byIndex[100086].GetProperty("onPlay").EnumerateArray().Select(x => x.GetString()).ToArray());
+
+        // Steve 100102 a un Combo, Steve 100103 est vanille
+        Assert.Equal(new[] { "passive_own_chars_plus_1" }, byIndex[100102].GetProperty("combo").EnumerateArray().Select(x => x.GetString()).ToArray());
+        Assert.Empty(byIndex[100103].GetProperty("onPlay").EnumerateArray());
+        Assert.Empty(byIndex[100103].GetProperty("combo").EnumerateArray());
+        Assert.Equal(new[] { "free_chars_this_turn" }, byIndex[100149].GetProperty("combo").EnumerateArray().Select(x => x.GetString()).ToArray());
+    }
+
+    [Fact]
+    public void MoveCharacter_Effect_MovesCharacterBetweenSlots()
+    {
+        var rng = new NoShuffleRandom();
+        var rules = new DuelRules(startingHandSize: 0, cardsDrawnPerTurn: 0);
+        var engine = new DuelEngine(rng, rules);
+
+        engine.StartDuel(new[] { new DuelCard("D1", "D1", CardKind.Character) }, new[] { new DuelCard("D2", "D2", CardKind.Character) }, PlayerId.Player1);
+        engine.State.SetSlot(0, new DuelCard("T0", "T0", CardKind.Terrain), placedOnTurn: 0, placedBy: PlayerId.Player1);
+        engine.State.SetSlot(1, new DuelCard("T1", "T1", CardKind.Terrain), placedOnTurn: 0, placedBy: PlayerId.Player1);
+
+        var ally = new DuelCard("Ally", "Ally", CardKind.Character, force: 2);
+        engine.State.Slots[0].AddCharacter(PlayerId.Player1, ally);
+
+        var pilote = new DuelCard("Pilote", "Pilote d'Avion", CardKind.Character, force: 2, effectIds: new[] { "move_character" });
+        engine.State.AddCardToHand(PlayerId.Player1, pilote);
+
+        engine.OnEvent += e =>
+        {
+            if (e is PlayerChoiceRequiredEvent choice)
+                choice.OnCardSelected(ally);
+            else if (e is PlayerSlotChoiceRequiredEvent slotChoice)
+                slotChoice.OnSlotSelected(1);
+        };
+
+        engine.StartTurn();
+        var res = engine.PlayCharacter(PlayerId.Player1, "Pilote", 0);
+        Assert.True(res.Success);
+
+        // Ally a été déplacé du slot 0 vers le slot 1
+        Assert.Contains(engine.State.Slots[1].GetCharacters(PlayerId.Player1), c => c.Id == "Ally");
+        Assert.DoesNotContain(engine.State.Slots[0].GetCharacters(PlayerId.Player1), c => c.Id == "Ally");
     }
 }

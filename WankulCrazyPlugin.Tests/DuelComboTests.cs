@@ -17,7 +17,7 @@ namespace WankulCrazyPlugin.Tests
 
         private DuelEngine CreateEngine()
         {
-            var rules = new DuelRules(startingHandSize: 5, cardsDrawnPerTurn: 1);
+            var rules = new DuelRules(startingHandSize: 5, cardsDrawnPerTurn: 1, autoScoreForceThreshold: 110);
             return new DuelEngine(new TestRandom(), rules);
         }
 
@@ -120,6 +120,84 @@ namespace WankulCrazyPlugin.Tests
             // Le block (idx 1) n'a pas d'opening gem, le combo (idx 2) a une closing gem -> Pas de combo
             // Force totale: 10 + 10 + 10 = 30
             Assert.Equal(30, slot.GetForce(PlayerId.Player1));
+        }
+
+        [Fact]
+        public void ComboColorMismatch_OrangeOpeningAndVioletClosing_DoesNotConnect()
+        {
+            var orangeOpen = new DuelCard("oo", "OpenOrange", CardKind.Character, force: 3, gemMask: GemMask.OpeningOrange);
+            var violetClose = new DuelCard("cv", "CloseViolet", CardKind.Character, force: 4, gemMask: GemMask.ClosingViolet);
+            var violetOpen = new DuelCard("ov", "OpenViolet", CardKind.Character, force: 3, gemMask: GemMask.OpeningViolet);
+
+            Assert.False(ComboEvaluator.CanConnect(orangeOpen, violetClose));
+            Assert.True(ComboEvaluator.CanConnect(violetOpen, violetClose));
+        }
+
+        [Fact]
+        public void CardAdapter_ChevalierAndInfecte_DoesNotFormCombo()
+        {
+            var chevalierData = new WankulCrazyPlugin.cards.EffigyCardData
+            {
+                Index = 100064,
+                Number = "64",
+                Title = "CHEVALIER",
+                Force = 5,
+                Combo = "Défaussez un Personnage en jeu d'une Force de 2 ou moins."
+            };
+            var infecteData = new WankulCrazyPlugin.cards.EffigyCardData
+            {
+                Index = 100043,
+                Number = "43",
+                Title = "INFECTÉ",
+                Force = 2,
+                Combo = "Reprenez en main la carte du dessus de votre défausse."
+            };
+
+            var chevalier = WankulCrazyPlugin.duel.CardAdapter.ToDuelCard(chevalierData);
+            var infecte = WankulCrazyPlugin.duel.CardAdapter.ToDuelCard(infecteData);
+
+            Assert.True(chevalier.HasClosingOrangeGem);
+            Assert.False(chevalier.HasOpeningGem);
+            Assert.True(infecte.HasClosingOrangeGem);
+            Assert.False(infecte.HasOpeningGem);
+            Assert.False(ComboEvaluator.CanConnect(chevalier, infecte));
+        }
+
+        [Fact]
+        public void CardAdapter_VendeurConnectsWithBoxeur_NotWithLutin()
+        {
+            var boxeur = WankulCrazyPlugin.duel.CardAdapter.ToDuelCard(new WankulCrazyPlugin.cards.EffigyCardData
+            {
+                Index = 100042,
+                Number = "42",
+                Title = "BOXEUR",
+                Force = 3
+            });
+            var lutin = WankulCrazyPlugin.duel.CardAdapter.ToDuelCard(new WankulCrazyPlugin.cards.EffigyCardData
+            {
+                Index = 200026,
+                Number = "26",
+                Title = "LUTIN",
+                Force = 2,
+                Combo = "Piocher 1 carte."
+            });
+            var vendeur = WankulCrazyPlugin.duel.CardAdapter.ToDuelCard(new WankulCrazyPlugin.cards.EffigyCardData
+            {
+                Index = 100035,
+                Number = "35",
+                Title = "VENDEUR",
+                Force = 4,
+                Combo = "Scorez un Terrain."
+            });
+
+            Assert.True(vendeur.HasClosingVioletGem);
+            Assert.False(vendeur.HasClosingOrangeGem);
+            Assert.True(lutin.HasOpeningOrangeGem);
+            Assert.False(lutin.HasOpeningVioletGem);
+            Assert.True(boxeur.HasOpeningVioletGem);
+
+            Assert.False(ComboEvaluator.CanConnect(lutin, vendeur));
+            Assert.True(ComboEvaluator.CanConnect(boxeur, vendeur));
         }
     }
 }

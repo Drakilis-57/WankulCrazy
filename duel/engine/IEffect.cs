@@ -102,9 +102,60 @@ public sealed class MoveCharacterEffect : IEffect
 
     public DuelActionResult Execute(EffectContext context)
     {
-        // Require the UI to prompt the player for a movement target
-        // The UI will then call context.Engine.MoveCharacter(...)
-        context.Engine.Emit(new PlayerChoiceRequiredEvent(context.Player, "move_character", context.SourceCard));
+        var candidates = new List<DuelCard>();
+        int occupiedSlots = 0;
+        for (int i = 0; i < context.Engine.State.Slots.Count; i++)
+        {
+            var s = context.Engine.State.Slots[i];
+            if (s.IsEmpty) continue;
+            occupiedSlots++;
+            var chars = s.GetCharacters(context.Player);
+            for (int j = 0; j < chars.Count; j++)
+            {
+                candidates.Add(chars[j]);
+            }
+        }
+
+        if (candidates.Count > 0 && occupiedSlots >= 2)
+        {
+            context.Engine.Emit(new PlayerChoiceRequiredEvent(
+                context.Player,
+                "move_character",
+                "Sélectionnez un personnage à déplacer",
+                candidates,
+                chosenCard =>
+                {
+                    int fromSlot = -1;
+                    for (int i = 0; i < context.Engine.State.Slots.Count; i++)
+                    {
+                        var s = context.Engine.State.Slots[i];
+                        if (!s.IsEmpty && s.GetCharacters(context.Player).Any(c => c.Id == chosenCard.Id))
+                        {
+                            fromSlot = i;
+                            break;
+                        }
+                    }
+                    if (fromSlot == -1) return;
+
+                    context.Engine.Emit(new PlayerSlotChoiceRequiredEvent(
+                        context.Player,
+                        "Choisissez un terrain de destination",
+                        $"Choisissez un autre terrain pour déplacer {chosenCard.Name}",
+                        toSlot =>
+                        {
+                            if (toSlot != fromSlot && toSlot >= 0 && toSlot < context.Engine.State.Slots.Count && !context.Engine.State.Slots[toSlot].IsEmpty)
+                            {
+                                context.Engine.MoveCharacter(context.Player, chosenCard.Id, fromSlot, toSlot);
+                            }
+                        }
+                    ));
+                }
+            ));
+        }
+        else
+        {
+            context.Engine.Emit(new PlayerChoiceRequiredEvent(context.Player, "move_character", context.SourceCard));
+        }
 
         return DuelActionResult.Ok();
     }
@@ -546,10 +597,15 @@ public sealed class PlayCharacterFreeAndScoreEffect : IEffect
                         slotIdx => {
                             if (slotIdx >= 0 && slotIdx < context.Engine.State.Slots.Count)
                             {
-                                context.Engine.State.RemoveCardFromHand(context.Player, chosenCard);
-                                context.Engine.State.AddCharacterToSlot(slotIdx, context.Player, chosenCard);
-                                context.Engine.Emit(new CharacterPlayedEvent(context.Player, slotIdx, chosenCard));
-                                context.Engine.ResolveScore(slotIdx);
+                                var targetSlot = context.Engine.State.Slots[slotIdx];
+                                if (!targetSlot.IsEmpty)
+                                {
+                                    context.Engine.State.RemoveCardFromHand(context.Player, chosenCard);
+                                    context.Engine.State.AddCharacterToSlot(slotIdx, context.Player, chosenCard);
+                                    context.Engine.Emit(new CharacterPlayedEvent(context.Player, slotIdx, chosenCard));
+                                    context.Engine.ResolveScore(slotIdx, context.Player);
+                                    context.Engine.CheckDeckOutCondition(context.Player);
+                                }
                             }
                         }
                     ));
@@ -576,26 +632,50 @@ public sealed class PlayCharacterFreeEffect : IEffect
                 hand,
                 chosenCard => {
                     context.Engine.State.RemoveCardFromHand(context.Player, chosenCard);
-                    // Emit a specific event or put it in a "PendingFreePlay" state that the UI resolves.
-                    // For the pure engine, we must put it on the board if a slot is available.
-                    int emptySlot = -1;
+                    var occupiedSlots = new List<int>();
                     for (int i = 0; i < context.Engine.State.Slots.Count; i++)
                     {
                         var s = context.Engine.State.Slots[i];
-                        if (s.IsActive(context.Engine.State.TurnNumber) && s.Card != null)
+                        if (!s.IsEmpty && s.Card != null)
                         {
-                            emptySlot = i;
-                            break;
+                            occupiedSlots.Add(i);
                         }
                     }
-                    if (emptySlot != -1)
+
+                    if (occupiedSlots.Count == 1)
                     {
-                        context.Engine.State.AddCharacterToSlot(emptySlot, context.Player, chosenCard);
-                        context.Engine.Emit(new CharacterPlayedEvent(context.Player, emptySlot, chosenCard));
+                        int targetSlot = occupiedSlots[0];
+                        context.Engine.State.AddCharacterToSlot(targetSlot, context.Player, chosenCard);
+                        context.Engine.Emit(new CharacterPlayedEvent(context.Player, targetSlot, chosenCard));
+                        context.Engine.CheckDeckOutCondition(context.Player);
+                    }
+                    else if (occupiedSlots.Count > 1)
+                    {
+                        context.Engine.Emit(new PlayerSlotChoiceRequiredEvent(
+                            context.Player,
+                            "Choisissez un terrain cible",
+                            $"Choisissez un terrain pour poser {chosenCard.Name}",
+                            slotIdx =>
+                            {
+                                if (slotIdx >= 0 && slotIdx < context.Engine.State.Slots.Count && !context.Engine.State.Slots[slotIdx].IsEmpty)
+                                {
+                                    context.Engine.State.AddCharacterToSlot(slotIdx, context.Player, chosenCard);
+                                    context.Engine.Emit(new CharacterPlayedEvent(context.Player, slotIdx, chosenCard));
+                                }
+                                else
+                                {
+                                    int fallbackSlot = occupiedSlots[0];
+                                    context.Engine.State.AddCharacterToSlot(fallbackSlot, context.Player, chosenCard);
+                                    context.Engine.Emit(new CharacterPlayedEvent(context.Player, fallbackSlot, chosenCard));
+                                }
+                                context.Engine.CheckDeckOutCondition(context.Player);
+                            }
+                        ));
                     }
                     else
                     {
                         context.Engine.State.AddCardToDiscard(context.Player, chosenCard);
+                        context.Engine.CheckDeckOutCondition(context.Player);
                     }
                 }
             ));

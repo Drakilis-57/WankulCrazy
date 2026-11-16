@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text.Json;
 using WankulCrazy.Duel.Engine;
 using WankulCrazyPlugin.cards;
 using WankulCrazyPlugin.duel;
@@ -195,5 +197,102 @@ public class DuelSeason5EffectsTests
         Assert.True(res.Success);
 
         Assert.Equal(handBefore + 1, engine.State.GetHand(p1).Count);
+    }
+
+    private static string FindRepoRoot()
+    {
+        var dir = new DirectoryInfo(AppContext.BaseDirectory);
+        while (dir != null && !File.Exists(Path.Combine(dir.FullName, "data", "customdecks", "effects_s5.json")))
+        {
+            dir = dir.Parent;
+        }
+        return dir?.FullName ?? throw new DirectoryNotFoundException("Impossible de localiser data/customdecks/effects_s5.json");
+    }
+
+    private static Dictionary<int, JsonElement> LoadEffectsS5()
+    {
+        var path = Path.Combine(FindRepoRoot(), "data", "customdecks", "effects_s5.json");
+        var doc = JsonDocument.Parse(File.ReadAllText(path));
+        var map = new Dictionary<int, JsonElement>();
+        foreach (var el in doc.RootElement.EnumerateArray())
+        {
+            map[el.GetProperty("cardIndex").GetInt32()] = el.Clone();
+        }
+        return map;
+    }
+
+    private static string[] GetStringArray(JsonElement el, string prop)
+    {
+        return el.GetProperty(prop).EnumerateArray().Select(x => x.GetString()!).ToArray();
+    }
+
+    [Fact]
+    public void EffectsS5Json_ContainsAll185LegacyCardsWithValidCosts()
+    {
+        var map = LoadEffectsS5();
+        Assert.Equal(185, map.Count);
+        for (int idx = 500001; idx <= 500185; idx++)
+        {
+            Assert.True(map.ContainsKey(idx), $"Index manquant dans effects_s5.json : {idx}");
+            int cost = map[idx].GetProperty("costOverride").GetInt32();
+            Assert.InRange(cost, 0, 3);
+            if (idx <= 500030 || idx >= 500176)
+            {
+                Assert.Equal(0, cost);
+            }
+        }
+
+        var effigyCosts = Enumerable.Range(500031, 145)
+            .Select(i => map[i].GetProperty("costOverride").GetInt32())
+            .GroupBy(c => c)
+            .ToDictionary(g => g.Key, g => g.Count());
+
+        Assert.Equal(66, effigyCosts[0]);
+        Assert.Equal(43, effigyCosts[1]);
+        Assert.Equal(23, effigyCosts[2]);
+        Assert.Equal(13, effigyCosts[3]);
+    }
+
+    [Fact]
+    public void EffectsS5Json_MapsKeyLegacyCharactersAndDuos()
+    {
+        var map = LoadEffectsS5();
+
+        Assert.Contains("discard_to_top_deck_by_gem_chain", GetStringArray(map[500103], "combo"));
+        Assert.Contains("passive_force_per_gem_chain_1", GetStringArray(map[500104], "passive"));
+        Assert.Contains("search_deck_char_no_gems", GetStringArray(map[500092], "onPlay"));
+
+        foreach (int rageIdx in new[] { 500140, 500170 })
+        {
+            Assert.Contains("apply_both_losing_effect_in_play", GetStringArray(map[rageIdx], "onPlay"));
+            Assert.Contains("both_banish_top_2_if_smaller_deck", GetStringArray(map[rageIdx], "combo"));
+        }
+
+        foreach (int fsIdx in new[] { 500144, 500174 })
+        {
+            Assert.Equal(2, map[fsIdx].GetProperty("costOverride").GetInt32());
+            Assert.Contains("mill_10_bonus_next_score", GetStringArray(map[fsIdx], "onPlay"));
+        }
+
+        foreach (int raiderIdx in new[] { 500133, 500163 })
+        {
+            Assert.Equal(1, map[raiderIdx].GetProperty("costOverride").GetInt32());
+            Assert.Contains("passive_double_force_on_poubelle_win", GetStringArray(map[raiderIdx], "passive"));
+            Assert.Contains("cancel_char_effect_turn", GetStringArray(map[raiderIdx], "combo"));
+        }
+
+        Assert.Equal(1, map[500156].GetProperty("costOverride").GetInt32());
+        Assert.Contains("bounce_both_char_1", GetStringArray(map[500156], "combo"));
+
+        Assert.Contains("duo_martine_jeanine", GetStringArray(map[500176], "passive"));
+        Assert.Contains("duo_martine_jeanine", GetStringArray(map[500177], "passive"));
+        Assert.Contains("duo_flantier", GetStringArray(map[500178], "passive"));
+        Assert.Contains("duo_flantier", GetStringArray(map[500179], "passive"));
+        Assert.Contains("duo_andre_pierre", GetStringArray(map[500180], "passive"));
+        Assert.Contains("duo_andre_pierre", GetStringArray(map[500181], "passive"));
+        Assert.Contains("duo_aventuriers_manoir", GetStringArray(map[500182], "passive"));
+        Assert.Contains("duo_aventuriers_manoir", GetStringArray(map[500183], "passive"));
+        Assert.Contains("duo_jakov_richus", GetStringArray(map[500184], "passive"));
+        Assert.Contains("duo_jakov_richus", GetStringArray(map[500185], "passive"));
     }
 }

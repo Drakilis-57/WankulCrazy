@@ -11,7 +11,7 @@ Une partie de Wankul oppose deux joueurs en duel stratégique autour d'arènes d
 ### Conditions de Victoire
 Pour gagner la partie, un joueur doit remplir **l'une des deux conditions** suivantes :
 1. **Gagner 5 Duels** : Être le premier joueur à remporter 5 combats sur les cartes Terrain ("scorer" 5 terrains).
-2. **Meule / Épuisement de Deck** : Vider la pioche adverse. Si un joueur doit piocher ou défausser une carte depuis une pioche vide, il perd immédiatement la partie.
+2. **Meule / Épuisement de Deck** : Un joueur perd par meule uniquement lorsque sa pioche **ET** sa main sont toutes les deux vides. Tant qu'il lui reste au moins une carte en main ou dans sa pioche, il peut continuer à jouer.
 
 ---
 

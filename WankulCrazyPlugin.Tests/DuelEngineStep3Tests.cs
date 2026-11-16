@@ -16,7 +16,7 @@ public class DuelEngineStep3Tests
     public void PlayCharacter_Max4PerTurn_EnforcedAndResetOnNextTurn()
     {
         var rng = new NoShuffleRandom();
-        var rules = new DuelRules(startingHandSize: 0, cardsDrawnPerTurn: 0);
+        var rules = new DuelRules(startingHandSize: 0, cardsDrawnPerTurn: 0, autoScoreForceThreshold: 500);
         var engine = new DuelEngine(rng, rules);
 
         var terrain = new DuelCard("T1", "Plaine", CardKind.Terrain);
@@ -100,7 +100,7 @@ public class DuelEngineStep3Tests
     public void Scoreur_OnActiveTerrain_TriggersScoring_ComparesForce_AndCleansSlot()
     {
         var rng = new NoShuffleRandom();
-        var rules = new DuelRules(startingHandSize: 0, cardsDrawnPerTurn: 0);
+        var rules = new DuelRules(startingHandSize: 0, cardsDrawnPerTurn: 0, autoScoreForceThreshold: 500);
         var engine = new DuelEngine(rng, rules);
 
         var terrain = new DuelCard("T1", "Plaine", CardKind.Terrain);

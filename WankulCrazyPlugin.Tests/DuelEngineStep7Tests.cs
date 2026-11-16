@@ -75,7 +75,7 @@ public class DuelEngineStep7Tests
     public void DuelAI_PrefersComboSlot_WhenPlayingCharacterWithClosingGem()
     {
         var rng = new NoShuffleRandom();
-        var rules = new DuelRules(startingHandSize: 0, cardsDrawnPerTurn: 0);
+        var rules = new DuelRules(startingHandSize: 0, cardsDrawnPerTurn: 0, autoScoreForceThreshold: 110);
         var engine = new DuelEngine(rng, rules);
 
         var terrain = new DuelCard("T1", "Plaine", CardKind.Terrain);
@@ -146,5 +146,79 @@ public class DuelEngineStep7Tests
         Assert.Equal(2, engine.State.ScoreP1);
         Assert.True(engine.State.Slots[0].IsEmpty);
         Assert.True(engine.State.Slots[1].IsEmpty);
+    }
+
+    [Fact]
+    public void ComboScoreur_And_Default11AutoScoreThreshold_WorkAsOfficialRules()
+    {
+        var rng = new NoShuffleRandom();
+        var rules = new DuelRules(startingHandSize: 0, cardsDrawnPerTurn: 0);
+        Assert.Equal(11, rules.AutoScoreForceThreshold);
+
+        var engine = new DuelEngine(rng, rules);
+        var terrain = new DuelCard("T1", "Plaine", CardKind.Terrain);
+        engine.StartDuel(new[] { terrain }, new[] { terrain }, PlayerId.Player1);
+        engine.State.SetSlot(0, terrain, placedOnTurn: 0, placedBy: PlayerId.Player1);
+        engine.State.SetSlot(1, terrain, placedOnTurn: 0, placedBy: PlayerId.Player2);
+
+        // Coiffeuse (#33 S03) : Scoreur uniquement en Combo
+        var coiffeuseSolo = new DuelCard(
+            "300033_solo",
+            "COIFFEUSE",
+            CardKind.Character,
+            force: 2,
+            isScoreur: false,
+            hasOpeningGem: true,
+            hasClosingGem: true,
+            isComboScoreur: true);
+        var coiffeuseCombo = new DuelCard(
+            "300033_combo",
+            "COIFFEUSE",
+            CardKind.Character,
+            force: 2,
+            isScoreur: false,
+            hasOpeningGem: true,
+            hasClosingGem: true,
+            isComboScoreur: true);
+
+        engine.State.AddCardToHand(PlayerId.Player1, coiffeuseSolo);
+        engine.State.AddCardToHand(PlayerId.Player1, coiffeuseCombo);
+
+        engine.StartTurn();
+
+        // 1. Posée seule (index 0), Coiffeuse ne forme pas de Combo -> ne déclenche PAS le score
+        engine.PlayCharacter(PlayerId.Player1, "300033_solo", 0);
+        Assert.Equal(0, engine.State.ScoreP1);
+        Assert.False(engine.State.Slots[0].IsEmpty);
+
+        // 2. Posée à droite d'un allié (index 1), Coiffeuse forme un Combo -> déclenche le score !
+        engine.PlayCharacter(PlayerId.Player1, "300033_combo", 0);
+        Assert.Equal(1, engine.State.ScoreP1);
+        Assert.True(engine.State.Slots[0].IsEmpty);
+    }
+
+    [Fact]
+    public void AutoScore_TriggersAutomaticallyOnPlay_WhenReaching11Force()
+    {
+        var rng = new NoShuffleRandom();
+        var rules = new DuelRules(startingHandSize: 0, cardsDrawnPerTurn: 0);
+        var engine = new DuelEngine(rng, rules);
+
+        var terrain = new DuelCard("T1", "Plaine", CardKind.Terrain);
+        engine.StartDuel(new[] { terrain }, new[] { terrain }, PlayerId.Player1);
+        engine.State.SetSlot(0, terrain, placedOnTurn: 0, placedBy: PlayerId.Player1);
+        engine.State.SetSlot(1, terrain, placedOnTurn: 0, placedBy: PlayerId.Player2);
+
+        // P1 a déjà 8 de Force, et pose un personnage de Force 3 (non-Scoreur) -> 11 de Force !
+        engine.State.Slots[0].AddCharacter(PlayerId.Player1, new DuelCard("C8", "Costaud", CardKind.Character, force: 8));
+        engine.State.AddCardToHand(PlayerId.Player1, new DuelCard("C3", "Renfort", CardKind.Character, force: 3, isScoreur: false));
+
+        engine.StartTurn();
+
+        var res = engine.PlayCharacter(PlayerId.Player1, "C3", 0);
+        Assert.True(res.Success);
+        // Scoring automatique immédiat sans clic supplémentaire ni Scoreur !
+        Assert.Equal(1, engine.State.ScoreP1);
+        Assert.True(engine.State.Slots[0].IsEmpty);
     }
 }

@@ -141,10 +141,46 @@ public class DuelEngineStep6Tests
     }
 
     [Fact]
-    public void CardEffect_DiscardCards_DiscardsFromHand()
+    public void CardEffect_MillDepletesDeck_DoesNotLoseWhileHandHasCards()
     {
         var rng = new NoShuffleRandom();
         var rules = new DuelRules(startingHandSize: 0, cardsDrawnPerTurn: 0);
+        var engine = new DuelEngine(rng, rules);
+
+        var terrain = new DuelCard("T1", "Plaine", CardKind.Terrain);
+        var miller = new DuelCard("C_Mill", "Meuleur", CardKind.Character, force: 50, effectIds: new[] { "mill_3" });
+        var oppDeckCard = new DuelCard("OppDeck1", "Opp Deck 1", CardKind.Character);
+        var oppHandCard = new DuelCard("OppHand1", "Opp Hand 1", CardKind.Character, force: 50);
+
+        engine.StartDuel(new[] { terrain }, new[] { oppDeckCard }, PlayerId.Player1);
+        engine.State.SetSlot(0, terrain, 0, PlayerId.Player1);
+        engine.State.SetSlot(1, terrain, 0, PlayerId.Player1);
+
+        engine.State.AddCardToHand(PlayerId.Player1, miller);
+        engine.State.AddCardToHand(PlayerId.Player2, oppHandCard);
+
+        engine.StartTurn();
+
+        var result = engine.PlayCharacter(PlayerId.Player1, "C_Mill", 0);
+        Assert.True(result.Success);
+
+        // Pioche P2 vide, mais P2 a encore 1 carte en main -> la partie continue !
+        Assert.Empty(engine.State.GetDeck(PlayerId.Player2));
+        Assert.Single(engine.State.GetHand(PlayerId.Player2));
+        Assert.False(engine.State.IsGameOver);
+
+        // Si P2 perd sa dernière carte en main avec pioche vide -> défaite immédiate par DeckOut
+        engine.DiscardFromHand(PlayerId.Player2, 1);
+        Assert.True(engine.State.IsGameOver);
+        Assert.Equal(PlayerId.Player1, engine.State.Winner);
+        Assert.Equal(GameOverReason.DeckOut, engine.State.GameOverReason);
+    }
+
+    [Fact]
+    public void CardEffect_DiscardCards_DiscardsFromHand()
+    {
+        var rng = new NoShuffleRandom();
+        var rules = new DuelRules(startingHandSize: 0, cardsDrawnPerTurn: 0, autoScoreForceThreshold: 110);
         var engine = new DuelEngine(rng, rules);
 
         var terrain = new DuelCard("T1", "Plaine", CardKind.Terrain);
@@ -179,7 +215,7 @@ public class DuelEngineStep6Tests
     public void CardEffect_UnknownEffectId_GracefullyIgnoredWithoutCrash()
     {
         var rng = new NoShuffleRandom();
-        var rules = new DuelRules(startingHandSize: 0, cardsDrawnPerTurn: 0);
+        var rules = new DuelRules(startingHandSize: 0, cardsDrawnPerTurn: 0, autoScoreForceThreshold: 110);
         var engine = new DuelEngine(rng, rules);
 
         var terrain = new DuelCard("T1", "Plaine", CardKind.Terrain);

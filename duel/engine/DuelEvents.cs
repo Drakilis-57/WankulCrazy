@@ -371,3 +371,58 @@ public sealed class PlayerSlotChoiceRequiredEvent : IDuelEvent
         OnSlotSelected = onSlotSelected;
     }
 }
+
+public sealed class PlayerCostPaymentRequiredEvent : IDuelEvent
+{
+    public PlayerId Player { get; }
+    public DuelCard CardToPlay { get; }
+    public int SlotIndex { get; }
+    public int InsertIndex { get; }
+    public int RequiredCount { get; }
+    public IReadOnlyList<DuelCard> PayableHandCards { get; }
+    public Action<IReadOnlyList<string>> OnConfirmPayment { get; }
+    public Action OnCancelPayment { get; }
+
+    public PlayerCostPaymentRequiredEvent(
+        PlayerId player,
+        DuelCard cardToPlay,
+        int slotIndex,
+        int insertIndex,
+        int requiredCount,
+        IReadOnlyList<DuelCard> payableHandCards,
+        Action<IReadOnlyList<string>> onConfirmPayment,
+        Action onCancelPayment)
+    {
+        Player = player;
+        CardToPlay = cardToPlay;
+        SlotIndex = slotIndex;
+        InsertIndex = insertIndex;
+        RequiredCount = requiredCount;
+        PayableHandCards = payableHandCards ?? Array.Empty<DuelCard>();
+        OnConfirmPayment = onConfirmPayment;
+        OnCancelPayment = onCancelPayment;
+    }
+}
+
+public sealed class SubReactionPromptEvent : IDuelEvent
+{
+    public PlayerId ReactingPlayer { get; }
+    public DuelCard SubCard { get; }
+    public string TriggerDescription { get; }
+    public Action OnAcceptSub { get; }
+    public Action OnDeclineSub { get; }
+
+    public SubReactionPromptEvent(
+        PlayerId reactingPlayer,
+        DuelCard subCard,
+        string triggerDescription,
+        Action onAcceptSub,
+        Action onDeclineSub)
+    {
+        ReactingPlayer = reactingPlayer;
+        SubCard = subCard;
+        TriggerDescription = triggerDescription ?? string.Empty;
+        OnAcceptSub = onAcceptSub;
+        OnDeclineSub = onDeclineSub;
+    }
+}

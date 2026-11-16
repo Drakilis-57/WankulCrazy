@@ -12,13 +12,27 @@ namespace WankulCrazyPlugin.duel
     /// </summary>
     public static class CardAdapter
     {
-                public class EffectMapping {
+        public class EffectMapping
+        {
             public int cardIndex { get; set; }
+            public int? costOverride { get; set; }
+            public bool isDuo { get; set; }
+            public List<string> onPlay { get; set; }
+            public List<string> combo { get; set; }
+            public List<string> passive { get; set; }
+            public List<string> sub { get; set; }
+            public List<string> win { get; set; }
+            public List<string> lose { get; set; }
             public List<string> effects { get; set; }
+
+            public bool HasEnrichedFormat =>
+                onPlay != null || combo != null || passive != null ||
+                sub != null || win != null || lose != null;
         }
 
         private static Dictionary<string, WankulCardData> _cardsByIdCache;
-        private static Dictionary<int, List<string>> _effectsByIndexCache;
+        private static Dictionary<int, EffectMapping> _mappingsByIndexCache;
+        private static Dictionary<int, GemMask> _gemsByIndexCache;
 
         /// <summary>
         /// Initialise ou enrichit manuellement le cache de cartes (utile pour injecter directement le pool en jeu ou dans les tests).
@@ -62,44 +76,103 @@ namespace WankulCrazyPlugin.duel
             }
         }
 
-        private static void LoadCardEffectsCache()
+        private static string ResolveCustomDeckDataPath(string fileName)
         {
-            if (_effectsByIndexCache != null) return;
-            _effectsByIndexCache = new Dictionary<int, List<string>>();
-            string effectsPath = "data/customdecks/duel_card_effects.json";
-
-            try {
+            try
+            {
                 var type = System.Type.GetType("BepInEx.Paths, BepInEx");
-                if (type != null) {
+                if (type != null)
+                {
                     var prop = type.GetProperty("PluginPath", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
-                    if (prop != null) {
+                    if (prop != null)
+                    {
                         string pluginPath = (string)prop.GetValue(null);
-                        string p = System.IO.Path.Combine(pluginPath, "WankulCrazy", "data", "customdecks", "duel_card_effects.json");
-                        if (System.IO.File.Exists(p)) {
-                            effectsPath = p;
-                        }
+                        string p = System.IO.Path.Combine(pluginPath, "WankulCrazy", "data", "customdecks", fileName);
+                        if (System.IO.File.Exists(p)) return p;
                     }
-                }
-            } catch { }
-
-            if (!System.IO.File.Exists(effectsPath)) {
-                effectsPath = System.IO.Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, "data", "customdecks", "duel_card_effects.json");
-                if (!System.IO.File.Exists(effectsPath)) {
-                    effectsPath = System.IO.Path.Combine("data", "customdecks", "duel_card_effects.json");
                 }
             }
+            catch { }
 
-            if (System.IO.File.Exists(effectsPath)) {
-                try {
+            string baseDir = System.AppDomain.CurrentDomain.BaseDirectory;
+            for (int depth = 0; depth < 6 && !string.IsNullOrEmpty(baseDir); depth++)
+            {
+                string candidate = System.IO.Path.Combine(baseDir, "data", "customdecks", fileName);
+                if (System.IO.File.Exists(candidate)) return candidate;
+                var parent = System.IO.Directory.GetParent(baseDir);
+                baseDir = parent != null ? parent.FullName : null;
+            }
+
+            return System.IO.Path.Combine("data", "customdecks", fileName);
+        }
+
+        private static void LoadCardEffectsCache()
+        {
+            if (_mappingsByIndexCache != null) return;
+            _mappingsByIndexCache = new Dictionary<int, EffectMapping>();
+            string effectsPath = ResolveCustomDeckDataPath("duel_card_effects.json");
+
+            if (System.IO.File.Exists(effectsPath))
+            {
+                try
+                {
                     string json = System.IO.File.ReadAllText(effectsPath, System.Text.Encoding.UTF8);
                     var list = Newtonsoft.Json.JsonConvert.DeserializeObject<List<EffectMapping>>(json);
-                    if (list != null) {
-                        foreach (var m in list) {
-                            _effectsByIndexCache[m.cardIndex] = m.effects;
+                    if (list != null)
+                    {
+                        foreach (var m in list)
+                        {
+                            if (m != null)
+                            {
+                                _mappingsByIndexCache[m.cardIndex] = m;
+                            }
                         }
                     }
-                } catch (System.Exception ex) {
+                }
+                catch (System.Exception ex)
+                {
                     System.Console.WriteLine("Error loading duel_card_effects.json: " + ex);
+                }
+            }
+        }
+
+        private static GemMask ParseGemMask(string tokens)
+        {
+            if (string.IsNullOrWhiteSpace(tokens)) return GemMask.None;
+            GemMask mask = GemMask.None;
+            if (tokens.Contains("CO", StringComparison.OrdinalIgnoreCase)) mask |= GemMask.ClosingOrange;
+            if (tokens.Contains("CV", StringComparison.OrdinalIgnoreCase)) mask |= GemMask.ClosingViolet;
+            if (tokens.Contains("OO", StringComparison.OrdinalIgnoreCase)) mask |= GemMask.OpeningOrange;
+            if (tokens.Contains("OV", StringComparison.OrdinalIgnoreCase)) mask |= GemMask.OpeningViolet;
+            return mask;
+        }
+
+        private static void LoadCardGemsCache()
+        {
+            if (_gemsByIndexCache != null) return;
+            _gemsByIndexCache = new Dictionary<int, GemMask>();
+            string gemsPath = ResolveCustomDeckDataPath("duel_card_gems.json");
+
+            if (System.IO.File.Exists(gemsPath))
+            {
+                try
+                {
+                    string json = System.IO.File.ReadAllText(gemsPath, System.Text.Encoding.UTF8);
+                    var dict = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
+                    if (dict != null)
+                    {
+                        foreach (var kv in dict)
+                        {
+                            if (int.TryParse(kv.Key, out int cardIndex))
+                            {
+                                _gemsByIndexCache[cardIndex] = ParseGemMask(kv.Value);
+                            }
+                        }
+                    }
+                }
+                catch (System.Exception ex)
+                {
+                    System.Console.WriteLine("Error loading duel_card_gems.json: " + ex);
                 }
             }
         }
@@ -146,9 +219,23 @@ namespace WankulCrazyPlugin.duel
             EnsureIndexBuilt();
             if (_cardsByIdCache != null)
             {
-                if (!string.IsNullOrEmpty(card.Id) && _cardsByIdCache.TryGetValue(card.Id, out var data))
+                if (!string.IsNullOrEmpty(card.Id))
                 {
-                    return data;
+                    if (_cardsByIdCache.TryGetValue(card.Id, out var data))
+                    {
+                        return data;
+                    }
+
+                    // Support des IDs d'instance uniques générés par BuildLegalDeck (ex: "Joueur#12#S1-005")
+                    int sepIdx = card.Id.LastIndexOf('#');
+                    if (sepIdx >= 0 && sepIdx + 1 < card.Id.Length)
+                    {
+                        string baseId = card.Id.Substring(sepIdx + 1);
+                        if (_cardsByIdCache.TryGetValue(baseId, out var dataByBaseId))
+                        {
+                            return dataByBaseId;
+                        }
+                    }
                 }
                 if (!string.IsNullOrEmpty(card.Name) && _cardsByIdCache.TryGetValue(card.Name, out var dataByName))
                 {
@@ -266,18 +353,72 @@ namespace WankulCrazyPlugin.duel
             return current;
         }
 
-        private static List<string> ResolveEffectIds(WankulCardData data)
+        private static EffectMapping ResolveEffectMapping(WankulCardData data)
         {
-            var list = new List<string>();
-            if (data == null) return list;
-
+            if (data == null) return null;
             EnsureIndexBuilt();
-            if (_effectsByIndexCache != null && _effectsByIndexCache.TryGetValue(data.Index, out var mappedEffects))
+            if (_mappingsByIndexCache != null && _mappingsByIndexCache.TryGetValue(data.Index, out var mapping))
             {
-                list.AddRange(mappedEffects);
+                return mapping;
+            }
+            return null;
+        }
+
+        private static bool ShouldSkipCharacterEffect(string effId, int force)
+        {
+            if (string.IsNullOrEmpty(effId)) return true;
+
+            // Ignorer les effets de victoire/défaite de Terrain ("win_play_free_score", etc.) placés par erreur sur des Personnages
+            if (effId.StartsWith("win_", StringComparison.OrdinalIgnoreCase) ||
+                effId.StartsWith("lose_", StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
             }
 
-            return list;
+            // Sur l'échelle réelle Wankul (Force 0..10), ignorer les anciens multiplicateurs ATK Tetramon (boost_self_15..90)
+            if (force <= 15 &&
+                (effId == "boost_self_15" || effId == "boost_self_20" || effId == "boost_self_30" ||
+                 effId == "boost_self_45" || effId == "boost_self_60" || effId == "boost_self_75" ||
+                 effId == "boost_self_90"))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        private static void AddFilteredEffects(List<string> target, IEnumerable<string> source, int force)
+        {
+            if (source == null) return;
+            foreach (var effId in source)
+            {
+                if (!ShouldSkipCharacterEffect(effId, force))
+                {
+                    target.Add(effId);
+                }
+            }
+        }
+
+        private static string NormalizeTerrainEffectId(string effId, int cardIndex)
+        {
+            if (cardIndex >= 100000)
+            {
+                if (effId == "boost_laink_20") return "boost_laink_1";
+                if (effId == "boost_terracid_20") return "boost_terracid_1";
+            }
+            return effId;
+        }
+
+        private static void AddNormalizedTerrainEffects(List<string> target, IEnumerable<string> source, int cardIndex)
+        {
+            if (source == null) return;
+            foreach (var effId in source)
+            {
+                if (!string.IsNullOrEmpty(effId))
+                {
+                    target.Add(NormalizeTerrainEffectId(effId, cardIndex));
+                }
+            }
         }
 
         private static readonly System.Text.RegularExpressions.Regex s_ComboBoostRegex =
@@ -292,38 +433,102 @@ namespace WankulCrazyPlugin.duel
 
             string id = !string.IsNullOrEmpty(cardData.Number) ? cardData.Number : cardData.Index.ToString();
             string name = !string.IsNullOrEmpty(cardData.Title) ? FixMojibake(cardData.Title) : "Carte Wankul";
-            var effectIds = ResolveEffectIds(cardData);
+            var mapping = ResolveEffectMapping(cardData);
 
             if (cardData is EffigyCardData effigy)
             {
-                // Dans les données Wankul, Force = -1 désigne les cartes utilitaires sans force imprimée (tiret '-')
-                int force = effigy.Force == -1 ? 0 : effigy.Force;
+                bool isDuo = (mapping != null && mapping.isDuo) ||
+                             string.Equals(effigy.RarityId, "DUO", StringComparison.OrdinalIgnoreCase) ||
+                             string.Equals(effigy.Effigy, "Duo", StringComparison.OrdinalIgnoreCase);
 
+                // Dans les données Wankul, Force = -1 désigne les cartes utilitaires sans force imprimée (tiret '-').
+                // Les cartes DUO S5 n'ont ni Force (0) ni Coût de pose (0).
+                int force = isDuo ? 0 : (effigy.Force == -1 ? 0 : effigy.Force);
+                int cost = isDuo ? 0 : Math.Max(0, mapping?.costOverride ?? effigy.Cost);
+
+                var onPlayEffectIds = new List<string>();
                 var comboEffectIds = new List<string>();
-                bool hasClosingGem = false;
+                var passiveEffectIds = new List<string>();
+                var subEffectIds = new List<string>();
+                bool hasRulesText = !string.IsNullOrWhiteSpace(effigy.Rules);
+                bool hasComboText = !string.IsNullOrWhiteSpace(effigy.Combo);
+                bool hasClosingGem = hasComboText;
 
-                if (!string.IsNullOrEmpty(effigy.Combo))
+                if (mapping != null && mapping.HasEnrichedFormat)
                 {
-                    string comboText = effigy.Combo.ToLowerInvariant();
-                    hasClosingGem = true;
+                    AddFilteredEffects(onPlayEffectIds, mapping.onPlay, force);
+                    AddFilteredEffects(comboEffectIds, mapping.combo, force);
+                    AddFilteredEffects(passiveEffectIds, mapping.passive, force);
+                    AddFilteredEffects(subEffectIds, mapping.sub, force);
+                    if (comboEffectIds.Count > 0)
+                    {
+                        hasClosingGem = true;
+                    }
+                }
+                else
+                {
+                    var legacyEffects = mapping?.effects;
+                    if (legacyEffects != null)
+                    {
+                        for (int i = 0; i < legacyEffects.Count; i++)
+                        {
+                            string effId = legacyEffects[i];
+                            if (ShouldSkipCharacterEffect(effId, force)) continue;
 
-                    var matchBoost = s_ComboBoostRegex.Match(comboText);
-                    if (matchBoost.Success && int.TryParse(matchBoost.Groups[1].Value, out int bonus))
-                    {
-                        comboEffectIds.Add($"boost_self_{bonus}");
+                            if (effId.StartsWith("sub_", StringComparison.OrdinalIgnoreCase))
+                            {
+                                subEffectIds.Add(effId);
+                            }
+                            else if (effId.StartsWith("passive_", StringComparison.OrdinalIgnoreCase))
+                            {
+                                passiveEffectIds.Add(effId);
+                            }
+                            else if (!hasRulesText && hasComboText)
+                            {
+                                comboEffectIds.Add(effId);
+                            }
+                            else
+                            {
+                                onPlayEffectIds.Add(effId);
+                            }
+                        }
                     }
-                    else if (comboText.Contains("+ 20 de force") || comboText.Contains("+20 de force"))
+
+                    if (hasComboText)
                     {
-                        comboEffectIds.Add("boost_self_20");
+                        string comboText = effigy.Combo.ToLowerInvariant();
+                        hasClosingGem = true;
+
+                        var matchBoost = s_ComboBoostRegex.Match(comboText);
+                        if (matchBoost.Success && int.TryParse(matchBoost.Groups[1].Value, out int bonus))
+                        {
+                            comboEffectIds.Add($"boost_self_{bonus}");
+                        }
+                        else if (comboText.Contains("+ 20 de force") || comboText.Contains("+20 de force"))
+                        {
+                            comboEffectIds.Add("boost_self_20");
+                        }
+                        else if (comboText.Contains("+ 15") || comboText.Contains("+15"))
+                        {
+                            comboEffectIds.Add("boost_self_15");
+                        }
+                        else if (comboText.Contains("+ 30") || comboText.Contains("+30"))
+                        {
+                            comboEffectIds.Add("boost_self_30");
+                        }
                     }
-                    else if (comboText.Contains("+ 15") || comboText.Contains("+15"))
-                    {
-                        comboEffectIds.Add("boost_self_15");
-                    }
-                    else if (comboText.Contains("+ 30") || comboText.Contains("+30"))
-                    {
-                        comboEffectIds.Add("boost_self_30");
-                    }
+                }
+
+                bool isDirectScoreur = effigy.isScoreur ||
+                    (effigy.Rules != null && (effigy.Rules.Contains("Scoreur") || effigy.Rules.Contains("Scorez un terrain") || effigy.Rules.Contains("Scorez un Terrain")));
+                bool isComboScoreur = !isDirectScoreur &&
+                    effigy.Combo != null && (effigy.Combo.Contains("Scorez un Terrain") || effigy.Combo.Contains("Scorez un terrain"));
+
+                LoadCardGemsCache();
+                GemMask? mappedGems = null;
+                if (_gemsByIndexCache != null && _gemsByIndexCache.TryGetValue(cardData.Index, out var foundGems))
+                {
+                    mappedGems = foundGems;
                 }
 
                 return new DuelCard(
@@ -331,22 +536,95 @@ namespace WankulCrazyPlugin.duel
                     name: name,
                     kind: CardKind.Character,
                     force: force,
-                    isScoreur: effigy.IsScoreur,
-                    effectIds: effectIds,
+                    isScoreur: isDirectScoreur,
+                    effectIds: onPlayEffectIds,
                     effigy: effigy.Effigy,
                     comboEffectIds: comboEffectIds,
-                    hasOpeningGem: true,
-                    hasClosingGem: hasClosingGem
+                    hasOpeningGem: false,
+                    hasClosingGem: hasClosingGem,
+                    isComboScoreur: isComboScoreur,
+                    gemMask: mappedGems,
+                    cost: cost,
+                    passiveEffectIds: passiveEffectIds,
+                    subEffectIds: subEffectIds,
+                    isDuo: isDuo
                 );
             }
 
             if (cardData is TerrainCardData || cardData.CardType == CardType.Terrain)
             {
-                return new DuelCard(id, name, CardKind.Terrain, 0, isScoreur: false, effectIds: effectIds);
+                var terrainEffectIds = new List<string>();
+                var terrainPassiveIds = new List<string>();
+                var terrainComboIds = new List<string>();
+                var terrainSubIds = new List<string>();
+
+                if (mapping != null && mapping.HasEnrichedFormat)
+                {
+                    AddNormalizedTerrainEffects(terrainEffectIds, mapping.onPlay, cardData.Index);
+                    AddNormalizedTerrainEffects(terrainEffectIds, mapping.win, cardData.Index);
+                    AddNormalizedTerrainEffects(terrainEffectIds, mapping.lose, cardData.Index);
+                    AddNormalizedTerrainEffects(terrainPassiveIds, mapping.passive, cardData.Index);
+                    AddNormalizedTerrainEffects(terrainComboIds, mapping.combo, cardData.Index);
+                    AddNormalizedTerrainEffects(terrainSubIds, mapping.sub, cardData.Index);
+                }
+                else if (mapping?.effects != null)
+                {
+                    for (int i = 0; i < mapping.effects.Count; i++)
+                    {
+                        string effId = mapping.effects[i];
+                        if (string.IsNullOrEmpty(effId)) continue;
+                        string normalized = NormalizeTerrainEffectId(effId, cardData.Index);
+                        if (normalized.StartsWith("passive_", StringComparison.OrdinalIgnoreCase))
+                        {
+                            terrainPassiveIds.Add(normalized);
+                        }
+                        else if (normalized.StartsWith("sub_", StringComparison.OrdinalIgnoreCase))
+                        {
+                            terrainSubIds.Add(normalized);
+                        }
+                        else
+                        {
+                            terrainEffectIds.Add(normalized);
+                        }
+                    }
+                }
+
+                return new DuelCard(
+                    id: id,
+                    name: name,
+                    kind: CardKind.Terrain,
+                    force: 0,
+                    isScoreur: false,
+                    effectIds: terrainEffectIds,
+                    comboEffectIds: terrainComboIds,
+                    hasOpeningGem: false,
+                    hasClosingGem: false,
+                    cost: 0,
+                    passiveEffectIds: terrainPassiveIds,
+                    subEffectIds: terrainSubIds,
+                    isDuo: false
+                );
             }
 
             // Fallback pour SpecialCardData ou autres
-            return new DuelCard(id, name, CardKind.Character, 0, isScoreur: false, effectIds: effectIds);
+            var fallbackEffects = new List<string>();
+            if (mapping != null)
+            {
+                if (mapping.onPlay != null) fallbackEffects.AddRange(mapping.onPlay);
+                if (mapping.effects != null && fallbackEffects.Count == 0) fallbackEffects.AddRange(mapping.effects);
+            }
+            return new DuelCard(
+                id: id,
+                name: name,
+                kind: CardKind.Character,
+                force: 0,
+                isScoreur: false,
+                effectIds: fallbackEffects,
+                cost: Math.Max(0, mapping?.costOverride ?? 0),
+                passiveEffectIds: mapping?.passive,
+                subEffectIds: mapping?.sub,
+                isDuo: mapping?.isDuo ?? false
+            );
         }
 
         public static List<DuelCard> ConvertDeck(IEnumerable<WankulCardData> deckData)
@@ -376,7 +654,12 @@ namespace WankulCrazyPlugin.duel
             {
                 foreach (var cardData in pool)
                 {
+                    if (cardData == null) continue;
                     var card = ToDuelCard(cardData);
+                    if (cardData.Index > 0)
+                    {
+                        card = CloneWithUniqueId(card, cardData.Index.ToString());
+                    }
                     if (card.Kind == CardKind.Terrain)
                     {
                         terrains.Add(card);
@@ -397,7 +680,7 @@ namespace WankulCrazyPlugin.duel
             {
                 if (i < terrains.Count)
                 {
-                    deck.Add(terrains[i]);
+                    deck.Add(CloneWithUniqueId(terrains[i], $"{prefix}#{deck.Count + 1}#{terrains[i].Id}"));
                 }
                 else
                 {
@@ -410,7 +693,7 @@ namespace WankulCrazyPlugin.duel
             {
                 if (i < scoreurs.Count)
                 {
-                    deck.Add(scoreurs[i]);
+                    deck.Add(CloneWithUniqueId(scoreurs[i], $"{prefix}#{deck.Count + 1}#{scoreurs[i].Id}"));
                 }
                 else
                 {
@@ -423,7 +706,7 @@ namespace WankulCrazyPlugin.duel
             {
                 if (i < characters.Count)
                 {
-                    deck.Add(characters[i]);
+                    deck.Add(CloneWithUniqueId(characters[i], $"{prefix}#{deck.Count + 1}#{characters[i].Id}"));
                 }
                 else
                 {
@@ -433,6 +716,28 @@ namespace WankulCrazyPlugin.duel
             }
 
             return deck;
+        }
+
+        private static DuelCard CloneWithUniqueId(DuelCard source, string instanceId)
+        {
+            return new DuelCard(
+                id: instanceId,
+                name: source.Name,
+                kind: source.Kind,
+                force: source.Force,
+                isScoreur: source.IsScoreur,
+                effectIds: source.EffectIds,
+                effigy: source.Effigy,
+                comboEffectIds: source.ComboEffectIds,
+                hasOpeningGem: source.HasOpeningGem,
+                hasClosingGem: source.HasClosingGem,
+                isComboScoreur: source.IsComboScoreur,
+                gemMask: source.Gems,
+                cost: source.Cost,
+                passiveEffectIds: source.PassiveEffectIds,
+                subEffectIds: source.SubEffectIds,
+                isDuo: source.IsDuo
+            );
         }
 
         /// <summary>

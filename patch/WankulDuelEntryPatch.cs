@@ -8,7 +8,7 @@ using WankulCrazyPlugin.duel;
 namespace WankulCrazyPlugin.patch
 {
     /// <summary>
-    /// Point d'entrée pour lancer le duel Wankul TCG (moteur indépendant et DuelView2D)
+    /// Point d'entrée pour lancer le duel Wankul TCG (moteur indépendant et DuelView3D)
     /// au lieu de la logique Tetramon vanilla quand le joueur s'assoit à une table de duel.
     /// </summary>
     public static class WankulDuelEntryPatch
@@ -18,21 +18,26 @@ namespace WankulCrazyPlugin.patch
         private static readonly System.Reflection.FieldInfo _isPlayerTurnField = AccessTools.Field(typeof(PlayTableGame), "m_IsPlayerTurn");
         private static readonly System.Reflection.FieldInfo _canExitField = AccessTools.Field(typeof(PlayTableGame), "m_CanExit");
         private static readonly System.Reflection.FieldInfo _isPlayerWinField = AccessTools.Field(typeof(PlayTableGame), "m_IsPlayerWin");
+        private static readonly System.Reflection.FieldInfo _isPlayTableGameModeField = AccessTools.Field(typeof(PlayTableGame), "m_IsPlayTableGameMode");
 
         public static void SetPlayTablePostfix(PlayTableGame __instance)
         {
             try
             {
                 if (__instance == null) return;
+                if (_isPlayTableGameModeField != null && !(bool)_isPlayTableGameModeField.GetValue(__instance))
+                {
+                    return;
+                }
 
                 Plugin.Logger.LogInfo("[WankulDuelEntryPatch] SetPlayTablePostfix : Interception et préparation du duel Wankul TCG.");
 
-                // 1. Préparation du deck du joueur et de l'adversaire (decks légaux 50 cartes : 10 terrains, 35 persos, 5 scoreurs)
+                // 1. Préparation du deck actif du joueur (établi : CPlayerData.m_CurrentSelectedDeckIndex) et d'un deck thématique pour l'IA
                 WankulCardsData.Instance.EnsureInitialized();
                 var wankulPool = WankulCardsData.Instance?.cards;
                 CardAdapter.SetCardsPool(wankulPool);
-                var playerDeck = CardAdapter.BuildLegalDeck(wankulPool, "Joueur");
-                var opponentDeck = CardAdapter.BuildLegalDeck(wankulPool, "Adversaire");
+                var playerDeck = BuildActiveWorkbenchPlayerDeck(wankulPool);
+                var opponentDeck = BuildRandomSeasonalOpponentDeck(wankulPool);
 
                 int pTerrains = 0, pPersos = 0, pScoreurs = 0;
                 foreach (var c in playerDeck)
@@ -165,8 +170,102 @@ namespace WankulCrazyPlugin.patch
 
             Plugin.Logger.LogInfo($"[WankulDuelEntryPatch] Tirage terminé : {(isPlayerTurn ? "Joueur (P1)" : "Adversaire (P2)")} commence !");
 
-            // Lancement de la vue 2D Wankul TCG
-            DuelView2D.Show(game, playerDeck, opponentDeck, startingPlayer);
+            // Lancement de la vue Full 3D Wankul TCG
+            DuelView3D.Show(game, playerDeck, opponentDeck, startingPlayer);
+        }
+
+        private static List<WankulCrazy.Duel.Engine.DuelCard> BuildActiveWorkbenchPlayerDeck(List<WankulCardData> wankulPool)
+        {
+            var workbenchCards = new List<WankulCardData>();
+            try
+            {
+                if (CPlayerData.m_DeckCompactCardDataList != null &&
+                    CPlayerData.m_CurrentSelectedDeckIndex >= 0 &&
+                    CPlayerData.m_CurrentSelectedDeckIndex < CPlayerData.m_DeckCompactCardDataList.Count)
+                {
+                    var activeDeck = CPlayerData.m_DeckCompactCardDataList[CPlayerData.m_CurrentSelectedDeckIndex];
+                    if (activeDeck?.compactCardDataAmountList != null)
+                    {
+                        for (int i = 0; i < activeDeck.compactCardDataAmountList.Count; i++)
+                        {
+                            var entry = activeDeck.compactCardDataAmountList[i];
+                            if (entry == null || entry.amount <= 0) continue;
+
+                            CardData gameCard = CPlayerData.GetCardData(entry.cardSaveIndex, entry.expansionType, entry.isDestiny);
+                            WankulCardData wankulCard = WankulCardsData.Instance?.GetFromMonster(gameCard, allowNull: true);
+                            if (wankulCard != null)
+                            {
+                                int copies = Mathf.Min(entry.amount, 3);
+                                for (int k = 0; k < copies; k++)
+                                {
+                                    workbenchCards.Add(wankulCard);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Plugin.Logger.LogWarning($"[WankulDuelEntryPatch] Impossible de lire le deck établi actif, fallback collection : {ex.Message}");
+            }
+
+            if (workbenchCards.Count > 0)
+            {
+                Plugin.Logger.LogInfo($"[WankulDuelEntryPatch] Deck établi actif chargé (index {CPlayerData.m_CurrentSelectedDeckIndex}) : {workbenchCards.Count} cartes sélectionnées.");
+                // Compléter avec la collection si le deck établi manque de Terrains ou de Scoreurs
+                if (wankulPool != null)
+                {
+                    for (int i = 0; i < wankulPool.Count; i++)
+                    {
+                        if (wankulPool[i] != null)
+                        {
+                            workbenchCards.Add(wankulPool[i]);
+                        }
+                    }
+                }
+                return CardAdapter.BuildLegalDeck(workbenchCards, "Joueur");
+            }
+
+            return CardAdapter.BuildLegalDeck(wankulPool, "Joueur");
+        }
+
+        private static List<WankulCrazy.Duel.Engine.DuelCard> BuildRandomSeasonalOpponentDeck(List<WankulCardData> wankulPool)
+        {
+            if (wankulPool == null || wankulPool.Count == 0)
+            {
+                return CardAdapter.BuildLegalDeck(null, "Adversaire");
+            }
+
+            string[] seasons = { "S01", "S02", "S03", "S04", "S05" };
+            string chosenSeason = seasons[UnityEngine.Random.Range(0, seasons.Length)];
+
+            var seasonCards = new List<WankulCardData>();
+            for (int i = 0; i < wankulPool.Count; i++)
+            {
+                var c = wankulPool[i];
+                if (c != null && string.Equals(c.SeasonId, chosenSeason, StringComparison.OrdinalIgnoreCase))
+                {
+                    seasonCards.Add(c);
+                }
+            }
+
+            if (seasonCards.Count < 20)
+            {
+                seasonCards.AddRange(wankulPool);
+            }
+
+            // Mélanger les cartes de la saison choisie pour varier les decks adverses à chaque duel
+            for (int i = seasonCards.Count - 1; i > 0; i--)
+            {
+                int j = UnityEngine.Random.Range(0, i + 1);
+                var tmp = seasonCards[i];
+                seasonCards[i] = seasonCards[j];
+                seasonCards[j] = tmp;
+            }
+
+            Plugin.Logger.LogInfo($"[WankulDuelEntryPatch] Deck IA généré sur le thème Saison {chosenSeason}.");
+            return CardAdapter.BuildLegalDeck(seasonCards, "Adversaire");
         }
     }
 }
