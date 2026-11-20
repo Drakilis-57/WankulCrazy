@@ -5,27 +5,11 @@ Expose les outils de communication en direct avec TCG Card Shop Simulator.
 """
 import sys
 import json
-import urllib.request
-import urllib.error
 
-BASE_URL = "http://127.0.0.1:8765"
-
-def request_api(endpoint, method="GET", data=None):
-    url = f"{BASE_URL}/{endpoint.lstrip('/')}"
-    try:
-        req = urllib.request.Request(url, method=method)
-        if data is not None:
-            body = json.dumps(data).encode("utf-8")
-            req.data = body
-            req.add_header("Content-Type", "application/json; charset=utf-8")
-        
-        with urllib.request.urlopen(req, timeout=30) as res:
-            resp_body = res.read().decode("utf-8")
-            return json.loads(resp_body)
-    except urllib.error.URLError as ex:
-        return {"error": f"Le jeu ne repond pas sur {url}. Assurez-vous que le jeu est lance: {ex}"}
-    except Exception as ex:
-        return {"error": f"Exception bridge: {ex}"}
+try:
+    from game_bridge import BASE_URL, request_api
+except ImportError:
+    from tools.game_bridge import BASE_URL, request_api
 
 TOOLS = [
     {
@@ -105,23 +89,23 @@ def handle_call_tool(params):
     args = params.get("arguments", {}) or {}
 
     if name == "game_status":
-        res = request_api("status")
+        res = request_api("status", timeout=30)
     elif name == "game_get_held_item":
-        res = request_api("held_item")
+        res = request_api("held_item", timeout=30)
     elif name == "game_get_target":
-        res = request_api("target")
+        res = request_api("target", timeout=30)
     elif name == "game_reload_textures":
-        res = request_api("reload_textures", method="POST")
+        res = request_api("reload_textures", method="POST", timeout=30)
     elif name == "game_take_screenshot":
-        res = request_api("screenshot", method="POST")
+        res = request_api("screenshot", method="POST", timeout=30)
     elif name == "game_dump_mesh":
         m_name = args.get("mesh_name", "")
         query = f"?name={urllib.parse.quote(str(m_name))}" if m_name else ""
-        res = request_api(f"dump_mesh{query}", method="POST", data={"mesh_name": m_name} if m_name else None)
+        res = request_api(f"dump_mesh{query}", method="POST", data={"mesh_name": m_name} if m_name else None, timeout=30)
     elif name == "game_dump_texture":
         t_name = args.get("texture_name", "")
         query = f"?texture_name={urllib.parse.quote(str(t_name))}" if t_name else ""
-        res = request_api(f"dump_texture{query}", method="POST", data={"texture_name": t_name})
+        res = request_api(f"dump_texture{query}", method="POST", data={"texture_name": t_name}, timeout=30)
     elif name == "game_render_item":
         item_type = args.get("item_type", "")
         mesh_name = args.get("mesh_name", "")
@@ -137,7 +121,8 @@ def handle_call_tool(params):
         res = request_api(
             f"render_item{query}",
             method="POST",
-            data={"item_type": item_type, "mesh_name": mesh_name, "size": size}
+            data={"item_type": item_type, "mesh_name": mesh_name, "size": size},
+            timeout=30
         )
     elif name == "game_get_logs":
         level = args.get("level", "")
@@ -148,7 +133,7 @@ def handle_call_tool(params):
         if keyword:
             q_parts.append(f"keyword={urllib.parse.quote(str(keyword))}")
         query = ("?" + "&".join(q_parts)) if q_parts else ""
-        res = request_api(f"logs{query}", method="GET")
+        res = request_api(f"logs{query}", method="GET", timeout=30)
     else:
         res = {"error": f"Outil inconnu : {name}"}
 

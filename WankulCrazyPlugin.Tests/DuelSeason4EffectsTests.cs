@@ -187,6 +187,7 @@ public class DuelSeason4EffectsTests
     private sealed class Season4EffectEntry
     {
         public int cardIndex { get; set; }
+        public List<int>? cardIndexes { get; set; }
         public int? costOverride { get; set; }
         public List<string> onPlay { get; set; } = new List<string>();
         public List<string> combo { get; set; } = new List<string>();
@@ -209,12 +210,38 @@ public class DuelSeason4EffectsTests
 
     private static List<Season4EffectEntry> LoadEffectsS4()
     {
-        string path = ResolveDataPath("data", "customdecks", "effects_s4.json");
-        Assert.True(File.Exists(path), $"effects_s4.json not found at {path}");
+        string path = ResolveDataPath("data", "customdecks", "duel_card_effects.json");
+        Assert.True(File.Exists(path), $"duel_card_effects.json not found at {path}");
         string json = File.ReadAllText(path, Encoding.UTF8);
-        var entries = JsonConvert.DeserializeObject<List<Season4EffectEntry>>(json);
-        Assert.NotNull(entries);
-        return entries!;
+        var raw = JsonConvert.DeserializeObject<List<Season4EffectEntry>>(json);
+        Assert.NotNull(raw);
+
+        var expanded = new List<Season4EffectEntry>();
+        foreach (var item in raw!)
+        {
+            var indices = new List<int>();
+            if (item.cardIndex > 0) indices.Add(item.cardIndex);
+            if (item.cardIndexes != null) indices.AddRange(item.cardIndexes);
+
+            foreach (int idx in indices)
+            {
+                if (idx >= 400001 && idx <= 400180)
+                {
+                    expanded.Add(new Season4EffectEntry
+                    {
+                        cardIndex = idx,
+                        costOverride = item.costOverride,
+                        onPlay = item.onPlay ?? new List<string>(),
+                        combo = item.combo ?? new List<string>(),
+                        passive = item.passive ?? new List<string>(),
+                        sub = item.sub ?? new List<string>(),
+                        win = item.win ?? new List<string>(),
+                        lose = item.lose ?? new List<string>()
+                    });
+                }
+            }
+        }
+        return expanded.OrderBy(e => e.cardIndex).ToList();
     }
 
     [Fact]

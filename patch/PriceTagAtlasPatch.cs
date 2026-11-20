@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using WankulCrazyPlugin.importer;
 
 namespace WankulCrazyPlugin.patch
 {
@@ -17,29 +18,29 @@ namespace WankulCrazyPlugin.patch
 
         private static void InitCustomCells()
         {
-            void Map(string name, int cell)
+            void Map(EItemType itemType, int cell)
             {
-                var val = (int)EnumExtensions.SafeParseEItemType(name);
+                int val = (int)itemType;
                 if (val >= 0)
                 {
                     s_CustomItemCells[val] = cell;
                 }
             }
 
-            Map("DisplayStellar", 224);
-            Map("DisplayStellarTaux", 225);
-            Map("BoosterStellar", 226);
-            Map("BoosterStellarTaux", 227);
-            Map("DisplayLegacy", 228);
-            Map("DisplayLegacyTaux", 229);
-            Map("BoosterLegacy", 230);
-            Map("BoosterLegacyTaux", 231);
-            Map("CaleconStellar", 232);
-            Map("StarterApocalypse", 233);
-            Map("StarterShowtime", 234);
-            Map("TapisS41", 235);
-            Map("TapisS42", 236);
-            Map("ClasseurS4", 237);
+            Map(CustomItemTypes.DisplayStellar, 224);
+            Map(CustomItemTypes.DisplayStellarTaux, 225);
+            Map(CustomItemTypes.BoosterStellar, 226);
+            Map(CustomItemTypes.BoosterStellarTaux, 227);
+            Map(CustomItemTypes.DisplayLegacy, 228);
+            Map(CustomItemTypes.DisplayLegacyTaux, 229);
+            Map(CustomItemTypes.BoosterLegacy, 230);
+            Map(CustomItemTypes.BoosterLegacyTaux, 231);
+            Map(CustomItemTypes.CaleconStellar, 232);
+            Map(CustomItemTypes.StarterApocalypse, 233);
+            Map(CustomItemTypes.StarterShowtime, 234);
+            Map(CustomItemTypes.TapisS41, 235);
+            Map(CustomItemTypes.TapisS42, 236);
+            Map(CustomItemTypes.ClasseurS4, 237);
         }
 
         public static bool TryGetCustomCell(int itemTypeValue, out int cell)
@@ -61,6 +62,12 @@ namespace WankulCrazyPlugin.patch
             return true;
         }
 
+        private static void ConfigureAtlasTexture(Texture2D tex)
+        {
+            tex.filterMode = FilterMode.Bilinear;
+            tex.name = "PriceTagAtlas_Wankul";
+        }
+
         public static void ReloadAtlas()
         {
             string p = Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "PriceTagAtlas.png");
@@ -72,25 +79,21 @@ namespace WankulCrazyPlugin.patch
 
             try
             {
-                byte[] data = File.ReadAllBytes(p);
-                if (s_CustomPriceTagAtlas != null)
+                Texture2D previous = s_CustomPriceTagAtlas;
+                Texture2D newTex = PatchTexturesImporter.ReloadDiskTexture(p, ConfigureAtlasTexture);
+                if (newTex == null)
                 {
-                    s_CustomPriceTagAtlas.LoadImage(data);
-                    Plugin.Logger.LogInfo($"[PriceTagPatch] PriceTagAtlas_Wankul rechargé en mémoire ({s_CustomPriceTagAtlas.width}x{s_CustomPriceTagAtlas.height}).");
+                    Plugin.Logger.LogError("[PriceTagPatch] ReloadAtlas: échec de LoadImage pour PriceTagAtlas.png");
+                    return;
                 }
-                else
+
+                if (previous != null && previous != newTex)
                 {
-                    var tex = new Texture2D(2, 2, TextureFormat.RGBA32, false);
-                    if (tex.LoadImage(data))
-                    {
-                        tex.filterMode = FilterMode.Bilinear;
-                        tex.name = "PriceTagAtlas_Wankul";
-                        tex.hideFlags |= HideFlags.DontUnloadUnusedAsset;
-                        UnityEngine.Object.DontDestroyOnLoad(tex);
-                        s_CustomPriceTagAtlas = tex;
-                        Plugin.Logger.LogInfo($"[PriceTagPatch] PriceTagAtlas_Wankul initialisé ({tex.width}x{tex.height}).");
-                    }
+                    UnityEngine.Object.Destroy(previous);
                 }
+                s_CustomPriceTagAtlas = newTex;
+                s_AtlasApplied = false;
+                Plugin.Logger.LogInfo($"[PriceTagPatch] PriceTagAtlas_Wankul rechargé en mémoire ({newTex.width}x{newTex.height}).");
             }
             catch (Exception ex)
             {
@@ -112,16 +115,10 @@ namespace WankulCrazyPlugin.patch
                 }
                 try
                 {
-                    byte[] data = File.ReadAllBytes(p);
-                    var tex = new Texture2D(2, 2, TextureFormat.RGBA32, false);
-                    if (tex.LoadImage(data))
+                    s_CustomPriceTagAtlas = PatchTexturesImporter.GetOrLoadDiskTexture(p, ConfigureAtlasTexture);
+                    if (s_CustomPriceTagAtlas != null)
                     {
-                        tex.filterMode = FilterMode.Bilinear;
-                        tex.name = "PriceTagAtlas_Wankul";
-                        tex.hideFlags |= HideFlags.DontUnloadUnusedAsset;
-                        UnityEngine.Object.DontDestroyOnLoad(tex);
-                        s_CustomPriceTagAtlas = tex;
-                        Plugin.Logger.LogInfo($"[PriceTagPatch] Texture PriceTagAtlas_Wankul chargée ({tex.width}x{tex.height}).");
+                        Plugin.Logger.LogInfo($"[PriceTagPatch] Texture PriceTagAtlas_Wankul chargée ({s_CustomPriceTagAtlas.width}x{s_CustomPriceTagAtlas.height}).");
                     }
                     else
                     {

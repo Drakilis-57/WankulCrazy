@@ -19,6 +19,44 @@ public sealed class DuelAI
         _rng = rng ?? new SystemRandomAdapter();
     }
 
+    private void HandleEngineEvent(DuelEngine engine, IDuelEvent evt)
+    {
+        if (engine.State.IsGameOver) return;
+
+        if (evt is PlayerChoiceRequiredEvent choiceEvt && choiceEvt.Player == Player)
+        {
+            ResolveCardChoice(engine, choiceEvt);
+        }
+        else if (evt is PlayerSlotChoiceRequiredEvent slotEvt && slotEvt.Player == Player)
+        {
+            ResolveSlotChoice(engine, slotEvt);
+        }
+        else if (evt is PlayerCostPaymentRequiredEvent payEvt && payEvt.Player == Player)
+        {
+            var ids = SelectBestPaymentCardIds(payEvt.PayableHandCards, string.Empty, payEvt.RequiredCount);
+            if (ids != null) payEvt.OnConfirmPayment?.Invoke(ids);
+            else payEvt.OnCancelPayment?.Invoke();
+        }
+        else if (evt is SubReactionPromptEvent subEvt && subEvt.ReactingPlayer == Player)
+        {
+            subEvt.OnAcceptSub?.Invoke();
+        }
+    }
+
+    private T ExecuteWithEngineEvents<T>(DuelEngine engine, Func<T> action)
+    {
+        void OnEngineEvent(IDuelEvent evt) => HandleEngineEvent(engine, evt);
+        engine.OnEvent += OnEngineEvent;
+        try
+        {
+            return action();
+        }
+        finally
+        {
+            engine.OnEvent -= OnEngineEvent;
+        }
+    }
+
     /// <summary>
     /// Exécute les actions du tour de l'IA jusqu'à EndTurn.
     /// </summary>
@@ -27,32 +65,7 @@ public sealed class DuelAI
         if (engine.State.IsGameOver) return;
         if (engine.State.ActivePlayer != Player) return;
 
-        void OnEngineEvent(IDuelEvent evt)
-        {
-            if (engine.State.IsGameOver) return;
-
-            if (evt is PlayerChoiceRequiredEvent choiceEvt && choiceEvt.Player == Player)
-            {
-                ResolveCardChoice(engine, choiceEvt);
-            }
-            else if (evt is PlayerSlotChoiceRequiredEvent slotEvt && slotEvt.Player == Player)
-            {
-                ResolveSlotChoice(engine, slotEvt);
-            }
-            else if (evt is PlayerCostPaymentRequiredEvent payEvt && payEvt.Player == Player)
-            {
-                var ids = SelectBestPaymentCardIds(payEvt.PayableHandCards, string.Empty, payEvt.RequiredCount);
-                if (ids != null) payEvt.OnConfirmPayment?.Invoke(ids);
-                else payEvt.OnCancelPayment?.Invoke();
-            }
-            else if (evt is SubReactionPromptEvent subEvt && subEvt.ReactingPlayer == Player)
-            {
-                subEvt.OnAcceptSub?.Invoke();
-            }
-        }
-
-        engine.OnEvent += OnEngineEvent;
-        try
+        ExecuteWithEngineEvents(engine, () =>
         {
             // 1. Pose obligatoire de terrain si requis
             if (engine.State.TerrainRequirementPending)
@@ -61,7 +74,7 @@ public sealed class DuelAI
                 if (engine.State.TerrainRequirementPending)
                 {
                     // Si toujours pending (cas anormal sans terrain trouvé), on ne peut pas continuer
-                    return;
+                    return true;
                 }
             }
 
@@ -87,11 +100,8 @@ public sealed class DuelAI
             {
                 engine.EndTurn(Player);
             }
-        }
-        finally
-        {
-            engine.OnEvent -= OnEngineEvent;
-        }
+            return true;
+        });
     }
 
     /// <summary>
@@ -104,32 +114,7 @@ public sealed class DuelAI
         if (engine.State.IsGameOver) return false;
         if (engine.State.ActivePlayer != Player) return false;
 
-        void OnEngineEvent(IDuelEvent evt)
-        {
-            if (engine.State.IsGameOver) return;
-
-            if (evt is PlayerChoiceRequiredEvent choiceEvt && choiceEvt.Player == Player)
-            {
-                ResolveCardChoice(engine, choiceEvt);
-            }
-            else if (evt is PlayerSlotChoiceRequiredEvent slotEvt && slotEvt.Player == Player)
-            {
-                ResolveSlotChoice(engine, slotEvt);
-            }
-            else if (evt is PlayerCostPaymentRequiredEvent payEvt && payEvt.Player == Player)
-            {
-                var ids = SelectBestPaymentCardIds(payEvt.PayableHandCards, string.Empty, payEvt.RequiredCount);
-                if (ids != null) payEvt.OnConfirmPayment?.Invoke(ids);
-                else payEvt.OnCancelPayment?.Invoke();
-            }
-            else if (evt is SubReactionPromptEvent subEvt && subEvt.ReactingPlayer == Player)
-            {
-                subEvt.OnAcceptSub?.Invoke();
-            }
-        }
-
-        engine.OnEvent += OnEngineEvent;
-        try
+        return ExecuteWithEngineEvents(engine, () =>
         {
             // 1. Pose obligatoire de terrain si requis
             if (engine.State.TerrainRequirementPending)
@@ -188,11 +173,7 @@ public sealed class DuelAI
             }
 
             return false;
-        }
-        finally
-        {
-            engine.OnEvent -= OnEngineEvent;
-        }
+        });
     }
 
     private void ResolveCardChoice(DuelEngine engine, PlayerChoiceRequiredEvent choiceEvt)

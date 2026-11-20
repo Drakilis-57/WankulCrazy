@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Xunit;
+using WankulCrazyPlugin.patch;
 using WankulCrazyPlugin.utils;
 
 namespace WankulCrazyPlugin.Tests
@@ -235,6 +236,28 @@ namespace WankulCrazyPlugin.Tests
             Assert.Equal(0, testData.m_CurrentTotalItemCountList[125]);
             Assert.Equal(3, testData.m_CurrentTotalItemCountList[202]);
             Assert.Equal(0, testData.m_CurrentTotalItemCountList[5002]);
+        }
+
+        [Fact]
+        public void CustomItemTypes_UnifiedTables_IncludeAscensionDisplaysAndGoldBoosters()
+        {
+            Assert.True(CustomItemTypes.IsOpenableDisplay(EItemType.AscensionCardBox));
+            Assert.Equal(EItemType.AscensionCardPack, CustomItemTypes.GetBoosterForDisplay(EItemType.AscensionCardBox));
+            Assert.True(CustomItemTypes.IsOpenablePack(EItemType.AscensionCardPack));
+
+            Assert.True(CustomItemTypes.IsOpenableDisplay(CustomItemTypes.DisplayStellar));
+            Assert.Equal(CustomItemTypes.BoosterStellar, CustomItemTypes.GetBoosterForDisplay(CustomItemTypes.DisplayStellar));
+            Assert.Equal(CustomItemTypes.BoosterLegacyTaux, CustomItemTypes.GetBoosterForDisplay(CustomItemTypes.DisplayLegacyTaux));
+
+            Assert.True(CustomItemTypes.IsGoldBooster(CustomItemTypes.BoosterGoldBattle));
+            Assert.True(CustomItemTypes.IsGoldBooster(CustomItemTypes.BoosterGoldStellar));
+            Assert.True(CustomItemTypes.IsGoldBooster(CustomItemTypes.BoosterGoldLegacy));
+            Assert.True(CustomItemTypes.IsOpenablePack(CustomItemTypes.BoosterGoldLegacy));
+
+            Assert.True(CustomItemTypes.TryGetCustomCollectionPackType(CustomItemTypes.DisplayLegacy, out var legacyPack));
+            Assert.Equal(CustomItemTypes.PackLegacy, legacyPack);
+            Assert.True(CustomItemTypes.TryGetCustomCollectionPackType(CustomItemTypes.BoosterGoldBattle, out var battlePack));
+            Assert.Equal(ECollectionPackType.EpicCardPack, battlePack);
         }
     }
 }

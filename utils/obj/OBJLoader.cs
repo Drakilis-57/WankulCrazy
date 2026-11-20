@@ -179,16 +179,8 @@ namespace WankulCrazyPlugin.utils.obj
         public GameObject Load(string path, string mtlPath)
         {
             _objInfo = new FileInfo(path);
-            if (!string.IsNullOrEmpty(mtlPath) && File.Exists(mtlPath))
-            {
-                using (FileStream input = new FileStream(path, FileMode.Open))
-                    return Load(input);
-            }
-            else
-            {
-                using (FileStream input = new FileStream(path, FileMode.Open))
-                    return Load(input);
-            }
+            using (FileStream input = new FileStream(path, FileMode.Open))
+                return Load(input);
         }
 
         public GameObject Load(string path) => Load(path, null);

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 using System.IO;
+using WankulCrazyPlugin.importer;
 using WankulCrazyPlugin.utils;
 
 namespace WankulCrazyPlugin.patch
@@ -37,7 +38,18 @@ namespace WankulCrazyPlugin.patch
             for (int i = 0; i < positions.Length; i++)
             {
                 string texturePath = texturePaths[i];
-                Texture2D texture = LoadPNG(texturePath);
+                string cacheKey = Path.GetFileNameWithoutExtension(texturePath);
+                Texture2D texture = OBJImporter.GetCachedTexture(cacheKey);
+                if (texture != null)
+                {
+                    texture.filterMode = FilterMode.Trilinear;
+                    texture.anisoLevel = 16;
+                    texture.mipMapBias = -0.5f;
+                }
+                else
+                {
+                    texture = LoadPNG(texturePath);
+                }
 
                 if (texture == null)
                 {
@@ -69,22 +81,19 @@ namespace WankulCrazyPlugin.patch
 
         }
 
-        public static Texture2D LoadPNG(string filePath)
+        public static Texture2D LoadPNG(string filePath, bool markNonReadable = true)
         {
-            Texture2D tex = null;
-            if (File.Exists(filePath))
-            {
-                byte[] data = File.ReadAllBytes(filePath);
-                tex = new Texture2D(2, 2, TextureFormat.RGBA32, true);
-                if (tex.LoadImage(data))
+            return TextureUtils.LoadTexture(
+                filePath,
+                markNonReadable: markNonReadable,
+                compress: true,
+                mipChain: true,
+                configure: tex =>
                 {
                     tex.filterMode = FilterMode.Trilinear;
                     tex.anisoLevel = 16;
                     tex.mipMapBias = -0.5f;
-                    tex.Apply(true, false);
-                }
-            }
-            return tex;
+                });
         }
 
         public static Sprite TextureToSprite(Texture2D texture)

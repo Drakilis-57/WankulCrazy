@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using BepInEx.Logging;
 using WankulCrazyPlugin.cards;
+using WankulCrazyPlugin.utils;
 
 namespace WankulCrazyPlugin.importer;
 
@@ -247,17 +248,19 @@ public class JsonImporter
             if (!string.IsNullOrEmpty(card.TexturePath))
             {
                 string texturepath = WankulLoadingScreen.ResolveExistingPath(Path.Combine(pluginPath, "data", card.TexturePath));
-                string texturepathmask = WankulLoadingScreen.ResolveMaskPath(card, pluginPath);
+                bool isFoil = WankulLoadingScreen.IsCardFoil(card);
+                string texturepathmask = isFoil ? WankulLoadingScreen.ResolveMaskPath(card, pluginPath) : null;
 
                 try
                 {
-                    Texture2D texture = texturepath != null ? LoadTexture(texturepath) : null;
+                    bool hasAlpha = !TextureUtils.IsJpegPath(texturepath);
+                    Texture2D texture = texturepath != null ? LoadTexture(texturepath, compress: true, hasAlpha: hasAlpha) : null;
                     Texture2D texturemask = null;
+                    Sprite spritemask = null;
 
-                    bool isFoil = WankulLoadingScreen.IsCardFoil(card);
-                    if (texturepathmask != null)
+                    if (isFoil && texturepathmask != null)
                     {
-                        texturemask = LoadTexture(texturepathmask);
+                        WankulLoadingScreen.GetOrLoadMask(texturepathmask, null, out texturemask, out spritemask);
                     }
 
                     if (texture != null)
@@ -273,7 +276,7 @@ public class JsonImporter
                     {
                         card.TextureMask = texturemask;
                     }
-                    else if (texturepathmask != null)
+                    else if (isFoil && texturepathmask != null)
                     {
                         Plugin.Logger?.LogError("Failed to load texture mask: " + texturepathmask);
                     }
@@ -283,12 +286,6 @@ public class JsonImporter
                     }
 
                     Sprite sprite = texture != null ? Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), 100f, 0, SpriteMeshType.FullRect) : null;
-                    Sprite spritemask = null;
-
-                    if (texturemask != null)
-                    {
-                        spritemask = Sprite.Create(texturemask, new Rect(0, 0, texturemask.width, texturemask.height), new Vector2(0.5f, 0.5f), 100f, 0, SpriteMeshType.FullRect);
-                    }
 
                     if (sprite != null)
                     {
@@ -305,7 +302,7 @@ public class JsonImporter
                         spritemask.hideFlags |= HideFlags.DontUnloadUnusedAsset;
                         card.SpriteMask = spritemask;
                     }
-                    else if (texturemask != null)
+                    else if (isFoil && texturemask != null)
                     {
                         Plugin.Logger?.LogError("Failed to create sprite mask: " + texturepathmask);
                     }
@@ -318,22 +315,24 @@ public class JsonImporter
         }
     }
 
-    private static Texture2D LoadTexture(string path)
+    private static Texture2D LoadTexture(string path, bool compress = true, bool? hasAlpha = null)
     {
         string resolved = WankulLoadingScreen.ResolveExistingPath(path);
         if (resolved == null)
         {
             return null;
         }
-        byte[] bytes = System.IO.File.ReadAllBytes(resolved);
-        Texture2D texture = new Texture2D(2, 2, TextureFormat.RGBA32, false);
-        if (texture.LoadImage(bytes, true))
-        {
-            texture.wrapMode = TextureWrapMode.Clamp;
-            texture.hideFlags |= HideFlags.DontUnloadUnusedAsset;
-            return texture;
-        }
-        UnityEngine.Object.Destroy(texture);
-        return null;
+        bool effectiveHasAlpha = hasAlpha ?? !TextureUtils.IsJpegPath(resolved);
+        return TextureUtils.LoadTexture(
+            resolved,
+            markNonReadable: true,
+            compress: compress,
+            mipChain: false,
+            hasAlpha: effectiveHasAlpha,
+            configure: tex =>
+            {
+                tex.wrapMode = TextureWrapMode.Clamp;
+                tex.hideFlags |= HideFlags.DontUnloadUnusedAsset;
+            });
     }
 }

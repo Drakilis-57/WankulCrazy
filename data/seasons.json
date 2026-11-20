@@ -1,4 +1,8 @@
 [
+  { "Id": "S01", "Name": "Origins" },
+  { "Id": "S02", "Name": "Campus" },
+  { "Id": "S03", "Name": "Battle" },
   { "Id": "S04", "Name": "Stellar" },
-  { "Id": "S05", "Name": "Legacy" }
+  { "Id": "S05", "Name": "Legacy" },
+  { "Id": "HS", "Name": "Hors Serie" }
 ]

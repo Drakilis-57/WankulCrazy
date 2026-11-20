@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using WankulCrazyPlugin.cards;
 using WankulCrazyPlugin.importer;
+using WankulCrazyPlugin.utils;
 using Xunit;
 
 namespace WankulCrazyPlugin.Tests
@@ -152,6 +153,16 @@ namespace WankulCrazyPlugin.Tests
             // Carte non-effigy (terrain ou special) n'est pas foil
             var terrainCard = new TerrainCardData();
             Assert.False(WankulFileIndex.IsCardFoil(terrainCard));
+        }
+
+        [Fact]
+        public void IsJpegPath_DetectsJpgAndJpegExtensionsOnly()
+        {
+            Assert.True(TextureUtils.IsJpegPath("data/cards/Origins/001.jpg"));
+            Assert.True(TextureUtils.IsJpegPath("DATA\\CARDS\\ORIGINS\\001.JPEG"));
+            Assert.False(TextureUtils.IsJpegPath("data/cards/Specials/001.png"));
+            Assert.False(TextureUtils.IsJpegPath(null));
+            Assert.False(TextureUtils.IsJpegPath(""));
         }
 
         [Fact]

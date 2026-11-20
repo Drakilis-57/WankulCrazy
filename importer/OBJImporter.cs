@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Text;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using WankulCrazyPlugin.utils;
 using WankulCrazyPlugin.utils.obj;
 using WankulCrazyPlugin.patch;
 using WankulCrazyPlugin;
@@ -27,6 +28,10 @@ namespace WankulCrazyPlugin.importer
         public static Dictionary<string, string> filePaths_tex = new Dictionary<string, string>((IEqualityComparer<string>)StringComparer.OrdinalIgnoreCase);
         private static Dictionary<string, Texture2D> cachedTextures = new Dictionary<string, Texture2D>(StringComparer.OrdinalIgnoreCase);
         private static Dictionary<string, Mesh> cachedMeshes = new Dictionary<string, Mesh>(StringComparer.OrdinalIgnoreCase);
+        private static readonly Dictionary<(Material, Texture2D), Material> s_PodiumMaterialCache = new Dictionary<(Material, Texture2D), Material>();
+        private static bool _initialized = false;
+        private static bool _texturesCached = false;
+        private static bool _meshesCached = false;
         public static GameObject tempmesh = null;
 
         private static Dictionary<string, Mesh> vanilla_podium_meshes = new Dictionary<string, Mesh>();
@@ -108,6 +113,12 @@ namespace WankulCrazyPlugin.importer
 
         public static void InitFiles()
         {
+            if (_initialized)
+            {
+                return;
+            }
+            _initialized = true;
+
             Plugin.LogInfo("Loading 3D Objects...");
             checkFolders();
             Plugin.LogInfo("Checking for .obj files...");
@@ -157,13 +168,29 @@ namespace WankulCrazyPlugin.importer
 
         private static void CacheTexturesAtStart()
         {
+            if (_texturesCached)
+            {
+                return;
+            }
+            _texturesCached = true;
+
             foreach (KeyValuePair<string, string> keyValuePair in OBJImporter.filePaths_tex)
             {
-                string key = keyValuePair.Key.Replace(".png", "");
-                Texture2D texture2D = !key.ToLower().EndsWith("_n") && !key.ToLower().EndsWith("_normal") && !key.ToLower().EndsWith(" n") ? OBJImporter.LoadPNG(keyValuePair.Value + key + ".png") : OBJImporter.LoadPNG_Bump(keyValuePair.Value + key + ".png");
+                if (!keyValuePair.Key.EndsWith(".png", StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
+                string key = Path.GetFileNameWithoutExtension(keyValuePair.Key);
+                if (OBJImporter.cachedTextures.TryGetValue(key, out Texture2D existing) && existing != null)
+                {
+                    continue;
+                }
+                string fullPath = Path.Combine(keyValuePair.Value, keyValuePair.Key);
+                Texture2D texture2D = !key.ToLower().EndsWith("_n") && !key.ToLower().EndsWith("_normal") && !key.ToLower().EndsWith(" n")
+                    ? OBJImporter.LoadPNG(fullPath)
+                    : OBJImporter.LoadPNG_Bump(fullPath);
                 if ((UnityEngine.Object)texture2D != (UnityEngine.Object)null)
                 {
-                    texture2D.Apply(true, true);
                     texture2D.hideFlags |= HideFlags.DontUnloadUnusedAsset;
                     OBJImporter.cachedTextures[key] = texture2D;
                 }
@@ -171,7 +198,7 @@ namespace WankulCrazyPlugin.importer
             Debug.Log((object)"Textures cached at start");
         }
 
-        private static Texture2D GetCachedTexture(string name)
+        internal static Texture2D GetCachedTexture(string name)
         {
             Texture2D texture2D;
             return OBJImporter.cachedTextures.TryGetValue(name, out texture2D) ? texture2D : (Texture2D)null;
@@ -179,20 +206,38 @@ namespace WankulCrazyPlugin.importer
 
         private static void CacheMeshesAtStart()
         {
+            if (_meshesCached)
+            {
+                return;
+            }
+            _meshesCached = true;
+
             foreach (KeyValuePair<string, string> keyValuePair in OBJImporter.filePaths_obj)
             {
-                string key = keyValuePair.Key.Replace(".obj", "");
-                OBJImporter.tempmesh = new OBJLoader().Load(keyValuePair.Value + key + ".obj");
-                OBJImporter.tempmesh.name = key;
+                string key = Path.GetFileNameWithoutExtension(keyValuePair.Key);
+                if (OBJImporter.cachedMeshes.TryGetValue(key, out Mesh existingMesh) && existingMesh != null)
+                {
+                    continue;
+                }
+
+                OBJImporter.tempmesh = new OBJLoader().Load(Path.Combine(keyValuePair.Value, keyValuePair.Key));
                 if ((UnityEngine.Object)OBJImporter.tempmesh != (UnityEngine.Object)null)
                 {
+                    OBJImporter.tempmesh.name = key;
+                    var tempMeshes = new HashSet<Mesh>();
+                    var tempMaterials = new HashSet<Material>();
+                    Mesh combinedMesh = null;
                     try
                     {
                         List<Mesh> meshList = new List<Mesh>();
-                        MeshFilter[] meshFilters = OBJImporter.tempmesh.GetComponentsInChildren<MeshFilter>();
+                        MeshFilter[] meshFilters = OBJImporter.tempmesh.GetComponentsInChildren<MeshFilter>(true);
                         foreach (MeshFilter meshFilter in meshFilters)
                         {
-                            Mesh mesh = meshFilter.mesh;
+                            if (meshFilter == null) continue;
+                            Mesh mesh = meshFilter.sharedMesh;
+                            if (mesh == null) continue;
+                            tempMeshes.Add(mesh);
+
                             Vector3[] vertices = mesh.vertices;
                             for (int index = 0; index < vertices.Length; ++index)
                                 vertices[index].z = -vertices[index].z;
@@ -207,29 +252,58 @@ namespace WankulCrazyPlugin.importer
                             mesh.triangles = triangles;
                             meshList.Add(mesh);
                         }
+
+                        Renderer[] renderers = OBJImporter.tempmesh.GetComponentsInChildren<Renderer>(true);
+                        foreach (Renderer r in renderers)
+                        {
+                            if (r == null || r.sharedMaterials == null) continue;
+                            foreach (Material m in r.sharedMaterials)
+                            {
+                                if (m != null) tempMaterials.Add(m);
+                            }
+                        }
+
                         CombineInstance[] combine = new CombineInstance[meshList.Count];
                         for (int index = 0; index < meshList.Count; ++index)
                         {
                             combine[index].mesh = meshList[index];
                             combine[index].transform = Matrix4x4.identity;
                         }
-                        Mesh mesh1 = new Mesh();
-                        mesh1.CombineMeshes(combine, false);
-                        mesh1.name = key;
-                        mesh1.hideFlags |= HideFlags.DontUnloadUnusedAsset;
-                        OBJImporter.cachedMeshes[key] = mesh1;
-                        OBJImporter.cachedMeshes[key].UploadMeshData(true);
+                        combinedMesh = new Mesh();
+                        combinedMesh.CombineMeshes(combine, false);
+                        combinedMesh.name = key;
+                        combinedMesh.hideFlags |= HideFlags.DontUnloadUnusedAsset;
+                        combinedMesh.UploadMeshData(true);
+                        OBJImporter.cachedMeshes[key] = combinedMesh;
                     }
                     catch (System.Exception ex)
                     {
+                        if (combinedMesh != null)
+                        {
+                            UnityEngine.Object.DestroyImmediate(combinedMesh);
+                        }
                         Plugin.Logger.LogWarning($"Failed to cache mesh for key '{key}': {ex.Message}");
                     }
                     finally
                     {
                         if (OBJImporter.tempmesh != null)
                         {
-                            UnityEngine.Object.Destroy(OBJImporter.tempmesh);
+                            UnityEngine.Object.DestroyImmediate(OBJImporter.tempmesh);
                             OBJImporter.tempmesh = null;
+                        }
+                        foreach (Mesh m in tempMeshes)
+                        {
+                            if (m != null && m != combinedMesh)
+                            {
+                                UnityEngine.Object.DestroyImmediate(m);
+                            }
+                        }
+                        foreach (Material mat in tempMaterials)
+                        {
+                            if (mat != null)
+                            {
+                                UnityEngine.Object.DestroyImmediate(mat);
+                            }
                         }
                     }
                 }
@@ -278,6 +352,16 @@ namespace WankulCrazyPlugin.importer
                 }
                 Plugin.LogInfo("Custom 3D Objects loaded!");
             }
+            // Nettoyage d'éventuels matériaux de scène déchargés dans le cache podium
+            if (s_PodiumMaterialCache.Count > 0)
+            {
+                var staleKeys = s_PodiumMaterialCache.Where(kvp => kvp.Key.Item1 == null || kvp.Value == null).Select(kvp => kvp.Key).ToList();
+                foreach (var k in staleKeys)
+                {
+                    s_PodiumMaterialCache.Remove(k);
+                }
+            }
+
             // Remplacement des textures podium
             var renderers = UnityEngine.Resources.FindObjectsOfTypeAll<Renderer>();
             foreach (var renderer in renderers)
@@ -306,10 +390,18 @@ namespace WankulCrazyPlugin.importer
 
                             if (File.Exists(customTexPath))
                             {
-                                cachedTexture = PatchTexturesImporter.LoadTexture2D(customTexPath);
+                                cachedTexture = TextureUtils.LoadTexture(
+                                    customTexPath,
+                                    markNonReadable: true,
+                                    compress: true,
+                                    mipChain: false,
+                                    configure: tex =>
+                                    {
+                                        tex.name = texName;
+                                        tex.hideFlags |= HideFlags.DontUnloadUnusedAsset;
+                                    });
                                 if (cachedTexture != null)
                                 {
-                                    cachedTexture.name = texName;
                                     OBJImporter.cachedTextures[texName] = cachedTexture;
                                 }
                                 else
@@ -323,8 +415,8 @@ namespace WankulCrazyPlugin.importer
                             }
                         }
 
-                        // Application si la texture custom est chargée
-                        if (cachedTexture != null)
+                        // Application si la texture custom est chargée (partage direct de la texture DXT5 non-lisible sans clonage)
+                        if (cachedTexture != null && mainTex != cachedTexture)
                         {
                             // Sauvegarde si non encore faite
                             if (!OBJImporter.vanilla_podium_textures.ContainsKey(texName) && OBJImporter.podium_textures.Contains(texName))
@@ -332,28 +424,22 @@ namespace WankulCrazyPlugin.importer
                                 OBJImporter.vanilla_podium_textures[texName] = mainTex;
                             }
 
-                            // Création d'une texture clonée et remplacement de son contenu
-                            Texture2D clonedTex;
-                            if (mainTex.isReadable)
+                            var matKey = (sharedMaterial, cachedTexture);
+                            if (!s_PodiumMaterialCache.TryGetValue(matKey, out Material podiumMaterial) || podiumMaterial == null)
                             {
-                                clonedTex = UnityEngine.Object.Instantiate(mainTex);
+                                bool needsShaderReplacement = sharedMaterial.shader == null
+                                    || sharedMaterial.HasProperty("_MainTexArray")
+                                    || sharedMaterial.shader.name.IndexOf("Texture2dArray", StringComparison.OrdinalIgnoreCase) >= 0;
+                                podiumMaterial = needsShaderReplacement
+                                    ? ShaderUtils.CreateSafeMaterial(sharedMaterial)
+                                    : UnityEngine.Object.Instantiate(sharedMaterial);
+                                podiumMaterial.name = sharedMaterial.name + "_PodiumCustom";
+                                SetMaterialMainTexture(podiumMaterial, cachedTexture);
+                                podiumMaterial.hideFlags |= HideFlags.DontUnloadUnusedAsset;
+                                s_PodiumMaterialCache[matKey] = podiumMaterial;
                             }
-                            else
-                            {
-                                clonedTex = new Texture2D(cachedTexture.width, cachedTexture.height, cachedTexture.format, cachedTexture.mipmapCount > 1);
-                            }
-                            clonedTex.name = texName + "_Custom";
 
-                            // Remplacement du contenu
-                            clonedTex = PatchTexturesImporter.ReplaceTexture(clonedTex, cachedTexture);
-
-                            // Duplication du matériau existant pour éviter de modifier les autres renderers
-                            Material podiumMaterial = UnityEngine.Object.Instantiate(sharedMaterial);
-                            podiumMaterial.name = sharedMaterial.name + "_PodiumCustom";
-
-                            // Application de la nouvelle texture dans le matériau du renderer
-                            podiumMaterial.mainTexture = clonedTex;
-                            renderer.material = podiumMaterial;
+                            renderer.sharedMaterial = podiumMaterial;
                         }
                     }
                 }
@@ -573,6 +659,27 @@ namespace WankulCrazyPlugin.importer
             }
         }
 
+        private static Texture GetMaterialMainTexture(Material mat)
+        {
+            if (mat == null) return null;
+            if (mat.HasProperty("_MainTex")) return mat.GetTexture("_MainTex");
+            if (mat.HasProperty("_BaseMap")) return mat.GetTexture("_BaseMap");
+            if (mat.HasProperty("_BaseColorMap")) return mat.GetTexture("_BaseColorMap");
+            return null;
+        }
+
+        private static void SetMaterialMainTexture(Material mat, Texture tex)
+        {
+            if (mat == null) return;
+            if (mat.HasProperty("_MainTex"))
+            {
+                mat.mainTexture = tex;
+                mat.SetTexture("_MainTex", tex);
+            }
+            if (mat.HasProperty("_BaseMap")) mat.SetTexture("_BaseMap", tex);
+            if (mat.HasProperty("_BaseColorMap")) mat.SetTexture("_BaseColorMap", tex);
+        }
+
         private static void FixNewStatues()
         {
             InteractableObject[] objectsOfTypeAll = UnityEngine.Resources.FindObjectsOfTypeAll<InteractableObject>();
@@ -612,14 +719,17 @@ namespace WankulCrazyPlugin.importer
                         Mesh cachedMesh = GetCachedMesh(meshName);
                         if (cachedMesh != null)
                         {
-                            cachedMesh.name = meshFilter.mesh.name;
-                            meshFilter.mesh = cachedMesh;
-                            meshFilter.mesh.UploadMeshData(true);
+                            if (meshFilter.sharedMesh != null)
+                            {
+                                cachedMesh.name = meshFilter.sharedMesh.name;
+                            }
+                            meshFilter.sharedMesh = cachedMesh;
+                            cachedMesh.UploadMeshData(true);
                         }
-                        else if (vanilla_podium_meshes.ContainsKey(meshFilter.mesh.name))
+                        else if (meshFilter.sharedMesh != null && vanilla_podium_meshes.TryGetValue(meshFilter.sharedMesh.name, out Mesh vanillaMesh) && vanillaMesh != null)
                         {
-                            meshFilter.mesh = vanilla_podium_meshes[meshFilter.mesh.name];
-                            meshFilter.mesh.UploadMeshData(true);
+                            meshFilter.sharedMesh = vanillaMesh;
+                            vanillaMesh.UploadMeshData(true);
                         }
 
                         if (mat != null)
@@ -628,7 +738,7 @@ namespace WankulCrazyPlugin.importer
                             if (cachedTex != null)
                             {
                                 cachedTex.name = texName;
-                                mat.SetTexture("_MainTex", cachedTex);
+                                SetMaterialMainTexture(mat, cachedTex);
                                 mat.SetOverrideTag("RenderType", "Transparent");
                                 mat.SetInt("_SrcBlend", 5);
                                 mat.SetInt("_DstBlend", 10);
@@ -638,9 +748,13 @@ namespace WankulCrazyPlugin.importer
                                 mat.DisableKeyword("_ALPHAPREMULTIPLY_ON");
                                 mat.renderQueue = 2450;
                             }
-                            else if (vanilla_podium_textures.TryGetValue(mat.GetTexture("_MainTex").name, out Texture tex))
+                            else
                             {
-                                mat.SetTexture("_MainTex", tex);
+                                Texture currentTex = GetMaterialMainTexture(mat);
+                                if (currentTex != null && vanilla_podium_textures.TryGetValue(currentTex.name, out Texture tex))
+                                {
+                                    SetMaterialMainTexture(mat, tex);
+                                }
                             }
                         }
                     }
@@ -652,9 +766,12 @@ namespace WankulCrazyPlugin.importer
                         Mesh cachedMesh = GetCachedMesh(podiumMeshName);
                         if (cachedMesh != null)
                         {
-                            cachedMesh.name = meshFilter.mesh.name;
-                            meshFilter.mesh = cachedMesh;
-                            meshFilter.mesh.UploadMeshData(true);
+                            if (meshFilter.sharedMesh != null)
+                            {
+                                cachedMesh.name = meshFilter.sharedMesh.name;
+                            }
+                            meshFilter.sharedMesh = cachedMesh;
+                            cachedMesh.UploadMeshData(true);
                         }
 
                         if (mat != null)
@@ -663,11 +780,15 @@ namespace WankulCrazyPlugin.importer
                             if (cachedTex != null)
                             {
                                 cachedTex.name = podiumTexName;
-                                mat.SetTexture("_MainTex", cachedTex);
+                                SetMaterialMainTexture(mat, cachedTex);
                             }
-                            else if (vanilla_podium_textures.TryGetValue(mat.GetTexture("_MainTex").name, out Texture tex))
+                            else
                             {
-                                mat.SetTexture("_MainTex", tex);
+                                Texture currentTex = GetMaterialMainTexture(mat);
+                                if (currentTex != null && vanilla_podium_textures.TryGetValue(currentTex.name, out Texture tex))
+                                {
+                                    SetMaterialMainTexture(mat, tex);
+                                }
                             }
                         }
                     }
@@ -679,9 +800,12 @@ namespace WankulCrazyPlugin.importer
                         Mesh cachedMesh = GetCachedMesh(podiumMeshName2);
                         if (cachedMesh != null)
                         {
-                            cachedMesh.name = meshFilter.mesh.name;
-                            meshFilter.mesh = cachedMesh;
-                            meshFilter.mesh.UploadMeshData(true);
+                            if (meshFilter.sharedMesh != null)
+                            {
+                                cachedMesh.name = meshFilter.sharedMesh.name;
+                            }
+                            meshFilter.sharedMesh = cachedMesh;
+                            cachedMesh.UploadMeshData(true);
                         }
 
                         if (mat != null)
@@ -690,11 +814,15 @@ namespace WankulCrazyPlugin.importer
                             if (cachedTex != null)
                             {
                                 cachedTex.name = podiumTexName2;
-                                mat.SetTexture("_MainTex", cachedTex);
+                                SetMaterialMainTexture(mat, cachedTex);
                             }
-                            else if (vanilla_podium_textures.TryGetValue(mat.GetTexture("_MainTex").name, out Texture tex))
+                            else
                             {
-                                mat.SetTexture("_MainTex", tex);
+                                Texture currentTex = GetMaterialMainTexture(mat);
+                                if (currentTex != null && vanilla_podium_textures.TryGetValue(currentTex.name, out Texture tex))
+                                {
+                                    SetMaterialMainTexture(mat, tex);
+                                }
                             }
                         }
                     }
@@ -702,16 +830,9 @@ namespace WankulCrazyPlugin.importer
             }
         }
 
-        public static Texture2D LoadPNG(string filePath)
+        public static Texture2D LoadPNG(string filePath, bool markNonReadable = true)
         {
-            Texture2D tex = (Texture2D)null;
-            if (File.Exists(filePath))
-            {
-                byte[] data = File.ReadAllBytes(filePath);
-                tex = new Texture2D(2, 2, TextureFormat.RGBA32, false);
-                tex.LoadImage(data);
-            }
-            return tex;
+            return TextureUtils.LoadTexture(filePath, markNonReadable: markNonReadable, compress: true, mipChain: false);
         }
 
         public static Texture2D LoadPNG_Bump(string filePath)
@@ -721,7 +842,15 @@ namespace WankulCrazyPlugin.importer
             {
                 byte[] data = File.ReadAllBytes(filePath);
                 tex = new Texture2D(2, 2, UnityEngine.TextureFormat.R8, true, true);
-                tex.LoadImage(data);
+                if (tex.LoadImage(data, false))
+                {
+                    tex.Apply(true, true);
+                }
+                else
+                {
+                    UnityEngine.Object.Destroy(tex);
+                    tex = null;
+                }
             }
             return tex;
         }

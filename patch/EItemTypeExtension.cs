@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Reflection.Emit;
-using HarmonyLib;
 using UnityEngine;
+using WankulCrazyPlugin.patch;
 
 public static class EnumExtensions
 {
@@ -223,114 +221,9 @@ public static class EnumExtensions
     /// </summary>
     public static ECollectionPackType ItemTypeToCollectionPackTypeSafe(EItemType itemType)
     {
-        // Mapping statique des boosters custom vers leur ECollectionPackType
-        var boosterStellar     = SafeParseEItemType("BoosterStellar");
-        var boosterStellarTaux = SafeParseEItemType("BoosterStellarTaux");
-        var boosterGoldBattle  = SafeParseEItemType("BoosterGoldBattle");
-        var boosterGoldStellar = SafeParseEItemType("BoosterGoldStellar");
-        var boosterGoldLegacy  = SafeParseEItemType("BoosterGoldLegacy");
-        var boosterLegacy      = SafeParseEItemType("BoosterLegacy");
-        var boosterLegacyTaux  = SafeParseEItemType("BoosterLegacyTaux");
-
-        if (itemType == boosterStellar)      return SafeParseECollectionPackType("Stellar");
-        if (itemType == boosterStellarTaux)  return SafeParseECollectionPackType("StellarTaux");
-        // Les Gold partagent la saison de leur booster de base
-        if (itemType == boosterGoldBattle)   return ECollectionPackType.EpicCardPack;
-        if (itemType == boosterGoldStellar)  return SafeParseECollectionPackType("Stellar");
-        if (itemType == boosterGoldLegacy)   return SafeParseECollectionPackType("Legacy");
-        if (itemType == boosterLegacy)       return SafeParseECollectionPackType("Legacy");
-        if (itemType == boosterLegacyTaux)   return SafeParseECollectionPackType("LegacyTaux");
-
-        return (ECollectionPackType)0;
-    }
-}
-
-class Patch_Enum_Transpiler
-{
-    static IEnumerable<MethodBase> TargetMethods()
-    {
-        return AppDomain.CurrentDomain.GetAssemblies()
-            .SelectMany(a => a.GetTypes())
-            .SelectMany(t => AccessTools.GetDeclaredMethods(t))
-            .Where(m => m.GetParameters().Any(p => EnumExtensions.customEnumValues.ContainsKey(p.ParameterType)) ||
-                        EnumExtensions.customEnumValues.ContainsKey(m.ReturnType));
-    }
-
-    static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
-    {
-        var codes = new List<CodeInstruction>(instructions);
-
-        for (int i = 0; i < codes.Count; i++)
-        {
-            if (codes[i].opcode == OpCodes.Conv_I4)
-            {
-                codes.Insert(i + 1, new CodeInstruction(OpCodes.Call,
-                    typeof(Patch_Enum_Transpiler).GetMethod(nameof(HandleCustomEnumValue))));
-            }
-        }
-
-        return codes;
-    }
-
-    public static int HandleCustomEnumValue(int originalValue)
-    {
-        foreach (var customEnum in EnumExtensions.customEnumValues)
-        {
-            if (customEnum.Value.ContainsKey(originalValue))
-            {
-                UnityEngine.Debug.Log($"Custom Enum détecté : {originalValue}");
-                return originalValue;
-            }
-        }
-
-        foreach (var remappedEnum in EnumExtensions.remappedEnumValues)
-        {
-            if (remappedEnum.Value.ContainsKey(originalValue))
-            {
-                int newValue = remappedEnum.Value[originalValue];
-                UnityEngine.Debug.Log($"Valeur Enum remappée : {originalValue} → {newValue}");
-                return newValue;
-            }
-        }
-
-        return originalValue;
-    }
-}
-
-class Patch_Enum_Comparison
-{
-    static IEnumerable<MethodBase> TargetMethods()
-    {
-        return AppDomain.CurrentDomain.GetAssemblies()
-            .SelectMany(a => a.GetTypes())
-            .SelectMany(t => AccessTools.GetDeclaredMethods(t))
-            .Where(m => m.GetMethodBody() != null);
-    }
-
-    static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
-    {
-        var codes = new List<CodeInstruction>(instructions);
-
-        for (int i = 0; i < codes.Count - 1; i++)
-        {
-            if (codes[i].opcode == OpCodes.Beq || codes[i].opcode == OpCodes.Bne_Un)
-            {
-                codes.Insert(i, new CodeInstruction(OpCodes.Call,
-                    typeof(Patch_Enum_Comparison).GetMethod(nameof(HandleEnumComparison))));
-            }
-        }
-
-        return codes;
-    }
-
-    public static bool HandleEnumComparison(int a, int b)
-    {
-        foreach (var customEnum in EnumExtensions.customEnumValues)
-        {
-            if (customEnum.Value.ContainsKey(a) || customEnum.Value.ContainsKey(b))
-                return a == b;
-        }
-        return a == b;
+        return CustomItemTypes.TryGetCustomCollectionPackType(itemType, out ECollectionPackType packType)
+            ? packType
+            : (ECollectionPackType)0;
     }
 }
 

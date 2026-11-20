@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using WankulCrazyPlugin.cards;
+using WankulCrazyPlugin.patch;
 using WankulCrazyPlugin.utils;
 
 namespace WankulCrazyPlugin.inventory
@@ -28,22 +29,15 @@ namespace WankulCrazyPlugin.inventory
 
         public static Season ConvertPackTypeToSeason(ECollectionPackType packType)
         {
-            // Récupère la valeur dynamique de "Stellar" et "Legacy" / "Ascension"
-            ECollectionPackType stellarPack = EnumExtensions.SafeParseECollectionPackType("Stellar");
-            ECollectionPackType stellarPackTaux = EnumExtensions.SafeParseECollectionPackType("StellarTaux");
-            ECollectionPackType legacyPack = EnumExtensions.SafeParseECollectionPackType("Legacy");
-            ECollectionPackType legacyPackTaux = EnumExtensions.SafeParseECollectionPackType("LegacyTaux");
-            ECollectionPackType ascensionPack = EnumExtensions.SafeParseECollectionPackType("AscensionCardPack");
-
             if (packType == ECollectionPackType.BasicCardPack || packType == ECollectionPackType.DestinyBasicCardPack)
                 return Season.S01;
             else if (packType == ECollectionPackType.RareCardPack || packType == ECollectionPackType.DestinyRareCardPack)
                 return Season.S02;
             else if (packType == ECollectionPackType.EpicCardPack || packType == ECollectionPackType.DestinyEpicCardPack)
                 return Season.S03;
-            else if (packType == stellarPack || packType == stellarPackTaux)
+            else if (packType == CustomItemTypes.PackStellar || packType == CustomItemTypes.PackStellarTaux)
                 return Season.S04;
-            else if (packType == legacyPack || packType == legacyPackTaux || (ascensionPack != (ECollectionPackType)0 && packType == ascensionPack))
+            else if (packType == CustomItemTypes.PackLegacy || packType == CustomItemTypes.PackLegacyTaux || (CustomItemTypes.PackAscension != (ECollectionPackType)0 && packType == CustomItemTypes.PackAscension))
                 return Season.S05;
             else
                 return Season.HS;
@@ -51,9 +45,6 @@ namespace WankulCrazyPlugin.inventory
 
         public static WankulCardData DropCard(ECollectionPackType packType, List<WankulCardData> alreadySelectedCards, bool isTerrain = false, bool isMinRare = false, bool isMinUR = false, bool isMinLegendary = false, bool isRare = false)
         {
-            ECollectionPackType stellarPackTaux = EnumExtensions.SafeParseECollectionPackType("StellarTaux");
-            ECollectionPackType legacyPackTaux = EnumExtensions.SafeParseECollectionPackType("LegacyTaux");
-
             bool increaseRarity = false;
             Season season = ConvertPackTypeToSeason(packType);
 
@@ -62,8 +53,8 @@ namespace WankulCrazyPlugin.inventory
                 packType == ECollectionPackType.DestinyRareCardPack ||
                 packType == ECollectionPackType.DestinyEpicCardPack ||
                 packType == ECollectionPackType.DestinyLegendaryCardPack ||
-                packType == stellarPackTaux ||
-                packType == legacyPackTaux
+                packType == CustomItemTypes.PackStellarTaux ||
+                packType == CustomItemTypes.PackLegacyTaux
             )
             {
                 increaseRarity = true;
@@ -169,8 +160,6 @@ namespace WankulCrazyPlugin.inventory
 
         public static WankulCardData DropCardGold(ECollectionPackType packType, List<WankulCardData> alreadySelectedCards)
         {
-            ECollectionPackType stellarPackTaux = EnumExtensions.SafeParseECollectionPackType("StellarTaux");
-            ECollectionPackType legacyPackTaux = EnumExtensions.SafeParseECollectionPackType("LegacyTaux");
             bool increaseRarity = false;
             Season season = ConvertPackTypeToSeason(packType);
 
@@ -179,8 +168,8 @@ namespace WankulCrazyPlugin.inventory
                 packType == ECollectionPackType.DestinyRareCardPack ||
                 packType == ECollectionPackType.DestinyEpicCardPack ||
                 packType == ECollectionPackType.DestinyLegendaryCardPack ||
-                packType == stellarPackTaux ||
-                packType == legacyPackTaux
+                packType == CustomItemTypes.PackStellarTaux ||
+                packType == CustomItemTypes.PackLegacyTaux
             )
             {
                 increaseRarity = true;
@@ -431,15 +420,15 @@ namespace WankulCrazyPlugin.inventory
                 ECollectionPackType.BasicCardPack
             ];
 
-            EItemType stellarCardPack = EnumExtensions.SafeParseEItemType("BoosterStellar");
-            EItemType stellarCardPackTaux = EnumExtensions.SafeParseEItemType("BoosterStellarTaux");
-            ECollectionPackType stellarCardExpansion = EnumExtensions.SafeParseECollectionPackType("Stellar");
-            ECollectionPackType stellarCardExpansionTaux = EnumExtensions.SafeParseECollectionPackType("StellarTaux");
+            EItemType stellarCardPack = CustomItemTypes.BoosterStellar;
+            EItemType stellarCardPackTaux = CustomItemTypes.BoosterStellarTaux;
+            ECollectionPackType stellarCardExpansion = CustomItemTypes.PackStellar;
+            ECollectionPackType stellarCardExpansionTaux = CustomItemTypes.PackStellarTaux;
 
-            EItemType legacyCardPack = EnumExtensions.SafeParseEItemType("BoosterLegacy");
-            EItemType legacyCardPackTaux = EnumExtensions.SafeParseEItemType("BoosterLegacyTaux");
-            ECollectionPackType legacyCardExpansion = EnumExtensions.SafeParseECollectionPackType("Legacy");
-            ECollectionPackType legacyCardExpansionTaux = EnumExtensions.SafeParseECollectionPackType("LegacyTaux");
+            EItemType legacyCardPack = CustomItemTypes.BoosterLegacy;
+            EItemType legacyCardPackTaux = CustomItemTypes.BoosterLegacyTaux;
+            ECollectionPackType legacyCardExpansion = CustomItemTypes.PackLegacy;
+            ECollectionPackType legacyCardExpansionTaux = CustomItemTypes.PackLegacyTaux;
 
             if (CPlayerData.m_ShopLevel >= InventoryBase.GetUnlockItemLevelRequired(EItemType.RareCardPack))
             {

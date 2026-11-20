@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using HarmonyLib;
 using UnityEngine;
+using WankulCrazyPlugin.importer;
 using WankulCrazyPlugin.utils;
 
 namespace WankulCrazyPlugin.patch
@@ -16,6 +17,8 @@ namespace WankulCrazyPlugin.patch
         private static Texture2D s_WankulLoadingBack;
         private static Sprite s_WankulLoadingFrontSprite;
         private static Sprite s_WankulLoadingBackSprite;
+        private static Material s_WankulLoadingFrontMaterial;
+        private static Material s_WankulLoadingBackMaterial;
 
         public static Sprite GetWankulLoadingFrontSprite()
         {
@@ -64,17 +67,20 @@ namespace WankulCrazyPlugin.patch
             string pluginPath = Plugin.GetPluginPath();
             if (s_WankulLoadingFront == null)
             {
+                if (s_WankulLoadingFrontSprite != null)
+                {
+                    UnityEngine.Object.Destroy(s_WankulLoadingFrontSprite);
+                    s_WankulLoadingFrontSprite = null;
+                }
                 string frontPath = Path.Combine(pluginPath, "data", "patchtextures", "shared1", "T_3dCardModel.png");
                 if (File.Exists(frontPath))
                 {
-                    s_WankulLoadingFront = TextureUtils.LoadTexture(frontPath);
+                    s_WankulLoadingFront = PatchTexturesImporter.GetOrLoadDiskTexture(frontPath, tex => tex.name = "WankulLoadingFront");
                     if (s_WankulLoadingFront != null)
                     {
-                        s_WankulLoadingFront.name = "WankulLoadingFront";
-                        s_WankulLoadingFront.hideFlags |= HideFlags.DontUnloadUnusedAsset;
-                        UnityEngine.Object.DontDestroyOnLoad(s_WankulLoadingFront);
                         s_WankulLoadingFrontSprite = Sprite.Create(s_WankulLoadingFront, new Rect(0, 0, s_WankulLoadingFront.width, s_WankulLoadingFront.height), new Vector2(0.5f, 0.5f));
                         s_WankulLoadingFrontSprite.name = "WankulLoadingFrontSprite";
+                        s_WankulLoadingFrontSprite.hideFlags |= HideFlags.DontUnloadUnusedAsset;
                         UnityEngine.Object.DontDestroyOnLoad(s_WankulLoadingFrontSprite);
                     }
                 }
@@ -82,6 +88,11 @@ namespace WankulCrazyPlugin.patch
 
             if (s_WankulLoadingBack == null)
             {
+                if (s_WankulLoadingBackSprite != null)
+                {
+                    UnityEngine.Object.Destroy(s_WankulLoadingBackSprite);
+                    s_WankulLoadingBackSprite = null;
+                }
                 string backPath = Path.Combine(pluginPath, "data", "patchtextures", "shared0", "CardBack.png");
                 if (!File.Exists(backPath))
                 {
@@ -90,14 +101,12 @@ namespace WankulCrazyPlugin.patch
 
                 if (File.Exists(backPath))
                 {
-                    s_WankulLoadingBack = TextureUtils.LoadTexture(backPath);
+                    s_WankulLoadingBack = PatchTexturesImporter.GetOrLoadDiskTexture(backPath, tex => tex.name = "WankulLoadingBack");
                     if (s_WankulLoadingBack != null)
                     {
-                        s_WankulLoadingBack.name = "WankulLoadingBack";
-                        s_WankulLoadingBack.hideFlags |= HideFlags.DontUnloadUnusedAsset;
-                        UnityEngine.Object.DontDestroyOnLoad(s_WankulLoadingBack);
                         s_WankulLoadingBackSprite = Sprite.Create(s_WankulLoadingBack, new Rect(0, 0, s_WankulLoadingBack.width, s_WankulLoadingBack.height), new Vector2(0.5f, 0.5f));
                         s_WankulLoadingBackSprite.name = "WankulLoadingBackSprite";
+                        s_WankulLoadingBackSprite.hideFlags |= HideFlags.DontUnloadUnusedAsset;
                         UnityEngine.Object.DontDestroyOnLoad(s_WankulLoadingBackSprite);
                     }
                 }
@@ -238,14 +247,30 @@ namespace WankulCrazyPlugin.patch
                     Texture2D targetTex = isBack ? s_WankulLoadingBack : s_WankulLoadingFront;
                     if (targetTex == null) continue;
 
-                    Material safeMat = ShaderUtils.CreateSafeMaterial(ShaderUtils.EnsureNotBrokenStandard(m));
-                    if (safeMat.HasProperty("_BaseColorMap")) safeMat.SetTexture("_BaseColorMap", targetTex);
-                    if (safeMat.HasProperty("_BaseMap")) safeMat.SetTexture("_BaseMap", targetTex);
-                    if (safeMat.HasProperty("_MainTex")) safeMat.SetTexture("_MainTex", targetTex);
-                    safeMat.hideFlags |= HideFlags.DontUnloadUnusedAsset;
+                    Material safeMat = isBack ? s_WankulLoadingBackMaterial : s_WankulLoadingFrontMaterial;
+                    if (safeMat == null)
+                    {
+                        safeMat = ShaderUtils.CreateSafeMaterial(ShaderUtils.EnsureNotBrokenStandard(m));
+                        if (safeMat.HasProperty("_BaseColorMap")) safeMat.SetTexture("_BaseColorMap", targetTex);
+                        if (safeMat.HasProperty("_BaseMap")) safeMat.SetTexture("_BaseMap", targetTex);
+                        if (safeMat.HasProperty("_MainTex")) safeMat.SetTexture("_MainTex", targetTex);
+                        safeMat.hideFlags |= HideFlags.DontUnloadUnusedAsset;
+                        UnityEngine.Object.DontDestroyOnLoad(safeMat);
+                        if (isBack) s_WankulLoadingBackMaterial = safeMat;
+                        else s_WankulLoadingFrontMaterial = safeMat;
+                    }
+                    else if (safeMat.HasProperty("_MainTex") && safeMat.GetTexture("_MainTex") != targetTex)
+                    {
+                        if (safeMat.HasProperty("_BaseColorMap")) safeMat.SetTexture("_BaseColorMap", targetTex);
+                        if (safeMat.HasProperty("_BaseMap")) safeMat.SetTexture("_BaseMap", targetTex);
+                        if (safeMat.HasProperty("_MainTex")) safeMat.SetTexture("_MainTex", targetTex);
+                    }
 
-                    mats[i] = safeMat;
-                    modified = true;
+                    if (mats[i] != safeMat)
+                    {
+                        mats[i] = safeMat;
+                        modified = true;
+                    }
                 }
 
                 if (modified)

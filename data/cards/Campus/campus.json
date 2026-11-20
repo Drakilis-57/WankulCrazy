@@ -420,7 +420,7 @@
   {
     "Index": 200027,
     "Number": "27",
-    "Title": "PÈRE NOÃ‹L",
+    "Title": "PÈRE NOËL",
     "Artist": "KaroArt",
     "CardType": "Effigy",
     "SeasonId": "S02",
@@ -1711,7 +1711,7 @@
     "Cost": 1,
     "Rules": "Votre adversaire défausse les 2 cartes du dessus de son deck.",
     "Combo": "Baissez la force d'un personnage en jeu de 2 jusqu'à la fin du tour.",
-    "Quote": "ATTENTION IL Y VA AVEC LA CHAISE ! Ã‡A VA ÊTRE UN MASSACRE !"
+    "Quote": "ATTENTION IL Y VA AVEC LA CHAISE ! ÇA VA ÊTRE UN MASSACRE !"
   },
   {
     "Index": 200099,
@@ -2593,7 +2593,7 @@
     "Cost": 1,
     "Rules": "Votre adversaire défausse les 2 cartes du dessus de son deck.",
     "Combo": "Baissez la force d'un personnage en jeu de 2 jusqu'à la fin du tour.",
-    "Quote": "ATTENTION IL Y VA AVEC LA CHAISE ! Ã‡A VA ÊTRE UN MASSACRE !"
+    "Quote": "ATTENTION IL Y VA AVEC LA CHAISE ! ÇA VA ÊTRE UN MASSACRE !"
   },
   {
     "Index": 200148,

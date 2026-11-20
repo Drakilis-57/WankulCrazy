@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Script de build pour WankulCrazy : mode Dev (rapide et direct en jeux) ou mode Release (package zip complet).
 .PARAMETER Mode
@@ -77,16 +77,32 @@ if ($Mode -eq 'dev') {
             Write-Warning "Le jeu est actuellement ouvert et verrouille 'WankulCrazyPlugin.dll'. Ferme le jeu pour que la nouvelle DLL soit appliquée."
         }
 
+        # Nettoyage d'un éventuel sous-dossier doublon issu d'une extraction de WankulCrazy.zip dans le dossier du mod
+        $nestedDuplicate = Join-Path $GamePluginDir "WankulCrazy"
+        if ((Test-Path $nestedDuplicate) -and (Test-Path (Join-Path $nestedDuplicate "WankulCrazyPlugin.dll"))) {
+            $nestedSaves = Get-ChildItem -Path $nestedDuplicate -Recurse -Include "save_*.json", "*.bckp" -File -ErrorAction SilentlyContinue
+            if ($nestedSaves) {
+                Write-Warning "[Dev] Sous-dossier doublon détecté ($nestedDuplicate), mais il contient des sauvegardes — nettoyage ignoré."
+            } else {
+                Write-Warning "[Dev] Suppression du sous-dossier doublon obsolète : $nestedDuplicate"
+                Remove-Item -Path $nestedDuplicate -Recurse -Force
+            }
+        }
+
         # Synchronisation du dossier data (textures patchées dont shared1, cartes, sprites, configs, etc.)
         $srcData = Join-Path $ScriptDir "data"
         if (Test-Path $srcData) {
-            Write-Host "[Dev] Synchronisation du dossier data (textures, etc.) -> $GamePluginDir\data" -ForegroundColor Green
+            Write-Host "[Dev] Synchronisation miroir du dossier data (purge des fichiers obsolètes, sauvegarde préservée) -> $GamePluginDir\data" -ForegroundColor Green
             $destData = Join-Path $GamePluginDir "data"
             if (-not (Test-Path $destData)) {
                 New-Item -ItemType Directory -Path $destData -Force | Out-Null
             }
-            # Robocopy /E /XO /FFT pour ne copier rapidement que les fichiers nouveaux/modifiés
-            & robocopy $srcData $destData /E /XO /FFT /NDL /NFL /NJH /NJS /nc /ns /np | Out-Null
+            # Robocopy /MIR purge les fichiers/dossiers obsolètes dans data\ tout en préservant les sauvegardes (save_*.json, *.bckp)
+            # Ne touche jamais aux fichiers utilisateur à la racine de $GamePluginDir ni aux logs BepInEx.
+            & robocopy $srcData $destData /MIR /XF "save_*.json" "*.bckp" /FFT /NDL /NFL /NJH /NJS /nc /ns /np | Out-Null
+            if ($LASTEXITCODE -ge 8) {
+                throw "Échec de la synchronisation robocopy du dossier data (code $LASTEXITCODE)."
+            }
             Write-Host "[Dev] Dossier data synchronisé avec succès !" -ForegroundColor Green
         }
 

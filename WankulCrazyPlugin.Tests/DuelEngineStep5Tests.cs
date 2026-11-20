@@ -83,19 +83,6 @@ public class DuelEngineStep5Tests
         Assert.Equal(5, deck.Count(c => c.Kind == CardKind.Character && c.IsScoreur));
     }
 
-    [Theory]
-    [InlineData("FRANÃƒâ€¡AIS", "FRANÇAIS")]
-    [InlineData("FRANÃ‡AIS", "FRANÇAIS")]
-    [InlineData("LÃ©onard Lam", "Léonard Lam")]
-    [InlineData("Ã€ la fin", "À la fin")]
-    [InlineData("coÃ»t", "coût")]
-    [InlineData("Normal Title", "Normal Title")]
-    public void CardAdapter_FixMojibake_RestoresFrenchAccentedNames(string input, string expected)
-    {
-        string result = CardAdapter.FixMojibake(input);
-        Assert.Equal(expected, result);
-    }
-
     [Fact]
     public void CardAdapter_GetWankulCard_And_SpriteFallback_ResolvesProperly()
     {
@@ -103,7 +90,7 @@ public class DuelEngineStep5Tests
         {
             Index = 999991,
             Number = "WTEST01",
-            Title = "HÃ©ros de Test",
+            Title = "Héros de Test",
             CardType = CardType.Effigy,
             Force = 80
         };
@@ -122,7 +109,7 @@ public class DuelEngineStep5Tests
         Assert.NotNull(resolvedByIndex);
         Assert.Equal(999991, resolvedByIndex.Index);
 
-        // Résolution par Nom avec Mojibake réparé
+        // Résolution par Nom UTF-8 accentué
         var duelCardByName = new DuelCard("unknown_id", "Héros de Test", CardKind.Character);
         var resolvedByName = CardAdapter.GetWankulCard(duelCardByName);
         Assert.NotNull(resolvedByName);

@@ -52,18 +52,58 @@ public class Plugin : BaseUnityPlugin
         }
     }
 
+    private readonly struct PatchDescriptor
+    {
+        public readonly string DisplayName;
+        public readonly Type TargetType;
+        public readonly string MethodName;
+        public readonly Type[] ParamTypes;
+        public readonly Type PrefixType;
+        public readonly string PrefixMethod;
+        public readonly Type PostfixType;
+        public readonly string PostfixMethod;
+        public readonly Type TranspilerType;
+        public readonly string TranspilerMethod;
+
+        public PatchDescriptor(
+            Type targetType,
+            string methodName,
+            Type[] paramTypes = null,
+            (Type type, string method)? prefix = null,
+            (Type type, string method)? postfix = null,
+            (Type type, string method)? transpiler = null,
+            string displayName = null)
+        {
+            TargetType = targetType;
+            MethodName = methodName;
+            ParamTypes = paramTypes;
+            PrefixType = prefix?.type;
+            PrefixMethod = prefix?.method;
+            PostfixType = postfix?.type;
+            PostfixMethod = postfix?.method;
+            TranspilerType = transpiler?.type;
+            TranspilerMethod = transpiler?.method;
+            DisplayName = displayName ?? $"{targetType.Name}.{methodName}";
+        }
+    }
+
     private void Awake()
     {
         // Plugin startup logic
         Logger = base.Logger;
         IsDebug = Config.Bind("Debug", "EnableVerboseLogs", false, "Activer les logs detailles (Debug/Info)").Value;
+#if DEBUG
         bool enableDevTools = Config.Bind("Debug", "EnableDevTools", false, "Activer les outils de developpement en jeu (F8: Inspecteur, F9: Capture d'ecran, F10: Hot-Reload)").Value;
         bool enableGameBridge = Config.Bind("Debug", "EnableGameBridge", false, "Activer le pont HTTP local de debug (127.0.0.1:8765)").Value;
         Logger.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is loaded! (VerboseLogs: {IsDebug}, DevTools: {enableDevTools}, GameBridge: {enableGameBridge})");
+#else
+        Logger.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is loaded! (VerboseLogs: {IsDebug})");
+#endif
 
         // Initialisation de l'écran de debug pour intercepter les crashs et blocages
         WankulDebugScreen.Initialize();
 
+#if DEBUG
         // Initialisation des outils de développement (F8: Inspecteur, F9: Screenshots, F10: Hot-Reload)
         if (enableDevTools)
         {
@@ -75,6 +115,7 @@ public class Plugin : BaseUnityPlugin
         {
             WankulGameBridge.Initialize();
         }
+#endif
 
         Harmony harmony = new Harmony(PluginInfo.PLUGIN_GUID);
 
@@ -103,521 +144,245 @@ public class Plugin : BaseUnityPlugin
             }
         }
 
-        // 🎯 Patch `Enum.GetName()`
-        TryPatch(
-            "Enum.GetName",
-            AccessTools.Method(typeof(Enum), "GetName", new Type[] { typeof(Type), typeof(object) }),
-            prefix: AccessTools.Method(typeof(Patch_Enum_GetName), "Prefix")
-        );
-
-        // 🎯 Patch `Enum.IsDefined()`
-        TryPatch(
-            "Enum.IsDefined",
-            AccessTools.Method(typeof(Enum), "IsDefined", new Type[] { typeof(Type), typeof(object) }),
-            prefix: AccessTools.Method(typeof(Patch_Enum_IsDefined), "Prefix")
-        );
-
-        // 🎯 Patch `Enum.Parse()`
-        TryPatch(
-            "Enum.Parse",
-            AccessTools.Method(typeof(Enum), "Parse", new Type[] { typeof(Type), typeof(string), typeof(bool) }),
-            prefix: AccessTools.Method(typeof(Patch_Enum_Parse), "Prefix")
-        );
-
-        TryPatch(
-            "CGameManager.OnLevelFinishedLoading",
-            AccessTools.Method(typeof(CGameManager), "OnLevelFinishedLoading"),
-            postfix: AccessTools.Method(typeof(GameStarting), "OnLevelFinishedLoading")
-        );
-
-        TryPatch(
-            "PriceChangeManager.OnDayStarted",
-            AccessTools.Method(typeof(PriceChangeManager), "OnDayStarted"),
-            postfix: AccessTools.Method(typeof(CardPrice), "OnDayStarted")
-        );
-
-        TryPatch(
-            "CardUI.SetCardUI",
-            AccessTools.Method(typeof(CardUI), "SetCardUI"),
-            prefix: AccessTools.Method(typeof(ReplacingCards), "SetCardUIPrefix"),
-            postfix: AccessTools.Method(typeof(ReplacingCards), "SetCardUIPostFix")
-        );
-
-        TryPatch(
-            "CollectionBinderFlipAnimCtrl.EnterViewUpCloseState",
-            AccessTools.Method(typeof(CollectionBinderFlipAnimCtrl), "EnterViewUpCloseState"),
-            prefix: AccessTools.Method(typeof(ReplacingCards), "EnterViewUpCloseStatePrefix"),
-            postfix: AccessTools.Method(typeof(ReplacingCards), "EnterViewUpCloseStatePostfix")
-        );
-
-        TryPatch(
-            "CardOpeningSequence.OpenScreen",
-            AccessTools.Method(typeof(CardOpeningSequence), "OpenScreen"),
-            prefix: AccessTools.Method(typeof(CardOpening), "OpenScreenPrefix")); TryPatch("CardOpeningSequence.ReadyingCardPack", AccessTools.Method(typeof(CardOpeningSequence), "ReadyingCardPack"), postfix: AccessTools.Method(typeof(CardOpening), "ReadyingCardPackPostfix")
-        );
-
-        TryPatch(
-            "CardOpeningSequence.GetPackContent",
-            AccessTools.Method(typeof(CardOpeningSequence), "GetPackContent"),
-            postfix: AccessTools.Method(typeof(CardOpening), "OpenBooster")
-        );
-
-        TryPatch(
-            "CardOpeningSequence.GetPackContentCardDataList",
-            AccessTools.Method(typeof(CardOpeningSequence), "GetPackContentCardDataList"),
-            prefix: AccessTools.Method(typeof(CardOpening), nameof(CardOpening.GetPackContentCardDataListPrefix))
-        );
-
-        TryPatch(
-            "InteractableAutoPackOpener.OpenPack",
-            AccessTools.Method(typeof(InteractableAutoPackOpener), "OpenPack"),
-            prefix: AccessTools.Method(typeof(WankulCrazyPlugin.patch.InteractableAutoPackOpenerPatch), nameof(WankulCrazyPlugin.patch.InteractableAutoPackOpenerPatch.OpenPackPrefix)),
-            postfix: AccessTools.Method(typeof(WankulCrazyPlugin.patch.InteractableAutoPackOpenerPatch), nameof(WankulCrazyPlugin.patch.InteractableAutoPackOpenerPatch.OpenPackPostfix))
-        );
-
-        TryPatch(
-            "InteractableAutoPackOpener.OnMouseButtonUp",
-            AccessTools.Method(typeof(InteractableAutoPackOpener), "OnMouseButtonUp"),
-            prefix: AccessTools.Method(typeof(WankulCrazyPlugin.patch.InteractableAutoPackOpenerPatch), nameof(WankulCrazyPlugin.patch.InteractableAutoPackOpenerPatch.OnMouseButtonUpPrefix))
-        );
-
-        TryPatch(
-            "ShowCardObtainedPage.ShowCardObtained",
-            AccessTools.Method(typeof(ShowCardObtainedPage), "ShowCardObtained"),
-            postfix: AccessTools.Method(typeof(WankulCrazyPlugin.patch.InteractableAutoPackOpenerPatch), nameof(WankulCrazyPlugin.patch.InteractableAutoPackOpenerPatch.ShowCardObtainedPostfix))
-        );
-
-        TryPatch(
-            "Worker.InitializeCharacter",
-            AccessTools.Method(typeof(Worker), "InitializeCharacter"),
-            postfix: AccessTools.Method(typeof(WankulCrazyPlugin.patch.InteractableAutoPackOpenerPatch), nameof(WankulCrazyPlugin.patch.InteractableAutoPackOpenerPatch.SyncWorkerCardPackLists))
-        );
-
-        TryPatch(
-            "Worker.LoadWorkerSaveData",
-            AccessTools.Method(typeof(Worker), "LoadWorkerSaveData"),
-            postfix: AccessTools.Method(typeof(WankulCrazyPlugin.patch.InteractableAutoPackOpenerPatch), nameof(WankulCrazyPlugin.patch.InteractableAutoPackOpenerPatch.SyncWorkerCardPackLists))
-        );
-
-        TryPatch(
-            "WorkerSetPackOpenerTypeOptionScreen.OpenScreen",
-            AccessTools.Method(typeof(WorkerSetPackOpenerTypeOptionScreen), "OpenScreen"),
-            prefix: AccessTools.Method(typeof(WankulCrazyPlugin.patch.InteractableAutoPackOpenerPatch), nameof(WankulCrazyPlugin.patch.InteractableAutoPackOpenerPatch.WorkerSetPackOpenerTypeOptionScreenOpenPrefix))
-        );
-
-        TryPatch(
-            "CardOpeningSequence.Update (CardOpening)",
-            AccessTools.Method(typeof(CardOpeningSequence), "Update"),
-            prefix: AccessTools.Method(typeof(CardOpening), "Update")
-        );
-
-        TryPatch(
-            "CardOpeningSequence.Update (UpdatePreFix)",
-            AccessTools.Method(typeof(CardOpeningSequence), "Update"),
-            prefix: AccessTools.Method(typeof(CardOpening), "UpdatePreFix")
-        );
-
-        TryPatch(
-            "CollectionBinderFlipAnimCtrl.UpdateBinderAllCardUI",
-            AccessTools.Method(typeof(CollectionBinderFlipAnimCtrl), "UpdateBinderAllCardUI"),
-            postfix: AccessTools.Method(typeof(SortUI), "UpdateBinderAllCardUI")
-        );
-
-        TryPatch(
-            "CSaveLoad.Save",
-            AccessTools.Method(typeof(CSaveLoad), "Save"),
-            postfix: AccessTools.Method(typeof(Saves), "Save")
-        );
-
-        TryPatch(
-            "CSaveLoad.Load",
-            AccessTools.Method(typeof(CSaveLoad), "Load"),
-            postfix: AccessTools.Method(typeof(Saves), "Load")
-        );
-
-        // Récupère la méthode originale à patcher en spécifiant les paramètres
-        TryPatch(
-            "CPlayerData.GetCardMarketPrice(CardData)",
-            AccessTools.Method(typeof(CPlayerData), "GetCardMarketPrice", new[] { typeof(CardData) }),
-            prefix: AccessTools.Method(typeof(CardPrice), nameof(CardPrice.Prefix_GetCardMarketPrice_CardData))
-        );
-
-        TryPatch(
-            "CPlayerData.GetCardMarketPrice(int, ECardExpansionType, bool, int)",
-            AccessTools.Method(typeof(CPlayerData), "GetCardMarketPrice", new[] { typeof(int), typeof(ECardExpansionType), typeof(bool), typeof(int) }),
-            postfix: AccessTools.Method(typeof(CardPrice), nameof(CardPrice.Postfix_GetCardMarketPrice_Params))
-        );
-
-        TryPatch(
-            "CheckPricePanelUI.InitCard",
-            AccessTools.Method(typeof(CheckPricePanelUI), "InitCard"),
-            prefix: AccessTools.Method(typeof(CheckPriceUI), "CheckPricePanelInitCard")
-        );
-
-        TryPatch(
-            "CheckPriceScreen.EvaluateCardPanelUI",
-            AccessTools.Method(typeof(CheckPriceScreen), "EvaluateCardPanelUI"),
-            prefix: AccessTools.Method(typeof(CheckPriceUI), "EvaluateCardPanelUI")
-        );
-
-        TryPatch(
-            "CheckPriceScreen.OnPressOpenCardPriceGraph",
-            AccessTools.Method(typeof(CheckPriceScreen), "OnPressOpenCardPriceGraph"),
-            prefix: AccessTools.Method(typeof(CheckPriceUI), "OnPressOpenCardPriceGraph")
-        );
-
-        TryPatch(
-            "ItemPriceGraphScreen.ShowCardPriceChart",
-            AccessTools.Method(typeof(ItemPriceGraphScreen), "ShowCardPriceChart"),
-            prefix: AccessTools.Method(typeof(CheckPriceUI), "ShowCardPriceChart")
-        );
-
-        TryPatch(
-            "RestockManager.GetItemCost",
-            AccessTools.Method(typeof(RestockManager), "GetItemCost", new[] { typeof(EItemType) }),
-            prefix: AccessTools.Method(typeof(CustomItemsImporter), "GetItemCostPrefix")
-        );
-
-        TryPatch(
-            "RestockManager.GetItemMarketPrice",
-            AccessTools.Method(typeof(RestockManager), "GetItemMarketPrice", new[] { typeof(EItemType) }),
-            prefix: AccessTools.Method(typeof(CustomItemsImporter), "GetItemMarketPricePrefix")
-        );
-
-        TryPatch(
-            "RestockManager.GetItemMarketPriceCustomPercent",
-            AccessTools.Method(typeof(RestockManager), "GetItemMarketPriceCustomPercent", new[] { typeof(EItemType), typeof(float) }),
-            prefix: AccessTools.Method(typeof(CustomItemsImporter), "GetItemMarketPriceCustomPercentPrefix")
-        );
-
-        TryPatch(
-            "CPlayerData.AddCard",
-            AccessTools.Method(typeof(CPlayerData), "AddCard"),
-            postfix: AccessTools.Method(typeof(Inventory), "AddCard")
-        );
-
-        TryPatch(
-            "CPlayerData.ReduceCard",
-            AccessTools.Method(typeof(CPlayerData), "ReduceCard"),
-            postfix: AccessTools.Method(typeof(Inventory), "RemoveCard")
-        );
-
-        TryPatch(
-            "MonsterData.GetIcon",
-            AccessTools.Method(typeof(MonsterData), "GetIcon"),
-            prefix: AccessTools.Method(typeof(ReplacingCards), "GetIcon")
-        );
-
-        TryPatch(
-            "CollectionBinderUI.OpenSortAlbumScreen",
-            AccessTools.Method(typeof(CollectionBinderUI), "OpenSortAlbumScreen"),
-            prefix: AccessTools.Method(typeof(SortUI), "OpenSortAlbumScreenPrefix"),
-            postfix: AccessTools.Method(typeof(SortUI), "OpenSortAlbumScreen")
-        );
-
-        TryPatch(
-            "CollectionBinderFlipAnimCtrl.Update",
-            AccessTools.Method(typeof(CollectionBinderFlipAnimCtrl), "Update"),
-            prefix: AccessTools.Method(typeof(SortUI), "Update")
-        );
-
-        TryPatch(
-            "CollectionBinderFlipAnimCtrl.OnSortingMethodUpdated",
-            AccessTools.Method(typeof(CollectionBinderFlipAnimCtrl), "OnSortingMethodUpdated"),
-            prefix: AccessTools.Method(typeof(SortUI), "OnSortingMethodUpdated")
-        );
-
-        TryPatch(
-            "CardExpansionSelectScreen.OpenScreen",
-            AccessTools.Method(typeof(CardExpansionSelectScreen), "OpenScreen"),
-            postfix: AccessTools.Method(typeof(ExpansionScreen), "OpenExpansionScreen")
-        );
-
-        TryPatch(
-            "CardExpansionSelectScreen.OnPressButton",
-            AccessTools.Method(typeof(CardExpansionSelectScreen), "OnPressButton"),
-            prefix: AccessTools.Method(typeof(ExpansionScreen), "OnExpansionPressButton")
-        );
-
-        TryPatch(
-            "WorkbenchUIScreen.OnCardExpansionUpdated",
-            AccessTools.Method(typeof(WorkbenchUIScreen), "OnCardExpansionUpdated"),
-            postfix: AccessTools.Method(typeof(patch.workbench.WorkbenchPatch), "OnCardExpansionUpdated")
-        );
-
-        TryPatch(
-            "CardRaritySelectScreen.OpenScreen",
-            AccessTools.Method(typeof(CardRaritySelectScreen), "OpenScreen"),
-            postfix: AccessTools.Method(typeof(patch.workbench.WorkbenchPatch), "OpenRarityScreen")
-        );
-
-        TryPatch(
-            "CardRaritySelectScreen.OnPressButton",
-            AccessTools.Method(typeof(CardRaritySelectScreen), "OnPressButton"),
-            prefix: AccessTools.Method(typeof(patch.workbench.WorkbenchPatch), "OnRarityPressButton")
-        );
-
-        TryPatch(
-            "WorkbenchUIScreen.OnRarityLimitUpdated",
-            AccessTools.Method(typeof(WorkbenchUIScreen), "OnRarityLimitUpdated"),
-            postfix: AccessTools.Method(typeof(patch.workbench.WorkbenchPatch), "OnRarityLimitUpdated")
-        );
-
-        TryPatch(
-            "WorkbenchUIScreen.OpenScreen",
-            AccessTools.Method(typeof(WorkbenchUIScreen), "OpenScreen"),
-            postfix: AccessTools.Method(typeof(patch.workbench.WorkbenchPatch), "OpenWorkBenchScreen")
-        );
-
-        TryPatch(
-            "WorkbenchUIScreen.RunBundleCardBulkFunction",
-            AccessTools.Method(typeof(WorkbenchUIScreen), "RunBundleCardBulkFunction"),
-            prefix: AccessTools.Method(typeof(patch.workbench.WorkbenchPatch), "RunBundleCardBulkFunction")
-        );
-
-        TryPatch(
-            "BinderPageGrp.SetSingleCard",
-            AccessTools.Method(typeof(BinderPageGrp), "SetSingleCard"),
-            prefix: AccessTools.Method(typeof(ReplacingCards), "SetSingleCard")
-        );
-
-        TryPatch(
-            "InteractionPlayerController.EvaluateOpenCardPack",
-            AccessTools.Method(typeof(InteractionPlayerController), "EvaluateOpenCardPack"),
-            prefix: AccessTools.Method(typeof(CardOpening), "EvaluateOpenCardPackPreFix"),
-            postfix: AccessTools.Method(typeof(CardOpening), "EvaluateOpenCardPackPostFix")
-        );
-
-        TryPatch(
-            "CollectionBinderFlipAnimCtrl.OnRightMouseButtonUp",
-            AccessTools.Method(typeof(CollectionBinderFlipAnimCtrl), "OnRightMouseButtonUp"),
-            prefix: AccessTools.Method(typeof(ReplacingCards), "CollectionBinderFlipAnimCtrlOnRightMouseButtonUp")
-        );
-
-        TryPatch(
-            "Customer.OnPayingDone",
-            AccessTools.Method(typeof(Customer), "OnPayingDone"),
-            prefix: AccessTools.Method(typeof(CardPrice), "OnPayingDone")
-        );
-
-        TryPatch(
-            "InventoryBase.ItemTypeToCollectionPackType",
-            AccessTools.Method(typeof(InventoryBase), "ItemTypeToCollectionPackType"),
-            postfix: AccessTools.Method(typeof(CustomItemsImporter), "ItemTypeToCollectionPackType")
-        );
-
-        TryPatch(
-            "InventoryBase.GetCardExpansionType",
-            AccessTools.Method(typeof(InventoryBase), "GetCardExpansionType"),
-            postfix: AccessTools.Method(typeof(CustomItemsImporter), "GetCardExpansionType")
-        );
-
-        TryPatch(
-            "InteractionPlayerController.CardBoxToCardPack",
-            AccessTools.Method(typeof(InteractionPlayerController), "CardBoxToCardPack"),
-            prefix: AccessTools.Method(typeof(WankulCrazyPlugin.patch.InteractionPlayerControllerPatch), "CardBoxToCardPack")
-        );
-
-        TryPatch(
-            "InteractionPlayerController.Awake",
-            AccessTools.Method(typeof(InteractionPlayerController), "Awake"),
-            postfix: AccessTools.Method(typeof(WankulCrazyPlugin.patch.InteractionPlayerControllerPatch), "AwakePostfix")
-        );
-
-        TryPatch(
-            "InteractionPlayerController.EvaluateOpenCardPack (V2)",
-            AccessTools.Method(typeof(InteractionPlayerController), "EvaluateOpenCardPack"),
-            prefix: AccessTools.Method(typeof(WankulCrazyPlugin.patch.InteractionPlayerControllerPatch), "EvaluateOpenCardPack")
-        );
-
-        TryPatch(
-            "InteractionPlayerController.RemoveToolTip",
-            AccessTools.Method(typeof(InteractionPlayerController), "RemoveToolTip"),
-            postfix: AccessTools.Method(typeof(WankulCrazyPlugin.patch.InteractionPlayerControllerPatch), "RemoveToolTip")
-        );
-
-        TryPatch(
-            "InteractionPlayerController.CanOpenPack",
-            AccessTools.Method(typeof(InteractionPlayerController), "CanOpenPack"),
-            prefix: AccessTools.Method(typeof(WankulCrazyPlugin.patch.InteractionPlayerControllerPatch), "CanOpenPack")
-        );
-
-        TryPatch(
-            "InteractionPlayerController.IsCardPackType",
-            AccessTools.Method(typeof(InteractionPlayerController), "IsCardPackType"),
-            prefix: AccessTools.Method(typeof(WankulCrazyPlugin.patch.InteractionPlayerControllerPatch), "IsCardPackType")
-        );
-
-        TryPatch(
-            "InteractionPlayerController.CanOpenCardBox",
-            AccessTools.Method(typeof(InteractionPlayerController), "CanOpenCardBox"),
-            prefix: AccessTools.Method(typeof(WankulCrazyPlugin.patch.InteractionPlayerControllerPatch), "CanOpenCardBox")
-        );
-
-        TryPatch(
-            "InteractionPlayerController.DelayLerpSpawnedCardPackToHand",
-            AccessTools.Method(typeof(InteractionPlayerController), "DelayLerpSpawnedCardPackToHand"),
-            postfix: AccessTools.Method(typeof(WankulCrazyPlugin.patch.InteractionPlayerControllerPatch), "DelayLerpSpawnedCardPackToHandPostfix")
-        );
-
-        TryPatch(
-            "Item.SetMesh",
-            AccessTools.Method(typeof(Item), "SetMesh"),
-            postfix: AccessTools.Method(typeof(WankulCrazyPlugin.importer.PatchTexturesImporter), "ItemPostfix")); TryPatch("Item.SetTexture2DArrayMaterialsForMesh", AccessTools.Method(typeof(Item), "SetTexture2DArrayMaterialsForMesh"), postfix: AccessTools.Method(typeof(WankulCrazyPlugin.importer.PatchTexturesImporter), "ItemArrayMaterialPostfix")); TryPatch("Item.SetTexture2DArrayMaterialsForItem", AccessTools.Method(typeof(Item), "SetTexture2DArrayMaterialsForItem"), postfix: AccessTools.Method(typeof(WankulCrazyPlugin.importer.PatchTexturesImporter), "ItemArrayMaterialPostfix")
-        );
-
-        TryPatch(
-            "UnlockRoomManager.Init",
-            AccessTools.Method(typeof(UnlockRoomManager), "Init"),
-            postfix: AccessTools.Method(typeof(WindowsPosters), "Init")
-        );
-
-        TryPatch(
-            "CustomerTradeCardScreen.SetCustomer",
-            AccessTools.Method(typeof(CustomerTradeCardScreen), "SetCustomer"),
-            prefix: AccessTools.Method(typeof(CustomerTradeCardScreenPatch), "SetCustomer")
-        );
-
-        TryPatch(
-            "UI_CashCounterScreen.OnCardScanned",
-            AccessTools.Method(typeof(UI_CashCounterScreen), "OnCardScanned"),
-            prefix: AccessTools.Method(typeof(UI_CashCounterScreenPatch), "OnCardScanned")
-        );
-
-        TryPatch(
-            "CPlayerData.GetCardAmount",
-            AccessTools.Method(typeof(CPlayerData), "GetCardAmount"),
-            prefix: AccessTools.Method(typeof(CPlayerDataPatch), "GetCardAmount")
-        );
-
-        TryPatch(
-            "Debug.Log(object)",
-            AccessTools.Method(typeof(Debug), "Log", new[] { typeof(object) }),
-            prefix: AccessTools.Method(typeof(DebugFilterPatch), nameof(DebugFilterPatch.LogPrefix))
-        );
-
-        TryPatch(
-            "Debug.Log(object, Object)",
-            AccessTools.Method(typeof(Debug), "Log", new[] { typeof(object), typeof(UnityEngine.Object) }),
-            prefix: AccessTools.Method(typeof(DebugFilterPatch), nameof(DebugFilterPatch.LogContextPrefix))
-        );
-
-        TryPatch(
-            "Debug.LogFormat(string, object[])",
-            AccessTools.Method(typeof(Debug), "LogFormat", new[] { typeof(string), typeof(object[]) }),
-            prefix: AccessTools.Method(typeof(DebugFilterPatch), nameof(DebugFilterPatch.LogFormatPrefix))
-        );
-
-        TryPatch(
-            "Debug.LogWarning(object)",
-            AccessTools.Method(typeof(Debug), "LogWarning", new[] { typeof(object) }),
-            prefix: AccessTools.Method(typeof(DebugFilterPatch), nameof(DebugFilterPatch.LogWarningPrefix))
-        );
-
-        TryPatch(
-            "Debug.LogWarning(object, Object)",
-            AccessTools.Method(typeof(Debug), "LogWarning", new[] { typeof(object), typeof(UnityEngine.Object) }),
-            prefix: AccessTools.Method(typeof(DebugFilterPatch), nameof(DebugFilterPatch.LogWarningContextPrefix))
-        );
-
-        TryPatch(
-            "Debug.LogWarningFormat(string, object[])",
-            AccessTools.Method(typeof(Debug), "LogWarningFormat", new[] { typeof(string), typeof(object[]) }),
-            prefix: AccessTools.Method(typeof(DebugFilterPatch), nameof(DebugFilterPatch.LogWarningFormatPrefix))
-        );
-
-        TryPatch(
-            "PlayCardSetUI.Update",
-            AccessTools.Method(typeof(PlayCardSetUI), "Update"),
-            prefix: AccessTools.Method(typeof(PlayCardSetUIPatch), nameof(PlayCardSetUIPatch.Prefix))
-        );
-
-        TryPatch(
-            "PlayCardSetUI.LateUpdate",
-            AccessTools.Method(typeof(PlayCardSetUI), "LateUpdate"),
-            prefix: AccessTools.Method(typeof(PlayCardSetUIPatch), nameof(PlayCardSetUIPatch.LateUpdatePrefix))
-        );
-
-        TryPatch(
-            "InventoryBase.GetItemData",
-            AccessTools.Method(typeof(InventoryBase), "GetItemData", new[] { typeof(EItemType) }),
-            prefix: AccessTools.Method(typeof(CustomItemsImporter), nameof(CustomItemsImporter.GetItemDataPrefix))
-        );
-
-        TryPatch(
-            "InventoryBase.GetItemMeshData",
-            AccessTools.Method(typeof(InventoryBase), "GetItemMeshData", new[] { typeof(EItemType) }),
-            prefix: AccessTools.Method(typeof(CustomItemsImporter), nameof(CustomItemsImporter.GetItemMeshDataPrefix))
-        );
-
-        TryPatch(
-            "LoadingScreen.OpenScreen",
-            AccessTools.Method(typeof(LoadingScreen), "OpenScreen"),
-            postfix: AccessTools.Method(typeof(SceneLifecyclePatches), nameof(SceneLifecyclePatches.OpenScreenPostfix))
-        );
-
-        TryPatch(
-            "SaveLoadGameSlotSelectScreen.OnPressLoadGame",
-            AccessTools.Method(typeof(SaveLoadGameSlotSelectScreen), "OnPressLoadGame", new[] { typeof(int) }),
-            prefix: AccessTools.Method(typeof(SceneLifecyclePatches), nameof(SceneLifecyclePatches.OnPressLoadGamePrefix))
-        );
-
-        TryPatch(
-            "LoadingScreen.CloseScreen",
-            AccessTools.Method(typeof(LoadingScreen), "CloseScreen"),
-            prefix: AccessTools.Method(typeof(SceneLifecyclePatches), nameof(SceneLifecyclePatches.CloseScreenPrefix))
-        );
-
-        TryPatch(
-            "LoadingScreen.FinishLoading",
-            AccessTools.Method(typeof(LoadingScreen), "FinishLoading"),
-            prefix: AccessTools.Method(typeof(SceneLifecyclePatches), nameof(SceneLifecyclePatches.FinishLoadingPrefix))
-        );
-
-        TryPatch(
-            "ScreenRatioScaler.Init",
-            AccessTools.Method(typeof(ScreenRatioScaler), "Init"),
-            prefix: AccessTools.Method(typeof(SceneLifecyclePatches), nameof(SceneLifecyclePatches.ScreenRatioScalerInitPrefix))
-        );
-
-        TryPatch(
-            "UI_PriceTag.SetItemImage",
-            AccessTools.Method(typeof(UI_PriceTag), "SetItemImage", new[] { typeof(EItemType) }),
-            postfix: AccessTools.Method(typeof(WankulCrazyPlugin.patch.PriceTagAtlasPatch), nameof(WankulCrazyPlugin.patch.PriceTagAtlasPatch.SetItemImagePostfix))
-        );
-
-        TryPatch(
-            "PriceTagAtlasMap.GetItemIconIndex",
-            AccessTools.Method(typeof(PriceTagAtlasMap), "GetItemIconIndex", new[] { typeof(int) }),
-            prefix: AccessTools.Method(typeof(WankulCrazyPlugin.patch.PriceTagAtlasPatch), nameof(WankulCrazyPlugin.patch.PriceTagAtlasPatch.GetItemIconIndexPrefix))
-        );
-
-        TryPatch(
-            "RestockItemScreen.EvaluateRestockItemPanelUI",
-            AccessTools.Method(typeof(RestockItemScreen), "EvaluateRestockItemPanelUI", new[] { typeof(int) }),
-            prefix: AccessTools.Method(typeof(CustomItemsImporter), nameof(CustomItemsImporter.LogShopEvaluation))
-        );
-
-        // 🎮 Récompenses de duel Wankul : remplace les packs Tetramon vanilla par des Boosters Wankul
-        TryPatch(
-            "PlayTableGame.EvaluateEndGameGift",
-            AccessTools.Method(typeof(PlayTableGame), "EvaluateEndGameGift"),
-            prefix: AccessTools.Method(typeof(DuelRewardsPatch), nameof(DuelRewardsPatch.EvaluateEndGameGiftPrefix))
-        );
-
-        // 🎮 Lancement du Duel : auto-complète le deck si le joueur n'a pas encore ses 50 cartes
-        TryPatch(
-            "PlayTableGame.SetPlayTable",
-            AccessTools.Method(typeof(PlayTableGame), "SetPlayTable"),
-            prefix: AccessTools.Method(typeof(DuelOpponentDeckPatch), nameof(DuelOpponentDeckPatch.SetPlayTablePrefix))
-        );
-
-        // 🎮 Duel Wankul TCG (moteur indépendant) : lance DuelView3D au lieu du mini-jeu vanilla
-        TryPatch(
-            "PlayTableGame.SetPlayTable (WankulDuelEntry)",
-            AccessTools.Method(typeof(PlayTableGame), "SetPlayTable"),
-            postfix: AccessTools.Method(typeof(WankulDuelEntryPatch), nameof(WankulDuelEntryPatch.SetPlayTablePostfix))
-        );
+        PatchDescriptor[] patches = new[]
+        {
+            // Enums custom
+            new PatchDescriptor(typeof(Enum), "GetName", new[] { typeof(Type), typeof(object) },
+                prefix: (typeof(Patch_Enum_GetName), nameof(Patch_Enum_GetName.Prefix))),
+            new PatchDescriptor(typeof(Enum), "IsDefined", new[] { typeof(Type), typeof(object) },
+                prefix: (typeof(Patch_Enum_IsDefined), nameof(Patch_Enum_IsDefined.Prefix))),
+            new PatchDescriptor(typeof(Enum), "Parse", new[] { typeof(Type), typeof(string), typeof(bool) },
+                prefix: (typeof(Patch_Enum_Parse), nameof(Patch_Enum_Parse.Prefix))),
+
+            // Cycle de vie & économie
+            new PatchDescriptor(typeof(CGameManager), "OnLevelFinishedLoading",
+                postfix: (typeof(GameStarting), nameof(GameStarting.OnLevelFinishedLoading))),
+            new PatchDescriptor(typeof(PriceChangeManager), "OnDayStarted",
+                postfix: (typeof(CardPrice), nameof(CardPrice.OnDayStarted))),
+            new PatchDescriptor(typeof(CSaveLoad), "Save",
+                postfix: (typeof(Saves), nameof(Saves.Save))),
+            new PatchDescriptor(typeof(CSaveLoad), "Load",
+                postfix: (typeof(Saves), nameof(Saves.Load))),
+
+            // Cartes & classeur
+            new PatchDescriptor(typeof(CardUI), "SetCardUI",
+                prefix: (typeof(ReplacingCards), nameof(ReplacingCards.SetCardUIPrefix)),
+                postfix: (typeof(ReplacingCards), "SetCardUIPostFix")),
+            new PatchDescriptor(typeof(CollectionBinderFlipAnimCtrl), "EnterViewUpCloseState",
+                prefix: (typeof(ReplacingCards), "EnterViewUpCloseStatePrefix"),
+                postfix: (typeof(ReplacingCards), "EnterViewUpCloseStatePostfix")),
+            new PatchDescriptor(typeof(CollectionBinderFlipAnimCtrl), "UpdateBinderAllCardUI",
+                postfix: (typeof(SortUI), nameof(SortUI.UpdateBinderAllCardUI))),
+            new PatchDescriptor(typeof(CollectionBinderFlipAnimCtrl), "Update",
+                prefix: (typeof(SortUI), nameof(SortUI.Update))),
+            new PatchDescriptor(typeof(CollectionBinderFlipAnimCtrl), "OnSortingMethodUpdated",
+                prefix: (typeof(SortUI), nameof(SortUI.OnSortingMethodUpdated))),
+            new PatchDescriptor(typeof(CollectionBinderFlipAnimCtrl), "OnRightMouseButtonUp",
+                prefix: (typeof(ReplacingCards), nameof(ReplacingCards.CollectionBinderFlipAnimCtrlOnRightMouseButtonUp))),
+            new PatchDescriptor(typeof(CollectionBinderUI), "OpenSortAlbumScreen",
+                prefix: (typeof(SortUI), nameof(SortUI.OpenSortAlbumScreenPrefix)),
+                postfix: (typeof(SortUI), nameof(SortUI.OpenSortAlbumScreen))),
+            new PatchDescriptor(typeof(MonsterData), "GetIcon",
+                prefix: (typeof(ReplacingCards), nameof(ReplacingCards.GetIcon))),
+            new PatchDescriptor(typeof(BinderPageGrp), "SetSingleCard",
+                prefix: (typeof(ReplacingCards), nameof(ReplacingCards.SetSingleCard))),
+
+            // Ouverture de boosters & machine auto
+            new PatchDescriptor(typeof(CardOpeningSequence), "OpenScreen",
+                prefix: (typeof(CardOpening), nameof(CardOpening.OpenScreenPrefix))),
+            new PatchDescriptor(typeof(CardOpeningSequence), "ReadyingCardPack",
+                postfix: (typeof(CardOpening), nameof(CardOpening.ReadyingCardPackPostfix))),
+            new PatchDescriptor(typeof(CardOpeningSequence), "GetPackContent",
+                postfix: (typeof(CardOpening), nameof(CardOpening.OpenBooster))),
+            new PatchDescriptor(typeof(CardOpeningSequence), "GetPackContentCardDataList",
+                prefix: (typeof(CardOpening), nameof(CardOpening.GetPackContentCardDataListPrefix))),
+            // CardOpeningSequence.Update : deux prefixes distincts conserves dans cet ordre exact
+            // (CardOpening.Update retourne bool false pour remplacer l'Update vanilla, UpdatePreFix est void pour le flush XP state=11).
+            new PatchDescriptor(typeof(CardOpeningSequence), "Update",
+                prefix: (typeof(CardOpening), nameof(CardOpening.Update)),
+                displayName: "CardOpeningSequence.Update (CardOpening)"),
+            new PatchDescriptor(typeof(CardOpeningSequence), "Update",
+                prefix: (typeof(CardOpening), nameof(CardOpening.UpdatePreFix)),
+                displayName: "CardOpeningSequence.Update (UpdatePreFix)"),
+            new PatchDescriptor(typeof(InteractableAutoPackOpener), "OpenPack",
+                prefix: (typeof(InteractableAutoPackOpenerPatch), nameof(InteractableAutoPackOpenerPatch.OpenPackPrefix)),
+                postfix: (typeof(InteractableAutoPackOpenerPatch), nameof(InteractableAutoPackOpenerPatch.OpenPackPostfix))),
+            new PatchDescriptor(typeof(InteractableAutoPackOpener), "OnMouseButtonUp",
+                prefix: (typeof(InteractableAutoPackOpenerPatch), nameof(InteractableAutoPackOpenerPatch.OnMouseButtonUpPrefix))),
+            new PatchDescriptor(typeof(ShowCardObtainedPage), "ShowCardObtained",
+                postfix: (typeof(InteractableAutoPackOpenerPatch), nameof(InteractableAutoPackOpenerPatch.ShowCardObtainedPostfix))),
+            new PatchDescriptor(typeof(Worker), "InitializeCharacter",
+                postfix: (typeof(InteractableAutoPackOpenerPatch), nameof(InteractableAutoPackOpenerPatch.SyncWorkerCardPackLists))),
+            new PatchDescriptor(typeof(Worker), "LoadWorkerSaveData",
+                postfix: (typeof(InteractableAutoPackOpenerPatch), nameof(InteractableAutoPackOpenerPatch.SyncWorkerCardPackLists))),
+            new PatchDescriptor(typeof(WorkerSetPackOpenerTypeOptionScreen), "OpenScreen",
+                prefix: (typeof(InteractableAutoPackOpenerPatch), nameof(InteractableAutoPackOpenerPatch.WorkerSetPackOpenerTypeOptionScreenOpenPrefix))),
+
+            // Prix, caisse, inventaire & échanges
+            new PatchDescriptor(typeof(CPlayerData), "GetCardMarketPrice", new[] { typeof(CardData) },
+                prefix: (typeof(CardPrice), nameof(CardPrice.Prefix_GetCardMarketPrice_CardData)),
+                displayName: "CPlayerData.GetCardMarketPrice(CardData)"),
+            new PatchDescriptor(typeof(CPlayerData), "GetCardMarketPrice", new[] { typeof(int), typeof(ECardExpansionType), typeof(bool), typeof(int) },
+                postfix: (typeof(CardPrice), nameof(CardPrice.Postfix_GetCardMarketPrice_Params)),
+                displayName: "CPlayerData.GetCardMarketPrice(int, ECardExpansionType, bool, int)"),
+            new PatchDescriptor(typeof(CPlayerData), "AddCard",
+                postfix: (typeof(Inventory), nameof(Inventory.AddCard))),
+            new PatchDescriptor(typeof(CPlayerData), "ReduceCard",
+                postfix: (typeof(Inventory), nameof(Inventory.RemoveCard))),
+            new PatchDescriptor(typeof(CPlayerData), "GetCardAmount",
+                prefix: (typeof(CPlayerDataPatch), nameof(CPlayerDataPatch.GetCardAmount))),
+            new PatchDescriptor(typeof(CheckPricePanelUI), "InitCard",
+                prefix: (typeof(CheckPriceUI), nameof(CheckPriceUI.CheckPricePanelInitCard))),
+            new PatchDescriptor(typeof(CheckPriceScreen), "EvaluateCardPanelUI",
+                prefix: (typeof(CheckPriceUI), nameof(CheckPriceUI.EvaluateCardPanelUI))),
+            new PatchDescriptor(typeof(CheckPriceScreen), "OnPressOpenCardPriceGraph",
+                prefix: (typeof(CheckPriceUI), nameof(CheckPriceUI.OnPressOpenCardPriceGraph))),
+            new PatchDescriptor(typeof(ItemPriceGraphScreen), "ShowCardPriceChart",
+                prefix: (typeof(CheckPriceUI), nameof(CheckPriceUI.ShowCardPriceChart))),
+            new PatchDescriptor(typeof(Customer), "OnPayingDone",
+                prefix: (typeof(CardPrice), nameof(CardPrice.OnPayingDone))),
+            new PatchDescriptor(typeof(CustomerTradeCardScreen), "SetCustomer",
+                prefix: (typeof(CustomerTradeCardScreenPatch), nameof(CustomerTradeCardScreenPatch.SetCustomer))),
+            new PatchDescriptor(typeof(UI_CashCounterScreen), "OnCardScanned",
+                prefix: (typeof(UI_CashCounterScreenPatch), nameof(UI_CashCounterScreenPatch.OnCardScanned))),
+
+            // Shop, items custom & textures
+            new PatchDescriptor(typeof(RestockManager), "GetItemCost", new[] { typeof(EItemType) },
+                prefix: (typeof(CustomItemsImporter), nameof(CustomItemsImporter.GetItemCostPrefix))),
+            new PatchDescriptor(typeof(RestockManager), "GetItemMarketPrice", new[] { typeof(EItemType) },
+                prefix: (typeof(CustomItemsImporter), nameof(CustomItemsImporter.GetItemMarketPricePrefix))),
+            new PatchDescriptor(typeof(RestockManager), "GetItemMarketPriceCustomPercent", new[] { typeof(EItemType), typeof(float) },
+                prefix: (typeof(CustomItemsImporter), nameof(CustomItemsImporter.GetItemMarketPriceCustomPercentPrefix))),
+            new PatchDescriptor(typeof(RestockItemScreen), "EvaluateRestockItemPanelUI", new[] { typeof(int) },
+                prefix: (typeof(CustomItemsImporter), nameof(CustomItemsImporter.LogShopEvaluation))),
+            new PatchDescriptor(typeof(InventoryBase), "ItemTypeToCollectionPackType",
+                postfix: (typeof(CustomItemsImporter), nameof(CustomItemsImporter.ItemTypeToCollectionPackType))),
+            new PatchDescriptor(typeof(InventoryBase), "GetCardExpansionType",
+                postfix: (typeof(CustomItemsImporter), nameof(CustomItemsImporter.GetCardExpansionType))),
+            new PatchDescriptor(typeof(InventoryBase), "GetItemData", new[] { typeof(EItemType) },
+                prefix: (typeof(CustomItemsImporter), nameof(CustomItemsImporter.GetItemDataPrefix))),
+            new PatchDescriptor(typeof(InventoryBase), "GetItemMeshData", new[] { typeof(EItemType) },
+                prefix: (typeof(CustomItemsImporter), nameof(CustomItemsImporter.GetItemMeshDataPrefix))),
+            new PatchDescriptor(typeof(Item), "SetMesh",
+                postfix: (typeof(PatchTexturesImporter), "ItemPostfix")),
+            new PatchDescriptor(typeof(Item), "SetTexture2DArrayMaterialsForMesh",
+                postfix: (typeof(PatchTexturesImporter), "ItemArrayMaterialPostfix")),
+            new PatchDescriptor(typeof(Item), "SetTexture2DArrayMaterialsForItem",
+                postfix: (typeof(PatchTexturesImporter), "ItemArrayMaterialPostfix")),
+            new PatchDescriptor(typeof(UnlockRoomManager), "Init",
+                postfix: (typeof(WindowsPosters), nameof(WindowsPosters.Init))),
+            new PatchDescriptor(typeof(UI_PriceTag), "SetItemImage", new[] { typeof(EItemType) },
+                postfix: (typeof(PriceTagAtlasPatch), nameof(PriceTagAtlasPatch.SetItemImagePostfix))),
+            new PatchDescriptor(typeof(PriceTagAtlasMap), "GetItemIconIndex", new[] { typeof(int) },
+                prefix: (typeof(PriceTagAtlasPatch), nameof(PriceTagAtlasPatch.GetItemIconIndexPrefix))),
+
+            // Extensions, Workbench & Contrôleur joueur
+            new PatchDescriptor(typeof(CardExpansionSelectScreen), "OpenScreen",
+                postfix: (typeof(ExpansionScreen), nameof(ExpansionScreen.OpenExpansionScreen))),
+            new PatchDescriptor(typeof(CardExpansionSelectScreen), "OnPressButton",
+                prefix: (typeof(ExpansionScreen), nameof(ExpansionScreen.OnExpansionPressButton))),
+            new PatchDescriptor(typeof(WorkbenchUIScreen), "OnCardExpansionUpdated",
+                postfix: (typeof(patch.workbench.WorkbenchPatch), nameof(patch.workbench.WorkbenchPatch.OnCardExpansionUpdated))),
+            new PatchDescriptor(typeof(CardRaritySelectScreen), "OpenScreen",
+                postfix: (typeof(patch.workbench.WorkbenchPatch), nameof(patch.workbench.WorkbenchPatch.OpenRarityScreen))),
+            new PatchDescriptor(typeof(CardRaritySelectScreen), "OnPressButton",
+                prefix: (typeof(patch.workbench.WorkbenchPatch), nameof(patch.workbench.WorkbenchPatch.OnRarityPressButton))),
+            new PatchDescriptor(typeof(WorkbenchUIScreen), "OnRarityLimitUpdated",
+                postfix: (typeof(patch.workbench.WorkbenchPatch), nameof(patch.workbench.WorkbenchPatch.OnRarityLimitUpdated))),
+            new PatchDescriptor(typeof(WorkbenchUIScreen), "OpenScreen",
+                postfix: (typeof(patch.workbench.WorkbenchPatch), nameof(patch.workbench.WorkbenchPatch.OpenWorkBenchScreen))),
+            new PatchDescriptor(typeof(WorkbenchUIScreen), "RunBundleCardBulkFunction",
+                prefix: (typeof(patch.workbench.WorkbenchPatch), nameof(patch.workbench.WorkbenchPatch.RunBundleCardBulkFunction))),
+
+            // InteractionPlayerController.EvaluateOpenCardPack : 2 entrees distinctes dans cet ordre exact :
+            // 1) CardOpening capture __state.CanOpenCardBox en prefix avant le remplacement, puis distribue les boosters rares/Gold en postfix.
+            // 2) InteractionPlayerControllerPatch remplace l'ouverture de display/pack (retourne bool false).
+            new PatchDescriptor(typeof(InteractionPlayerController), "EvaluateOpenCardPack",
+                prefix: (typeof(CardOpening), nameof(CardOpening.EvaluateOpenCardPackPreFix)),
+                postfix: (typeof(CardOpening), nameof(CardOpening.EvaluateOpenCardPackPostFix))),
+            new PatchDescriptor(typeof(InteractionPlayerController), "EvaluateOpenCardPack",
+                prefix: (typeof(InteractionPlayerControllerPatch), nameof(InteractionPlayerControllerPatch.EvaluateOpenCardPack)),
+                displayName: "InteractionPlayerController.EvaluateOpenCardPack (V2)"),
+            new PatchDescriptor(typeof(InteractionPlayerController), "CardBoxToCardPack",
+                prefix: (typeof(InteractionPlayerControllerPatch), nameof(InteractionPlayerControllerPatch.CardBoxToCardPack))),
+            new PatchDescriptor(typeof(InteractionPlayerController), "Awake",
+                postfix: (typeof(InteractionPlayerControllerPatch), nameof(InteractionPlayerControllerPatch.AwakePostfix))),
+            new PatchDescriptor(typeof(InteractionPlayerController), "RemoveToolTip",
+                postfix: (typeof(InteractionPlayerControllerPatch), nameof(InteractionPlayerControllerPatch.RemoveToolTip))),
+            new PatchDescriptor(typeof(InteractionPlayerController), "CanOpenPack",
+                prefix: (typeof(InteractionPlayerControllerPatch), nameof(InteractionPlayerControllerPatch.CanOpenPack))),
+            new PatchDescriptor(typeof(InteractionPlayerController), "IsCardPackType",
+                prefix: (typeof(InteractionPlayerControllerPatch), nameof(InteractionPlayerControllerPatch.IsCardPackType))),
+            new PatchDescriptor(typeof(InteractionPlayerController), "CanOpenCardBox",
+                prefix: (typeof(InteractionPlayerControllerPatch), nameof(InteractionPlayerControllerPatch.CanOpenCardBox))),
+            new PatchDescriptor(typeof(InteractionPlayerController), "DelayLerpSpawnedCardPackToHand",
+                postfix: (typeof(InteractionPlayerControllerPatch), nameof(InteractionPlayerControllerPatch.DelayLerpSpawnedCardPackToHandPostfix))),
+
+            // Filtrage logs Unity, chargement de scène & UI PlayCardSet
+            new PatchDescriptor(typeof(Debug), "Log", new[] { typeof(object) },
+                prefix: (typeof(DebugFilterPatch), nameof(DebugFilterPatch.LogPrefix)),
+                displayName: "Debug.Log(object)"),
+            new PatchDescriptor(typeof(Debug), "Log", new[] { typeof(object), typeof(UnityEngine.Object) },
+                prefix: (typeof(DebugFilterPatch), nameof(DebugFilterPatch.LogContextPrefix)),
+                displayName: "Debug.Log(object, Object)"),
+            new PatchDescriptor(typeof(Debug), "LogFormat", new[] { typeof(string), typeof(object[]) },
+                prefix: (typeof(DebugFilterPatch), nameof(DebugFilterPatch.LogFormatPrefix)),
+                displayName: "Debug.LogFormat(string, object[])"),
+            new PatchDescriptor(typeof(Debug), "LogWarning", new[] { typeof(object) },
+                prefix: (typeof(DebugFilterPatch), nameof(DebugFilterPatch.LogWarningPrefix)),
+                displayName: "Debug.LogWarning(object)"),
+            new PatchDescriptor(typeof(Debug), "LogWarning", new[] { typeof(object), typeof(UnityEngine.Object) },
+                prefix: (typeof(DebugFilterPatch), nameof(DebugFilterPatch.LogWarningContextPrefix)),
+                displayName: "Debug.LogWarning(object, Object)"),
+            new PatchDescriptor(typeof(Debug), "LogWarningFormat", new[] { typeof(string), typeof(object[]) },
+                prefix: (typeof(DebugFilterPatch), nameof(DebugFilterPatch.LogWarningFormatPrefix)),
+                displayName: "Debug.LogWarningFormat(string, object[])"),
+            new PatchDescriptor(typeof(PlayCardSetUI), "Update",
+                prefix: (typeof(PlayCardSetUIPatch), nameof(PlayCardSetUIPatch.Prefix))),
+            new PatchDescriptor(typeof(PlayCardSetUI), "LateUpdate",
+                prefix: (typeof(PlayCardSetUIPatch), nameof(PlayCardSetUIPatch.LateUpdatePrefix))),
+            new PatchDescriptor(typeof(LoadingScreen), "OpenScreen",
+                postfix: (typeof(SceneLifecyclePatches), nameof(SceneLifecyclePatches.OpenScreenPostfix))),
+            new PatchDescriptor(typeof(SaveLoadGameSlotSelectScreen), "OnPressLoadGame", new[] { typeof(int) },
+                prefix: (typeof(SceneLifecyclePatches), nameof(SceneLifecyclePatches.OnPressLoadGamePrefix))),
+            new PatchDescriptor(typeof(LoadingScreen), "CloseScreen",
+                prefix: (typeof(SceneLifecyclePatches), nameof(SceneLifecyclePatches.CloseScreenPrefix))),
+            new PatchDescriptor(typeof(LoadingScreen), "FinishLoading",
+                prefix: (typeof(SceneLifecyclePatches), nameof(SceneLifecyclePatches.FinishLoadingPrefix))),
+            new PatchDescriptor(typeof(ScreenRatioScaler), "Init",
+                prefix: (typeof(SceneLifecyclePatches), nameof(SceneLifecyclePatches.ScreenRatioScalerInitPrefix))),
+
+            // Duel Wankul TCG : récompenses, auto-complétion deck et lancement DuelView3D
+            new PatchDescriptor(typeof(PlayTableGame), "EvaluateEndGameGift",
+                prefix: (typeof(DuelRewardsPatch), nameof(DuelRewardsPatch.EvaluateEndGameGiftPrefix))),
+            new PatchDescriptor(typeof(PlayTableGame), "SetPlayTable",
+                prefix: (typeof(DuelOpponentDeckPatch), nameof(DuelOpponentDeckPatch.SetPlayTablePrefix)),
+                postfix: (typeof(WankulDuelEntryPatch), nameof(WankulDuelEntryPatch.SetPlayTablePostfix)))
+        };
+
+        foreach (var p in patches)
+        {
+            MethodInfo original = p.ParamTypes != null
+                ? AccessTools.Method(p.TargetType, p.MethodName, p.ParamTypes)
+                : AccessTools.Method(p.TargetType, p.MethodName);
+
+            MethodInfo ResolveHook(Type hookType, string hookName, string role)
+            {
+                if (hookType == null) return null;
+                MethodInfo m = AccessTools.Method(hookType, hookName);
+                if (m == null)
+                {
+                    Logger.LogWarning($"[HarmonyPatch] Méthode {role} '{hookType.Name}.{hookName}' introuvable pour '{p.DisplayName}'.");
+                }
+                return m;
+            }
+
+            MethodInfo prefix = ResolveHook(p.PrefixType, p.PrefixMethod, "prefix");
+            MethodInfo postfix = ResolveHook(p.PostfixType, p.PostfixMethod, "postfix");
+            MethodInfo transpiler = ResolveHook(p.TranspilerType, p.TranspilerMethod, "transpiler");
+
+            TryPatch(p.DisplayName, original, prefix, postfix, transpiler);
+        }
     }
 
     public static string GetPluginPath()

@@ -269,7 +269,7 @@ public class DuelSeason1EffectsTests
     private static string FindRepoRoot()
     {
         var dir = new DirectoryInfo(AppContext.BaseDirectory);
-        while (dir != null && !File.Exists(Path.Combine(dir.FullName, "data", "customdecks", "effects_s1.json")))
+        while (dir != null && !File.Exists(Path.Combine(dir.FullName, "data", "customdecks", "duel_card_effects.json")))
         {
             dir = dir.Parent;
         }
@@ -277,58 +277,65 @@ public class DuelSeason1EffectsTests
         return dir!.FullName;
     }
 
+    private static string[] ReadBucket(JsonElement entry, string name)
+    {
+        if (!entry.TryGetProperty(name, out var prop) || prop.ValueKind != JsonValueKind.Array)
+            return Array.Empty<string>();
+        return prop.EnumerateArray().Select(x => x.GetString() ?? string.Empty).ToArray();
+    }
+
     [Fact]
     public void EffectsS1Json_ContainsAll180OriginsCards_WithValidSchema()
     {
-        string path = Path.Combine(FindRepoRoot(), "data", "customdecks", "effects_s1.json");
+        string path = Path.Combine(FindRepoRoot(), "data", "customdecks", "duel_card_effects.json");
         using var doc = JsonDocument.Parse(File.ReadAllText(path));
         Assert.Equal(JsonValueKind.Array, doc.RootElement.ValueKind);
 
-        var entries = doc.RootElement.EnumerateArray().ToList();
-        Assert.Equal(180, entries.Count);
-
         var byIndex = new Dictionary<int, JsonElement>();
-        foreach (var entry in entries)
+        foreach (var entry in doc.RootElement.EnumerateArray())
         {
-            int idx = entry.GetProperty("cardIndex").GetInt32();
-            byIndex[idx] = entry;
-            Assert.True(entry.TryGetProperty("costOverride", out _));
-            Assert.Equal(JsonValueKind.Array, entry.GetProperty("onPlay").ValueKind);
-            Assert.Equal(JsonValueKind.Array, entry.GetProperty("combo").ValueKind);
-            Assert.Equal(JsonValueKind.Array, entry.GetProperty("passive").ValueKind);
-            Assert.Equal(JsonValueKind.Array, entry.GetProperty("sub").ValueKind);
-            Assert.Equal(JsonValueKind.Array, entry.GetProperty("win").ValueKind);
-            Assert.Equal(JsonValueKind.Array, entry.GetProperty("lose").ValueKind);
+            var indices = new List<int>();
+            if (entry.TryGetProperty("cardIndex", out var singleProp) && singleProp.GetInt32() > 0)
+                indices.Add(singleProp.GetInt32());
+            if (entry.TryGetProperty("cardIndexes", out var multiProp) && multiProp.ValueKind == JsonValueKind.Array)
+                indices.AddRange(multiProp.EnumerateArray().Select(x => x.GetInt32()));
+
+            foreach (int idx in indices)
+            {
+                if (idx >= 100001 && idx <= 100180)
+                    byIndex[idx] = entry.Clone();
+            }
         }
 
+        Assert.Equal(180, byIndex.Count);
         for (int i = 100001; i <= 100180; i++)
         {
             Assert.True(byIndex.ContainsKey(i), $"Missing cardIndex {i}");
         }
 
         // Vérifier quelques cartes clés d'Origins
-        Assert.Equal(new[] { "both_discard_hand_1" }, byIndex[100001].GetProperty("onPlay").EnumerateArray().Select(x => x.GetString()).ToArray());
-        Assert.Equal(new[] { "lose_mill_5" }, byIndex[100001].GetProperty("lose").EnumerateArray().Select(x => x.GetString()).ToArray());
+        Assert.Equal(new[] { "both_discard_hand_1" }, ReadBucket(byIndex[100001], "onPlay"));
+        Assert.Equal(new[] { "lose_mill_5" }, ReadBucket(byIndex[100001], "lose"));
 
-        Assert.Equal(new[] { "passive_boost_terracid_1" }, byIndex[100002].GetProperty("passive").EnumerateArray().Select(x => x.GetString()).ToArray());
-        Assert.Equal(new[] { "discard_opp_char_force3" }, byIndex[100033].GetProperty("onPlay").EnumerateArray().Select(x => x.GetString()).ToArray());
+        Assert.Equal(new[] { "passive_boost_terracid_1" }, ReadBucket(byIndex[100002], "passive"));
+        Assert.Equal(new[] { "discard_opp_char_force3" }, ReadBucket(byIndex[100033], "onPlay"));
 
         // Infecté & Pilote d'Avion ne doivent plus avoir discard_opp_hand_1
-        Assert.Equal(new[] { "passive_start_turn_infecte" }, byIndex[100043].GetProperty("passive").EnumerateArray().Select(x => x.GetString()).ToArray());
-        Assert.Empty(byIndex[100043].GetProperty("onPlay").EnumerateArray());
-        Assert.Equal(new[] { "move_character" }, byIndex[100061].GetProperty("onPlay").EnumerateArray().Select(x => x.GetString()).ToArray());
+        Assert.Equal(new[] { "passive_start_turn_infecte" }, ReadBucket(byIndex[100043], "passive"));
+        Assert.Empty(ReadBucket(byIndex[100043], "onPlay"));
+        Assert.Equal(new[] { "move_character" }, ReadBucket(byIndex[100061], "onPlay"));
 
-        Assert.Equal(new[] { "passive_cost_opp_plus_1" }, byIndex[100064].GetProperty("passive").EnumerateArray().Select(x => x.GetString()).ToArray());
-        Assert.Equal(new[] { "discard_any_char_force2" }, byIndex[100064].GetProperty("combo").EnumerateArray().Select(x => x.GetString()).ToArray());
-        Assert.Equal(new[] { "passive_combo_return_top_discard_once_turn" }, byIndex[100065].GetProperty("passive").EnumerateArray().Select(x => x.GetString()).ToArray());
-        Assert.Equal(new[] { "take_discard_terrain_1" }, byIndex[100065].GetProperty("combo").EnumerateArray().Select(x => x.GetString()).ToArray());
-        Assert.Equal(new[] { "discard_opp_char_force2", "score_current_terrain" }, byIndex[100086].GetProperty("onPlay").EnumerateArray().Select(x => x.GetString()).ToArray());
+        Assert.Equal(new[] { "passive_cost_opp_plus_1" }, ReadBucket(byIndex[100064], "passive"));
+        Assert.Equal(new[] { "discard_any_char_force2" }, ReadBucket(byIndex[100064], "combo"));
+        Assert.Equal(new[] { "passive_combo_return_top_discard_once_turn" }, ReadBucket(byIndex[100065], "passive"));
+        Assert.Equal(new[] { "take_discard_terrain_1" }, ReadBucket(byIndex[100065], "combo"));
+        Assert.Equal(new[] { "discard_opp_char_force2", "score_current_terrain" }, ReadBucket(byIndex[100086], "onPlay"));
 
         // Steve 100102 a un Combo, Steve 100103 est vanille
-        Assert.Equal(new[] { "passive_own_chars_plus_1" }, byIndex[100102].GetProperty("combo").EnumerateArray().Select(x => x.GetString()).ToArray());
-        Assert.Empty(byIndex[100103].GetProperty("onPlay").EnumerateArray());
-        Assert.Empty(byIndex[100103].GetProperty("combo").EnumerateArray());
-        Assert.Equal(new[] { "free_chars_this_turn" }, byIndex[100149].GetProperty("combo").EnumerateArray().Select(x => x.GetString()).ToArray());
+        Assert.Equal(new[] { "passive_own_chars_plus_1" }, ReadBucket(byIndex[100102], "combo"));
+        Assert.Empty(ReadBucket(byIndex[100103], "onPlay"));
+        Assert.Empty(ReadBucket(byIndex[100103], "combo"));
+        Assert.Equal(new[] { "free_chars_this_turn" }, ReadBucket(byIndex[100149], "combo"));
     }
 
     [Fact]

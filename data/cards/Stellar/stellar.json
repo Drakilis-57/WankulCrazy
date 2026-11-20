@@ -1034,7 +1034,7 @@
     "Force": 3,
     "Cost": 1,
     "Rules": "",
-    "Combo": "Échangez ce Personnage avec le personnage du dessus de votre dÃ©fausse.",
+    "Combo": "Échangez ce Personnage avec le personnage du dessus de votre défausse.",
     "Quote": "Je vais pas vous faire un dessin, c'est pas génial de tirer cette carte..."
   },
   {
@@ -1796,7 +1796,7 @@
   {
     "Index": 400104,
     "Number": "104",
-    "Title": "ROBERT PÃ‚TÉ",
+    "Title": "ROBERT PÂTÉ",
     "Artist": "Yuriiick",
     "CardType": "Effigy",
     "SeasonId": "S04",
@@ -2318,7 +2318,7 @@
   {
     "Index": 400133,
     "Number": "133",
-    "Title": "ENCHAÃŽNÉS",
+    "Title": "ENCHAÎNÉS",
     "Artist": "Yoann",
     "CardType": "Effigy",
     "SeasonId": "S04",
@@ -2336,7 +2336,7 @@
   {
     "Index": 400134,
     "Number": "134",
-    "Title": "ENCHAÃŽNÉS",
+    "Title": "ENCHAÎNÉS",
     "Artist": "Yoann",
     "CardType": "Effigy",
     "SeasonId": "S04",
@@ -3014,7 +3014,7 @@
     "Force": 3,
     "Cost": 1,
     "Rules": "",
-    "Combo": "Échangez ce Personnage avec le personnage du dessus de votre dÃ©fausse.",
+    "Combo": "Échangez ce Personnage avec le personnage du dessus de votre défausse.",
     "Quote": "Je vais pas vous faire un dessin, c'est pas génial de tirer cette carte..."
   },
   {

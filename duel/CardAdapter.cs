@@ -15,6 +15,7 @@ namespace WankulCrazyPlugin.duel
         public class EffectMapping
         {
             public int cardIndex { get; set; }
+            public List<int> cardIndexes { get; set; }
             public int? costOverride { get; set; }
             public bool isDuo { get; set; }
             public List<string> onPlay { get; set; }
@@ -26,13 +27,15 @@ namespace WankulCrazyPlugin.duel
             public List<string> effects { get; set; }
 
             public bool HasEnrichedFormat =>
+                effects == null || effects.Count == 0 ||
                 onPlay != null || combo != null || passive != null ||
                 sub != null || win != null || lose != null;
         }
 
+        private static readonly object _cacheLock = new object();
         private static Dictionary<string, WankulCardData> _cardsByIdCache;
-        private static Dictionary<int, EffectMapping> _mappingsByIndexCache;
-        private static Dictionary<int, GemMask> _gemsByIndexCache;
+        private static volatile Dictionary<int, EffectMapping> _mappingsByIndexCache;
+        private static volatile Dictionary<int, GemMask> _gemsByIndexCache;
 
         /// <summary>
         /// Initialise ou enrichit manuellement le cache de cartes (utile pour injecter directement le pool en jeu ou dans les tests).
@@ -60,18 +63,9 @@ namespace WankulCrazyPlugin.duel
                     _cardsByIdCache[idxStr] = c;
                 }
 
-                if (!string.IsNullOrEmpty(c.Title))
+                if (!string.IsNullOrEmpty(c.Title) && !_cardsByIdCache.ContainsKey(c.Title))
                 {
-                    if (!_cardsByIdCache.ContainsKey(c.Title))
-                    {
-                        _cardsByIdCache[c.Title] = c;
-                    }
-
-                    string fixedTitle = FixMojibake(c.Title);
-                    if (!string.IsNullOrEmpty(fixedTitle) && !_cardsByIdCache.ContainsKey(fixedTitle))
-                    {
-                        _cardsByIdCache[fixedTitle] = c;
-                    }
+                    _cardsByIdCache[c.Title] = c;
                 }
             }
         }
@@ -109,30 +103,48 @@ namespace WankulCrazyPlugin.duel
         private static void LoadCardEffectsCache()
         {
             if (_mappingsByIndexCache != null) return;
-            _mappingsByIndexCache = new Dictionary<int, EffectMapping>();
-            string effectsPath = ResolveCustomDeckDataPath("duel_card_effects.json");
-
-            if (System.IO.File.Exists(effectsPath))
+            lock (_cacheLock)
             {
-                try
+                if (_mappingsByIndexCache != null) return;
+                var cache = new Dictionary<int, EffectMapping>();
+                string effectsPath = ResolveCustomDeckDataPath("duel_card_effects.json");
+
+                if (System.IO.File.Exists(effectsPath))
                 {
-                    string json = System.IO.File.ReadAllText(effectsPath, System.Text.Encoding.UTF8);
-                    var list = Newtonsoft.Json.JsonConvert.DeserializeObject<List<EffectMapping>>(json);
-                    if (list != null)
+                    try
                     {
-                        foreach (var m in list)
+                        string json = System.IO.File.ReadAllText(effectsPath, System.Text.Encoding.UTF8);
+                        var list = Newtonsoft.Json.JsonConvert.DeserializeObject<List<EffectMapping>>(json);
+                        if (list != null)
                         {
-                            if (m != null)
+                            foreach (var m in list)
                             {
-                                _mappingsByIndexCache[m.cardIndex] = m;
+                                if (m == null) continue;
+
+                                if (m.cardIndex > 0 || m.cardIndexes == null || m.cardIndexes.Count == 0)
+                                {
+                                    cache[m.cardIndex] = m;
+                                }
+                                if (m.cardIndexes != null)
+                                {
+                                    foreach (int idx in m.cardIndexes)
+                                    {
+                                        if (idx > 0)
+                                        {
+                                            cache[idx] = m;
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
+                    catch (System.Exception ex)
+                    {
+                        System.Console.WriteLine("Error loading duel_card_effects.json: " + ex);
+                    }
                 }
-                catch (System.Exception ex)
-                {
-                    System.Console.WriteLine("Error loading duel_card_effects.json: " + ex);
-                }
+
+                _mappingsByIndexCache = cache;
             }
         }
 
@@ -150,30 +162,36 @@ namespace WankulCrazyPlugin.duel
         private static void LoadCardGemsCache()
         {
             if (_gemsByIndexCache != null) return;
-            _gemsByIndexCache = new Dictionary<int, GemMask>();
-            string gemsPath = ResolveCustomDeckDataPath("duel_card_gems.json");
-
-            if (System.IO.File.Exists(gemsPath))
+            lock (_cacheLock)
             {
-                try
+                if (_gemsByIndexCache != null) return;
+                var cache = new Dictionary<int, GemMask>();
+                string gemsPath = ResolveCustomDeckDataPath("duel_card_gems.json");
+
+                if (System.IO.File.Exists(gemsPath))
                 {
-                    string json = System.IO.File.ReadAllText(gemsPath, System.Text.Encoding.UTF8);
-                    var dict = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
-                    if (dict != null)
+                    try
                     {
-                        foreach (var kv in dict)
+                        string json = System.IO.File.ReadAllText(gemsPath, System.Text.Encoding.UTF8);
+                        var dict = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
+                        if (dict != null)
                         {
-                            if (int.TryParse(kv.Key, out int cardIndex))
+                            foreach (var kv in dict)
                             {
-                                _gemsByIndexCache[cardIndex] = ParseGemMask(kv.Value);
+                                if (int.TryParse(kv.Key, out int cardIndex))
+                                {
+                                    cache[cardIndex] = ParseGemMask(kv.Value);
+                                }
                             }
                         }
                     }
+                    catch (System.Exception ex)
+                    {
+                        System.Console.WriteLine("Error loading duel_card_gems.json: " + ex);
+                    }
                 }
-                catch (System.Exception ex)
-                {
-                    System.Console.WriteLine("Error loading duel_card_gems.json: " + ex);
-                }
+
+                _gemsByIndexCache = cache;
             }
         }
 
@@ -274,84 +292,6 @@ namespace WankulCrazyPlugin.duel
         {
             return Sprite.Create(tex, new Rect(0f, 0f, tex.width, tex.height), new Vector2(0.5f, 0.5f), 100f);
         }
-        /// <summary>
-        /// Répare le mojibake (caractères UTF-8 français mal décodés comme 'FRANÃƒâ€¡AIS' ou 'FRANÃ‡AIS' -> 'FRANÇAIS').
-        /// Gère le simple et le double encodage UTF-8/Windows-1252 ainsi qu'un fallback direct sans dépendance.
-        /// </summary>
-        public static string FixMojibake(string text)
-        {
-            if (string.IsNullOrEmpty(text) || !text.Contains("Ã")) return text;
-
-            string current = text;
-            try
-            {
-                var enc = System.Text.Encoding.GetEncoding("windows-1252");
-                for (int i = 0; i < 2 && current.Contains("Ã"); i++)
-                {
-                    byte[] bytes = enc.GetBytes(current);
-                    string decoded = System.Text.Encoding.UTF8.GetString(bytes);
-                    if (decoded.Contains("\ufffd") || decoded == current)
-                        break;
-                    current = decoded;
-                }
-            }
-            catch
-            {
-                // Unity Mono sans encodage 1252 disponible : le fallback direct ci-dessous prend le relais
-            }
-
-            // Si des résidus d'encodage double ou simple subsistent (ou si le catch a été déclenché) :
-            if (current.Contains("Ã"))
-            {
-                // 1. Remplacements double mojibake d'abord (séquences avec préfixe Ãƒ)
-                current = current
-                    .Replace("Ãƒâ€¡", "Ç")
-                    .Replace("ÃƒÂ§", "ç")
-                    .Replace("ÃƒÂ©", "é")
-                    .Replace("ÃƒÂ¨", "è")
-                    .Replace("ÃƒÂª", "ê")
-                    .Replace("ÃƒÂ«", "ë")
-                    .Replace("Ãƒ ", "à")
-                    .Replace("ÃƒÂ ", "à")
-                    .Replace("ÃƒÂ¢", "â")
-                    .Replace("ÃƒÂ¤", "ä")
-                    .Replace("ÃƒÂ®", "î")
-                    .Replace("ÃƒÂ¯", "ï")
-                    .Replace("ÃƒÂ´", "ô")
-                    .Replace("ÃƒÂ¶", "ö")
-                    .Replace("ÃƒÂ¹", "ù")
-                    .Replace("ÃƒÂ»", "û")
-                    .Replace("ÃƒÂ¼", "ü")
-                    .Replace("Ãƒâ‚¬", "À")
-                    .Replace("Ãƒâ€°", "É")
-                    .Replace("ÃƒË†", "È");
-
-                // 2. Remplacements simple mojibake ensuite
-                current = current
-                    .Replace("Ã‡", "Ç")
-                    .Replace("Ã§", "ç")
-                    .Replace("Ã©", "é")
-                    .Replace("Ã¨", "è")
-                    .Replace("Ãª", "ê")
-                    .Replace("Ã«", "ë")
-                    .Replace("Ã ", "à")
-                    .Replace("Ã ", "à")
-                    .Replace("Ã¢", "â")
-                    .Replace("Ã¤", "ä")
-                    .Replace("Ã®", "î")
-                    .Replace("Ã¯", "ï")
-                    .Replace("Ã´", "ô")
-                    .Replace("Ã¶", "ö")
-                    .Replace("Ã¹", "ù")
-                    .Replace("Ã»", "û")
-                    .Replace("Ã¼", "ü")
-                    .Replace("Ã€", "À")
-                    .Replace("Ã‰", "É")
-                    .Replace("Ãˆ", "È");
-            }
-
-            return current;
-        }
 
         private static EffectMapping ResolveEffectMapping(WankulCardData data)
         {
@@ -432,7 +372,7 @@ namespace WankulCrazyPlugin.duel
             }
 
             string id = !string.IsNullOrEmpty(cardData.Number) ? cardData.Number : cardData.Index.ToString();
-            string name = !string.IsNullOrEmpty(cardData.Title) ? FixMojibake(cardData.Title) : "Carte Wankul";
+            string name = !string.IsNullOrEmpty(cardData.Title) ? cardData.Title : "Carte Wankul";
             var mapping = ResolveEffectMapping(cardData);
 
             if (cardData is EffigyCardData effigy)
@@ -452,7 +392,7 @@ namespace WankulCrazyPlugin.duel
                 var subEffectIds = new List<string>();
                 bool hasRulesText = !string.IsNullOrWhiteSpace(effigy.Rules);
                 bool hasComboText = !string.IsNullOrWhiteSpace(effigy.Combo);
-                bool hasClosingGem = hasComboText;
+                bool hasClosingGem = false;
 
                 if (mapping != null && mapping.HasEnrichedFormat)
                 {
@@ -460,10 +400,7 @@ namespace WankulCrazyPlugin.duel
                     AddFilteredEffects(comboEffectIds, mapping.combo, force);
                     AddFilteredEffects(passiveEffectIds, mapping.passive, force);
                     AddFilteredEffects(subEffectIds, mapping.sub, force);
-                    if (comboEffectIds.Count > 0)
-                    {
-                        hasClosingGem = true;
-                    }
+                    hasClosingGem = comboEffectIds.Count > 0;
                 }
                 else
                 {

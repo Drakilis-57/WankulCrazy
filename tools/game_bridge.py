@@ -10,7 +10,7 @@ import urllib.error
 
 BASE_URL = "http://127.0.0.1:8765"
 
-def request_api(endpoint, method="GET", data=None):
+def request_api(endpoint, method="GET", data=None, timeout=5):
     url = f"{BASE_URL}/{endpoint.lstrip('/')}"
     try:
         req = urllib.request.Request(url, method=method)
@@ -19,13 +19,13 @@ def request_api(endpoint, method="GET", data=None):
             req.data = body
             req.add_header("Content-Type", "application/json; charset=utf-8")
         
-        with urllib.request.urlopen(req, timeout=5) as res:
+        with urllib.request.urlopen(req, timeout=timeout) as res:
             resp_body = res.read().decode("utf-8")
             return json.loads(resp_body)
     except urllib.error.URLError as ex:
-        return {"error": f"Impossible de contacter le jeu sur {url}: {ex}"}
+        return {"error": f"Impossible de contacter le jeu sur {url}. Assurez-vous que le jeu est lance: {ex}"}
     except Exception as ex:
-        return {"error": f"Exception: {ex}"}
+        return {"error": f"Exception bridge: {ex}"}
 
 def main():
     import urllib.parse

@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 using WankulCrazyPlugin.cards;
+using WankulCrazyPlugin.utils;
 
 namespace WankulCrazyPlugin.importer
 {
@@ -99,6 +100,79 @@ namespace WankulCrazyPlugin.importer
         /// Invalide le cache d'index de fichiers (utile lors d'ajouts dynamiques de fichiers).
         /// </summary>
         public static void InvalidateFileIndex() => WankulFileIndex.Invalidate();
+
+        private static readonly object _maskCacheLock = new object();
+        private static readonly Dictionary<string, (Texture2D Texture, Sprite Sprite)> _maskCache =
+            new Dictionary<string, (Texture2D Texture, Sprite Sprite)>(StringComparer.OrdinalIgnoreCase);
+
+        private static bool IsMaskCached(string maskPath)
+        {
+            if (string.IsNullOrEmpty(maskPath)) return false;
+            string normKey = WankulFileIndex.NormalizePathKey(maskPath);
+            lock (_maskCacheLock)
+            {
+                return _maskCache.TryGetValue(normKey, out var cached)
+                    && !object.ReferenceEquals(cached.Texture, null)
+                    && !object.ReferenceEquals(cached.Sprite, null);
+            }
+        }
+
+        /// <summary>
+        /// Récupère un masque foil dédupliqué depuis le cache par chemin normalisé,
+        /// ou le charge en RGBA32 non compressé (zéro artefact foil) puis le met en cache.
+        /// </summary>
+        public static bool GetOrLoadMask(string maskPath, byte[] maskBytes, out Texture2D mask, out Sprite maskSprite)
+        {
+            mask = null;
+            maskSprite = null;
+            if (string.IsNullOrEmpty(maskPath)) return false;
+
+            string normKey = WankulFileIndex.NormalizePathKey(maskPath);
+            lock (_maskCacheLock)
+            {
+                if (_maskCache.TryGetValue(normKey, out var cached) && cached.Texture != null && cached.Sprite != null)
+                {
+                    mask = cached.Texture;
+                    maskSprite = cached.Sprite;
+                    return true;
+                }
+            }
+
+            byte[] bytes = maskBytes;
+            if (bytes == null && File.Exists(maskPath))
+            {
+                bytes = File.ReadAllBytes(maskPath);
+            }
+            if (bytes == null || bytes.Length == 0) return false;
+
+            mask = TextureUtils.LoadTextureFromBytes(
+                bytes,
+                markNonReadable: true,
+                compress: false,
+                mipChain: false,
+                hasAlpha: true,
+                configure: tex =>
+                {
+                    tex.wrapMode = TextureWrapMode.Clamp;
+                    tex.hideFlags |= HideFlags.DontUnloadUnusedAsset;
+                });
+
+            if (mask == null) return false;
+
+            maskSprite = CreateSprite(mask);
+            if (maskSprite == null)
+            {
+                UnityEngine.Object.Destroy(mask);
+                mask = null;
+                return false;
+            }
+
+            lock (_maskCacheLock)
+            {
+                _maskCache[normKey] = (mask, maskSprite);
+            }
+            return true;
+        }
 
         public static string ResolveExistingPath(string path) => WankulFileIndex.ResolveExistingPath(path);
 
@@ -319,7 +393,8 @@ namespace WankulCrazyPlugin.importer
                     string texturePath = ResolveExistingPath(Path.Combine(pluginPath, "data", card.TexturePath));
                     payload.TexturePath = texturePath;
 
-                    string maskPath = ResolveMaskPath(card, pluginPath);
+                    bool isFoil = IsCardFoil(card);
+                    string maskPath = isFoil ? ResolveMaskPath(card, pluginPath) : null;
                     payload.MaskPath = maskPath;
 
                     // Lecture disque I/O en tâche d'arrière-plan
@@ -336,8 +411,8 @@ namespace WankulCrazyPlugin.importer
                         }
                     }
 
-                    // Lecture du masque foil en tâche d'arrière-plan
-                    if (maskPath != null && !ct.IsCancellationRequested)
+                    // Lecture du masque foil en tâche d'arrière-plan (uniquement si foil et pas déjà en cache)
+                    if (isFoil && maskPath != null && !ct.IsCancellationRequested && !IsMaskCached(maskPath))
                     {
                         try
                         {
@@ -500,19 +575,26 @@ namespace WankulCrazyPlugin.importer
                 {
                     try
                     {
-                        Texture2D texture = new Texture2D(2, 2, TextureFormat.RGBA32, false);
-                        // markNonReadable : true libère la mémoire CPU dès l'envoi sur GPU (~2x moins de RAM).
-                        if (texture.LoadImage(payload.TextureBytes, true))
+                        bool hasAlpha = !TextureUtils.IsJpegPath(payload.TexturePath);
+                        Texture2D texture = TextureUtils.LoadTextureFromBytes(
+                            payload.TextureBytes,
+                            markNonReadable: true,
+                            compress: true,
+                            mipChain: false,
+                            hasAlpha: hasAlpha,
+                            configure: tex =>
+                            {
+                                tex.wrapMode = TextureWrapMode.Clamp;
+                                tex.hideFlags |= HideFlags.DontUnloadUnusedAsset;
+                            });
+                        if (texture != null)
                         {
-                            texture.wrapMode = TextureWrapMode.Clamp;
-                            texture.hideFlags |= HideFlags.DontUnloadUnusedAsset;
                             card.Texture = texture;
                             card.Sprite = CreateSprite(texture);
                         }
                         else
                         {
                             failed++;
-                            UnityEngine.Object.Destroy(texture);
                             Plugin.Logger?.LogWarning($"Texture illisible (LoadImage failed) : {card.TexturePath}");
                         }
                     }
@@ -524,42 +606,28 @@ namespace WankulCrazyPlugin.importer
                 }
             }
 
-            // 2. Masque Foil (strictement synchronisé avec la carte principale)
+            // 2. Masque Foil (strictement réservé aux cartes foil, dédupliqué par chemin, jamais compressé pour préserver le rendu foil)
             bool isFoil = IsCardFoil(card);
-            if (payload.MaskBytes != null && (card.TextureMask == null || card.SpriteMask == null))
+            if (isFoil && (card.TextureMask == null || card.SpriteMask == null))
             {
-                try
+                if (payload.MaskPath != null)
                 {
-                    Texture2D mask = new Texture2D(2, 2, TextureFormat.RGBA32, false);
-                    if (mask.LoadImage(payload.MaskBytes, true))
+                    try
                     {
-                        mask.wrapMode = TextureWrapMode.Clamp;
-                        mask.hideFlags |= HideFlags.DontUnloadUnusedAsset;
-                        card.TextureMask = mask;
-                        card.SpriteMask = CreateSprite(mask);
-                    }
-                    else
-                    {
-                        UnityEngine.Object.Destroy(mask);
-                        if (isFoil)
+                        if (GetOrLoadMask(payload.MaskPath, payload.MaskBytes, out Texture2D mask, out Sprite maskSprite))
+                        {
+                            card.TextureMask = mask;
+                            card.SpriteMask = maskSprite;
+                        }
+                        else
                         {
                             Plugin.Logger?.LogWarning($"[Foil] Le masque a echoue au chargement pour la carte foil {card.Title} (#{card.Number}): {payload.MaskPath}");
                         }
                     }
-                }
-                catch (Exception ex)
-                {
-                    if (isFoil)
+                    catch (Exception ex)
                     {
                         Plugin.Logger?.LogWarning($"[Foil] Exception lors du chargement du masque pour {card.Title}: {ex.Message}");
                     }
-                }
-            }
-            else if (isFoil && card.TextureMask == null)
-            {
-                if (payload.MaskPath != null)
-                {
-                    Plugin.Logger?.LogWarning($"[Foil] Le masque a echoue au chargement pour la carte foil {card.Title} (#{card.Number}): {payload.MaskPath}");
                 }
                 else
                 {
@@ -572,7 +640,7 @@ namespace WankulCrazyPlugin.importer
 
         #region Helpers de Création Directe (Compatibilité & Fallback)
 
-        public static Texture2D LoadTexture(string path)
+        public static Texture2D LoadTexture(string path, bool compress = true)
         {
             if (string.IsNullOrEmpty(path)) return null;
             string resolved = ResolveExistingPath(path);
@@ -581,15 +649,18 @@ namespace WankulCrazyPlugin.importer
             try
             {
                 byte[] bytes = File.ReadAllBytes(resolved);
-                Texture2D texture = new Texture2D(2, 2, TextureFormat.RGBA32, false);
-                if (!texture.LoadImage(bytes, true))
-                {
-                    UnityEngine.Object.Destroy(texture);
-                    return null;
-                }
-                texture.wrapMode = TextureWrapMode.Clamp;
-                texture.hideFlags |= HideFlags.DontUnloadUnusedAsset;
-                return texture;
+                bool hasAlpha = !TextureUtils.IsJpegPath(resolved);
+                return TextureUtils.LoadTextureFromBytes(
+                    bytes,
+                    markNonReadable: true,
+                    compress: compress,
+                    mipChain: false,
+                    hasAlpha: hasAlpha,
+                    configure: tex =>
+                    {
+                        tex.wrapMode = TextureWrapMode.Clamp;
+                        tex.hideFlags |= HideFlags.DontUnloadUnusedAsset;
+                    });
             }
             catch (Exception ex)
             {

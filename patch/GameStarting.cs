@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using WankulCrazyPlugin.cards;
@@ -9,6 +10,8 @@ namespace WankulCrazyPlugin.patch;
 
 public class GameStarting
 {
+    private static Texture2D s_BillboardTex;
+    private static readonly Dictionary<Material, Material> s_BillboardMaterialCache = new Dictionary<Material, Material>();
     public static void OnLevelFinishedLoading(CGameManager __instance)
     {
         WankulCardsData.Instance.EnsureInitialized();
@@ -27,7 +30,6 @@ public class GameStarting
             PatchTexturesImporter.ReplaceGameTextures("shared0");
             OBJImporter.InitFiles();
             ExpansionScreen.inited = false;
-            LogTitleLoadingScreenDiagnostics();
             SceneLifecyclePatches.ApplyWankulLoadingCard(CSingleton<LoadingScreen>.Instance);
         }
 
@@ -36,35 +38,6 @@ public class GameStarting
         // Clean up unreferenced assets and perform garbage collection at level transition
         UnityEngine.Resources.UnloadUnusedAssets();
         System.GC.Collect();
-    }
-
-    private static void LogTitleLoadingScreenDiagnostics()
-    {
-        try
-        {
-            if (CSingleton<LoadingScreen>.Instance != null)
-            {
-                MaterialDiagnostics.DumpRenderers(CSingleton<LoadingScreen>.Instance.gameObject, "LoadingScreen_Title");
-            }
-            else
-            {
-                Plugin.Logger.LogWarning("[LoadingScreenDiag] CSingleton<LoadingScreen>.Instance est null au Title !");
-            }
-
-            var cardTextures = Resources.FindObjectsOfTypeAll<Texture>()
-                .Where(t => t.name.IndexOf("Card", StringComparison.OrdinalIgnoreCase) >= 0 ||
-                            t.name.IndexOf("Model", StringComparison.OrdinalIgnoreCase) >= 0 ||
-                            t.name.IndexOf("Back", StringComparison.OrdinalIgnoreCase) >= 0)
-                .Select(t => $"{t.name}({t.GetType().Name} {t.width}x{t.height})")
-                .Take(30)
-                .ToArray();
-
-            Plugin.Logger.LogInfo($"[LoadingScreenDiag] Textures Title trouvées ({cardTextures.Length}) : {string.Join(", ", cardTextures)}");
-        }
-        catch (Exception ex)
-        {
-            Plugin.Logger.LogError($"[LoadingScreenDiag] Erreur diag Title : {ex.Message}");
-        }
     }
 
     private static void LogItemDiagnostics()
@@ -109,18 +82,28 @@ public class GameStarting
     {
         try
         {
-            string billboardPath = System.IO.Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Billboard.png");
-            if (!System.IO.File.Exists(billboardPath))
+            if (s_BillboardTex == null)
             {
-                billboardPath = System.IO.Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "mcp_building_32_billboards_d.png");
-            }
-            if (!System.IO.File.Exists(billboardPath)) return;
+                string billboardPath = System.IO.Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Billboard.png");
+                if (!System.IO.File.Exists(billboardPath))
+                {
+                    billboardPath = System.IO.Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "mcp_building_32_billboards_d.png");
+                }
+                if (!System.IO.File.Exists(billboardPath)) return;
 
-            Texture2D billboardTex = TextureUtils.LoadTexture(billboardPath);
-            if (billboardTex == null) return;
-            billboardTex.name = "WankulBillboard";
-            billboardTex.hideFlags |= HideFlags.DontUnloadUnusedAsset;
-            UnityEngine.Object.DontDestroyOnLoad(billboardTex);
+                s_BillboardTex = PatchTexturesImporter.GetOrLoadDiskTexture(billboardPath, tex => tex.name = "WankulBillboard");
+                if (s_BillboardTex == null) return;
+            }
+            Texture2D billboardTex = s_BillboardTex;
+
+            if (s_BillboardMaterialCache.Count > 0)
+            {
+                var deadKeys = s_BillboardMaterialCache.Where(kvp => kvp.Key == null || kvp.Value == null).Select(kvp => kvp.Key).ToList();
+                foreach (var k in deadKeys)
+                {
+                    s_BillboardMaterialCache.Remove(k);
+                }
+            }
 
             // 1. Chercher tous les GameObjects liés au Billboard
             GameObject[] allGos = UnityEngine.Object.FindObjectsOfType<GameObject>();
@@ -139,21 +122,42 @@ public class GameStarting
                         Material[] mats = r.sharedMaterials;
                         if (mats != null && mats.Length > 0)
                         {
+                            bool changed = false;
                             for (int i = 0; i < mats.Length; i++)
                             {
                                 Material m = mats[i];
                                 if (m == null) continue;
-                                Material safeMat = ShaderUtils.CreateSafeMaterial(ShaderUtils.EnsureNotBrokenStandard(m));
-                                if (safeMat.HasProperty("_MainTex")) safeMat.SetTexture("_MainTex", billboardTex);
-                                if (safeMat.HasProperty("_BaseMap")) safeMat.SetTexture("_BaseMap", billboardTex);
-                                if (safeMat.HasProperty("_BaseColorMap")) safeMat.SetTexture("_BaseColorMap", billboardTex);
-                                if (safeMat.HasProperty("_EmissionTex")) safeMat.SetTexture("_EmissionTex", billboardTex);
-                                safeMat.hideFlags |= HideFlags.DontUnloadUnusedAsset;
-                                mats[i] = safeMat;
+                                if (!s_BillboardMaterialCache.TryGetValue(m, out Material safeMat) || safeMat == null)
+                                {
+                                    safeMat = ShaderUtils.CreateSafeMaterial(ShaderUtils.EnsureNotBrokenStandard(m));
+                                    if (safeMat.HasProperty("_MainTex")) safeMat.SetTexture("_MainTex", billboardTex);
+                                    if (safeMat.HasProperty("_BaseMap")) safeMat.SetTexture("_BaseMap", billboardTex);
+                                    if (safeMat.HasProperty("_BaseColorMap")) safeMat.SetTexture("_BaseColorMap", billboardTex);
+                                    if (safeMat.HasProperty("_EmissionTex")) safeMat.SetTexture("_EmissionTex", billboardTex);
+                                    safeMat.hideFlags |= HideFlags.DontUnloadUnusedAsset;
+                                    UnityEngine.Object.DontDestroyOnLoad(safeMat);
+                                    s_BillboardMaterialCache[m] = safeMat;
+                                    s_BillboardMaterialCache[safeMat] = safeMat;
+                                }
+                                else if (safeMat.HasProperty("_MainTex") && safeMat.GetTexture("_MainTex") != billboardTex)
+                                {
+                                    safeMat.SetTexture("_MainTex", billboardTex);
+                                    if (safeMat.HasProperty("_BaseMap")) safeMat.SetTexture("_BaseMap", billboardTex);
+                                    if (safeMat.HasProperty("_BaseColorMap")) safeMat.SetTexture("_BaseColorMap", billboardTex);
+                                    if (safeMat.HasProperty("_EmissionTex")) safeMat.SetTexture("_EmissionTex", billboardTex);
+                                }
+                                if (mats[i] != safeMat)
+                                {
+                                    mats[i] = safeMat;
+                                    changed = true;
+                                }
                             }
-                            r.sharedMaterials = mats;
-                            foundCount++;
-                            Plugin.Logger.LogInfo($"[BillboardPatch] Texture Wankul Billboard appliquée sur GameObject '{go.name}'.");
+                            if (changed)
+                            {
+                                r.sharedMaterials = mats;
+                                foundCount++;
+                                Plugin.Logger.LogInfo($"[BillboardPatch] Texture Wankul Billboard appliquée sur GameObject '{go.name}'.");
+                            }
                         }
                     }
                 }

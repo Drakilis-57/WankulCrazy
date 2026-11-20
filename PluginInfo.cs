@@ -8,6 +8,6 @@ namespace WankulCrazyPlugin
     {
         public const string PLUGIN_GUID = "WankulCrazyPlugin";
         public const string PLUGIN_NAME = "WankulCrazy";
-        public const string PLUGIN_VERSION = "1.4.1";
+        public const string PLUGIN_VERSION = "1.4.2";
     }
 }

@@ -1,59 +1,155 @@
 [
   {
     "Id": "C",
-    "Name": "Common",
+    "Name": "Commune",
     "ExperienceMultiplier": 1.0,
     "PriceMultiplier": 1.0
   },
   {
     "Id": "UC",
-    "Name": "Uncommon",
-    "ExperienceMultiplier": 1.25,
-    "PriceMultiplier": 1.25
+    "Name": "Peu Commune",
+    "ExperienceMultiplier": 2.0,
+    "PriceMultiplier": 1.5
   },
   {
     "Id": "R",
     "Name": "Rare",
-    "ExperienceMultiplier": 1.5,
-    "PriceMultiplier": 1.5
-  },
-  {
-    "Id": "UR1",
-    "Name": "Ultra Rare 1",
-    "ExperienceMultiplier": 2.0,
+    "ExperienceMultiplier": 4.0,
     "PriceMultiplier": 2.0
   },
   {
+    "Id": "UR1",
+    "Name": "Ultra rare holo 1",
+    "ExperienceMultiplier": 7.0,
+    "PriceMultiplier": 3.0,
+    "IsEligibleForFoil": true
+  },
+  {
     "Id": "UR2",
-    "Name": "Ultra Rare 2",
-    "ExperienceMultiplier": 2.5,
-    "PriceMultiplier": 2.5
+    "Name": "Ultra rare holo 2",
+    "ExperienceMultiplier": 10.0,
+    "PriceMultiplier": 4.0,
+    "IsEligibleForFoil": true
   },
   {
     "Id": "LB",
-    "Name": "Legendary Bronze",
-    "ExperienceMultiplier": 3.0,
-    "PriceMultiplier": 3.0,
+    "Name": "Légendaire Bronze",
+    "ExperienceMultiplier": 15.0,
+    "PriceMultiplier": 5.0,
+    "IsEligibleForFoil": true,
     "DropMultiplier": 0.044
   },
   {
     "Id": "LA",
-    "Name": "Legendary Argent",
-    "ExperienceMultiplier": 4.0,
-    "PriceMultiplier": 4.0,
+    "Name": "Légendaire Argent",
+    "ExperienceMultiplier": 20.0,
+    "PriceMultiplier": 7.5,
+    "IsEligibleForFoil": true,
     "DropMultiplier": 0.023
   },
   {
     "Id": "LO",
-    "Name": "Legendary Or",
-    "ExperienceMultiplier": 5.0,
-    "PriceMultiplier": 5.0,
+    "Name": "Légendaire Or",
+    "ExperienceMultiplier": 25.0,
+    "PriceMultiplier": 10.0,
+    "IsEligibleForFoil": true,
     "DropMultiplier": 0.013
+  },
+  {
+    "Id": "PGW23",
+    "Name": "PGW 2023",
+    "ExperienceMultiplier": 50.0,
+    "PriceMultiplier": 15.0,
+    "IsEligibleForFoil": true
+  },
+  {
+    "Id": "NOEL23",
+    "Name": "Noël 2023",
+    "ExperienceMultiplier": 50.0,
+    "PriceMultiplier": 15.0,
+    "IsEligibleForFoil": true
+  },
+  {
+    "Id": "PGW24",
+    "Name": "PGW 2024",
+    "ExperienceMultiplier": 50.0,
+    "PriceMultiplier": 15.0,
+    "IsEligibleForFoil": true
+  },
+  {
+    "Id": "SPCIV",
+    "Name": "Starter Pack Civilisations",
+    "ExperienceMultiplier": 50.0,
+    "PriceMultiplier": 15.0,
+    "IsEligibleForFoil": true
+  },
+  {
+    "Id": "SPLEG",
+    "Name": "Starter Pack Légendes",
+    "ExperienceMultiplier": 50.0,
+    "PriceMultiplier": 15.0,
+    "IsEligibleForFoil": true
+  },
+  {
+    "Id": "ED",
+    "Name": "Edition Speciale",
+    "ExperienceMultiplier": 50.0,
+    "PriceMultiplier": 15.0,
+    "IsEligibleForFoil": true
+  },
+  {
+    "Id": "SPPOP",
+    "Name": "Starter Pack Pop-Culture",
+    "ExperienceMultiplier": 50.0,
+    "PriceMultiplier": 15.0,
+    "IsEligibleForFoil": true
+  },
+  {
+    "Id": "GP",
+    "Name": "Gemmes Pack",
+    "ExperienceMultiplier": 50.0,
+    "PriceMultiplier": 15.0,
+    "IsEligibleForFoil": true
+  },
+  {
+    "Id": "SPTV",
+    "Name": "Starter Pack TV",
+    "ExperienceMultiplier": 50.0,
+    "PriceMultiplier": 15.0,
+    "IsEligibleForFoil": true
+  },
+  {
+    "Id": "SPJV",
+    "Name": "Starter Pack Jeux Vidéo",
+    "ExperienceMultiplier": 50.0,
+    "PriceMultiplier": 15.0,
+    "IsEligibleForFoil": true
+  },
+  {
+    "Id": "EG",
+    "Name": "Edition Gold",
+    "ExperienceMultiplier": 50.0,
+    "PriceMultiplier": 15.0,
+    "IsEligibleForFoil": true
+  },
+  {
+    "Id": "SPCAR",
+    "Name": "Starter Pack Carrières",
+    "ExperienceMultiplier": 50.0,
+    "PriceMultiplier": 15.0,
+    "IsEligibleForFoil": true
+  },
+  {
+    "Id": "TOR",
+    "Name": "Gagnant Ticket Or",
+    "ExperienceMultiplier": 50.0,
+    "PriceMultiplier": 15.0,
+    "IsEligibleForFoil": true
   },
   {
     "Id": "DUO",
     "Name": "Duo",
-    "ExperienceMultiplier": 4.0,
+    "ExperienceMultiplier": 20.0,
     "PriceMultiplier": 4.0,
     "PriceRangeMin": 500.0,
     "PriceRangeMax": 1000.0,

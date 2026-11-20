@@ -202,28 +202,47 @@ public class DuelSeason5EffectsTests
     private static string FindRepoRoot()
     {
         var dir = new DirectoryInfo(AppContext.BaseDirectory);
-        while (dir != null && !File.Exists(Path.Combine(dir.FullName, "data", "customdecks", "effects_s5.json")))
+        while (dir != null && !File.Exists(Path.Combine(dir.FullName, "data", "customdecks", "duel_card_effects.json")))
         {
             dir = dir.Parent;
         }
-        return dir?.FullName ?? throw new DirectoryNotFoundException("Impossible de localiser data/customdecks/effects_s5.json");
+        return dir?.FullName ?? throw new DirectoryNotFoundException("Impossible de localiser data/customdecks/duel_card_effects.json");
     }
 
     private static Dictionary<int, JsonElement> LoadEffectsS5()
     {
-        var path = Path.Combine(FindRepoRoot(), "data", "customdecks", "effects_s5.json");
-        var doc = JsonDocument.Parse(File.ReadAllText(path));
+        var path = Path.Combine(FindRepoRoot(), "data", "customdecks", "duel_card_effects.json");
+        using var doc = JsonDocument.Parse(File.ReadAllText(path));
         var map = new Dictionary<int, JsonElement>();
         foreach (var el in doc.RootElement.EnumerateArray())
         {
-            map[el.GetProperty("cardIndex").GetInt32()] = el.Clone();
+            var indices = new List<int>();
+            if (el.TryGetProperty("cardIndex", out var singleProp) && singleProp.GetInt32() > 0)
+                indices.Add(singleProp.GetInt32());
+            if (el.TryGetProperty("cardIndexes", out var multiProp) && multiProp.ValueKind == JsonValueKind.Array)
+                indices.AddRange(multiProp.EnumerateArray().Select(x => x.GetInt32()));
+
+            foreach (int idx in indices)
+            {
+                if (idx >= 500001 && idx <= 500185)
+                    map[idx] = el.Clone();
+            }
         }
         return map;
     }
 
     private static string[] GetStringArray(JsonElement el, string prop)
     {
-        return el.GetProperty(prop).EnumerateArray().Select(x => x.GetString()!).ToArray();
+        if (!el.TryGetProperty(prop, out var p) || p.ValueKind != JsonValueKind.Array)
+            return Array.Empty<string>();
+        return p.EnumerateArray().Select(x => x.GetString()!).ToArray();
+    }
+
+    private static int GetCostOverride(JsonElement el)
+    {
+        return el.TryGetProperty("costOverride", out var p) && p.ValueKind == JsonValueKind.Number
+            ? p.GetInt32()
+            : 0;
     }
 
     [Fact]
@@ -233,8 +252,8 @@ public class DuelSeason5EffectsTests
         Assert.Equal(185, map.Count);
         for (int idx = 500001; idx <= 500185; idx++)
         {
-            Assert.True(map.ContainsKey(idx), $"Index manquant dans effects_s5.json : {idx}");
-            int cost = map[idx].GetProperty("costOverride").GetInt32();
+            Assert.True(map.ContainsKey(idx), $"Index manquant dans duel_card_effects.json : {idx}");
+            int cost = GetCostOverride(map[idx]);
             Assert.InRange(cost, 0, 3);
             if (idx <= 500030 || idx >= 500176)
             {
@@ -243,7 +262,7 @@ public class DuelSeason5EffectsTests
         }
 
         var effigyCosts = Enumerable.Range(500031, 145)
-            .Select(i => map[i].GetProperty("costOverride").GetInt32())
+            .Select(i => GetCostOverride(map[i]))
             .GroupBy(c => c)
             .ToDictionary(g => g.Key, g => g.Count());
 
@@ -270,18 +289,18 @@ public class DuelSeason5EffectsTests
 
         foreach (int fsIdx in new[] { 500144, 500174 })
         {
-            Assert.Equal(2, map[fsIdx].GetProperty("costOverride").GetInt32());
+            Assert.Equal(2, GetCostOverride(map[fsIdx]));
             Assert.Contains("mill_10_bonus_next_score", GetStringArray(map[fsIdx], "onPlay"));
         }
 
         foreach (int raiderIdx in new[] { 500133, 500163 })
         {
-            Assert.Equal(1, map[raiderIdx].GetProperty("costOverride").GetInt32());
+            Assert.Equal(1, GetCostOverride(map[raiderIdx]));
             Assert.Contains("passive_double_force_on_poubelle_win", GetStringArray(map[raiderIdx], "passive"));
             Assert.Contains("cancel_char_effect_turn", GetStringArray(map[raiderIdx], "combo"));
         }
 
-        Assert.Equal(1, map[500156].GetProperty("costOverride").GetInt32());
+        Assert.Equal(1, GetCostOverride(map[500156]));
         Assert.Contains("bounce_both_char_1", GetStringArray(map[500156], "combo"));
 
         Assert.Contains("duo_martine_jeanine", GetStringArray(map[500176], "passive"));

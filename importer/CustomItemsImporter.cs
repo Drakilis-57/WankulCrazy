@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using WankulCrazyPlugin.cards;
 using UnityEngine;
+using WankulCrazyPlugin.patch;
 using WankulCrazyPlugin.utils;
 using System.Linq;
 using WankulCrazyPlugin.utils.obj;
@@ -93,16 +94,8 @@ namespace WankulCrazyPlugin.importer
                 var customRestockTypes = new HashSet<EItemType>(RestockDataList.Select(r => r.itemType));
                 so.m_RestockDataList.RemoveAll(r => customRestockTypes.Contains(r.itemType));
 
-                var tauxRestockTypes = new HashSet<EItemType>
-                {
-                    EnumExtensions.SafeParseEItemType("BoosterStellarTaux"),
-                    EnumExtensions.SafeParseEItemType("DisplayStellarTaux"),
-                    EnumExtensions.SafeParseEItemType("BoosterLegacyTaux"),
-                    EnumExtensions.SafeParseEItemType("DisplayLegacyTaux")
-                };
-
-                var normalRestockItems = RestockDataList.Where(r => !tauxRestockTypes.Contains(r.itemType)).ToList();
-                var tauxRestockItems = RestockDataList.Where(r => tauxRestockTypes.Contains(r.itemType)).ToList();
+                var normalRestockItems = RestockDataList.Where(r => !CustomItemTypes.TauxCustomTypes.Contains(r.itemType)).ToList();
+                var tauxRestockItems = RestockDataList.Where(r => CustomItemTypes.TauxCustomTypes.Contains(r.itemType)).ToList();
 
                 // 2.a Inserer les normaux apres Battle normal (EpicCardBox)
                 int battleNormalIdx = so.m_RestockDataList.FindLastIndex(r => 
@@ -236,9 +229,13 @@ namespace WankulCrazyPlugin.importer
 
                             if (File.Exists(iconPath))
                             {
-                                Texture2D texture = TextureUtils.LoadTexture(iconPath);
-                                item.icon = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(.5f, .5f), 100f, 0, SpriteMeshType.FullRect);
-                                item.icon.name = item.name + "_icon";
+                                Texture2D texture = PatchTexturesImporter.GetOrLoadDiskTexture(iconPath);
+                                if (texture != null)
+                                {
+                                    item.icon = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(.5f, .5f), 100f, 0, SpriteMeshType.FullRect);
+                                    item.icon.name = item.name + "_icon";
+                                    item.icon.hideFlags |= HideFlags.DontUnloadUnusedAsset;
+                                }
                             }
                             else Plugin.Logger.LogWarning("Test/custom item icon not found yet: " + iconPath);
                         }
@@ -319,43 +316,78 @@ namespace WankulCrazyPlugin.importer
                                     GameObject loadedObj = new OBJLoader().Load(objPath);
                                     if (loadedObj != null)
                                     {
-                                        List<Mesh> meshList = new List<Mesh>();
-                                        MeshFilter[] meshFilters = loadedObj.GetComponentsInChildren<MeshFilter>();
-                                        foreach (MeshFilter mf in meshFilters)
+                                        var tempMeshes = new HashSet<Mesh>();
+                                        var tempMaterials = new HashSet<Material>();
+                                        Mesh finalMesh = null;
+                                        try
                                         {
-                                            if (mf.mesh != null)
+                                            List<Mesh> meshList = new List<Mesh>();
+                                            MeshFilter[] meshFilters = loadedObj.GetComponentsInChildren<MeshFilter>(true);
+                                            foreach (MeshFilter mf in meshFilters)
                                             {
-                                                Mesh m = mf.mesh;
-                                                Vector3[] vertices = m.vertices;
-                                                for (int i = 0; i < vertices.Length; i++)
-                                                    vertices[i].z = -vertices[i].z;
-                                                int[] triangles = m.triangles;
-                                                for (int i = 0; i < triangles.Length; i += 3)
+                                                if (mf != null && mf.sharedMesh != null)
                                                 {
-                                                    int temp = triangles[i];
-                                                    triangles[i] = triangles[i + 2];
-                                                    triangles[i + 2] = temp;
+                                                    Mesh m = mf.sharedMesh;
+                                                    tempMeshes.Add(m);
+                                                    Vector3[] vertices = m.vertices;
+                                                    for (int i = 0; i < vertices.Length; i++)
+                                                        vertices[i].z = -vertices[i].z;
+                                                    int[] triangles = m.triangles;
+                                                    for (int i = 0; i < triangles.Length; i += 3)
+                                                    {
+                                                        int temp = triangles[i];
+                                                        triangles[i] = triangles[i + 2];
+                                                        triangles[i + 2] = temp;
+                                                    }
+                                                    m.vertices = vertices;
+                                                    m.triangles = triangles;
+                                                    meshList.Add(m);
                                                 }
-                                                m.vertices = vertices;
-                                                m.triangles = triangles;
-                                                meshList.Add(m);
+                                            }
+
+                                            Renderer[] objRenderers = loadedObj.GetComponentsInChildren<Renderer>(true);
+                                            foreach (Renderer r in objRenderers)
+                                            {
+                                                if (r == null || r.sharedMaterials == null) continue;
+                                                foreach (Material mat in r.sharedMaterials)
+                                                {
+                                                    if (mat != null) tempMaterials.Add(mat);
+                                                }
+                                            }
+
+                                            CombineInstance[] combine = new CombineInstance[meshList.Count];
+                                            for (int i = 0; i < meshList.Count; i++)
+                                            {
+                                                combine[i].mesh = meshList[i];
+                                                combine[i].transform = Matrix4x4.identity;
+                                            }
+
+                                            finalMesh = new Mesh();
+                                            finalMesh.CombineMeshes(combine, false);
+                                            finalMesh.name = mesh.name;
+                                            finalMesh.hideFlags |= HideFlags.DontUnloadUnusedAsset;
+                                            finalMesh.UploadMeshData(true);
+                                            mesh.mesh = finalMesh;
+                                        }
+                                        finally
+                                        {
+                                            loadedObj.SetActive(false);
+                                            UnityEngine.Object.DestroyImmediate(loadedObj);
+                                            foreach (Mesh m in tempMeshes)
+                                            {
+                                                if (m != null && m != finalMesh)
+                                                {
+                                                    UnityEngine.Object.DestroyImmediate(m);
+                                                }
+                                            }
+                                            foreach (Material mat in tempMaterials)
+                                            {
+                                                if (mat != null)
+                                                {
+                                                    UnityEngine.Object.DestroyImmediate(mat);
+                                                }
                                             }
                                         }
-
-                                        CombineInstance[] combine = new CombineInstance[meshList.Count];
-                                        for (int i = 0; i < meshList.Count; i++)
-                                        {
-                                            combine[i].mesh = meshList[i];
-                                            combine[i].transform = Matrix4x4.identity;
-                                        }
-
-                                        Mesh finalMesh = new Mesh();
-                                        finalMesh.CombineMeshes(combine, false);
-                                        finalMesh.name = mesh.name;
-                                        mesh.mesh = finalMesh;
-
-                                        loadedObj.SetActive(false);
-                                        UnityEngine.Object.Destroy(loadedObj);
                                     }
                                 }
                                 catch (Exception ex)
@@ -383,43 +415,78 @@ namespace WankulCrazyPlugin.importer
                             }
                         }
 
-                        string texProp = (string)json["texture"];
-                        if (!string.IsNullOrEmpty(texProp))
+                        EItemType currentType = EnumExtensions.SafeParseEItemType(itemTypeStr);
+                        var allBoxPaths = PatchTexturesImporter.GetBoxTexturePaths();
+                        if (currentType != EItemType.None && allBoxPaths.TryGetValue(currentType, out string boxTexPath))
                         {
-                            string texturePath = Path.Combine(root, "textures", texProp);
-                            if (!File.Exists(texturePath))
+                            // Cet item est géré par PatchTexturesImporter.ApplyCustomItemMeshMaterials :
+                            // on réutilise directement le matériau/texture du cache unifié sans charger une texture destinée à être écrasée.
+                            Material mat = PatchTexturesImporter.GetOrCreateBoxMaterial(currentType, boxTexPath, null);
+                            if (mat != null)
                             {
-                                string patchTexPath = Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", texProp);
-                                if (File.Exists(patchTexPath))
+                                mesh.material = mat;
+                            }
+                            if (mesh.meshSecondary != null)
+                            {
+                                if (CustomItemTypes.IsOpenablePack(currentType))
                                 {
-                                    texturePath = patchTexPath;
+                                    mesh.materialSecondary = mesh.material;
+                                }
+                                else
+                                {
+                                    EItemType boosterType = CustomItemTypes.GetBoosterForDisplay(currentType);
+                                    if (boosterType != EItemType.None && allBoxPaths.TryGetValue(boosterType, out string bPath))
+                                    {
+                                        Material boosterMat = PatchTexturesImporter.GetOrCreateBoxMaterial(boosterType, bPath, null);
+                                        if (boosterMat != null)
+                                        {
+                                            mesh.materialSecondary = boosterMat;
+                                        }
+                                    }
                                 }
                             }
-
-                            if (File.Exists(texturePath))
+                            else
                             {
-                                Texture2D texture = TextureUtils.LoadTexture(texturePath);
-                                Material newMat = WankulCrazyPlugin.utils.ShaderUtils.CreateSafeMaterial(mesh.material);
-                                if (newMat.HasProperty("_BaseColorMap")) newMat.SetTexture("_BaseColorMap", texture);
-                                if (newMat.HasProperty("_BaseMap")) newMat.SetTexture("_BaseMap", texture);
-                                if (newMat.HasProperty("_MainTex")) newMat.SetTexture("_MainTex", texture);
-                                mesh.material = newMat;
-                                EItemType currentType = EnumExtensions.SafeParseEItemType(itemTypeStr);
-                                if (mesh.meshSecondary != null)
+                                mesh.materialSecondary = null;
+                            }
+                            mesh.arrayMaterialType = ItemMeshData.ItemShareTexture2DArrayMaterial.None;
+                        }
+                        else
+                        {
+                            string texProp = (string)json["texture"];
+                            if (!string.IsNullOrEmpty(texProp))
+                            {
+                                string texturePath = Path.Combine(root, "textures", texProp);
+                                if (!File.Exists(texturePath))
                                 {
-                                    if (PatchTexturesImporter.IsBoosterPackType(currentType))
+                                    string patchTexPath = Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", texProp);
+                                    if (File.Exists(patchTexPath))
                                     {
-                                        mesh.materialSecondary = newMat;
+                                        texturePath = patchTexPath;
                                     }
-                                    else
+                                }
+
+                                if (File.Exists(texturePath))
+                                {
+                                    Texture2D texture = PatchTexturesImporter.GetOrLoadDiskTexture(texturePath);
+                                    Material newMat = WankulCrazyPlugin.utils.ShaderUtils.CreateSafeMaterial(mesh.material);
+                                    if (newMat.HasProperty("_BaseColorMap")) newMat.SetTexture("_BaseColorMap", texture);
+                                    if (newMat.HasProperty("_BaseMap")) newMat.SetTexture("_BaseMap", texture);
+                                    if (newMat.HasProperty("_MainTex")) newMat.SetTexture("_MainTex", texture);
+                                    newMat.hideFlags |= HideFlags.DontUnloadUnusedAsset;
+                                    mesh.material = newMat;
+                                    if (mesh.meshSecondary != null)
                                     {
-                                        EItemType boosterType = PatchTexturesImporter.GetBoosterTypeForDisplay(currentType);
-                                        if (boosterType != EItemType.None)
+                                        if (CustomItemTypes.IsOpenablePack(currentType))
                                         {
-                                            var allBoxPaths = PatchTexturesImporter.GetBoxTexturePaths();
-                                            if (allBoxPaths.TryGetValue(boosterType, out string bPath) && File.Exists(bPath))
+                                            mesh.materialSecondary = newMat;
+                                        }
+                                        else
+                                        {
+                                            EItemType boosterType = CustomItemTypes.GetBoosterForDisplay(currentType);
+                                            if (boosterType != EItemType.None && allBoxPaths.TryGetValue(boosterType, out string bPath) && File.Exists(bPath))
                                             {
-                                                Texture2D bTex = TextureUtils.LoadTexture(bPath);
+                                                Texture2D bTex = PatchTexturesImporter.GetOrLoadDiskTexture(bPath);
                                                 Material boosterMat = WankulCrazyPlugin.utils.ShaderUtils.CreateSafeMaterial(mesh.material);
                                                 if (boosterMat.HasProperty("_BaseColorMap")) boosterMat.SetTexture("_BaseColorMap", bTex);
                                                 if (boosterMat.HasProperty("_BaseMap")) boosterMat.SetTexture("_BaseMap", bTex);
@@ -429,17 +496,17 @@ namespace WankulCrazyPlugin.importer
                                             }
                                         }
                                     }
+                                    else
+                                    {
+                                        // Un mesh 1.07 sans meshSecondary (1 seul submesh) ne doit jamais recevoir
+                                        // materialSecondary : sinon Item.SetMesh met 2 materiaux sur m_Mesh et Unity
+                                        // redessine la face avec la texture booster par-dessus celle du display.
+                                        mesh.materialSecondary = null;
+                                    }
+                                    mesh.arrayMaterialType = ItemMeshData.ItemShareTexture2DArrayMaterial.None;
                                 }
-                                else
-                                {
-                                    // Un mesh 1.07 sans meshSecondary (1 seul submesh) ne doit jamais recevoir
-                                    // materialSecondary : sinon Item.SetMesh met 2 materiaux sur m_Mesh et Unity
-                                    // redessine la face avec la texture booster par-dessus celle du display.
-                                    mesh.materialSecondary = null;
-                                }
-                                mesh.arrayMaterialType = ItemMeshData.ItemShareTexture2DArrayMaterial.None;
+                                else Plugin.Logger.LogWarning("Test/custom item texture not found yet: " + texturePath);
                             }
-                            else Plugin.Logger.LogWarning("Test/custom item texture not found yet: " + texturePath);
                         }
                         result.Add(mesh);
                     }
@@ -451,50 +518,21 @@ namespace WankulCrazyPlugin.importer
 
         public static void ItemTypeToCollectionPackType(EItemType itemType, ref ECollectionPackType __result)
         {
-            EItemType boosterStellar = EnumExtensions.SafeParseEItemType("BoosterStellar");
-            EItemType displayStellar = EnumExtensions.SafeParseEItemType("DisplayStellar");
-            EItemType boosterStellarTaux = EnumExtensions.SafeParseEItemType("BoosterStellarTaux");
-            EItemType displayStellarTaux = EnumExtensions.SafeParseEItemType("DisplayStellarTaux");
-            EItemType boosterGoldBattle = EnumExtensions.SafeParseEItemType("BoosterGoldBattle");
-            EItemType boosterGoldStellar = EnumExtensions.SafeParseEItemType("BoosterGoldStellar");
-            EItemType boosterGoldLegacy = EnumExtensions.SafeParseEItemType("BoosterGoldLegacy");
-            ECollectionPackType stellarPack = EnumExtensions.SafeParseECollectionPackType("Stellar");
-            ECollectionPackType stellarPackTaux = EnumExtensions.SafeParseECollectionPackType("StellarTaux");
+            if (CustomItemTypes.TryGetCustomCollectionPackType(itemType, out ECollectionPackType customPackType))
+            {
+                __result = customPackType;
+                return;
+            }
 
-            EItemType boosterLegacy = EnumExtensions.SafeParseEItemType("BoosterLegacy");
-            EItemType displayLegacy = EnumExtensions.SafeParseEItemType("DisplayLegacy");
-            EItemType boosterLegacyTaux = EnumExtensions.SafeParseEItemType("BoosterLegacyTaux");
-            EItemType displayLegacyTaux = EnumExtensions.SafeParseEItemType("DisplayLegacyTaux");
-            ECollectionPackType legacyPack = EnumExtensions.SafeParseECollectionPackType("Legacy");
-            ECollectionPackType legacyPackTaux = EnumExtensions.SafeParseECollectionPackType("LegacyTaux");
-
-            if (itemType == EItemType.BasicCardPack || itemType == EItemType.BasicCardBox) return; // Keep original __result
-            else if (itemType == EItemType.RareCardPack || itemType == EItemType.RareCardBox) return; // Keep original __result
-            else if (itemType == EItemType.EpicCardPack || itemType == EItemType.EpicCardBox || itemType == boosterGoldBattle) __result = ECollectionPackType.EpicCardPack;
-            else if (itemType == EItemType.LegendaryCardPack || itemType == EItemType.LegendaryCardBox) return; // Keep original __result
-            else if (itemType == EItemType.DestinyBasicCardPack || itemType == EItemType.DestinyBasicCardBox) return; // Keep original __result
-            else if (itemType == EItemType.DestinyRareCardPack || itemType == EItemType.DestinyRareCardBox) return; // Keep original __result
-            else if (itemType == EItemType.DestinyEpicCardPack || itemType == EItemType.DestinyEpicCardBox) return; // Keep original __result
-            else if (itemType == EItemType.DestinyLegendaryCardPack || itemType == EItemType.DestinyLegendaryCardBox) return; // Keep original __result
-            else if (itemType == EItemType.GhostPack) return; // Keep original __result
-            else if (itemType == EItemType.MegabotPack) return; // Keep original __result
-            else if (itemType == EItemType.FantasyRPGPack) return; // Keep original __result
-            else if (itemType == EItemType.CatJobPack) return; // Keep original __result
-            else if (itemType == boosterStellar || itemType == displayStellar || itemType == boosterGoldStellar) __result = stellarPack;
-            else if (itemType == boosterStellarTaux || itemType == displayStellarTaux) __result = stellarPackTaux;
-            else if (itemType == boosterLegacy || itemType == displayLegacy || itemType == boosterGoldLegacy) __result = legacyPack;
-            else if (itemType == boosterLegacyTaux || itemType == displayLegacyTaux) __result = legacyPackTaux;
+            if (itemType == EItemType.EpicCardPack || itemType == EItemType.EpicCardBox)
+            {
+                __result = ECollectionPackType.EpicCardPack;
+            }
         }
 
         public static void GetCardExpansionType(ECollectionPackType collectionPackType, ref ECardExpansionType __result)
         {
-            ECollectionPackType stellarPack = EnumExtensions.SafeParseECollectionPackType("Stellar");
-            ECollectionPackType stellarPackTaux = EnumExtensions.SafeParseECollectionPackType("StellarTaux");
-            ECollectionPackType legacyPack = EnumExtensions.SafeParseECollectionPackType("Legacy");
-            ECollectionPackType legacyPackTaux = EnumExtensions.SafeParseECollectionPackType("LegacyTaux");
-
-            if (collectionPackType == stellarPack || collectionPackType == stellarPackTaux ||
-                collectionPackType == legacyPack || collectionPackType == legacyPackTaux)
+            if (CustomItemTypes.IsCustomPackType(collectionPackType))
             {
                 __result = ECardExpansionType.Tetramon;
             }
@@ -505,29 +543,8 @@ namespace WankulCrazyPlugin.importer
             if (InventoryBase.Instance?.m_StockItemData_SO == null) return;
             var so = InventoryBase.Instance.m_StockItemData_SO;
 
-            // Définition des types custom
-            EItemType boosterStellar = EnumExtensions.SafeParseEItemType("BoosterStellar");
-            EItemType displayStellar = EnumExtensions.SafeParseEItemType("DisplayStellar");
-            EItemType boosterStellarTaux = EnumExtensions.SafeParseEItemType("BoosterStellarTaux");
-            EItemType displayStellarTaux = EnumExtensions.SafeParseEItemType("DisplayStellarTaux");
-            EItemType boosterLegacy = EnumExtensions.SafeParseEItemType("BoosterLegacy");
-            EItemType displayLegacy = EnumExtensions.SafeParseEItemType("DisplayLegacy");
-            EItemType boosterLegacyTaux = EnumExtensions.SafeParseEItemType("BoosterLegacyTaux");
-            EItemType displayLegacyTaux = EnumExtensions.SafeParseEItemType("DisplayLegacyTaux");
-            EItemType starterApocalypse = EnumExtensions.SafeParseEItemType("StarterApocalypse");
-            EItemType starterShowtime = EnumExtensions.SafeParseEItemType("StarterShowtime");
-            EItemType caleconStellar = EnumExtensions.SafeParseEItemType("CaleconStellar");
-            EItemType tapisS41 = EnumExtensions.SafeParseEItemType("TapisS41");
-            EItemType tapisS42 = EnumExtensions.SafeParseEItemType("TapisS42");
-            EItemType classeurS4 = EnumExtensions.SafeParseEItemType("ClasseurS4");
-
             // Nettoyage complet des objets custom dans TOUTES les listes pour éviter qu'un objet se retrouve dans le mauvais onglet
-            var allCustom = new List<EItemType>
-            {
-                boosterStellar, displayStellar, boosterStellarTaux, displayStellarTaux,
-                boosterLegacy, displayLegacy, boosterLegacyTaux, displayLegacyTaux,
-                starterApocalypse, starterShowtime, caleconStellar, tapisS41, tapisS42, classeurS4
-            };
+            var allCustom = new HashSet<EItemType>(CustomItemTypes.ShopCustomItems);
 
             if (so.m_ShownItemType != null) so.m_ShownItemType.RemoveAll(t => allCustom.Contains(t));
             if (so.m_ShownAccessoryItemType != null) so.m_ShownAccessoryItemType.RemoveAll(t => allCustom.Contains(t));
@@ -540,67 +557,61 @@ namespace WankulCrazyPlugin.importer
             // 3) Packs Taux : DestinyBasic -> DestinyRare -> DestinyEpic (Battle Taux) -> Stellar Taux -> Legacy Taux
             if (so.m_ShownItemType != null)
             {
-                var normalPacks = new List<EItemType> { boosterStellar, displayStellar, boosterLegacy, displayLegacy };
-                var s4Starters = new List<EItemType> { starterApocalypse, starterShowtime };
-                var tauxPacks = new List<EItemType> { boosterStellarTaux, displayStellarTaux, boosterLegacyTaux, displayLegacyTaux };
-
                 // 1) Normal après Battle normal (EpicCardBox)
                 int battleNormalIdx = so.m_ShownItemType.FindLastIndex(t => t == EItemType.EpicCardBox || t == EItemType.EpicCardPack);
                 if (battleNormalIdx >= 0 && battleNormalIdx + 1 <= so.m_ShownItemType.Count)
                 {
-                    so.m_ShownItemType.InsertRange(battleNormalIdx + 1, normalPacks);
+                    so.m_ShownItemType.InsertRange(battleNormalIdx + 1, CustomItemTypes.NormalCustomPacks);
                     Plugin.LogInfo($"[CustomItemsImporter] Inserted Normal packs at index {battleNormalIdx + 1} after Battle (EpicCardBox).");
                 }
                 else
                 {
-                    so.m_ShownItemType.AddRange(normalPacks);
+                    so.m_ShownItemType.AddRange(CustomItemTypes.NormalCustomPacks);
                 }
 
                 // 2) Starters après les decks de départ (PreconDeck_Wind)
                 int deckIdx = so.m_ShownItemType.FindLastIndex(t => t == EItemType.PreconDeck_Wind || t == EItemType.PreconDeck_Water || t == EItemType.PreconDeck_Earth || t == EItemType.PreconDeck_Fire);
                 if (deckIdx >= 0 && deckIdx + 1 <= so.m_ShownItemType.Count)
                 {
-                    so.m_ShownItemType.InsertRange(deckIdx + 1, s4Starters);
+                    so.m_ShownItemType.InsertRange(deckIdx + 1, CustomItemTypes.StarterCustomItems);
                     Plugin.LogInfo($"[CustomItemsImporter] Inserted Starters at index {deckIdx + 1} after PreconDeck_Wind.");
                 }
                 else
                 {
-                    so.m_ShownItemType.AddRange(s4Starters);
+                    so.m_ShownItemType.AddRange(CustomItemTypes.StarterCustomItems);
                 }
 
                 // 3) Taux après Battle Taux (DestinyEpicCardBox)
                 int battleTauxIdx = so.m_ShownItemType.FindLastIndex(t => t == EItemType.DestinyEpicCardBox || t == EItemType.DestinyEpicCardPack);
                 if (battleTauxIdx >= 0 && battleTauxIdx + 1 <= so.m_ShownItemType.Count)
                 {
-                    so.m_ShownItemType.InsertRange(battleTauxIdx + 1, tauxPacks);
+                    so.m_ShownItemType.InsertRange(battleTauxIdx + 1, CustomItemTypes.TauxCustomPacks);
                     Plugin.LogInfo($"[CustomItemsImporter] Inserted Taux packs at index {battleTauxIdx + 1} after Battle Taux (DestinyEpicCardBox).");
                 }
                 else
                 {
-                    so.m_ShownItemType.AddRange(tauxPacks);
+                    so.m_ShownItemType.AddRange(CustomItemTypes.TauxCustomPacks);
                 }
             }
 
             // Onglet Figurines (CaleconStellar uniquement)
             if (so.m_ShownFigurineItemType != null)
             {
-                so.m_ShownFigurineItemType.Add(caleconStellar);
+                so.m_ShownFigurineItemType.Add(CustomItemTypes.CaleconStellar);
                 Plugin.LogInfo("[CustomItemsImporter] Added CaleconStellar to m_ShownFigurineItemType.");
             }
 
             // Onglet Accessoires (TapisS41, TapisS42, ClasseurS4)
             if (so.m_ShownAccessoryItemType != null)
             {
-                var s4Accessories = new List<EItemType> { tapisS41, tapisS42, classeurS4 };
-                so.m_ShownAccessoryItemType.AddRange(s4Accessories);
-                Plugin.LogInfo($"[CustomItemsImporter] Added {s4Accessories.Count} accessories to m_ShownAccessoryItemType.");
+                so.m_ShownAccessoryItemType.AddRange(CustomItemTypes.AccessoryCustomItems);
+                Plugin.LogInfo($"[CustomItemsImporter] Added {CustomItemTypes.AccessoryCustomItems.Length} accessories to m_ShownAccessoryItemType.");
             }
 
             // Enregistrement des boosters custom dans m_CardPackItemTypeList (utilisé par les employés pour remplir l'AutoPackOpener)
             if (so.m_CardPackItemTypeList != null)
             {
-                var customCardPacks = new List<EItemType> { boosterStellar, boosterStellarTaux, boosterLegacy, boosterLegacyTaux };
-                foreach (var packType in customCardPacks)
+                foreach (var packType in CustomItemTypes.CustomCardPacksForWorkers)
                 {
                     if (!so.m_CardPackItemTypeList.Contains(packType))
                     {
@@ -731,17 +742,12 @@ namespace WankulCrazyPlugin.importer
                 if (index < 0 || index >= stock.Count)
                 {
                     // Pour les boîtes de display custom, utiliser le mesh et material de base d'une boîte de boosters
-                    EItemType displayStellar = EnumExtensions.SafeParseEItemType("DisplayStellar");
-                    EItemType displayStellarTaux = EnumExtensions.SafeParseEItemType("DisplayStellarTaux");
-                    EItemType displayLegacy = EnumExtensions.SafeParseEItemType("DisplayLegacy");
-                    EItemType displayLegacyTaux = EnumExtensions.SafeParseEItemType("DisplayLegacyTaux");
-
-                    if (itemType == displayStellar || itemType == displayStellarTaux || itemType == displayLegacy || itemType == displayLegacyTaux)
+                    if (CustomItemTypes.IsCustomDisplay(itemType))
                     {
                         ItemMeshData baseBoxMesh = InventoryBase.GetItemMeshData(EItemType.BasicCardBox);
                         if (baseBoxMesh != null)
                         {
-                            EItemType boosterType = PatchTexturesImporter.GetBoosterTypeForDisplay(itemType);
+                            EItemType boosterType = CustomItemTypes.GetBoosterForDisplay(itemType);
                             ItemMeshData boosterMesh = boosterType != EItemType.None ? InventoryBase.GetItemMeshData(boosterType) : null;
                             __result = new ItemMeshData
                             {
@@ -756,13 +762,8 @@ namespace WankulCrazyPlugin.importer
                         }
                     }
 
-                    // Pour les boosters custom, utiliser le mesh et material de base d'un booster de base
-                    EItemType boosterStellar = EnumExtensions.SafeParseEItemType("BoosterStellar");
-                    EItemType boosterStellarTaux = EnumExtensions.SafeParseEItemType("BoosterStellarTaux");
-                    EItemType boosterLegacy = EnumExtensions.SafeParseEItemType("BoosterLegacy");
-                    EItemType boosterLegacyTaux = EnumExtensions.SafeParseEItemType("BoosterLegacyTaux");
-
-                    if (itemType == boosterStellar || itemType == boosterStellarTaux || itemType == boosterLegacy || itemType == boosterLegacyTaux)
+                    // Pour les boosters custom (et Gold), utiliser le mesh et material de base d'un booster de base
+                    if (CustomItemTypes.IsCustomBoosterOrGold(itemType))
                     {
                         ItemMeshData basePackMesh = InventoryBase.GetItemMeshData(EItemType.BasicCardPack);
                         if (basePackMesh != null)
@@ -808,12 +809,7 @@ namespace WankulCrazyPlugin.importer
                 int index = (int)itemType;
                 if (index < 0 || index >= stock.Count)
                 {
-                    EItemType dsStellar = EnumExtensions.SafeParseEItemType("DisplayStellar");
-                    EItemType dsStellarTaux = EnumExtensions.SafeParseEItemType("DisplayStellarTaux");
-                    EItemType dsLegacy = EnumExtensions.SafeParseEItemType("DisplayLegacy");
-                    EItemType dsLegacyTaux = EnumExtensions.SafeParseEItemType("DisplayLegacyTaux");
-
-                    if (itemType == dsStellar || itemType == dsStellarTaux || itemType == dsLegacy || itemType == dsLegacyTaux)
+                    if (CustomItemTypes.IsCustomDisplay(itemType))
                     {
                         ItemData baseBoxData = InventoryBase.GetItemData(EItemType.BasicCardBox);
                         if (baseBoxData != null)
@@ -825,15 +821,7 @@ namespace WankulCrazyPlugin.importer
                         }
                     }
 
-                    EItemType bsStellar = EnumExtensions.SafeParseEItemType("BoosterStellar");
-                    EItemType bsStellarTaux = EnumExtensions.SafeParseEItemType("BoosterStellarTaux");
-                    EItemType bsLegacy = EnumExtensions.SafeParseEItemType("BoosterLegacy");
-                    EItemType bsLegacyTaux = EnumExtensions.SafeParseEItemType("BoosterLegacyTaux");
-                    EItemType bsGoldBattle = EnumExtensions.SafeParseEItemType("BoosterGoldBattle");
-                    EItemType bsGoldStellar = EnumExtensions.SafeParseEItemType("BoosterGoldStellar");
-                    EItemType bsGoldLegacy = EnumExtensions.SafeParseEItemType("BoosterGoldLegacy");
-
-                    if (itemType == bsStellar || itemType == bsStellarTaux || itemType == bsLegacy || itemType == bsLegacyTaux || itemType == bsGoldBattle || itemType == bsGoldStellar || itemType == bsGoldLegacy)
+                    if (CustomItemTypes.IsCustomBoosterOrGold(itemType))
                     {
                         ItemData basePackData = InventoryBase.GetItemData(EItemType.BasicCardPack);
                         if (basePackData != null)

@@ -161,14 +161,14 @@ namespace WankulCrazyPlugin.patch
             EItemType s2 = EItemType.RareCardPack;
             EItemType s3 = EItemType.EpicCardPack;
 
-            // EItemTypes Wankul custom (via SafeParse pour éviter tout crash si absent)
-            EItemType stellar = EnumExtensions.SafeParseEItemType("BoosterStellar");
-            EItemType stellarTaux = EnumExtensions.SafeParseEItemType("BoosterStellarTaux");
-            EItemType legacy = EnumExtensions.SafeParseEItemType("BoosterLegacy");
-            EItemType legacyTaux = EnumExtensions.SafeParseEItemType("BoosterLegacyTaux");
-            EItemType goldBattle = EnumExtensions.SafeParseEItemType("BoosterGoldBattle");
-            EItemType goldStellar = EnumExtensions.SafeParseEItemType("BoosterGoldStellar");
-            EItemType goldLegacy = EnumExtensions.SafeParseEItemType("BoosterGoldLegacy");
+            // EItemTypes Wankul custom (via CustomItemTypes)
+            EItemType stellar = CustomItemTypes.BoosterStellar;
+            EItemType stellarTaux = CustomItemTypes.BoosterStellarTaux;
+            EItemType legacy = CustomItemTypes.BoosterLegacy;
+            EItemType legacyTaux = CustomItemTypes.BoosterLegacyTaux;
+            EItemType goldBattle = CustomItemTypes.BoosterGoldBattle;
+            EItemType goldStellar = CustomItemTypes.BoosterGoldStellar;
+            EItemType goldLegacy = CustomItemTypes.BoosterGoldLegacy;
 
             // Valeur EItemType.None si le SafeParse échoue
             EItemType none = EItemType.None;

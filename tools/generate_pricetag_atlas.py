@@ -2,7 +2,9 @@
 Générateur de PriceTagAtlas Wankul.
 Injecte toutes les icônes Wankul dans l'atlas des étiquettes de rayon (PriceTagAtlas 4096x4096).
 """
+import json
 import os
+import shutil
 from PIL import Image
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -315,6 +317,26 @@ def paste_centered(atlas, sprite_path, cell_idx, padding=8):
     atlas.paste(resized, (px, py), resized)
 
 
+def get_game_plugin_dir():
+    """Lit GamePluginDir depuis TCGCARDSHOP_PLUGIN_DIR ou local.config.json à la racine du dépôt."""
+    env_dir = os.environ.get("TCGCARDSHOP_PLUGIN_DIR", "").strip()
+    if env_dir and os.path.isdir(env_dir):
+        return env_dir
+
+    config_path = os.path.join(ROOT, "local.config.json")
+    if os.path.isfile(config_path):
+        try:
+            with open(config_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            game_dir = (data.get("GamePluginDir") or "").strip()
+            if game_dir and os.path.isdir(game_dir):
+                return game_dir
+        except Exception as ex:
+            print(f"Avertissement: impossible de lire {config_path}: {ex}")
+
+    return None
+
+
 def main():
     print("Ouverture de l'atlas de base...")
     atlas = Image.open(BASE_ATLAS).convert('RGBA')
@@ -327,11 +349,14 @@ def main():
     atlas.save(OUT_ATLAS)
     print(f"Atlas Wankul sauvegardé ({len(MAPPING)} cellules remplacées) dans: {OUT_ATLAS} ({os.path.getsize(OUT_ATLAS)} octets)")
 
-    game_atlas = r"E:\jeux\TCG Card Shop Simulator\BepInEx\plugins\WankulCrazy\data\patchtextures\shared1\PriceTagAtlas.png"
-    if os.path.exists(os.path.dirname(game_atlas)):
-        import shutil
-        shutil.copy2(OUT_ATLAS, game_atlas)
-        print(f"Atlas Wankul copié avec succès dans le jeu: {game_atlas}")
+    game_plugin_dir = get_game_plugin_dir()
+    if game_plugin_dir:
+        game_atlas = os.path.join(game_plugin_dir, "data", "patchtextures", "shared1", "PriceTagAtlas.png")
+        if os.path.isdir(os.path.dirname(game_atlas)):
+            shutil.copy2(OUT_ATLAS, game_atlas)
+            print(f"Atlas Wankul copié avec succès dans le jeu: {game_atlas}")
+    else:
+        print("Info: GamePluginDir non configuré (local.config.json / TCGCARDSHOP_PLUGIN_DIR), copie vers le jeu ignorée.")
 
 if __name__ == "__main__":
     main()

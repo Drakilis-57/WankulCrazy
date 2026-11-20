@@ -66,71 +66,37 @@ namespace WankulCrazyPlugin.patch
             );
 
 
-            GameObject s04GameObject = GameObject.Instantiate(destinyButton.gameObject);
-            s04GameObject.name = "S04_Button";
-            s04GameObject.transform.SetParent(tetramonButton.parent);
-            s04GameObject.transform.localScale = tetramonButton.localScale;
-            s04GameObject.transform.localPosition = tetramonButton.localPosition;
-            s04GameObject.transform.localRotation = tetramonButton.localRotation;
-            s04GameObject.GetComponent<RectTransform>().anchoredPosition = new Vector2(
-                ghostButton.GetComponent<RectTransform>().anchoredPosition.x,
-                ghostButton.GetComponent<RectTransform>().anchoredPosition.y - verticalSpacing
-            );
-            s04GameObject.GetComponentInChildren<TextMeshProUGUI>().text = SeasonsContainer.Seasons[Season.S04];
-            Button s04Button = Plugin.FindChildByPath(s04GameObject.transform, "AnimGrp/BGBarGrp/BtnRaycast").GetComponent<Button>();
-            GameObject s04BHHighlight = Plugin.FindChildByPath(s04GameObject.transform, "AnimGrp/BGHighlight").gameObject;
-            CardExpansionSelectScreen.Instance.m_BtnHighlightList.Add(s04BHHighlight);
+            Vector2 previousPos = ghostButton.GetComponent<RectTransform>().anchoredPosition;
+            Season[] extraSeasons = { Season.S04, Season.S05, Season.HS };
 
-            s04Button.onClick.AddListener(() =>
+            foreach (Season season in extraSeasons)
             {
-                s04BHHighlight.SetActive(true);
-                Plugin.SetPProperty(CardExpansionSelectScreen.Instance, "m_CurrentIndex", (int)Season.S04);
-                currentExpensionIndex = (int)Season.S04;
-            });
+                GameObject seasonObj = GameObject.Instantiate(destinyButton.gameObject);
+                seasonObj.name = $"{season}_Button";
+                seasonObj.transform.SetParent(tetramonButton.parent);
+                seasonObj.transform.localScale = tetramonButton.localScale;
+                seasonObj.transform.localPosition = tetramonButton.localPosition;
+                seasonObj.transform.localRotation = tetramonButton.localRotation;
 
-            GameObject s05GameObject = GameObject.Instantiate(destinyButton.gameObject);
-            s05GameObject.name = "S05_Button";
-            s05GameObject.transform.SetParent(tetramonButton.parent);
-            s05GameObject.transform.localScale = tetramonButton.localScale;
-            s05GameObject.transform.localPosition = tetramonButton.localPosition;
-            s05GameObject.transform.localRotation = tetramonButton.localRotation;
-            s05GameObject.GetComponent<RectTransform>().anchoredPosition = new Vector2(
-                s04GameObject.GetComponent<RectTransform>().anchoredPosition.x,
-                s04GameObject.GetComponent<RectTransform>().anchoredPosition.y - verticalSpacing
-            );
-            s05GameObject.GetComponentInChildren<TextMeshProUGUI>().text = SeasonsContainer.Seasons[Season.S05];
-            Button s05Button = Plugin.FindChildByPath(s05GameObject.transform, "AnimGrp/BGBarGrp/BtnRaycast").GetComponent<Button>();
-            GameObject s05BHHighlight = Plugin.FindChildByPath(s05GameObject.transform, "AnimGrp/BGHighlight").gameObject;
-            CardExpansionSelectScreen.Instance.m_BtnHighlightList.Add(s05BHHighlight);
+                Vector2 nextPos = new Vector2(previousPos.x, previousPos.y - verticalSpacing);
+                seasonObj.GetComponent<RectTransform>().anchoredPosition = nextPos;
+                previousPos = nextPos;
 
-            s05Button.onClick.AddListener(() =>
-            {
-                s05BHHighlight.SetActive(true);
-                Plugin.SetPProperty(CardExpansionSelectScreen.Instance, "m_CurrentIndex", (int)Season.S05);
-                currentExpensionIndex = (int)Season.S05;
-            });
+                string label = SeasonsContainer.Seasons.TryGetValue(season, out string seasonName) ? seasonName : season.ToString();
+                seasonObj.GetComponentInChildren<TextMeshProUGUI>().text = label;
 
-            GameObject HSGameObject = GameObject.Instantiate(destinyButton.gameObject);
-            HSGameObject.name = "HS_Button";
-            HSGameObject.transform.SetParent(tetramonButton.parent);
-            HSGameObject.transform.localScale = tetramonButton.localScale;
-            HSGameObject.transform.localPosition = tetramonButton.localPosition;
-            HSGameObject.transform.localRotation = tetramonButton.localRotation;
-            HSGameObject.GetComponent<RectTransform>().anchoredPosition = new Vector2(
-                s05GameObject.GetComponent<RectTransform>().anchoredPosition.x,
-                s05GameObject.GetComponent<RectTransform>().anchoredPosition.y - verticalSpacing
-            );
-            HSGameObject.GetComponentInChildren<TextMeshProUGUI>().text = SeasonsContainer.Seasons[Season.HS];
-            Button HSButton = Plugin.FindChildByPath(HSGameObject.transform, "AnimGrp/BGBarGrp/BtnRaycast").GetComponent<Button>();
-            GameObject HSBGHighlight = Plugin.FindChildByPath(HSGameObject.transform, "AnimGrp/BGHighlight").gameObject;
-            CardExpansionSelectScreen.Instance.m_BtnHighlightList.Add(HSBGHighlight);
+                Button seasonButton = Plugin.FindChildByPath(seasonObj.transform, "AnimGrp/BGBarGrp/BtnRaycast").GetComponent<Button>();
+                GameObject highlight = Plugin.FindChildByPath(seasonObj.transform, "AnimGrp/BGHighlight").gameObject;
+                CardExpansionSelectScreen.Instance.m_BtnHighlightList.Add(highlight);
 
-            HSButton.onClick.AddListener(() =>
-            {
-                HSBGHighlight.SetActive(true);
-                Plugin.SetPProperty(CardExpansionSelectScreen.Instance, "m_CurrentIndex", (int)Season.HS);
-                currentExpensionIndex = (int)Season.HS;
-            });
+                Season capturedSeason = season;
+                seasonButton.onClick.AddListener(() =>
+                {
+                    highlight.SetActive(true);
+                    Plugin.SetPProperty(CardExpansionSelectScreen.Instance, "m_CurrentIndex", (int)capturedSeason);
+                    currentExpensionIndex = (int)capturedSeason;
+                });
+            }
         }
 
         public static void OnExpansionPressButton(int index)

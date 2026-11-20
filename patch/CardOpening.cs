@@ -183,9 +183,7 @@ namespace WankulCrazyPlugin.patch
                 return true;
             }
 
-            if (currentItem.GetItemType() == EnumExtensions.SafeParseEItemType("BoosterGoldBattle") ||
-                currentItem.GetItemType() == EnumExtensions.SafeParseEItemType("BoosterGoldStellar") ||
-                currentItem.GetItemType() == EnumExtensions.SafeParseEItemType("BoosterGoldLegacy"))
+            if (CustomItemTypes.IsGoldBooster(currentItem.GetItemType()))
             {
                 boosterSize = 4;
             }
@@ -443,9 +441,7 @@ namespace WankulCrazyPlugin.patch
 
                 Item currentItem = CurrentMachineOpeningItem;
                 EItemType currentItemType = currentItem != null ? currentItem.GetItemType() : EItemType.None;
-                bool isGold = currentItemType == EnumExtensions.SafeParseEItemType("BoosterGoldBattle") ||
-                              currentItemType == EnumExtensions.SafeParseEItemType("BoosterGoldStellar") ||
-                              currentItemType == EnumExtensions.SafeParseEItemType("BoosterGoldLegacy");
+                bool isGold = CustomItemTypes.IsGoldBooster(currentItemType);
 
                 int packCardCount = isGold ? 4 : 10;
                 List<CardData> rolledCards = new List<CardData>(packCardCount);
@@ -534,9 +530,7 @@ namespace WankulCrazyPlugin.patch
 
             Item currentItem = CurrentMachineOpeningItem ?? ___m_CurrentItem ?? (Item)Plugin.GetPProperty(__instance, "m_CurrentItem");
             EItemType currentItemType = currentItem != null ? currentItem.GetItemType() : EItemType.None;
-            bool isGold = currentItemType == EnumExtensions.SafeParseEItemType("BoosterGoldBattle") ||
-                          currentItemType == EnumExtensions.SafeParseEItemType("BoosterGoldStellar") ||
-                          currentItemType == EnumExtensions.SafeParseEItemType("BoosterGoldLegacy");
+            bool isGold = CustomItemTypes.IsGoldBooster(currentItemType);
 
             boosterSize = isGold ? 4 : 10;
 
@@ -717,13 +711,7 @@ namespace WankulCrazyPlugin.patch
 
                 ECollectionPackType collectionPackType = InventoryBase.ItemTypeToCollectionPackType(m_HoldItemList[0].GetItemType());
                 Plugin.LogInfo($"[CardOpening] Ouverture display/box : itemType={m_HoldItemList[0].GetItemType()} packType={collectionPackType} holdCount={m_HoldItemList.Count}");
-                bool isEligibleForGold =
-                    collectionPackType == ECollectionPackType.EpicCardPack ||
-                    collectionPackType == ECollectionPackType.DestinyEpicCardPack ||
-                    collectionPackType == EnumExtensions.SafeParseECollectionPackType("Stellar") ||
-                    collectionPackType == EnumExtensions.SafeParseECollectionPackType("StellarTaux") ||
-                    collectionPackType == EnumExtensions.SafeParseECollectionPackType("Legacy") ||
-                    collectionPackType == EnumExtensions.SafeParseECollectionPackType("LegacyTaux");
+                bool isEligibleForGold = CustomItemTypes.TryGetGoldBoosterForPackType(collectionPackType, out EItemType goldBoosterType);
 
                 if (isEligibleForGold)
                 {
@@ -746,30 +734,12 @@ namespace WankulCrazyPlugin.patch
                 for (int i = 0; i < m_HoldItemList.Count; i++)
                 {
                     Item item = m_HoldItemList[i];
-                    if (shouldGenGoldBooster && i == boosterGoldIndex)
+                    if (shouldGenGoldBooster && i == boosterGoldIndex && goldBoosterType != EItemType.None)
                     {
-                        if (collectionPackType == ECollectionPackType.EpicCardPack || collectionPackType == ECollectionPackType.DestinyEpicCardPack)
-                        {
-                            Plugin.SetPProperty(item, "m_ItemType", EnumExtensions.SafeParseEItemType("BoosterGoldBattle"));
+                        Plugin.SetPProperty(item, "m_ItemType", goldBoosterType);
 
-                            ItemMeshData itemMeshData = InventoryBase.GetItemMeshData(item.GetItemType());
-                            item.SetMesh(itemMeshData.mesh, itemMeshData.material, EnumExtensions.SafeParseEItemType("BoosterGoldBattle"));
-                        }
-                        else if (collectionPackType == EnumExtensions.SafeParseECollectionPackType("Stellar") || collectionPackType == EnumExtensions.SafeParseECollectionPackType("StellarTaux"))
-                        {
-                            Plugin.SetPProperty(item, "m_ItemType", EnumExtensions.SafeParseEItemType("BoosterGoldStellar"));
-
-                            ItemMeshData itemMeshData = InventoryBase.GetItemMeshData(item.GetItemType());
-                            item.SetMesh(itemMeshData.mesh, itemMeshData.material, EnumExtensions.SafeParseEItemType("BoosterGoldStellar"));
-                        }
-                        else if (collectionPackType == EnumExtensions.SafeParseECollectionPackType("Legacy") || collectionPackType == EnumExtensions.SafeParseECollectionPackType("LegacyTaux"))
-                        {
-                            EItemType boosterGoldLegacy = EnumExtensions.SafeParseEItemType("BoosterGoldLegacy");
-                            Plugin.SetPProperty(item, "m_ItemType", boosterGoldLegacy);
-
-                            ItemMeshData itemMeshData = InventoryBase.GetItemMeshData(item.GetItemType());
-                            item.SetMesh(itemMeshData.mesh, itemMeshData.material, boosterGoldLegacy);
-                        }
+                        ItemMeshData itemMeshData = InventoryBase.GetItemMeshData(item.GetItemType());
+                        item.SetMesh(itemMeshData.mesh, itemMeshData.material, goldBoosterType);
                     }
                     else
                     {

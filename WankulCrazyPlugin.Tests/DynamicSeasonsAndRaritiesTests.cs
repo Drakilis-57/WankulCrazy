@@ -118,5 +118,34 @@ namespace WankulCrazyPlugin.Tests
             int xp = RaritiesManager.CalculateExperience(card, shopLevel: 1);
             Assert.True(xp >= 35, $"Expected XP to be >= 35, got {xp}");
         }
+
+        [Fact]
+        public void JsonFiles_ContainCompleteSeasonsAndRarities()
+        {
+            string? root = AppDomain.CurrentDomain.BaseDirectory;
+            while (root != null && !Directory.Exists(Path.Combine(root, "data")))
+            {
+                root = Directory.GetParent(root)?.FullName;
+            }
+            if (root == null) root = Directory.GetCurrentDirectory();
+
+            SeasonsManager.LoadFromPluginPath(root);
+            RaritiesManager.LoadFromPluginPath(root);
+
+            foreach (Season season in Enum.GetValues(typeof(Season)))
+            {
+                Assert.NotNull(SeasonsManager.GetSeason(season.ToString()));
+            }
+
+            foreach (Rarity rarity in Enum.GetValues(typeof(Rarity)))
+            {
+                Assert.NotNull(RaritiesManager.GetRarity(rarity.ToString()));
+            }
+            Assert.NotNull(RaritiesManager.GetRarity("DUO"));
+
+            // Cleanup static state
+            SeasonsManager.ResetToDefaults();
+            RaritiesManager.ResetToDefaults();
+        }
     }
 }

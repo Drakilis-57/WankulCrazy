@@ -1,9 +1,11 @@
+#if DEBUG
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text;
 using UnityEngine;
+using WankulCrazyPlugin.utils;
 
 namespace WankulCrazyPlugin.importer
 {
@@ -255,7 +257,7 @@ namespace WankulCrazyPlugin.importer
             if (cam != null)
             {
                 Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
-                RaycastHit? bestHit = GetBestRaycastHit(ray, 30f);
+                RaycastHit? bestHit = RaycastHelper.GetBestRaycastHit(ray, 30f);
 
                 if (bestHit.HasValue)
                 {
@@ -296,54 +298,6 @@ namespace WankulCrazyPlugin.importer
             );
             GUI.Label(new Rect(0, 0, viewWidth - 16f, contentHeight), sb.ToString(), m_LabelStyle);
             GUI.EndScrollView();
-        }
-
-        private RaycastHit? GetBestRaycastHit(Ray ray, float maxDistance)
-        {
-            RaycastHit[] hits = Physics.RaycastAll(ray, maxDistance);
-            if (hits == null || hits.Length == 0) return null;
-
-            Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
-
-            RaycastHit? candidateWithRenderer = null;
-
-            foreach (var hit in hits)
-            {
-                var col = hit.collider;
-                if (col == null || col.isTrigger) continue;
-
-                string colName = col.gameObject.name;
-                string layerName = LayerMask.LayerToName(col.gameObject.layer);
-
-                // Ignorer les bloqueurs de navigation, obstacles invisibles, triggers et navmesh
-                if (colName.IndexOf("NavBlocker", StringComparison.OrdinalIgnoreCase) >= 0 ||
-                    colName.IndexOf("NavMesh", StringComparison.OrdinalIgnoreCase) >= 0 ||
-                    colName.IndexOf("Pathfinding", StringComparison.OrdinalIgnoreCase) >= 0 ||
-                    colName.IndexOf("Obstacle", StringComparison.OrdinalIgnoreCase) >= 0 ||
-                    colName.IndexOf("Door_Obstacle", StringComparison.OrdinalIgnoreCase) >= 0 ||
-                    layerName.Equals("NavMeshBlocker", StringComparison.OrdinalIgnoreCase))
-                {
-                    continue;
-                }
-
-                // Cible prioritaire absolue : objet qui contient un Item ou un UI_PriceTag
-                if (col.GetComponentInParent<Item>() != null || col.GetComponentInParent<UI_PriceTag>() != null)
-                {
-                    return hit;
-                }
-
-                // Cible secondaire : objet avec un Renderer actif
-                if (candidateWithRenderer == null)
-                {
-                    var rend = col.GetComponent<Renderer>() ?? col.GetComponentInParent<Renderer>();
-                    if (rend != null && rend.enabled)
-                    {
-                        candidateWithRenderer = hit;
-                    }
-                }
-            }
-
-            return candidateWithRenderer;
         }
 
         private void AppendObjectDetails(StringBuilder sb, GameObject go, string header)
@@ -413,3 +367,4 @@ namespace WankulCrazyPlugin.importer
         }
     }
 }
+#endif

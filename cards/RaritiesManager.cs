@@ -131,6 +131,15 @@ namespace WankulCrazyPlugin.cards
             {
                 allRarities.Add(rarityData);
             }
+
+            try
+            {
+                if (Enum.TryParse<Rarity>(rarityData.Id, true, out var rarityEnum))
+                {
+                    RaritiesContainer.Rarities[rarityEnum] = rarityData.Name;
+                }
+            }
+            catch (Exception) { }
         }
 
         public static RarityData GetRarity(string id)

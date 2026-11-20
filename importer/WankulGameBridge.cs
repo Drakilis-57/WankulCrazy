@@ -1,3 +1,4 @@
+#if DEBUG
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -467,46 +468,10 @@ namespace WankulCrazyPlugin.importer
             }
 
             Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
-            RaycastHit[] hits = Physics.RaycastAll(ray, 30f);
-            if (hits == null || hits.Length == 0)
+            RaycastHit? bestHit = RaycastHelper.GetBestRaycastHit(ray, 30f, out bool hadRawHits);
+            if (!hadRawHits)
             {
                 return "{\"found\":false,\"reason\":\"Rien à portée de vue (30m)\"}";
-            }
-
-            Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
-
-            RaycastHit? bestHit = null;
-            foreach (var hit in hits)
-            {
-                var col = hit.collider;
-                if (col == null || col.isTrigger) continue;
-
-                string colName = col.gameObject.name;
-                string layerName = LayerMask.LayerToName(col.gameObject.layer);
-
-                if (colName.IndexOf("NavBlocker", StringComparison.OrdinalIgnoreCase) >= 0 ||
-                    colName.IndexOf("NavMesh", StringComparison.OrdinalIgnoreCase) >= 0 ||
-                    colName.IndexOf("Pathfinding", StringComparison.OrdinalIgnoreCase) >= 0 ||
-                    colName.IndexOf("Obstacle", StringComparison.OrdinalIgnoreCase) >= 0 ||
-                    layerName.Equals("NavMeshBlocker", StringComparison.OrdinalIgnoreCase))
-                {
-                    continue;
-                }
-
-                if (col.GetComponentInParent<Item>() != null || col.GetComponentInParent<UI_PriceTag>() != null)
-                {
-                    bestHit = hit;
-                    break;
-                }
-
-                if (bestHit == null)
-                {
-                    var rend = col.GetComponent<Renderer>() ?? col.GetComponentInParent<Renderer>();
-                    if (rend != null && rend.enabled)
-                    {
-                        bestHit = hit;
-                    }
-                }
             }
 
             if (!bestHit.HasValue)
@@ -1358,3 +1323,4 @@ namespace WankulCrazyPlugin.importer
         }
     }
 }
+#endif

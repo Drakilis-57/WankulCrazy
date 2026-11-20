@@ -782,7 +782,7 @@
     "Force": 2,
     "Cost": 1,
     "Rules": "",
-    "Combo": "Échangez le contrÃ´le de 2 autres personnages sur ce Terrain.",
+    "Combo": "Échangez le contrôle de 2 autres personnages sur ce Terrain.",
     "Quote": "Il a peut-être un penchant pour la violence mais attention, ce n'est qu'une supposition."
   },
   {
@@ -1501,7 +1501,7 @@
     "Effigy": "Laink",
     "Force": 0,
     "Cost": 2,
-    "Rules": "(Sub) Jouez cette carte au moment de scorer. Échangez la position de 2 autres personnages en jeu du mÃªme cÃ´tÃ©.",
+    "Rules": "(Sub) Jouez cette carte au moment de scorer. Échangez la position de 2 autres personnages en jeu du même côté.",
     "Combo": "",
     "Quote": "Personne ne sait rien sur son passé, mais elle a scalpé trois, quatre gaillards qui ont osé demander."
   },
@@ -1611,7 +1611,7 @@
     "Cost": 1,
     "Rules": "(Permanent) Votre adversaire ne peut pas appliquer d'effet double combo.",
     "Combo": "",
-    "Quote": "Énorme teufeur, accro de la picole, incorrigible sac Ã  vin, dieu lorsqu'il a le temps."
+    "Quote": "Énorme teufeur, accro de la picole, incorrigible sac à vin, dieu lorsqu'il a le temps."
   },
   {
     "Index": 300094,
@@ -1772,7 +1772,7 @@
     "Force": 3,
     "Cost": 1,
     "Rules": "(Permanent) Si votre adversaire joue un personnage, il perd son nom, mais l'adversaire pioche une carte.",
-    "Combo": "Échangez un personnage adverse en jeu par un de sa dÃ©fausse.",
+    "Combo": "Échangez un personnage adverse en jeu par un de sa défausse.",
     "Quote": "Elle est très méchante, cupide et désagréable, mais quelle beauté..."
   },
   {

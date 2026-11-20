@@ -35,116 +35,35 @@ namespace WankulCrazyPlugin.patch
         private static readonly MethodInfo s_CardBoxToCardPackMethod = AccessTools.Method(typeof(InteractionPlayerController), "CardBoxToCardPack");
         private static readonly MethodInfo s_RemoveToolTipMethod = AccessTools.Method(typeof(InteractionPlayerController), "RemoveToolTip");
 
-        private static HashSet<EItemType> s_OpenablePacks;
-        private static HashSet<EItemType> s_OpenableCardBoxes;
-        private static Dictionary<EItemType, EItemType> s_BoxToPackMap;
-
+        // 24 emplacements debout (2 colonnes x 12 rangées d'avant en arrière) à l'intérieur du display vertical (échelle 0.10)
         private static readonly Vector3[] s_PackPositions = new Vector3[]
         {
-            new Vector3(-0.05f, 0.1f - 0.08f, 0),
-            new Vector3(0.05f, 0.1f - 0.08f, 0),
-            new Vector3(-0.05f, 0.096f - 0.08f, 0),
-            new Vector3(0.05f, 0.096f - 0.08f, 0),
-            new Vector3(-0.05f, 0.092f - 0.08f, 0),
-            new Vector3(0.05f, 0.092f - 0.08f, 0),
-            new Vector3(-0.05f, 0.088f - 0.08f, 0),
-            new Vector3(0.05f, 0.088f - 0.08f, 0),
-            new Vector3(-0.05f, 0.084f - 0.08f, 0),
-            new Vector3(0.05f, 0.084f - 0.08f, 0),
-            new Vector3(-0.05f, 0.08f - 0.08f, 0),
-            new Vector3(0.05f, 0.08f - 0.08f, 0),
-            new Vector3(-0.05f, 0.076f - 0.08f, 0),
-            new Vector3(0.05f, 0.076f - 0.08f, 0),
-            new Vector3(-0.05f, 0.072f - 0.08f, 0),
-            new Vector3(0.05f, 0.072f - 0.08f, 0),
-            new Vector3(-0.05f, 0.068f - 0.08f, 0),
-            new Vector3(0.05f, 0.068f - 0.08f, 0),
-            new Vector3(-0.05f, 0.064f - 0.08f, 0),
-            new Vector3(0.05f, 0.064f - 0.08f, 0),
-            new Vector3(-0.05f, 0.060f - 0.08f, 0),
-            new Vector3(0.05f, 0.060f - 0.08f, 0),
-            new Vector3(-0.05f, 0.056f - 0.08f, 0),
-            new Vector3(0.05f, 0.056f - 0.08f, 0),
+            new Vector3(-0.030f, -0.040f,  0.030f),
+            new Vector3( 0.036f, -0.040f,  0.030f),
+            new Vector3(-0.030f, -0.040f,  0.025f),
+            new Vector3( 0.036f, -0.040f,  0.025f),
+            new Vector3(-0.030f, -0.040f,  0.019f),
+            new Vector3( 0.036f, -0.040f,  0.019f),
+            new Vector3(-0.030f, -0.040f,  0.014f),
+            new Vector3( 0.036f, -0.040f,  0.014f),
+            new Vector3(-0.030f, -0.040f,  0.008f),
+            new Vector3( 0.036f, -0.040f,  0.008f),
+            new Vector3(-0.030f, -0.040f,  0.003f),
+            new Vector3( 0.036f, -0.040f,  0.003f),
+            new Vector3(-0.030f, -0.040f, -0.003f),
+            new Vector3( 0.036f, -0.040f, -0.003f),
+            new Vector3(-0.030f, -0.040f, -0.008f),
+            new Vector3( 0.036f, -0.040f, -0.008f),
+            new Vector3(-0.030f, -0.040f, -0.014f),
+            new Vector3( 0.036f, -0.040f, -0.014f),
+            new Vector3(-0.030f, -0.040f, -0.019f),
+            new Vector3( 0.036f, -0.040f, -0.019f),
+            new Vector3(-0.030f, -0.040f, -0.025f),
+            new Vector3( 0.036f, -0.040f, -0.025f),
+            new Vector3(-0.030f, -0.040f, -0.030f),
+            new Vector3( 0.036f, -0.040f, -0.030f),
         };
 
-        private static void EnsurePackAndBoxLookupsInitialized()
-        {
-            if (s_OpenablePacks != null && s_OpenableCardBoxes != null && s_BoxToPackMap != null)
-                return;
-
-            EItemType displayStellar = EnumExtensions.SafeParseEItemType("DisplayStellar");
-            EItemType displayStellarTaux = EnumExtensions.SafeParseEItemType("DisplayStellarTaux");
-            EItemType boosterStellar = EnumExtensions.SafeParseEItemType("BoosterStellar");
-            EItemType boosterStellarTaux = EnumExtensions.SafeParseEItemType("BoosterStellarTaux");
-            EItemType displayLegacy = EnumExtensions.SafeParseEItemType("DisplayLegacy");
-            EItemType displayLegacyTaux = EnumExtensions.SafeParseEItemType("DisplayLegacyTaux");
-            EItemType boosterLegacy = EnumExtensions.SafeParseEItemType("BoosterLegacy");
-            EItemType boosterLegacyTaux = EnumExtensions.SafeParseEItemType("BoosterLegacyTaux");
-            EItemType boosterGoldBattle = EnumExtensions.SafeParseEItemType("BoosterGoldBattle");
-            EItemType boosterGoldStellar = EnumExtensions.SafeParseEItemType("BoosterGoldStellar");
-            EItemType boosterGoldLegacy = EnumExtensions.SafeParseEItemType("BoosterGoldLegacy");
-
-            s_OpenablePacks = new HashSet<EItemType>
-            {
-                EItemType.BasicCardPack,
-                EItemType.RareCardPack,
-                EItemType.EpicCardPack,
-                EItemType.LegendaryCardPack,
-                EItemType.DestinyBasicCardPack,
-                EItemType.DestinyRareCardPack,
-                EItemType.DestinyEpicCardPack,
-                EItemType.DestinyLegendaryCardPack,
-                EItemType.GhostPack,
-                EItemType.MegabotPack,
-                EItemType.FantasyRPGPack,
-                EItemType.CatJobPack,
-                EItemType.AscensionCardPack,
-                boosterStellar,
-                boosterStellarTaux,
-                boosterLegacy,
-                boosterLegacyTaux,
-                boosterGoldBattle,
-                boosterGoldStellar,
-                boosterGoldLegacy
-            };
-
-            s_OpenableCardBoxes = new HashSet<EItemType>
-            {
-                EItemType.BasicCardBox,
-                EItemType.RareCardBox,
-                EItemType.EpicCardBox,
-                EItemType.LegendaryCardBox,
-                EItemType.DestinyBasicCardBox,
-                EItemType.DestinyRareCardBox,
-                EItemType.DestinyEpicCardBox,
-                EItemType.DestinyLegendaryCardBox,
-                EItemType.AscensionCardBox,
-                displayStellar,
-                displayStellarTaux,
-                displayLegacy,
-                displayLegacyTaux
-            };
-
-            s_BoxToPackMap = new Dictionary<EItemType, EItemType>
-            {
-                { EItemType.BasicCardBox, EItemType.BasicCardPack },
-                { EItemType.RareCardBox, EItemType.RareCardPack },
-                { EItemType.EpicCardBox, EItemType.EpicCardPack },
-                { EItemType.LegendaryCardBox, EItemType.LegendaryCardPack },
-                { EItemType.DestinyBasicCardBox, EItemType.DestinyBasicCardPack },
-                { EItemType.DestinyRareCardBox, EItemType.DestinyRareCardPack },
-                { EItemType.DestinyEpicCardBox, EItemType.DestinyEpicCardPack },
-                { EItemType.DestinyLegendaryCardBox, EItemType.DestinyLegendaryCardPack },
-                { EItemType.AscensionCardBox, EItemType.AscensionCardPack },
-                { displayStellar, boosterStellar },
-                { displayStellarTaux, boosterStellarTaux },
-                { displayLegacy, boosterLegacy },
-                { displayLegacyTaux, boosterLegacyTaux }
-            };
-        }
-
-        [HarmonyPatch(typeof(InteractionPlayerController), "Awake")]
-        [HarmonyPostfix]
         public static void AwakePostfix(InteractionPlayerController __instance)
         {
 
@@ -179,7 +98,6 @@ namespace WankulCrazyPlugin.patch
 
         public static bool CanOpenPack(ref bool __result, InteractionPlayerController __instance)
         {
-            EnsurePackAndBoxLookupsInitialized();
             bool result = false;
 
             List<Item> m_HoldItemList = (List<Item>)s_HoldItemListField.GetValue(__instance);
@@ -188,7 +106,7 @@ namespace WankulCrazyPlugin.patch
                 Item item = m_HoldItemList[0];
                 if (item != null)
                 {
-                    result = s_OpenablePacks.Contains(item.GetItemType());
+                    result = CustomItemTypes.IsOpenablePack(item.GetItemType());
                 }
             }
             __result = result;
@@ -197,14 +115,12 @@ namespace WankulCrazyPlugin.patch
 
         public static bool IsCardPackType(EItemType itemType, ref bool __result)
         {
-            EnsurePackAndBoxLookupsInitialized();
-            __result = s_OpenablePacks.Contains(itemType);
+            __result = CustomItemTypes.IsOpenablePack(itemType);
             return false;
         }
 
         public static bool CanOpenCardBox(ref bool __result, InteractionPlayerController __instance)
         {
-            EnsurePackAndBoxLookupsInitialized();
             bool result = false;
 
             List<Item> m_HoldItemList = (List<Item>)s_HoldItemListField.GetValue(__instance);
@@ -213,7 +129,7 @@ namespace WankulCrazyPlugin.patch
                 Item item = m_HoldItemList[0];
                 if (item != null)
                 {
-                    result = s_OpenableCardBoxes.Contains(item.GetItemType());
+                    result = CustomItemTypes.IsOpenableDisplay(item.GetItemType());
                 }
             }
             __result = result;
@@ -222,12 +138,7 @@ namespace WankulCrazyPlugin.patch
 
         public static bool CardBoxToCardPack(EItemType cardBoxItemType, ref EItemType __result)
         {
-            EnsurePackAndBoxLookupsInitialized();
-            if (!s_BoxToPackMap.TryGetValue(cardBoxItemType, out __result))
-            {
-                __result = EItemType.None;
-            }
-
+            __result = CustomItemTypes.GetBoosterForDisplay(cardBoxItemType);
             return false;
         }
 
@@ -239,7 +150,6 @@ namespace WankulCrazyPlugin.patch
         }
 
         // Nouvelle méthode EvaluateOpenCardPack
-        [HarmonyPatch(typeof(InteractionPlayerController), "EvaluateOpenCardPack")]
         public static bool EvaluateOpenCardPack(InteractionPlayerController __instance)
         {
             if (WankulCrazyPlugin.importer.WankulLoadingScreen.IsLoading)
@@ -366,12 +276,69 @@ namespace WankulCrazyPlugin.patch
                 }
 
                 ItemMeshData itemMeshData2 = InventoryBase.GetItemMeshData(cardPack);
-                Dictionary<EItemType, string> boxPaths = GetBoxTexturePaths();
-                Dictionary<EItemType, string> packPaths = GetPackTexturePaths();
+                Dictionary<EItemType, string> itemTexturePaths = WankulCrazyPlugin.importer.PatchTexturesImporter.GetBoxTexturePaths();
                 EItemType boxType = holdItem != null ? holdItem.GetItemType() : EItemType.None;
-                Quaternion spawnPackLocalRot = Quaternion.Euler(270, 0, 0);
-                Quaternion cardBoxStaticLocalRot = Quaternion.Euler(0, 180, 0);
-                Quaternion staticMeshLocalRot = Quaternion.Euler(90, 180, 0);
+                Quaternion spawnPackLocalRot = Quaternion.identity;
+                Quaternion cardBoxStaticLocalRot = Quaternion.Euler(0f, 180f, 0f);
+                Quaternion staticMeshLocalRot = Quaternion.Euler(0f, 180f, 0f);
+                Vector3 spawnPackLocalScale = new Vector3(0.55f, 0.55f, 0.55f);
+
+                // Initialisation unique de la boîte verticale ouverte, de son couvercle et des 24 emplacements internes
+                if (__instance.m_HoldCardPackPosList != null)
+                {
+                    Transform cardBoxInnerMesh = null;
+                    for (int posIdx = 0; posIdx < __instance.m_HoldCardPackPosList.Count; posIdx++)
+                    {
+                        if (__instance.m_HoldCardPackPosList[posIdx] == null) continue;
+                        cardBoxInnerMesh = __instance.m_HoldCardPackPosList[posIdx].Find("CardBoxInnerMesh");
+                        if (cardBoxInnerMesh != null) break;
+                    }
+
+                    if (cardBoxInnerMesh != null)
+                    {
+                        int packIndex = 0;
+                        foreach (Transform child in cardBoxInnerMesh)
+                        {
+                            if (child.name.StartsWith("SpawnCardPackPosLoc"))
+                            {
+                                if (packIndex < s_PackPositions.Length)
+                                {
+                                    child.localPosition = s_PackPositions[packIndex];
+                                    child.localRotation = spawnPackLocalRot;
+                                    child.localScale = spawnPackLocalScale;
+                                    packIndex++;
+                                }
+                            }
+                            else if (child.name.StartsWith("CardBoxStaticMesh"))
+                            {
+                                child.localPosition = new Vector3(0.003f, 0.0238f, 0f);
+                                child.localRotation = cardBoxStaticLocalRot;
+                                child.localScale = new Vector3(0.10f, 0.0001f, 0.10f);
+
+                                ApplyBoxMaterialToChild(child, boxType, itemTexturePaths, itemMeshData1?.material);
+                                StartChildAnimation(child);
+                            }
+                            else if (child.name.StartsWith("StaticMesh"))
+                            {
+                                child.localPosition = new Vector3(0.003f, -0.035f, 0f);
+                                child.localRotation = staticMeshLocalRot;
+                                child.localScale = new Vector3(0.10f, 0.10f, 0.10f);
+
+                                MeshFilter mf = child.GetComponent<MeshFilter>();
+                                if (mf != null)
+                                {
+                                    mf.sharedMesh = GetOrCreateOpenDisplayBoxMesh();
+                                }
+
+                                ApplyBoxMaterialToChild(child, boxType, itemTexturePaths, itemMeshData1?.material);
+                            }
+                            else if (child.name.StartsWith("CardPackStaticMesh"))
+                            {
+                                ApplyBoxMaterialToChild(child, cardPack, itemTexturePaths, itemMeshData2?.material);
+                            }
+                        }
+                    }
+                }
 
                 for (int index = 0; index < openCardBoxSpawnCardPackPosList.Count; ++index)
                 {
@@ -380,61 +347,6 @@ namespace WankulCrazyPlugin.patch
                         Item obj = ItemSpawnManager.GetItem(openCardBoxSpawnCardPackPosList[index]);
                         if (obj != null)
                         {
-                            Transform cardBoxInnerMesh = __instance.m_HoldCardPackPosList[index].Find("CardBoxInnerMesh");
-                            if (cardBoxInnerMesh != null)
-                            {
-                                int packIndex = 0;
-                                foreach (Transform child in cardBoxInnerMesh)
-                                {
-                                    if (child.name.StartsWith("SpawnCardPackPosLoc"))
-                                    {
-                                        if (packIndex < s_PackPositions.Length)
-                                        {
-                                            child.localPosition = s_PackPositions[packIndex];
-                                            child.localRotation = spawnPackLocalRot;
-                                            child.localScale = Vector3.one;
-                                            packIndex++;
-                                        }
-                                    }
-                                    else if (child.name.StartsWith("CardBoxStaticMesh"))
-                                    {
-                                        child.localPosition = new Vector3(-0.001f, 0.1107f - 0.08f, 0);
-                                        child.localRotation = cardBoxStaticLocalRot;
-                                        child.localScale = new Vector3(0.26f, 0.15f, 0.0001f);
-
-                                        if (boxPaths.TryGetValue(boxType, out string texturePath))
-                                        {
-                                            ApplyTextureToChild(child, texturePath);
-                                        }
-                                        else if (itemMeshData1 != null && itemMeshData1.material != null)
-                                        {
-                                            var rend = child.GetComponent<Renderer>();
-                                            if (rend != null)
-                                            {
-                                                rend.material = itemMeshData1.material;
-                                            }
-                                        }
-
-                                        StartChildAnimation(child);
-                                    }
-                                    else if (child.name.StartsWith("StaticMesh") || child.name.StartsWith("CardPackStaticMesh"))
-                                    {
-                                        if (child.name.StartsWith("StaticMesh"))
-                                        {
-                                            child.localPosition = new Vector3(-0.001f, 0.08f - 0.08f, 0);
-                                            child.localRotation = staticMeshLocalRot;
-                                            child.localScale = new Vector3(0.15f, 0.15f, 0.15f);
-                                        }
-
-                                        // Vérifie si le cardPack a une texture associée dans le dictionnaire
-                                        if (packPaths.TryGetValue(cardPack, out string texturePath))
-                                        {
-                                            ApplyTextureToChild(child, texturePath);
-                                        }
-                                    }
-                                }
-                            }
-
                             obj.SetMesh(itemMeshData2.mesh, itemMeshData2.material, cardPack, itemMeshData2.meshSecondary, itemMeshData2.materialSecondary);
                             obj.transform.position = openCardBoxSpawnCardPackPosList[index].position;
                             obj.transform.rotation = openCardBoxSpawnCardPackPosList[index].rotation;
@@ -444,6 +356,11 @@ namespace WankulCrazyPlugin.patch
 
                             m_HoldItemList[index] = obj; // Remplacer l'élément fictif par le véritable objet
                             CPlayerData.m_HoldItemTypeList.Add(obj.GetItemType());
+
+                            if (holdCardPackPosList != null && index < holdCardPackPosList.Count && holdCardPackPosList[index] != null)
+                            {
+                                holdCardPackPosList[index].localScale = Vector3.one;
+                            }
 
                             DelayLerpSpawnedCardPackToHandPostfix(__instance, index, (1.25f + 0.05f * (float)index), obj, holdCardPackPosList[index], holdItem);
                         }
@@ -580,13 +497,209 @@ namespace WankulCrazyPlugin.patch
 
             byte[] fileData = System.IO.File.ReadAllBytes(path);
             Texture2D tex = new Texture2D(2, 2, TextureFormat.RGBA32, false);
-            if (tex.LoadImage(fileData))
+            if (tex.LoadImage(fileData, false))
             {
+                if (tex.width % 4 == 0 && tex.height % 4 == 0)
+                {
+                    tex.Compress(false);
+                }
+                tex.Apply(false, true);
                 _textureCache[path] = tex;
                 return tex;
             }
+            UnityEngine.Object.Destroy(tex);
             return null;
         }
+        private static Mesh s_OpenDisplayBoxMesh;
+
+        /// <summary>
+        /// Construit et met en cache le mesh d'un display ouvert sur le dessus (+Y)
+        /// aux dimensions et coordonnées UV exactes du layout Display 1.07 (CardBoxMesh_low).
+        /// </summary>
+        private static Mesh GetOrCreateOpenDisplayBoxMesh()
+        {
+            if (s_OpenDisplayBoxMesh != null)
+            {
+                return s_OpenDisplayBoxMesh;
+            }
+
+            const float xMin = -0.781f;
+            const float xMax = 0.766f;
+            const float yMin = -0.535f;
+            const float yMax = 0.588f;
+            const float zFront = -0.472f;
+            const float zBack = 0.457f;
+            const float innerInset = 0.995f;
+
+            var vertices = new List<Vector3>(40);
+            var normals = new List<Vector3>(40);
+            var uvs = new List<Vector2>(40);
+            var triangles = new List<int>(60);
+
+            Vector2 innerUv0 = new Vector2(0.06f, 0.06f);
+            Vector2 innerUv1 = new Vector2(0.06f, 0.44f);
+            Vector2 innerUv2 = new Vector2(0.28f, 0.44f);
+            Vector2 innerUv3 = new Vector2(0.28f, 0.06f);
+
+            void AddWall(
+                Vector3 p0, Vector3 p1, Vector3 p2, Vector3 p3,
+                Vector2 uv0, Vector2 uv1, Vector2 uv2, Vector2 uv3,
+                Vector3 outwardNormal)
+            {
+                int outerBase = vertices.Count;
+                vertices.Add(p0);
+                vertices.Add(p1);
+                vertices.Add(p2);
+                vertices.Add(p3);
+                for (int i = 0; i < 4; i++) normals.Add(outwardNormal);
+                uvs.Add(uv0);
+                uvs.Add(uv1);
+                uvs.Add(uv2);
+                uvs.Add(uv3);
+                triangles.Add(outerBase);
+                triangles.Add(outerBase + 1);
+                triangles.Add(outerBase + 2);
+                triangles.Add(outerBase);
+                triangles.Add(outerBase + 2);
+                triangles.Add(outerBase + 3);
+
+                // Paroi intérieure légèrement en retrait pour éviter tout z-fighting,
+                // avec normales/winding inversés et UV sur la zone unie de l'atlas.
+                int innerBase = vertices.Count;
+                vertices.Add(p0 * innerInset);
+                vertices.Add(p1 * innerInset);
+                vertices.Add(p2 * innerInset);
+                vertices.Add(p3 * innerInset);
+                Vector3 inwardNormal = -outwardNormal;
+                for (int i = 0; i < 4; i++) normals.Add(inwardNormal);
+                uvs.Add(innerUv0);
+                uvs.Add(innerUv1);
+                uvs.Add(innerUv2);
+                uvs.Add(innerUv3);
+                triangles.Add(innerBase);
+                triangles.Add(innerBase + 2);
+                triangles.Add(innerBase + 1);
+                triangles.Add(innerBase);
+                triangles.Add(innerBase + 3);
+                triangles.Add(innerBase + 2);
+            }
+
+            // Avant (-Z) : illustration principale
+            AddWall(
+                new Vector3(xMin, yMin, zFront),
+                new Vector3(xMin, yMax, zFront),
+                new Vector3(xMax, yMax, zFront),
+                new Vector3(xMax, yMin, zFront),
+                new Vector2(0.315f, 0.232f),
+                new Vector2(0.315f, 0.500f),
+                new Vector2(0.684f, 0.500f),
+                new Vector2(0.684f, 0.232f),
+                Vector3.back
+            );
+
+            // Arrière (+Z) : dos
+            AddWall(
+                new Vector3(xMin, yMax, zBack),
+                new Vector3(xMin, yMin, zBack),
+                new Vector3(xMax, yMin, zBack),
+                new Vector3(xMax, yMax, zBack),
+                new Vector2(0.315f, 0.722f),
+                new Vector2(0.315f, 0.990f),
+                new Vector2(0.684f, 0.990f),
+                new Vector2(0.684f, 0.722f),
+                Vector3.forward
+            );
+
+            // Dessous (-Y)
+            AddWall(
+                new Vector3(xMin, yMin, zBack),
+                new Vector3(xMin, yMin, zFront),
+                new Vector3(xMax, yMin, zFront),
+                new Vector3(xMax, yMin, zBack),
+                new Vector2(0.315f, 0.010f),
+                new Vector2(0.315f, 0.232f),
+                new Vector2(0.684f, 0.232f),
+                new Vector2(0.684f, 0.010f),
+                Vector3.down
+            );
+
+            // Côté droit (+X)
+            AddWall(
+                new Vector3(xMax, yMin, zFront),
+                new Vector3(xMax, yMax, zFront),
+                new Vector3(xMax, yMax, zBack),
+                new Vector3(xMax, yMin, zBack),
+                new Vector2(0.952f, 0.500f),
+                new Vector2(0.684f, 0.500f),
+                new Vector2(0.684f, 0.722f),
+                new Vector2(0.952f, 0.722f),
+                Vector3.right
+            );
+
+            // Côté gauche (-X)
+            AddWall(
+                new Vector3(xMin, yMin, zBack),
+                new Vector3(xMin, yMax, zBack),
+                new Vector3(xMin, yMax, zFront),
+                new Vector3(xMin, yMin, zFront),
+                new Vector2(0.047f, 0.722f),
+                new Vector2(0.315f, 0.722f),
+                new Vector2(0.315f, 0.500f),
+                new Vector2(0.047f, 0.500f),
+                Vector3.left
+            );
+
+            s_OpenDisplayBoxMesh = new Mesh
+            {
+                name = "WankulOpenDisplayBoxMesh"
+            };
+            s_OpenDisplayBoxMesh.SetVertices(vertices);
+            s_OpenDisplayBoxMesh.SetNormals(normals);
+            s_OpenDisplayBoxMesh.SetUVs(0, uvs);
+            s_OpenDisplayBoxMesh.SetTriangles(triangles, 0);
+            s_OpenDisplayBoxMesh.RecalculateBounds();
+            s_OpenDisplayBoxMesh.hideFlags |= HideFlags.DontUnloadUnusedAsset;
+
+            return s_OpenDisplayBoxMesh;
+        }
+
+        private static void ApplyBoxMaterialToChild(Transform child, EItemType itemType, Dictionary<EItemType, string> paths, Material fallbackMaterial)
+        {
+            if (child == null)
+            {
+                return;
+            }
+
+            Renderer renderer = child.GetComponent<Renderer>();
+            if (renderer == null)
+            {
+                Plugin.Logger.LogError($"[InteractionPlayerControllerPatch] Impossible de récupérer le Renderer sur '{child.name}'.");
+                return;
+            }
+
+            Material targetMaterial = null;
+            if (paths != null && paths.TryGetValue(itemType, out string texturePath))
+            {
+                targetMaterial = WankulCrazyPlugin.importer.PatchTexturesImporter.GetOrCreateBoxMaterial(itemType, texturePath, null);
+                if (targetMaterial == null)
+                {
+                    ApplyTextureToChild(child, texturePath);
+                    return;
+                }
+            }
+            else if (fallbackMaterial != null && !ShaderUtils.UsesBrokenStandardShader(fallbackMaterial))
+            {
+                targetMaterial = fallbackMaterial;
+            }
+
+            if (targetMaterial != null)
+            {
+                renderer.sharedMaterial = targetMaterial;
+                renderer.material = targetMaterial;
+                renderer.SetPropertyBlock(null);
+            }
+        }
+
         public static void ApplyTextureToChild(Transform child, string texturePath)
         {
             Texture2D newTexture = LoadTexture(texturePath);
@@ -623,56 +736,6 @@ namespace WankulCrazyPlugin.patch
             {
                 Plugin.Logger.LogError("Échec du chargement de la texture.");
             }
-        }
-
-        private static Dictionary<EItemType, string> boxTexturePaths = null;
-
-        private static Dictionary<EItemType, string> GetBoxTexturePaths()
-        {
-            if (boxTexturePaths == null)
-            {
-                boxTexturePaths = new Dictionary<EItemType, string>
-                {
-                    { EItemType.BasicCardBox, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S1.png") },
-                    { EItemType.RareCardBox, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S2.png") },
-                    { EItemType.EpicCardBox, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S3.png") },
-                    { EItemType.LegendaryCardBox, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_HS.png") },
-                    { EItemType.DestinyBasicCardBox, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S1_TauxDrop.png") },
-                    { EItemType.DestinyRareCardBox, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S2_TauxDrop.png") },
-                    { EItemType.DestinyEpicCardBox, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S3_TauxDrop.png") },
-                    { EItemType.DestinyLegendaryCardBox, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_HS_TauxDrop.png") },
-                    { EnumExtensions.SafeParseEItemType("DisplayStellar"), Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S4.png") },
-                    { EnumExtensions.SafeParseEItemType("DisplayStellarTaux"), Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S4_TauxDrop.png") },
-                    { EnumExtensions.SafeParseEItemType("DisplayLegacy"), Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S5.png") },
-                    { EnumExtensions.SafeParseEItemType("DisplayLegacyTaux"), Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S5_TauxDrop.png") },
-                };
-            }
-            return boxTexturePaths;
-        }
-
-        private static Dictionary<EItemType, string> packTexturePaths = null;
-
-        private static Dictionary<EItemType, string> GetPackTexturePaths()
-        {
-            if (packTexturePaths == null)
-            {
-                packTexturePaths = new Dictionary<EItemType, string>
-                {
-                    { EItemType.BasicCardPack, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "T_CardPackCommon.png") },
-                    { EItemType.RareCardPack, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "T_CardPackRare.png") },
-                    { EItemType.EpicCardPack, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "T_CardPackEpic.png") },
-                    { EnumExtensions.SafeParseEItemType("BoosterStellar"), Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Booster_S4.png") },
-                    { EItemType.LegendaryCardPack, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "T_CardPackLegnd.png") },
-                    { EItemType.DestinyBasicCardPack, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "T_CardPackDestinyCommon.png") },
-                    { EItemType.DestinyRareCardPack, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "T_CardPackDestinyRare.png") },
-                    { EItemType.DestinyEpicCardPack, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "T_CardPackDestinyEpic.png") },
-                    { EnumExtensions.SafeParseEItemType("BoosterStellarTaux"), Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Booster_S4_TauxDrop.png") },
-                    { EItemType.DestinyLegendaryCardPack, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "T_CardPackDestinyLegend.png") },
-                    { EnumExtensions.SafeParseEItemType("BoosterLegacy"), Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Booster_S5.png") },
-                    { EnumExtensions.SafeParseEItemType("BoosterLegacyTaux"), Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Booster_S5_TauxDrop.png") },
-                };
-            }
-            return packTexturePaths;
         }
     }
 }

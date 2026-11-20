@@ -1,17 +1,61 @@
 using UnityEngine;
+using Unity.Collections;
 using System.Linq;
 using System.Collections.Generic;
 using System.IO;
 using System;
 using HarmonyLib;
 using WankulCrazyPlugin.patch;
+using WankulCrazyPlugin.utils;
 
 namespace WankulCrazyPlugin.importer
 {
     internal class PatchTexturesImporter
     {
-        private static readonly List<Texture2D> s_PersistentTextures = new List<Texture2D>();
-        private static readonly Dictionary<string, Texture2D> s_DiskTextureCache = new Dictionary<string, Texture2D>(StringComparer.OrdinalIgnoreCase);
+        // Cache unifié des textures disque créées par le mod (remplace s_PersistentTextures + s_DiskTextureCache)
+        private static readonly Dictionary<string, Texture2D> s_TextureCache = new Dictionary<string, Texture2D>(StringComparer.OrdinalIgnoreCase);
+        private static HashSet<string> s_SharedDiskPaths = null;
+
+        private static HashSet<string> GetSharedDiskPaths()
+        {
+            if (s_SharedDiskPaths == null)
+            {
+                var set = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                foreach (string p in GetBoxTexturePaths().Values)
+                {
+                    if (!string.IsNullOrEmpty(p))
+                    {
+                        set.Add(WankulFileIndex.NormalizePathKey(p));
+                    }
+                }
+                string pluginPath = Plugin.GetPluginPath();
+                string[] extraShared = new[]
+                {
+                    Path.Combine(pluginPath, "data", "patchtextures", "shared1", "PriceTagAtlas.png"),
+                    Path.Combine(pluginPath, "data", "patchtextures", "shared1", "Billboard.png"),
+                    Path.Combine(pluginPath, "data", "patchtextures", "shared1", "mcp_building_32_billboards_d.png"),
+                    Path.Combine(pluginPath, "data", "patchtextures", "shared1", "T_3dCardModel.png"),
+                    Path.Combine(pluginPath, "data", "patchtextures", "shared0", "CardBack.png"),
+                    Path.Combine(pluginPath, "data", "patchtextures", "shared1", "T_CardBackMesh.png")
+                };
+                foreach (string p in extraShared)
+                {
+                    set.Add(WankulFileIndex.NormalizePathKey(p));
+                }
+                s_SharedDiskPaths = set;
+            }
+            return s_SharedDiskPaths;
+        }
+
+        private static bool IsSharedDiskTexturePath(string normalizedPath, string filename)
+        {
+            if (!string.IsNullOrEmpty(normalizedPath) && GetSharedDiskPaths().Contains(normalizedPath))
+            {
+                return true;
+            }
+            return !string.IsNullOrEmpty(filename) &&
+                   filename.StartsWith("MonsterStatue_", StringComparison.OrdinalIgnoreCase);
+        }
 
         public static void ReplaceGameTextures(string textureLevel)
         {
@@ -21,7 +65,6 @@ namespace WankulCrazyPlugin.importer
                 return;
             }
 
-            s_PersistentTextures.RemoveAll(t => t == null);
             List<string> filenames = GetFileNames(texturesPath);
             if (filenames.Count == 0)
             {
@@ -79,7 +122,13 @@ namespace WankulCrazyPlugin.importer
                     if (targetTextures.Count > 0)
                     {
                         string texturePath = Path.Combine(texturesPath, filename);
-                        Texture2D newTexture = LoadTexture2D(texturePath);
+                        string normPath = WankulFileIndex.NormalizePathKey(texturePath);
+
+                        bool fromCache = s_TextureCache.TryGetValue(normPath, out Texture2D newTexture) && newTexture != null;
+                        if (!fromCache)
+                        {
+                            newTexture = LoadTexture2D(texturePath);
+                        }
                         if (newTexture == null)
                         {
                             continue;
@@ -91,19 +140,35 @@ namespace WankulCrazyPlugin.importer
                             for (int i = 0; i < targetTextures.Count; i++)
                             {
                                 Texture2D targetTexture2D = targetTextures[i];
-                                Texture2D result = ReplaceTexture(targetTexture2D, newTexture, ref cachedMaterialsForPass);
+                                Texture2D result = ReplaceTexture(targetTexture2D, newTexture, ref cachedMaterialsForPass, normPath);
                                 if (result == newTexture)
                                 {
                                     keepAlive = true;
-                                    RegisterPersistentTexture(newTexture);
                                 }
                             }
                         }
                         finally
                         {
-                            if (!keepAlive && newTexture != null)
+                            if (!fromCache && newTexture != null)
                             {
-                                UnityEngine.Object.Destroy(newTexture);
+                                if (keepAlive || IsSharedDiskTexturePath(normPath, filename))
+                                {
+                                    if (newTexture.isReadable)
+                                    {
+                                        // La texture est conservée uniquement pour le rendu GPU : on libère la copie CPU (et compresse en DXT si multiple de 4)
+                                        if (newTexture.width % 4 == 0 && newTexture.height % 4 == 0)
+                                        {
+                                            newTexture.Compress(false);
+                                        }
+                                        newTexture.Apply(false, true);
+                                    }
+                                    RegisterPersistentTexture(newTexture, normPath);
+                                }
+                                else
+                                {
+                                    // Libération immédiate de la texture temporaire créée par le mod (jamais sur une texture vanilla)
+                                    UnityEngine.Object.DestroyImmediate(newTexture);
+                                }
                             }
                         }
                     }
@@ -143,9 +208,24 @@ namespace WankulCrazyPlugin.importer
         {
             Plugin.Logger.LogInfo("[HotReload] Rechargement de toutes les textures Wankul...");
 
-            // 1. Nettoyer le cache des matériaux de boîtes et le cache disque
+            // 1. Détruire proprement les matériaux et textures créés par le mod avant de vider les caches
+            foreach (var mat in cachedBoxMaterials.Values)
+            {
+                if (mat != null)
+                {
+                    UnityEngine.Object.Destroy(mat);
+                }
+            }
             cachedBoxMaterials.Clear();
-            s_DiskTextureCache.Clear();
+
+            foreach (var tex in s_TextureCache.Values)
+            {
+                if (tex != null)
+                {
+                    UnityEngine.Object.Destroy(tex);
+                }
+            }
+            s_TextureCache.Clear();
 
             // 2. Recharger les textures patchées via Resources
             ReplaceGameTextures("shared1");
@@ -229,17 +309,17 @@ namespace WankulCrazyPlugin.importer
                    textureName == "mcp_building_32_billboards_d";
         }
 
-        private static void RegisterPersistentTexture(Texture2D texture)
+        private static void RegisterPersistentTexture(Texture2D texture, string normalizedPath = null)
         {
             if (texture == null)
             {
                 return;
             }
 
-            if (!s_PersistentTextures.Contains(texture))
-            {
-                s_PersistentTextures.Add(texture);
-            }
+            string key = !string.IsNullOrEmpty(normalizedPath)
+                ? normalizedPath
+                : "__mem_" + texture.GetInstanceID();
+            s_TextureCache[key] = texture;
 
             try
             {
@@ -362,10 +442,10 @@ namespace WankulCrazyPlugin.importer
         public static Texture2D ReplaceTexture(Texture2D original, Texture2D replacement)
         {
             Material[] cachedMaterials = null;
-            return ReplaceTexture(original, replacement, ref cachedMaterials);
+            return ReplaceTexture(original, replacement, ref cachedMaterials, null);
         }
 
-        private static Texture2D ReplaceTexture(Texture2D original, Texture2D replacement, ref Material[] cachedMaterials)
+        private static Texture2D ReplaceTexture(Texture2D original, Texture2D replacement, ref Material[] cachedMaterials, string normalizedPath)
         {
             if (original == null)
             {
@@ -408,7 +488,7 @@ namespace WankulCrazyPlugin.importer
                 }
                 int replacedCount = ApplyDirectMaterialReplacement(original, replacement, cachedMaterials);
                 Plugin.Logger.LogInfo($"[PatchTexturesImporter] Remplacement par référence directe pour '{original.name}' ({original.width}x{original.height} -> {replacement.width}x{replacement.height}) sur {replacedCount} matériau(x).");
-                RegisterPersistentTexture(replacement);
+                RegisterPersistentTexture(replacement, normalizedPath);
                 return replacement;
             }
 
@@ -417,21 +497,21 @@ namespace WankulCrazyPlugin.importer
             Texture2D intermediateMip = null;
             Texture2D textureToCopy = replacement;
 
-            if (original.mipmapCount != replacement.mipmapCount)
-            {
-                intermediateMip = AdjustMipMapLevels(replacement, original.mipmapCount);
-                textureToCopy = intermediateMip;
-            }
-
-            if (original.format != replacement.format)
-            {
-                intermediate = ConvertTextureFormat(textureToCopy, original.format, original.mipmapCount);
-                textureToCopy = intermediate;
-            }
-
             bool copySuccess = false;
             try
             {
+                if (original.mipmapCount != replacement.mipmapCount)
+                {
+                    intermediateMip = AdjustMipMapLevels(replacement, original.mipmapCount);
+                    textureToCopy = intermediateMip;
+                }
+
+                if (original.format != textureToCopy.format)
+                {
+                    intermediate = ConvertTextureFormat(textureToCopy, original.format, original.mipmapCount);
+                    textureToCopy = intermediate;
+                }
+
                 Graphics.CopyTexture(textureToCopy, original);
 
                 // Amélioration de la netteté pour les textures de décor/affiches vues à distance et sous des angles rasants
@@ -449,11 +529,11 @@ namespace WankulCrazyPlugin.importer
             {
                 if (intermediateMip != null)
                 {
-                    UnityEngine.Object.Destroy(intermediateMip);
+                    UnityEngine.Object.DestroyImmediate(intermediateMip);
                 }
                 if (intermediate != null)
                 {
-                    UnityEngine.Object.Destroy(intermediate);
+                    UnityEngine.Object.DestroyImmediate(intermediate);
                 }
             }
 
@@ -473,95 +553,131 @@ namespace WankulCrazyPlugin.importer
             }
             int fallbackCount = ApplyDirectMaterialReplacement(original, replacement, cachedMaterials);
             Plugin.Logger.LogInfo($"[PatchTexturesImporter] Fallback référence directe appliqué pour '{original.name}' sur {fallbackCount} matériau(x).");
-            RegisterPersistentTexture(replacement);
+            RegisterPersistentTexture(replacement, normalizedPath);
             return replacement;
+        }
+
+        private static Texture2D BlitToUncompressedTexture(Texture2D source, TextureFormat targetFormat, bool mipChain, bool makeNoLongerReadable)
+        {
+            RenderTexture rt = RenderTexture.GetTemporary(source.width, source.height, 0, RenderTextureFormat.ARGB32);
+            RenderTexture prev = RenderTexture.active;
+            try
+            {
+                Graphics.Blit(source, rt);
+                RenderTexture.active = rt;
+                Texture2D result = new Texture2D(source.width, source.height, targetFormat, mipChain);
+                result.ReadPixels(new Rect(0, 0, source.width, source.height), 0, 0);
+                result.Apply(mipChain, makeNoLongerReadable);
+                return result;
+            }
+            finally
+            {
+                RenderTexture.active = prev;
+                RenderTexture.ReleaseTemporary(rt);
+            }
+        }
+
+        private static Texture2D CreateUncompressedCopy(Texture2D texture, TextureFormat targetFormat, bool mipChain)
+        {
+            if (texture.isReadable)
+            {
+                int pixelCount = texture.width * texture.height;
+                if (texture.format == TextureFormat.RGBA32 && targetFormat == TextureFormat.RGBA32)
+                {
+                    Texture2D copy = new Texture2D(texture.width, texture.height, TextureFormat.RGBA32, mipChain);
+                    NativeArray<Color32>.Copy(texture.GetRawTextureData<Color32>(), 0, copy.GetRawTextureData<Color32>(), 0, pixelCount);
+                    copy.Apply(mipChain, false);
+                    return copy;
+                }
+                if (texture.format == TextureFormat.RGB24 && targetFormat == TextureFormat.RGB24)
+                {
+                    Texture2D copy = new Texture2D(texture.width, texture.height, TextureFormat.RGB24, mipChain);
+                    NativeArray<byte>.Copy(texture.GetRawTextureData<byte>(), 0, copy.GetRawTextureData<byte>(), 0, pixelCount * 3);
+                    copy.Apply(mipChain, false);
+                    return copy;
+                }
+                if (texture.format == TextureFormat.RGBA32 && targetFormat == TextureFormat.RGB24)
+                {
+                    Texture2D copy = new Texture2D(texture.width, texture.height, TextureFormat.RGB24, mipChain);
+                    var src = texture.GetRawTextureData<Color32>();
+                    var dst = copy.GetRawTextureData<byte>();
+                    for (int i = 0, j = 0; i < pixelCount; i++, j += 3)
+                    {
+                        Color32 c = src[i];
+                        dst[j] = c.r;
+                        dst[j + 1] = c.g;
+                        dst[j + 2] = c.b;
+                    }
+                    copy.Apply(mipChain, false);
+                    return copy;
+                }
+                if (texture.format == TextureFormat.RGB24 && targetFormat == TextureFormat.RGBA32)
+                {
+                    Texture2D copy = new Texture2D(texture.width, texture.height, TextureFormat.RGBA32, mipChain);
+                    var src = texture.GetRawTextureData<byte>();
+                    var dst = copy.GetRawTextureData<Color32>();
+                    for (int i = 0, j = 0; i < pixelCount; i++, j += 3)
+                    {
+                        dst[i] = new Color32(src[j], src[j + 1], src[j + 2], 255);
+                    }
+                    copy.Apply(mipChain, false);
+                    return copy;
+                }
+            }
+
+            // Fallback GPU sans allocation Mono GC (supporte aussi les textures non-lisibles/compressées DXT du cache)
+            return BlitToUncompressedTexture(texture, targetFormat, mipChain, makeNoLongerReadable: false);
         }
 
         private static Texture2D ConvertTextureFormat(Texture2D texture, TextureFormat format, int mipCount)
         {
+            bool mipChain = mipCount > 1;
             if (format == TextureFormat.DXT1)
             {
-                Texture2D noAlphaTex = ConvertTextureToNoAlpha(texture);
-                Texture2D convertedTexture = new Texture2D(texture.width, texture.height, TextureFormat.RGB24, mipCount > 1);
-                try
+                Texture2D convertedTexture = CreateUncompressedCopy(texture, TextureFormat.RGB24, mipChain);
+                if (convertedTexture.width % 4 == 0 && convertedTexture.height % 4 == 0)
                 {
-                    convertedTexture.SetPixels(noAlphaTex.GetPixels());
-                    convertedTexture.Apply(true);
                     convertedTexture.Compress(false);
                 }
-                finally
-                {
-                    UnityEngine.Object.Destroy(noAlphaTex);
-                }
+                convertedTexture.Apply(false, true);
                 return convertedTexture;
             }
             else if (format == TextureFormat.DXT5)
             {
-                Texture2D convertedTexture = new Texture2D(texture.width, texture.height, TextureFormat.RGBA32, mipCount > 1);
-                convertedTexture.SetPixels(texture.GetPixels());
-                convertedTexture.Apply(true);
-                convertedTexture.Compress(false);
+                Texture2D convertedTexture = CreateUncompressedCopy(texture, TextureFormat.RGBA32, mipChain);
+                if (convertedTexture.width % 4 == 0 && convertedTexture.height % 4 == 0)
+                {
+                    convertedTexture.Compress(false);
+                }
+                convertedTexture.Apply(false, true);
+                return convertedTexture;
+            }
+            else if (format == TextureFormat.RGB24 || format == TextureFormat.RGBA32)
+            {
+                Texture2D convertedTexture = CreateUncompressedCopy(texture, format, mipChain);
+                convertedTexture.Apply(false, true);
                 return convertedTexture;
             }
             else
             {
-                // For formats where SetPixels might fail (e.g. compressed or platform-specific formats),
-                // use RenderTexture / Blit or safe fallback
-                Texture2D convertedTexture = new Texture2D(texture.width, texture.height, format, mipCount > 1);
-                try
-                {
-                    convertedTexture.SetPixels(texture.GetPixels());
-                    convertedTexture.Apply(true);
-                }
-                catch
-                {
-                    // Fallback using RenderTexture
-                    RenderTexture rt = RenderTexture.GetTemporary(texture.width, texture.height, 0, RenderTextureFormat.ARGB32);
-                    Graphics.Blit(texture, rt);
-                    RenderTexture prev = RenderTexture.active;
-                    RenderTexture.active = rt;
-                    convertedTexture.ReadPixels(new Rect(0, 0, texture.width, texture.height), 0, 0);
-                    convertedTexture.Apply(true);
-                    RenderTexture.active = prev;
-                    RenderTexture.ReleaseTemporary(rt);
-                }
-                return convertedTexture;
+                // Pour d'autres formats non-compressés ou spécifiques : RenderTexture / Blit (0 allocation Color[])
+                return BlitToUncompressedTexture(texture, format, mipChain, makeNoLongerReadable: true);
             }
-        }
-
-        private static Texture2D ConvertTextureToNoAlpha(Texture2D texture)
-        {
-            int width = texture.width;
-            int height = texture.height;
-
-            Texture2D textureNoAlpha = new Texture2D(width, height, TextureFormat.RGB24, texture.mipmapCount > 1);
-            Color[] pixels = texture.GetPixels();
-            Color[] pixelsNoAlpha = new Color[pixels.Length];
-
-            for (int i = 0; i < pixels.Length; i++)
-            {
-                pixelsNoAlpha[i] = new Color(pixels[i].r, pixels[i].g, pixels[i].b);
-            }
-
-            textureNoAlpha.SetPixels(pixelsNoAlpha);
-            textureNoAlpha.Apply(true);
-
-            return textureNoAlpha;
         }
 
         private static Texture2D AdjustMipMapLevels(Texture2D texture, int mipCount)
         {
-            Texture2D adjustedTexture = new Texture2D(texture.width, texture.height, TextureFormat.RGBA32, mipCount > 1);
-            adjustedTexture.SetPixels(texture.GetPixels());
-            adjustedTexture.Apply(true);
-            return adjustedTexture;
+            TextureFormat targetFormat = texture.format == TextureFormat.RGB24 ? TextureFormat.RGB24 : TextureFormat.RGBA32;
+            return CreateUncompressedCopy(texture, targetFormat, mipCount > 1);
         }
 
         public static Texture2D LoadTexture2D(string filePath)
         {
             byte[] bytes = File.ReadAllBytes(filePath);
-            Texture2D texture = new Texture2D(2, 2, TextureFormat.RGBA32, true);
-            texture.LoadImage(bytes);
+            TextureFormat fmt = TextureUtils.IsJpegPath(filePath) ? TextureFormat.RGB24 : TextureFormat.RGBA32;
+            Texture2D texture = new Texture2D(2, 2, fmt, true);
+            // Doit rester lisible : ReplaceTexture peut appeler GetRawTextureData via AdjustMipMapLevels/ConvertTextureFormat
+            texture.LoadImage(bytes, false);
             return texture;
         }
 
@@ -591,10 +707,10 @@ namespace WankulCrazyPlugin.importer
                     { EItemType.BasicCardBox, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S1.png") },
                     { EItemType.RareCardBox, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S2.png") },
                     { EItemType.EpicCardBox, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S3.png") },
-                    { EnumExtensions.SafeParseEItemType("DisplayStellar"), Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S4.png") },
-                    { EnumExtensions.SafeParseEItemType("DisplayStellarTaux"), Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S4_TauxDrop.png") },
-                    { EnumExtensions.SafeParseEItemType("DisplayLegacy"), Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S5.png") },
-                    { EnumExtensions.SafeParseEItemType("DisplayLegacyTaux"), Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S5_TauxDrop.png") },
+                    { CustomItemTypes.DisplayStellar, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S4.png") },
+                    { CustomItemTypes.DisplayStellarTaux, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S4_TauxDrop.png") },
+                    { CustomItemTypes.DisplayLegacy, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S5.png") },
+                    { CustomItemTypes.DisplayLegacyTaux, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S5_TauxDrop.png") },
                     { EItemType.LegendaryCardBox, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_HS.png") },
                     { EItemType.DestinyBasicCardBox, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S1_TauxDrop.png") },
                     { EItemType.DestinyRareCardBox, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Display_S2_TauxDrop.png") },
@@ -689,23 +805,23 @@ namespace WankulCrazyPlugin.importer
                     { EItemType.Manga10, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "T_Manga_10.png") },
                     { EItemType.Manga11, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "T_Manga_11.png") },
                     { EItemType.Manga12, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "T_Manga_12.png") },
-                    { EnumExtensions.SafeParseEItemType("BoosterGoldBattle"), Path.Combine(Plugin.GetPluginPath(), "data", "customitems", "textures", "Texture_BoosterGold.png") },
-                    { EnumExtensions.SafeParseEItemType("BoosterGoldStellar"), Path.Combine(Plugin.GetPluginPath(), "data", "customitems", "textures", "Texture_BoosterGold.png") },
-                    { EnumExtensions.SafeParseEItemType("BoosterGoldLegacy"), Path.Combine(Plugin.GetPluginPath(), "data", "customitems", "textures", "Texture_BoosterGold.png") },
-                    { EnumExtensions.SafeParseEItemType("StarterShowtime"), Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Starter_Showtime.png") },
-                    { EnumExtensions.SafeParseEItemType("StarterApocalypse"), Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Starter_Apocalypse.png") },
+                    { CustomItemTypes.BoosterGoldBattle, Path.Combine(Plugin.GetPluginPath(), "data", "customitems", "textures", "Texture_BoosterGold.png") },
+                    { CustomItemTypes.BoosterGoldStellar, Path.Combine(Plugin.GetPluginPath(), "data", "customitems", "textures", "Texture_BoosterGold.png") },
+                    { CustomItemTypes.BoosterGoldLegacy, Path.Combine(Plugin.GetPluginPath(), "data", "customitems", "textures", "Texture_BoosterGold.png") },
+                    { CustomItemTypes.StarterShowtime, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Starter_Showtime.png") },
+                    { CustomItemTypes.StarterApocalypse, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Starter_Apocalypse.png") },
 
                     // Boosters custom
-                    { EnumExtensions.SafeParseEItemType("BoosterStellar"), Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Booster_S4.png") },
-                    { EnumExtensions.SafeParseEItemType("BoosterStellarTaux"), Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Booster_S4_TauxDrop.png") },
-                    { EnumExtensions.SafeParseEItemType("BoosterLegacy"), Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Booster_S5.png") },
-                    { EnumExtensions.SafeParseEItemType("BoosterLegacyTaux"), Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Booster_S5_TauxDrop.png") },
+                    { CustomItemTypes.BoosterStellar, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Booster_S4.png") },
+                    { CustomItemTypes.BoosterStellarTaux, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Booster_S4_TauxDrop.png") },
+                    { CustomItemTypes.BoosterLegacy, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Booster_S5.png") },
+                    { CustomItemTypes.BoosterLegacyTaux, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Booster_S5_TauxDrop.png") },
 
                     // Accessoires & goodies custom
-                    { EnumExtensions.SafeParseEItemType("TapisS41"), Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Tapis_S4_1.png") },
-                    { EnumExtensions.SafeParseEItemType("TapisS42"), Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Tapis_S4_2.png") },
-                    { EnumExtensions.SafeParseEItemType("ClasseurS4"), Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "T_BinderBook.png") },
-                    { EnumExtensions.SafeParseEItemType("CaleconStellar"), File.Exists(Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Calecon.png"))
+                    { CustomItemTypes.TapisS41, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Tapis_S4_1.png") },
+                    { CustomItemTypes.TapisS42, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Tapis_S4_2.png") },
+                    { CustomItemTypes.ClasseurS4, Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "T_BinderBook.png") },
+                    { CustomItemTypes.CaleconStellar, File.Exists(Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Calecon.png"))
                         ? Path.Combine(Plugin.GetPluginPath(), "data", "patchtextures", "shared1", "Texture_Calecon.png")
                         : Path.Combine(Plugin.GetPluginPath(), "data", "customitems", "textures", "Texture_Calecon.png") },
                 };
@@ -748,7 +864,7 @@ namespace WankulCrazyPlugin.importer
 
                 meshData.material = mat;
 
-                EItemType boosterType = GetBoosterTypeForDisplay(kvp.Key);
+                EItemType boosterType = CustomItemTypes.GetBoosterForDisplay(kvp.Key);
                 if (boosterType != EItemType.None && texturePaths.TryGetValue(boosterType, out string boosterPath))
                 {
                     if (meshData.meshSecondary != null)
@@ -764,7 +880,7 @@ namespace WankulCrazyPlugin.importer
                         meshData.materialSecondary = null;
                     }
                 }
-                else if (IsBoosterPackType(kvp.Key))
+                else if (CustomItemTypes.IsOpenablePack(kvp.Key))
                 {
                     meshData.materialSecondary = mat;
                 }
@@ -786,13 +902,13 @@ namespace WankulCrazyPlugin.importer
                         if (mat != null) customMesh.material = mat;
                         if (customMesh.meshSecondary != null)
                         {
-                            EItemType bType = GetBoosterTypeForDisplay(cType);
+                            EItemType bType = CustomItemTypes.GetBoosterForDisplay(cType);
                             if (bType != EItemType.None && texturePaths.TryGetValue(bType, out string bPath))
                             {
                                 Material bMat = GetOrCreateBoxMaterial(bType, bPath, null);
                                 if (bMat != null) customMesh.materialSecondary = bMat;
                             }
-                            else if (IsBoosterPackType(cType))
+                            else if (CustomItemTypes.IsOpenablePack(cType))
                             {
                                 customMesh.materialSecondary = mat;
                             }
@@ -833,36 +949,76 @@ namespace WankulCrazyPlugin.importer
             }
         }
 
-        private static Texture2D LoadTexture(string path)
+        public static Texture2D GetOrLoadDiskTexture(
+            string path,
+            Action<Texture2D> configure = null,
+            bool mipChain = false,
+            bool compress = true)
         {
             if (string.IsNullOrEmpty(path))
             {
                 return null;
             }
-            if (s_DiskTextureCache.TryGetValue(path, out Texture2D cachedTex) && cachedTex != null)
+
+            string normKey = WankulFileIndex.NormalizePathKey(path);
+            if (s_TextureCache.TryGetValue(normKey, out Texture2D cachedTex) && cachedTex != null)
             {
                 return cachedTex;
             }
+
             if (!File.Exists(path))
             {
                 return null;
             }
-            byte[] fileData = File.ReadAllBytes(path);
-            Texture2D tex = new Texture2D(2, 2, TextureFormat.RGBA32, false);
-            if (tex.LoadImage(fileData))
-            {
-                tex.wrapMode = TextureWrapMode.Clamp;
-                if (Path.GetFileNameWithoutExtension(path).StartsWith("T_D20Dice", StringComparison.OrdinalIgnoreCase))
+
+            Texture2D tex = TextureUtils.LoadTexture(
+                path,
+                markNonReadable: true,
+                compress: compress,
+                mipChain: mipChain,
+                hasAlpha: !TextureUtils.IsJpegPath(path),
+                configure: t =>
                 {
-                    tex.filterMode = FilterMode.Point;
-                }
-                tex.Apply();
-                tex.hideFlags |= HideFlags.DontUnloadUnusedAsset;
-                s_DiskTextureCache[path] = tex;
-                return tex;
+                    t.wrapMode = TextureWrapMode.Clamp;
+                    if (Path.GetFileNameWithoutExtension(path).StartsWith("T_D20Dice", StringComparison.OrdinalIgnoreCase))
+                    {
+                        t.filterMode = FilterMode.Point;
+                    }
+                    configure?.Invoke(t);
+                });
+
+            if (tex != null)
+            {
+                RegisterPersistentTexture(tex, normKey);
             }
-            return null;
+            return tex;
         }
+
+        public static Texture2D ReloadDiskTexture(
+            string path,
+            Action<Texture2D> configure = null,
+            bool mipChain = false,
+            bool compress = true)
+        {
+            if (string.IsNullOrEmpty(path))
+            {
+                return null;
+            }
+
+            string normKey = WankulFileIndex.NormalizePathKey(path);
+            if (s_TextureCache.TryGetValue(normKey, out Texture2D oldTex))
+            {
+                if (oldTex != null)
+                {
+                    UnityEngine.Object.Destroy(oldTex);
+                }
+                s_TextureCache.Remove(normKey);
+            }
+
+            return GetOrLoadDiskTexture(path, configure, mipChain, compress);
+        }
+
+        private static Texture2D LoadTexture(string path) => GetOrLoadDiskTexture(path);
 
         private static Material s_Safe2DBaseMaterial = null;
 
@@ -963,7 +1119,7 @@ namespace WankulCrazyPlugin.importer
                 Renderer secondaryRenderer = item.m_MeshSecondary.GetComponent<Renderer>();
                 if (secondaryRenderer != null)
                 {
-                    EItemType boosterType = GetBoosterTypeForDisplay(itemType);
+                    EItemType boosterType = CustomItemTypes.GetBoosterForDisplay(itemType);
                     var allBoxPaths = GetBoxTexturePaths();
                     if (boosterType != EItemType.None && allBoxPaths.TryGetValue(boosterType, out string boosterPath))
                     {
@@ -977,7 +1133,7 @@ namespace WankulCrazyPlugin.importer
                             secondaryRenderer.SetPropertyBlock(null);
                         }
                     }
-                    else if (IsBoosterPackType(itemType))
+                    else if (CustomItemTypes.IsOpenablePack(itemType))
                     {
                         if (secondaryRenderer.sharedMaterial != targetMaterial)
                         {
@@ -989,67 +1145,8 @@ namespace WankulCrazyPlugin.importer
             }
         }
 
-        private static Dictionary<EItemType, EItemType> s_DisplayToBoosterMap;
-        private static HashSet<EItemType> s_BoosterPackTypes;
+        public static EItemType GetBoosterTypeForDisplay(EItemType displayType) => CustomItemTypes.GetBoosterForDisplay(displayType);
 
-        private static void EnsureBoosterTypeCaches()
-        {
-            if (s_DisplayToBoosterMap != null && s_BoosterPackTypes != null)
-            {
-                return;
-            }
-
-            EItemType boosterStellar = EnumExtensions.SafeParseEItemType("BoosterStellar");
-            EItemType boosterStellarTaux = EnumExtensions.SafeParseEItemType("BoosterStellarTaux");
-            EItemType boosterLegacy = EnumExtensions.SafeParseEItemType("BoosterLegacy");
-            EItemType boosterLegacyTaux = EnumExtensions.SafeParseEItemType("BoosterLegacyTaux");
-
-            s_DisplayToBoosterMap = new Dictionary<EItemType, EItemType>(12)
-            {
-                { EItemType.BasicCardBox, EItemType.BasicCardPack },
-                { EItemType.RareCardBox, EItemType.RareCardPack },
-                { EItemType.EpicCardBox, EItemType.EpicCardPack },
-                { EItemType.LegendaryCardBox, EItemType.LegendaryCardPack },
-                { EItemType.DestinyBasicCardBox, EItemType.DestinyBasicCardPack },
-                { EItemType.DestinyRareCardBox, EItemType.DestinyRareCardPack },
-                { EItemType.DestinyEpicCardBox, EItemType.DestinyEpicCardPack },
-                { EItemType.DestinyLegendaryCardBox, EItemType.DestinyLegendaryCardPack },
-                { EnumExtensions.SafeParseEItemType("DisplayStellar"), boosterStellar },
-                { EnumExtensions.SafeParseEItemType("DisplayStellarTaux"), boosterStellarTaux },
-                { EnumExtensions.SafeParseEItemType("DisplayLegacy"), boosterLegacy },
-                { EnumExtensions.SafeParseEItemType("DisplayLegacyTaux"), boosterLegacyTaux }
-            };
-
-            s_BoosterPackTypes = new HashSet<EItemType>
-            {
-                EItemType.BasicCardPack,
-                EItemType.RareCardPack,
-                EItemType.EpicCardPack,
-                EItemType.LegendaryCardPack,
-                EItemType.DestinyBasicCardPack,
-                EItemType.DestinyRareCardPack,
-                EItemType.DestinyEpicCardPack,
-                EItemType.DestinyLegendaryCardPack,
-                boosterStellar,
-                boosterStellarTaux,
-                boosterLegacy,
-                boosterLegacyTaux,
-                EnumExtensions.SafeParseEItemType("BoosterGoldBattle"),
-                EnumExtensions.SafeParseEItemType("BoosterGoldStellar"),
-                EnumExtensions.SafeParseEItemType("BoosterGoldLegacy")
-            };
-        }
-
-        public static EItemType GetBoosterTypeForDisplay(EItemType displayType)
-        {
-            EnsureBoosterTypeCaches();
-            return s_DisplayToBoosterMap.TryGetValue(displayType, out EItemType boosterType) ? boosterType : EItemType.None;
-        }
-
-        public static bool IsBoosterPackType(EItemType itemType)
-        {
-            EnsureBoosterTypeCaches();
-            return s_BoosterPackTypes.Contains(itemType);
-        }
+        public static bool IsBoosterPackType(EItemType itemType) => CustomItemTypes.IsOpenablePack(itemType);
     }
 }

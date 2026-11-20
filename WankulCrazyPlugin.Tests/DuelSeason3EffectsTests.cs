@@ -22,6 +22,7 @@ namespace WankulCrazyPlugin.Tests
         private sealed class BattleEffectEntry
         {
             public int cardIndex { get; set; }
+            public List<int>? cardIndexes { get; set; }
             public int? costOverride { get; set; }
             public List<string> onPlay { get; set; } = new();
             public List<string> combo { get; set; } = new();
@@ -31,14 +32,14 @@ namespace WankulCrazyPlugin.Tests
             public List<string> lose { get; set; } = new();
         }
 
-        private static string GetEffectsS3Path()
+        private static string GetEffectsPath()
         {
             string baseDir = AppContext.BaseDirectory;
             string[] candidates =
             {
-                Path.Combine(baseDir, "data", "customdecks", "effects_s3.json"),
-                Path.GetFullPath(Path.Combine(baseDir, "..", "..", "..", "..", "data", "customdecks", "effects_s3.json")),
-                Path.GetFullPath(Path.Combine("data", "customdecks", "effects_s3.json"))
+                Path.Combine(baseDir, "data", "customdecks", "duel_card_effects.json"),
+                Path.GetFullPath(Path.Combine(baseDir, "..", "..", "..", "..", "data", "customdecks", "duel_card_effects.json")),
+                Path.GetFullPath(Path.Combine("data", "customdecks", "duel_card_effects.json"))
             };
             foreach (var p in candidates)
             {
@@ -49,12 +50,38 @@ namespace WankulCrazyPlugin.Tests
 
         private static List<BattleEffectEntry> LoadEffectsS3()
         {
-            string path = GetEffectsS3Path();
-            Assert.True(File.Exists(path), $"effects_s3.json introuvable: {path}");
+            string path = GetEffectsPath();
+            Assert.True(File.Exists(path), $"duel_card_effects.json introuvable: {path}");
             string json = File.ReadAllText(path);
-            var entries = JsonSerializer.Deserialize<List<BattleEffectEntry>>(json);
-            Assert.NotNull(entries);
-            return entries!;
+            var raw = JsonSerializer.Deserialize<List<BattleEffectEntry>>(json);
+            Assert.NotNull(raw);
+
+            var expanded = new List<BattleEffectEntry>();
+            foreach (var item in raw!)
+            {
+                var indices = new List<int>();
+                if (item.cardIndex > 0) indices.Add(item.cardIndex);
+                if (item.cardIndexes != null) indices.AddRange(item.cardIndexes);
+
+                foreach (int idx in indices)
+                {
+                    if (idx >= 300001 && idx <= 300180)
+                    {
+                        expanded.Add(new BattleEffectEntry
+                        {
+                            cardIndex = idx,
+                            costOverride = item.costOverride,
+                            onPlay = item.onPlay ?? new(),
+                            combo = item.combo ?? new(),
+                            passive = item.passive ?? new(),
+                            sub = item.sub ?? new(),
+                            win = item.win ?? new(),
+                            lose = item.lose ?? new()
+                        });
+                    }
+                }
+            }
+            return expanded.OrderBy(e => e.cardIndex).ToList();
         }
 
         [Fact]

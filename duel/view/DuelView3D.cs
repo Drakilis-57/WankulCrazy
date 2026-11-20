@@ -935,7 +935,7 @@ namespace WankulCrazyPlugin.duel
 
             if (_pendingSlotChoice != null)
             {
-                _hintText.text = $"★ {CardAdapter.FixMojibake(_pendingSlotChoice.Title)} — Cliquez directement sur un Terrain 3D";
+                _hintText.text = $"★ {_pendingSlotChoice.Title} — Cliquez directement sur un Terrain 3D";
                 return;
             }
 
@@ -950,7 +950,7 @@ namespace WankulCrazyPlugin.duel
             if (focusCard != null && focusCard.Kind == CardKind.Character)
             {
                 int effCost = _engine.GetEffectivePlayCost(PlayerId.Player1, focusCard, _hoveredSlotIndex);
-                string cardName = CardAdapter.FixMojibake(focusCard.Name);
+                string cardName = focusCard.Name;
                 string costPart = focusCard.IsDuo
                     ? "DUO (Coût 0)"
                     : (effCost == 0 ? "Coût : 0" : $"Coût : {effCost} défausse(s)");
@@ -982,7 +982,7 @@ namespace WankulCrazyPlugin.duel
                     string actionHint = hovEntry.Zone == DuelCard3dManager.ZoneKind.CharacterP1
                         ? "Clic ou Clic droit : Activer capacité"
                         : "Clic droit : Inspecter / Activer capacité";
-                    _hintText.text = $"★ {CardAdapter.FixMojibake(hovEntry.Card.Name)} • {actionHint}";
+                    _hintText.text = $"★ {hovEntry.Card.Name} • {actionHint}";
                     return;
                 }
             }
@@ -1249,13 +1249,13 @@ namespace WankulCrazyPlugin.duel
 
                 case TerrainPlayedEvent terrain:
                     DuelSfx.PlayPlaceCard();
-                    PushLog($"Terrain {CardAdapter.FixMojibake(terrain.Card.Name)} posé (Slot {terrain.SlotIndex + 1}).");
+                    PushLog($"Terrain {terrain.Card.Name} posé (Slot {terrain.SlotIndex + 1}).");
                     break;
 
                 case TerrainRevealedByDigEvent dig:
                     DuelSfx.PlayPowerup();
                     if (dig.Card != null)
-                        PushLog($"Terrain révélé (pioche) : {CardAdapter.FixMojibake(dig.Card.Name)}.");
+                        PushLog($"Terrain révélé (pioche) : {dig.Card.Name}.");
                     break;
 
                 case TerrainDigFailedEvent:
@@ -1269,7 +1269,7 @@ namespace WankulCrazyPlugin.duel
 
                 case CharacterPlayedEvent charEvt:
                     DuelSfx.PlayPlaceCard();
-                    string chName = CardAdapter.FixMojibake(charEvt.Card.Name);
+                    string chName = charEvt.Card.Name;
                     if (charEvt.SlotIndex >= 0 && charEvt.SlotIndex < _engine.State.Slots.Count)
                     {
                         var chars = _engine.State.Slots[charEvt.SlotIndex].GetCharacters(charEvt.Player);
@@ -1288,7 +1288,7 @@ namespace WankulCrazyPlugin.duel
 
                 case CharacterMovedSlotEvent moved:
                     DuelSfx.PlaySelectCard();
-                    PushLog($"{CardAdapter.FixMojibake(moved.Card.Name)} déplacé vers Terrain {moved.ToSlotIndex + 1}.");
+                    PushLog($"{moved.Card.Name} déplacé vers Terrain {moved.ToSlotIndex + 1}.");
                     break;
 
                 case ComboFormedEvent comboEvt:
@@ -1297,7 +1297,7 @@ namespace WankulCrazyPlugin.duel
                     break;
 
                 case ComboBrokenEvent brokenEvt:
-                    PushLog($"Combo rompu : {CardAdapter.FixMojibake(brokenEvt.CardWithBrokenCombo.Name)}.");
+                    PushLog($"Combo rompu : {brokenEvt.CardWithBrokenCombo.Name}.");
                     break;
 
                 case ScoreResolvedEvent scoreEvt:
@@ -1351,7 +1351,7 @@ namespace WankulCrazyPlugin.duel
 
                 case EffectTriggeredEvent eff:
                     DuelSfx.PlayPowerup();
-                    PushLog($"Effet : {CardAdapter.FixMojibake(eff.SourceCard.Name)}");
+                    PushLog($"Effet : {eff.SourceCard.Name}");
                     break;
 
                 case PlayerChoiceRequiredEvent choiceEvt:
@@ -1367,7 +1367,7 @@ namespace WankulCrazyPlugin.duel
                         }
                         else
                         {
-                            PushLog($"Action impossible : {CardAdapter.FixMojibake(choiceEvt.Title)}");
+                            PushLog($"Action impossible : {choiceEvt.Title}");
                         }
                     }
                     break;
@@ -1387,7 +1387,7 @@ namespace WankulCrazyPlugin.duel
                         if (hasOccupiedSlot)
                         {
                             _pendingSlotChoice = slotChoice;
-                            PushLog($"Choix de terrain requis : {CardAdapter.FixMojibake(slotChoice.Title)}");
+                            PushLog($"Choix de terrain requis : {slotChoice.Title}");
                             RefreshHudOnly();
                         }
                         else
@@ -1915,7 +1915,7 @@ namespace WankulCrazyPlugin.duel
             if (res.Success)
             {
                 DuelSfx.PlayPowerup();
-                PushLog($"⚡ Capacité activée : {CardAdapter.FixMojibake(cardDisplayName)}");
+                PushLog($"⚡ Capacité activée : {cardDisplayName}");
                 RefreshAllVisuals();
                 return true;
             }
@@ -1949,7 +1949,7 @@ namespace WankulCrazyPlugin.duel
                 _inspectorCardImg.color = spr != null ? Color.white : new Color(0.18f, 0.24f, 0.34f);
             }
 
-            _inspectorTitleText.text = CardAdapter.FixMojibake(card.Name);
+            _inspectorTitleText.text = card.Name;
 
             WankulCardData wCard = CardAdapter.GetWankulCard(card);
             int terrainSlotIdx = _hoveredSlotIndex;
@@ -1992,7 +1992,7 @@ namespace WankulCrazyPlugin.duel
                 string costStr = card.IsDuo
                     ? "0 (DUO)"
                     : (effCost != baseCost ? $"{effCost} (base {baseCost})" : $"{effCost}");
-                string effigy = !string.IsNullOrEmpty(card.Effigy) ? $"  |  Effigie : {CardAdapter.FixMojibake(card.Effigy)}" : "";
+                string effigy = !string.IsNullOrEmpty(card.Effigy) ? $"  |  Effigie : {card.Effigy}" : "";
                 _inspectorStatsText.text =
                     $"TYPE : PERSONNAGE\nForce : {card.Force}  |  Coût : {costStr}{effigy}\nGemmes Combo : {gems}";
             }
@@ -2001,15 +2001,15 @@ namespace WankulCrazyPlugin.duel
             if (wCard is EffigyCardData eff)
             {
                 desc = !string.IsNullOrWhiteSpace(eff.Combo)
-                    ? $"{CardAdapter.FixMojibake(eff.Rules)}\n\nCombo : {CardAdapter.FixMojibake(eff.Combo)}"
-                    : CardAdapter.FixMojibake(eff.Rules);
+                    ? $"{eff.Rules}\n\nCombo : {eff.Combo}"
+                    : eff.Rules;
             }
             else if (wCard is TerrainCardData ter)
             {
                 var parts = new List<string>();
-                if (!string.IsNullOrWhiteSpace(ter.SpecialEffect)) parts.Add($"Spécial : {CardAdapter.FixMojibake(ter.SpecialEffect)}");
-                if (!string.IsNullOrWhiteSpace(ter.WinningEffect)) parts.Add($"Gagnant : {CardAdapter.FixMojibake(ter.WinningEffect)}");
-                if (!string.IsNullOrWhiteSpace(ter.LosingEffect)) parts.Add($"Perdant : {CardAdapter.FixMojibake(ter.LosingEffect)}");
+                if (!string.IsNullOrWhiteSpace(ter.SpecialEffect)) parts.Add($"Spécial : {ter.SpecialEffect}");
+                if (!string.IsNullOrWhiteSpace(ter.WinningEffect)) parts.Add($"Gagnant : {ter.WinningEffect}");
+                if (!string.IsNullOrWhiteSpace(ter.LosingEffect)) parts.Add($"Perdant : {ter.LosingEffect}");
                 desc = string.Join("\n", parts);
             }
 
@@ -2129,12 +2129,12 @@ namespace WankulCrazyPlugin.duel
 
             _activeChoiceModal = modalObj;
 
-            CreateHudText(modalObj.transform, font, CardAdapter.FixMojibake(choiceEvt.Title), 20, FontStyle.Bold,
+            CreateHudText(modalObj.transform, font, choiceEvt.Title, 20, FontStyle.Bold,
                 new Vector2(0.04f, 0.88f), new Vector2(allowCloseButton ? 0.80f : 0.96f, 0.97f), TextAnchor.MiddleCenter, new Color(1f, 0.88f, 0.42f));
 
             if (!string.IsNullOrWhiteSpace(choiceEvt.Description))
             {
-                CreateHudText(modalObj.transform, font, CardAdapter.FixMojibake(choiceEvt.Description), 13, FontStyle.Italic,
+                CreateHudText(modalObj.transform, font, choiceEvt.Description, 13, FontStyle.Italic,
                     new Vector2(0.04f, 0.82f), new Vector2(allowCloseButton ? 0.80f : 0.96f, 0.88f), TextAnchor.MiddleCenter, new Color(0.78f, 0.86f, 0.96f));
             }
 
@@ -2276,7 +2276,7 @@ namespace WankulCrazyPlugin.duel
                     CloseActiveModalAndAdvance(modalObj, () => choiceEvt.OnCardSelected?.Invoke(cand));
                 });
 
-                string shortName = CardAdapter.FixMojibake(cand.Name);
+                string shortName = cand.Name;
                 string capText = cand.Kind == CardKind.Character
                     ? $"{shortName}\nF:{cand.Force} C:{cand.Cost}"
                     : shortName;
@@ -2328,7 +2328,7 @@ namespace WankulCrazyPlugin.duel
 
             _activeChoiceModal = modalObj;
 
-            string cardTitle = CardAdapter.FixMojibake(payEvt.CardToPlay.Name);
+            string cardTitle = payEvt.CardToPlay.Name;
             CreateHudText(modalObj.transform, font,
                 $"PAIEMENT DU COÛT : {cardTitle}", 20, FontStyle.Bold,
                 new Vector2(0.04f, 0.88f), new Vector2(0.96f, 0.97f), TextAnchor.MiddleCenter, new Color(1f, 0.88f, 0.42f));
@@ -2452,7 +2452,7 @@ namespace WankulCrazyPlugin.duel
                 cardOutline.effectDistance = new Vector2(1.5f, -1.5f);
                 outlinesById[cand.Id] = cardOutline;
 
-                string shortName = CardAdapter.FixMojibake(cand.Name);
+                string shortName = cand.Name;
                 string capText = cand.Kind == CardKind.Character
                     ? $"{shortName}\nF:{cand.Force} C:{cand.Cost}"
                     : $"{shortName}\nTERRAIN";
@@ -2562,16 +2562,16 @@ namespace WankulCrazyPlugin.duel
             cardImg.raycastTarget = false;
             WankulUiKit.Place(cardImg.rectTransform, new Vector2(0.05f, 0.20f), new Vector2(0.37f, 0.82f), Vector2.zero, Vector2.zero);
 
-            string cardName = CardAdapter.FixMojibake(subEvt.SubCard.Name);
+            string cardName = subEvt.SubCard.Name;
             string triggerDesc = string.IsNullOrWhiteSpace(subEvt.TriggerDescription)
                 ? "Condition de réaction remplie."
-                : CardAdapter.FixMojibake(subEvt.TriggerDescription);
+                : subEvt.TriggerDescription;
 
             WankulCardData wCard = CardAdapter.GetWankulCard(subEvt.SubCard);
             string rulesText = wCard is EffigyCardData eff && !string.IsNullOrWhiteSpace(eff.Rules)
-                ? CardAdapter.FixMojibake(eff.Rules)
+                ? eff.Rules
                 : (wCard is TerrainCardData ter && !string.IsNullOrWhiteSpace(ter.SpecialEffect)
-                    ? CardAdapter.FixMojibake(ter.SpecialEffect)
+                    ? ter.SpecialEffect
                     : string.Join(", ", subEvt.SubCard.SubEffectIds));
 
             var infoHeader = WankulUiKit.CreateText(modalObj.transform, "SubCardHeader",
